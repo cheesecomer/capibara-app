@@ -57,7 +57,7 @@ namespace Capibara.ViewModels
 
         private void OnSignUpSuccess(object sender, EventArgs args)
         {
-            this.NavigationService.NavigateAsync("NavigationPage/FloorMapPage");
+            this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }
     }
 }

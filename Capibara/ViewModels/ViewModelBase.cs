@@ -13,15 +13,14 @@ namespace Capibara.ViewModels
         public const string Model = "ParameterNames.Model";
     }
 
-    public class ViewModelBase<TModel> : BindableBase, INavigationAware where TModel : Models.ModelBase<TModel>, new()
+    public class ViewModelBase : BindableBase, INavigationAware
     {
         private IUnityContainer container;
 
-        protected ViewModelBase(INavigationService navigationService, IPageDialogService pageDialogService, TModel model)
+        protected ViewModelBase(INavigationService navigationService, IPageDialogService pageDialogService)
         {
             this.NavigationService = navigationService;
             this.PageDialogService = pageDialogService;
-            this.Model = model ?? new TModel();
         }
 
         protected CompositeDisposable Disposable { get; } = new CompositeDisposable();
@@ -42,23 +41,41 @@ namespace Capibara.ViewModels
             {
                 this.container = value;
 
-                if (value.IsPresent())
-                {
-                    this.Model.BuildUp(this.Container);
-                }
+                this.OnContainerChanged();
             }
+        }
+
+        public virtual void OnNavigatedFrom(NavigationParameters parameters) { }
+
+        public virtual void OnNavigatedTo(NavigationParameters parameters) { }
+
+        public virtual void OnNavigatingTo(NavigationParameters parameters) { }
+
+        protected virtual void OnContainerChanged() { }
+    }
+
+    public class ViewModelBase<TModel> : ViewModelBase where TModel : Models.ModelBase<TModel>, new()
+    {
+        protected ViewModelBase(INavigationService navigationService, IPageDialogService pageDialogService, TModel model)
+            : base(navigationService, pageDialogService)
+        {
+            this.Model = model ?? new TModel();
         }
 
         public TModel Model { get; }
 
-        public virtual void OnNavigatedFrom(NavigationParameters parameters) { }
-
-        public virtual void OnNavigatedTo(NavigationParameters parameters)
+        protected override void OnContainerChanged()
         {
+            base.OnContainerChanged();
+
+            if (this.Container != null)
+                this.Model.BuildUp(this.Container);
         }
 
-        public virtual void OnNavigatingTo(NavigationParameters parameters)
+        public override void OnNavigatingTo(NavigationParameters parameters)
         {
+            base.OnNavigatingTo(parameters);
+
             if (parameters?.ContainsKey(ParameterNames.Model) ?? false)
             {
                 this.Model.Restore(parameters[ParameterNames.Model] as TModel);
