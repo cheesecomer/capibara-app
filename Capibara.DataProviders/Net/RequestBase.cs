@@ -1,0 +1,137 @@
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+
+using Newtonsoft.Json;
+using Microsoft.Practices.Unity;
+
+namespace Capibara.Net
+{
+    public abstract class RequestBase<TResponse> : IRequest<TResponse> where TResponse : class, new()
+    {
+        /// <summary>
+        /// HTTP メソッドを取得します。
+        /// </summary>
+        /// <value>The method.</value>
+        [JsonIgnore]
+        public abstract HttpMethod Method { get; }
+
+        /// <summary>
+        /// パスを取得します。リクエスト時は Option#BaseUrl と結合されます。
+        /// </summary>
+        /// <value>The end point.</value>
+        [JsonIgnore]
+        public abstract string[] Paths { get; }
+
+        /// <summary>
+        /// Authentication Header を付与する必要があるか
+        /// </summary>
+        /// <value><c>true</c> if need authentication; otherwise, <c>false</c>.</value>
+        [JsonIgnore]
+        public virtual bool NeedAuthentication { get; } = false;
+
+        /// <summary>
+        /// DIコンテナ
+        /// </summary>
+        /// <value>The container.</value>
+        [JsonIgnore]
+        [Dependency]
+        public IUnityContainer Container { get; set; }
+
+        /// <summary>
+        /// Gets or sets the environment.
+        /// </summary>
+        /// <value>The environment.</value>
+        [JsonIgnore]
+        [Dependency]
+        public IEnvironment Environment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rest client.
+        /// </summary>
+        /// <value>The rest client.</value>
+        [JsonIgnore]
+        [Dependency]
+        public IRestClient RestClient { get; set; }
+
+        /// <summary>
+        /// セキュア分離ストレージ
+        /// </summary>
+        /// <value>The secure isolated storage.</value>
+        [JsonIgnore]
+        [Dependency]
+        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+
+        [JsonIgnore]
+        [Dependency]
+        public ICapibaraApplication Application { get; set; }
+
+        protected virtual string StringContent => string.Empty;
+
+        protected virtual string ContentType => string.Empty;
+
+        /// <summary>
+        /// Execute this instance.
+        /// </summary>
+        /// <returns>The execute.</returns>
+        public async Task<TResponse> Execute()
+        {
+            if (!this.Application.HasPlatformInitializer)
+            {
+                return null;
+            }
+
+            var path = Path.Combine(this.Paths);
+            var url = Path.Combine(this.Environment.ApiBaseUrl, path);
+
+            var requestMessage = new HttpRequestMessage(this.Method, url);
+
+            this.RestClient.ApplyRequestHeader(requestMessage);
+
+            if (this.NeedAuthentication && this.SecureIsolatedStorage.AccessToken.IsPresent())
+            {
+                requestMessage.Headers.Authorization
+                      = this.RestClient.GenerateAuthenticationHeader(this.SecureIsolatedStorage.AccessToken);
+            }
+
+            if (new HttpMethod[] { HttpMethod.Post, HttpMethod.Put }.Any(x => x == this.Method))
+            {
+                requestMessage.Content = new StringContent(this.StringContent);
+                requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(this.ContentType);
+            }
+
+            var responseMessage = await this.RestClient.SendAsync(requestMessage);
+
+            if (responseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new HttpNotFoundException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+            else if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                this.SecureIsolatedStorage.Email = string.Empty;
+                this.SecureIsolatedStorage.AccessToken = string.Empty;
+                this.SecureIsolatedStorage.Save();
+
+                throw new HttpUnauthorizedException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+
+            using (var stream = await responseMessage.Content.ReadAsStreamAsync())
+            using (var reader = new StreamReader(stream))
+            {
+                var response = reader.ReadToEnd();
+                if (response.IsNullOrEmpty())
+                {
+                    return new TResponse().BuildUp(this.Container);
+                }
+
+                return JsonConvert.DeserializeObject<TResponse>(response).BuildUp(this.Container);
+            }
+        }
+    }
+}

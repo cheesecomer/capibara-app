@@ -1,0 +1,39 @@
+version: 0.0.{build}
+image: Visual Studio 2017
+before_build:
+- ps: nuget restore Capibara.PCL.sln
+build:
+  project: Capibara.PCL.sln
+  verbosity: quiet
+after_build:
+- ps:
+before_test:
+- ps:
+after_test:
+- ps: >-
+    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
+      -targetargs:"Capibara.Core.Test/bin/Debug/Capibara.Core.Test.dll" `
+      -target:"nunit3-console.exe" `
+      -register:user `
+      -filter:"+[Capibara.Core]*" `
+      -output:"coverage.xml"
+
+    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
+      -targetargs:"Capibara.DataProviders.Test/bin/Debug/Capibara.DataProviders.Test.dll" `
+      -target:"nunit3-console.exe" `
+      -register:user `
+      -filter:"+[Capibara.DataProviders]* -[Capibara.DataProviders]Capibara.Net.WebSocket*" `
+      -output:"coverage.xml" `
+      -mergeoutput
+
+    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
+      -targetargs:"Capibara.Test/bin/Debug/Capibara.Test.dll" `
+      -target:"nunit3-console.exe" `
+      -register:user `
+      -filter:"+[Capibara]* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment*" `
+      -output:"coverage.xml" `
+      -mergeoutput
+
+    pip install codecov
+
+    codecov -f "coverage.xml" -X gcov

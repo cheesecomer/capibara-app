@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:selectors="clr-namespace:Capibara.Selectors;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    x:Class="Capibara.Views.RoomPage"
+    Title="{Binding Name.Value}"
+    BackgroundColor="#FEFEFE">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectCommand}" />
+        <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
+    </ContentView.Behaviors>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding NumberOfParticipants.Value}" Priority="1" Command="{Binding ShowParticipantsCommand}" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="ownMessageTemplate">
+                <ViewCell>
+                    <Grid Padding="75, 10, 10, 10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Frame Grid.Row="0" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false">
+                            <Label Text="{Binding Content}" TextColor="#444" />
+                        </Frame>
+                        <Label Grid.Row="1" Text="{Binding At, StringFormat='{0:HH:mm:ss}'}" FontSize="Small" TextColor="#444" Margin="10, 0, 0, 0" />
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="othersMessageTemplate">
+                <ViewCell>
+                    <Grid Padding="10, 10, 50, 10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Text="{Binding Sender.Nickname}" FontSize="Small" />
+                        <Frame Grid.Row="1" OutlineColor="#999999" CornerRadius="5" HasShadow="false">
+                            <Label Text="{Binding Content}" TextColor="#444" />
+                        </Frame>
+                        <Label Grid.Row="2" Text="{Binding At, StringFormat='{0:HH:mm:ss}'}" FontSize="Small" HorizontalTextAlignment="End" TextColor="#444" Margin="0, 0, 10, 0" />
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            <selectors:MessageDataTemplateSelector x:Key="messageDataTemplateSelector"
+                OwnMessageTemplate="{StaticResource ownMessageTemplate}"
+                OthersMessageTemplate="{StaticResource othersMessageTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <ListView
+            Grid.Row="0"
+            HasUnevenRows="true"
+            VerticalOptions="FillAndExpand"
+            SeparatorColor="Transparent"
+            ItemsSource="{Binding Messages}"
+            ItemTemplate="{StaticResource messageDataTemplateSelector}" />
+        <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Editor Grid.Column="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="1" Text="Send" BackgroundColor="#58CE91" TextColor="White" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>
