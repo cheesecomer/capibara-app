@@ -5,7 +5,6 @@ using System.Reactive.Disposables;
 
 using Capibara.Models;
 
-
 using Prism.Services;
 using Prism.Navigation;
 using Reactive.Bindings;
