@@ -89,7 +89,7 @@ namespace Capibara.Test
 
         private Mock<IWebSocketClient> webSocketClient;
 
-        public IUnityContainer GenerateUnityContainer()
+        public virtual IUnityContainer GenerateUnityContainer()
         {
             this.Dispose();
 

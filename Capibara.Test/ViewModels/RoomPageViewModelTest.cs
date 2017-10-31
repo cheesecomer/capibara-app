@@ -12,7 +12,7 @@ using Prism.Navigation;
 namespace Capibara.Test.ViewModels.RoomPageViewModelTest
 {
     [TestFixture]
-    public class ShowParticipantsCommandTest : TestFixtureBase
+    public class ShowParticipantsCommandTest : ViewModelTestBase
     {
         protected string NavigatePageName { get; private set; }
 
@@ -64,7 +64,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace SpeakCommandCanExecuteTest
     {
         [TestFixture]
-        public class WhenConnectAfterSetMessage : TestFixtureBase
+        public class WhenConnectAfterSetMessage : ViewModelTestBase
         {
             [TestCase("", false)]
             [TestCase(null, false)]
@@ -91,7 +91,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         }
 
         [TestFixture]
-        public class WhenConnectBeforeSetMessage : TestFixtureBase
+        public class WhenConnectBeforeSetMessage : ViewModelTestBase
         {
             [TestCase("", false)]
             [TestCase(null, false)]
@@ -121,7 +121,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace SpeakCommandExecuteTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenSuccess : ViewModelTestBase
         {
             protected RoomPageViewModel viewModel;
 
@@ -165,7 +165,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace RefreshCommandTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenSuccess : ViewModelTestBase
         {
             protected Task<bool> refreshTask;
 
@@ -208,7 +208,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace ConnectCommandTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenSuccess : ViewModelTestBase
         {
             protected Task<bool> refreshTask;
 
@@ -260,7 +260,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace CloseCommandTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenSuccess : ViewModelTestBase
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
@@ -295,7 +295,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         }
 
         [TestFixture]
-        public class WhenAfterShowParticipantsCommand : TestFixtureBase
+        public class WhenAfterShowParticipantsCommand : ViewModelTestBase
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
@@ -346,7 +346,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace NamePropertyTest
     {
         [TestFixture]
-        public class WhenUpdate : TestFixtureBase
+        public class WhenUpdate : ViewModelTestBase
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
@@ -374,7 +374,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace CapacityPropertyTest
     {
         [TestFixture]
-        public class WhenUpdate : TestFixtureBase
+        public class WhenUpdate : ViewModelTestBase
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
@@ -402,7 +402,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace NumberOfParticipantsPropertyTest
     {
         [TestFixture]
-        public class WhenUpdate : TestFixtureBase
+        public class WhenUpdate : ViewModelTestBase
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 

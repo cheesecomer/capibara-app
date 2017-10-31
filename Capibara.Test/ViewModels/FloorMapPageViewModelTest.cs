@@ -13,7 +13,7 @@ using Prism.Services;
 namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
 {
     [TestFixture]
-    public class ItemTappedCommandTest : TestFixtureBase
+    public class ItemTappedCommandTest : ViewModelTestBase
     {
         protected string NavigatePageName { get; private set; }
 
@@ -65,7 +65,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
     namespace RefreshCommandTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenSuccess : ViewModelTestBase
         {
             protected Task<bool> refreshTask;
 
@@ -97,7 +97,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         }
 
         [TestFixture]
-        public class WhenUnauthorizedWithService : TestFixtureBase
+        public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             protected Task<bool> refreshTask;
 

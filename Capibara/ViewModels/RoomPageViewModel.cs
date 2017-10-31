@@ -84,11 +84,7 @@ namespace Capibara.ViewModels
 
             // ConnectCommand
             this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(async () => {
-                this.needClose = true;
-                await this.Model.Refresh();
-                await this.Model.Connect();
-            });
+            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(ConnectCommandExecute()));
 
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -118,6 +114,13 @@ namespace Capibara.ViewModels
             });
 
             this.Model.SpeakSuccess += (sender, e) => this.Message.Value = string.Empty;
+        }
+
+        private async Task ConnectCommandExecute()
+        {
+            this.needClose = true;
+            await this.Model.Refresh();
+            await this.Model.Connect();
         }
     }
 }

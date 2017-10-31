@@ -2,6 +2,8 @@
 
 using Microsoft.Practices.Unity;
 
+using Capibara.Services;
+
 using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Services;
@@ -28,6 +30,9 @@ namespace Capibara.ViewModels
         protected INavigationService NavigationService { get; }
 
         protected IPageDialogService PageDialogService { get; }
+
+        [Dependency]
+        public IProgressDialogService ProgressDialogService { get; set; }
 
         /// <summary>
         /// DIコンテナ
