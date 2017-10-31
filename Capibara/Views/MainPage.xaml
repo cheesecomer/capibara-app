@@ -26,6 +26,12 @@
                     BackgroundColor="#EEE"
                     ItemsSource="{Binding MenuItems}"
                     Grid.Row="1">
+                    <ListView.Behaviors>
+                        <behaviors:EventToCommandBehavior
+                            EventName="ItemTapped" 
+                            EventArgsParameterPath="Item"
+                            Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
                     <ListView.Header>
                         <BoxView HeightRequest="10" />
                     </ListView.Header>
