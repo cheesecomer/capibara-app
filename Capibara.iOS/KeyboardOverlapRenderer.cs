@@ -124,7 +124,7 @@ namespace Capibara.iOS
         {
             var keyboardFrame = UIKeyboard.FrameEndFromNotification(notification);
             var pageFrame = this.ContentView.Bounds;
-            this.ContentView.LayoutTo(new Rectangle(pageFrame.X, pageFrame.Y, pageFrame.Width, pageFrame.Height - keyboardFrame.Height));
+            this.ContentView.LayoutTo(new Rectangle(pageFrame.X, pageFrame.Y, pageFrame.Width, this.beforeHeight - keyboardFrame.Height));
         }
     }
 }
