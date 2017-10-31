@@ -42,7 +42,7 @@ namespace Capibara
             this.NavigationService.NavigateAsync(
                 this.SecureIsolatedStorage.AccessToken.IsNullOrEmpty()
                     ? "SignUpPage"
-                    : "NavigationPage/FloorMapPage");
+                    : "/MainPage/NavigationPage/FloorMapPage");
         }
 
         protected override void RegisterTypes()
@@ -54,6 +54,7 @@ namespace Capibara
             this.Container.RegisterInstance<ISecureIsolatedStorage>(new SecureIsolatedStorageStub());
             this.Container.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
+            this.Container.RegisterTypeForNavigation<MainPage>();
             this.Container.RegisterTypeForNavigation<NavigationPage>();
             this.Container.RegisterTypeForNavigation<SplashPage>();
             this.Container.RegisterTypeForNavigation<SignInPage>();

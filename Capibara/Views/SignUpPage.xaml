@@ -5,74 +5,79 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     prism:ViewModelLocator.AutowireViewModel="True" 
-    x:Class="Capibara.Views.SignUpPage" >
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness">
-            <OnPlatform.iOS>0, 20, 0, 30</OnPlatform.iOS>
-            <OnPlatform.Android>0, 0, 0, 30</OnPlatform.Android>
-        </OnPlatform>
-    </ContentPage.Padding>
-    <StackLayout
-        HorizontalOptions="FillAndExpand"
-        VerticalOptions="FillAndExpand"
-        Padding="20, 0, 20, 0">
-        <Label
+    x:Class="Capibara.Views.SignUpPage"
+    BackgroundColor="#2f8e5b">
+    <Grid>
+        <Image 
+            Source="bg_launch"
+            Aspect="Fill" />
+        <StackLayout
             HorizontalOptions="FillAndExpand"
-            Text="Capibara"
-            FontSize="70"
-            HorizontalTextAlignment="Center"
-            Margin="0, 20, 0, 20"
-            FontAttributes="Bold"
-            />
-        <Label
-            Margin="0, 30, 0, 0"
-            TextColor="#444"
-            Text="ニックネームを登録して"
-            HorizontalTextAlignment="Center"
-            />
-        <Label
-            Margin="0, 0, 0, 30"
-            TextColor="#444"
-            Text="アプリを始めよう！"
-            HorizontalTextAlignment="Center"
-            />
-        <Entry
-            HorizontalOptions="FillAndExpand"
-            Placeholder="ニックネーム"
-            Text="{Binding Nickname.Value, Mode=TwoWay}"
-            HeightRequest="40"
-            />
-        <Label
-            Margin="0, 30, 0, 0"
-            HorizontalOptions="FillAndExpand"
-            VerticalOptions="FillAndExpand"
-            Text="{Binding Error.Value, Mode=TwoWay}"
-            FontAttributes="Bold"
-            TextColor="Red"
-            />
-        <Button
-            HorizontalOptions="FillAndExpand"
-            HeightRequest="50"
-            FontSize="20"
-            Text="登録！"
-            TextColor="White"
-            BorderRadius="25"
-            BackgroundColor="#58CE91"
-            Command="{Binding SignUpCommand}"
-            Margin="0, 0, 0, 20"
-            />
-        <Button
-            HorizontalOptions="FillAndExpand"
-            HeightRequest="50"
-            FontSize="20"
-            Text="既にアカウントのある方"
-            TextColor="#58CE91"
-            BorderColor="#58CE91"
-            BorderWidth="2"
-            BorderRadius="25"
-            BackgroundColor="White"
-            Command="{Binding SignInCommand}"
-            Margin="0, 0, 0, 50"
-            />
-    </StackLayout>
+            VerticalOptions="FillAndExpand">
+
+            <StackLayout.Padding>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <OnPlatform.iOS>20, 20, 20, 30</OnPlatform.iOS>
+                    <OnPlatform.Android>20, 0, 20, 30</OnPlatform.Android>
+                </OnPlatform>
+            </StackLayout.Padding>
+            
+            <Image
+                Source="logo"
+                Margin="0, 20, 0, 20"
+                />
+            <Label
+                Margin="0, 30, 0, 0"
+                TextColor="#eee"
+                Text="ニックネームを登録して"
+                HorizontalTextAlignment="Center"
+                />
+            <Label
+                Margin="0, 0, 0, 30"
+                TextColor="#eee"
+                Text="アプリを始めよう！"
+                HorizontalTextAlignment="Center"
+                />
+            <Entry
+                HorizontalOptions="FillAndExpand"
+                Placeholder="ニックネーム"
+                Text="{Binding Nickname.Value, Mode=TwoWay}"
+                HeightRequest="40"
+                />
+            <Label
+                Margin="0, 30, 0, 0"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                Text="{Binding Error.Value, Mode=TwoWay}"
+                FontAttributes="Bold"
+                TextColor="Red"
+                />
+            <Button
+                HorizontalOptions="FillAndExpand"
+                HeightRequest="50"
+                FontSize="20"
+                Text="登録！"
+                TextColor="#58CE91"
+                BorderColor="#58CE91"
+                BorderWidth="2"
+                BorderRadius="25"
+                BackgroundColor="#FFFFFF"
+                Command="{Binding SignUpCommand}"
+                Margin="0, 0, 0, 20"
+                />
+            <Button
+                HorizontalOptions="FillAndExpand"
+                HeightRequest="50"
+                FontSize="20"
+                Text="既にアカウントのある方"
+                TextColor="#FFFFFF"
+                BorderColor="Transparent"
+                BorderWidth="2"
+                BorderRadius="25"
+                BackgroundColor="Transparent"
+                Command="{Binding SignInCommand}"
+                Margin="0, 0, 0, 50"
+                />
+        </StackLayout>
+    </Grid>
 </ContentPage>

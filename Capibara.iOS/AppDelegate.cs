@@ -35,6 +35,10 @@ namespace Capibara.iOS
 
             AnimationViewRenderer.Init();
 
+            UINavigationBar.Appearance.BarTintColor = UIColor.FromPatternImage(UIImage.FromBundle("bg_header"));
+            UINavigationBar.Appearance.TintColor = UIColor.White;
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes() { TextColor = UIColor.White });
+
             return base.FinishedLaunching(app, options);
         }
     }

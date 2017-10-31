@@ -104,7 +104,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             [TestCase]
             public void ItShouldNavigateToFloorMap()
             {
-                Assert.That(this.navigatePageName, Is.EqualTo("NavigationPage/FloorMapPage"));
+                Assert.That(this.navigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
             }
 
             [TestCase]

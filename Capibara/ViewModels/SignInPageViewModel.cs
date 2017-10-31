@@ -66,7 +66,7 @@ namespace Capibara.ViewModels
             this.IsBusy = this.SignInCommand
                 .CanExecuteChangedAsObservable()
                 // メールアドレスとパスワードが入力された状態で、ログインコマンド実行不可は、現在処理中
-                .Select(_ => this.Email.IsPresent() && this.Password.IsPresent() && !this.SignInCommand.CanExecute())
+                .Select(_ => this.Email.Value.IsPresent() && this.Password.Value.IsPresent() && !this.SignInCommand.CanExecute())
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposable);
 
@@ -78,7 +78,7 @@ namespace Capibara.ViewModels
 
         private void OnSignInSuccess(object sender, EventArgs args)
         {
-            this.NavigationService.NavigateAsync("NavigationPage/FloorMapPage");
+            this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }
     }
 }
