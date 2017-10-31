@@ -188,6 +188,10 @@
     <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch.png" />
     <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch%40x2.png" />
     <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch%40x3.png" />
+    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header%40x3.png" />
+    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header%40x2.png" />
+    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -207,6 +211,7 @@
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
     <Folder Include="Resources\Images.xcassets\bg_launch.imageset\" />
+    <Folder Include="Resources\Images.xcassets\bg_header.imageset\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
