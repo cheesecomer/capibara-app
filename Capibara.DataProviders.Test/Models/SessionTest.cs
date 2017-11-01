@@ -253,10 +253,6 @@ namespace Capibara.Test.Models.SessionTest
         {
             protected Session model;
 
-            bool isSucceed;
-
-            bool isFailed;
-
             [SetUp]
             public void Setup()
             {

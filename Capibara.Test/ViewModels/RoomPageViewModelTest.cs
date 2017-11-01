@@ -21,18 +21,14 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-
-            var navigateTaskSource = new TaskCompletionSource<bool>();
             var navigationService = new Mock<INavigationService>();
             navigationService
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
+                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
                 {
                     this.NavigatePageName = name;
                     this.NavigationParameters = parameters;
-                    navigateTaskSource.SetResult(true);
+                    return Task.Run(() => { });
                 });
 
             var viewModel = new RoomPageViewModel(navigationService.Object);
@@ -107,7 +103,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
                 var container = this.GenerateUnityContainer();
 
                 viewModel = new RoomPageViewModel().BuildUp(container);
-                
+
                 viewModel.Message.Value = message;
 
                 viewModel.ConnectCommand.Execute();
@@ -162,56 +158,11 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         }
     }
 
-    namespace RefreshCommandTest
-    {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
-        {
-            protected Task<bool> refreshTask;
-
-            RoomPageViewModel ViewModel;
-
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
-
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
-
-                this.ViewModel = new RoomPageViewModel();
-                this.ViewModel.Model.Restore(new Room() { Id = 1 });
-
-                this.ViewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                this.ViewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
-
-                this.ViewModel.BuildUp(container);
-
-                this.ViewModel.RefreshCommand.Execute();
-                while (!this.ViewModel.RefreshCommand.CanExecute()) { }
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.ViewModel.Model.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldRefreshSuccess()
-            {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(true));
-            }
-        }
-    }
-
     namespace ConnectCommandTest
     {
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
         {
-            protected Task<bool> refreshTask;
-
             protected RoomPageViewModel ViewModel { get; private set; }
 
             [SetUp]
@@ -219,14 +170,8 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
 
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
-
                 ViewModel = new RoomPageViewModel();
                 ViewModel.Model.Restore(new Room() { Id = 1 });
-
-                ViewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                ViewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
 
                 ViewModel.BuildUp(container);
 
@@ -241,12 +186,6 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             public void TearDown()
             {
                 this.ViewModel.Model.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldRefreshSuccess()
-            {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(true));
             }
 
             [TestCase]
@@ -304,15 +243,10 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
 
-                var navigateTaskSource = new TaskCompletionSource<bool>();
                 var navigationService = new Mock<INavigationService>();
                 navigationService
                     .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns(navigateTaskSource.Task)
-                    .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        navigateTaskSource.SetResult(true);
-                    });
+                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) => Task.Run(() => { }));
 
                 ViewModel = new RoomPageViewModel(navigationService.Object);
                 ViewModel.Model.Restore(new Room() { Id = 1 });

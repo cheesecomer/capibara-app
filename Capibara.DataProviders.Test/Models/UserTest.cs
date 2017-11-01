@@ -282,10 +282,6 @@ namespace Capibara.Test.Models.UserTest
         {
             protected User model;
 
-            bool isSucceed;
-
-            bool isFailed;
-
             [SetUp]
             public void Setup()
             {

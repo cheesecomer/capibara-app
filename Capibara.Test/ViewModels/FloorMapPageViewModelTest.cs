@@ -22,16 +22,14 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var navigateTaskSource = new TaskCompletionSource<bool>();
             var navigationService = new Mock<INavigationService>();
             navigationService
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
+                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
                 {
                     this.NavigatePageName = name;
                     this.NavigationParameters = parameters;
-                    navigateTaskSource.SetResult(true);
+                    return Task.Run(() => { });
                 });
 
             var viewModel = new FloorMapPageViewModel(navigationService.Object);
@@ -65,40 +63,30 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
         {
-            protected Task<bool> refreshTask;
-
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
 
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
-
                 var viewModel = new FloorMapPageViewModel();
-
-                viewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                viewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
 
                 viewModel.BuildUp(container);
 
                 viewModel.RefreshCommand.Execute();
 
-                this.refreshTask.Wait();
+                while(!viewModel.RefreshCommand.CanExecute()) { };
             }
 
             [TestCase]
-            public void ItShouldRefreshSuccess()
+            public void ItShouldShowDialog()
             {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(true));
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            protected Task<bool> refreshTask;
-
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             protected string NavigatePageName { get; private set; }
@@ -110,18 +98,13 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
 
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
-
-                var navigateTaskSource = new TaskCompletionSource<bool>();
                 var navigationService = new Mock<INavigationService>();
                 navigationService
                     .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns(navigateTaskSource.Task)
-                    .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
+                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
                     {
                         this.NavigatePageName = name;
-                        navigateTaskSource.SetResult(true);
+                        return Task.Run(() => { });
                     });
 
 
@@ -135,21 +118,11 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
                     navigationService.Object,
                     pageDialogService.Object);
 
-                viewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                viewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
-
                 viewModel.BuildUp(container);
 
                 viewModel.RefreshCommand.Execute();
 
-                this.refreshTask.Wait();
-                navigateTaskSource.Task.Wait();
-            }
-
-            [TestCase]
-            public void ItShouldRefreshFail()
-            {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(false));
+                while(!viewModel.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]

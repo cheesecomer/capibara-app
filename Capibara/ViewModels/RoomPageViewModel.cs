@@ -16,8 +16,6 @@ namespace Capibara.ViewModels
     {
         private bool needClose = true;
 
-        public AsyncReactiveCommand RefreshCommand { get; }
-
         public AsyncReactiveCommand ConnectCommand { get; }
 
         public AsyncReactiveCommand CloseCommand { get; }
@@ -77,10 +75,6 @@ namespace Capibara.ViewModels
             this.Name.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Name)));
             this.IsConnected.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsConnected)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Message)));
-
-            // RefreshCommand
-            this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(this.Model.Refresh);
 
             // ConnectCommand
             this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

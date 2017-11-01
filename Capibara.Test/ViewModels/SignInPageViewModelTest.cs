@@ -36,8 +36,6 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
     {
         public abstract class ExecuteTestBase : ViewModelTestBase
         {
-            protected Task<bool> loginTask;
-
             protected string navigatePageName;
 
             protected virtual bool NeedSignInWait { get; } = true;
@@ -48,9 +46,6 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-
-                var loginCompletionSource = new TaskCompletionSource<bool>();
-                this.loginTask = loginCompletionSource.Task;
 
                 var navigationService = new Mock<INavigationService>();
                 navigationService
@@ -64,14 +59,11 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
                 this.ViewModel.Email.Value = "user@email.com";
                 this.ViewModel.Password.Value = "password";
 
-                this.ViewModel.Model.SignInSuccess += (sender, e) => loginCompletionSource.SetResult(true);
-                this.ViewModel.Model.SignInFail += (sender, e) => loginCompletionSource.SetResult(false);
-
                 this.ViewModel.SignInCommand.Execute();
 
                 if (this.NeedSignInWait)
                 {
-                    this.loginTask.Wait();
+                    while(!this.ViewModel.SignInCommand.CanExecute()) { }
                 }
             }
         }
@@ -96,12 +88,6 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             protected override string HttpStabResponse => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\"}";
 
             [TestCase]
-            public void ItShouldSignInSuccess()
-            {
-                Assert.That(this.loginTask.Result, Is.EqualTo(true));
-            }
-
-            [TestCase]
             public void ItShouldNavigateToFloorMap()
             {
                 Assert.That(this.navigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
@@ -118,12 +104,6 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         public class WhenFail : ExecuteTestBase
         {
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            [TestCase]
-            public void ItShouldSignInFail()
-            {
-                Assert.That(this.loginTask.Result, Is.EqualTo(false));
-            }
 
             [TestCase]
             public void ItShouldNotNavigate()
