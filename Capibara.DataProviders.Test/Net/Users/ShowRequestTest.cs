@@ -15,7 +15,8 @@ namespace Capibara.Test.Net.Users
     {
         private ShowRequest request;
 
-        public ShowRequestTest()
+        [SetUp]
+        public void SetUp()
         {
             this.request = new ShowRequest(new User { Id = 1000 });
         }

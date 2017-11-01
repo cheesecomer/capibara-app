@@ -16,13 +16,9 @@ namespace Capibara.Test.Models.FloorMapTest
     namespace RefreshTest
     {
         [TestFixture]
-        public abstract class RefreshTestBase
+        public abstract class RefreshTestBase : TestFixtureBase
         {
             protected FloorMap model;
-
-            protected virtual string HttpStabResponse { get; }
-
-            protected virtual HttpStatusCode HttpStabStatusCode { get; } = HttpStatusCode.OK;
 
             protected bool IsRefreshSuccess { get; private set; }
 
@@ -33,42 +29,7 @@ namespace Capibara.Test.Models.FloorMapTest
             [SetUp]
             public void Setup()
             {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-                var responseMessage =
-                    new HttpResponseMessage()
-                    {
-                        StatusCode = this.HttpStabStatusCode,
-                        Content = new HttpContentHandler()
-                        {
-                            ResultOfString = this.HttpStabResponse
-                        }
-                    };
-
-                // ISecureIsolatedStorage のセットアップ
-                var isolatedStorage = new Mock<IIsolatedStorage>();
-                isolatedStorage.SetupAllProperties();
-
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
-                
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-                this.model = new FloorMap().BuildUp(container);
+                this.model = new FloorMap().BuildUp(this.GenerateUnityContainer());
 
                 if (this.NeedEventHandler)
                 {

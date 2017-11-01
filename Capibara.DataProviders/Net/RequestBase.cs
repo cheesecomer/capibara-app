@@ -72,9 +72,11 @@ namespace Capibara.Net
         [Dependency]
         public ICapibaraApplication Application { get; set; }
 
-        protected virtual string StringContent => string.Empty;
+        [JsonIgnore]
+        public virtual string StringContent => string.Empty;
 
-        protected virtual string ContentType => string.Empty;
+        [JsonIgnore]
+        public virtual string ContentType => string.Empty;
 
         /// <summary>
         /// Execute this instance.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,7 @@ using Capibara.Net;
 using Capibara.Net.Channels;
 
 using Moq;
+using Moq.Language.Flow;
 using Microsoft.Practices.Unity;
 using NUnit.Framework;
 using Newtonsoft.Json;
@@ -79,11 +81,15 @@ namespace Capibara.Test
 
         protected IIsolatedStorage IsolatedStorage { get; private set; }
 
+        protected HttpRequestMessage RequestMessage { get; private set; }
+
         protected virtual string HttpStabResponse { get; } = string.Empty;
 
         protected virtual HttpStatusCode HttpStabStatusCode { get; } = HttpStatusCode.OK;
 
         protected virtual bool IsInfiniteWait { get; }
+
+        protected virtual Exception RestException { get; }
 
         private Mock<IWebSocketClient> webSocketClient;
 
@@ -93,7 +99,7 @@ namespace Capibara.Test
 
             // Environment のセットアップ
             var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
+            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/api");
             environment.SetupGet(x => x.WebSocketUrl).Returns("http://localhost:9999/cable/");
             environment.SetupGet(x => x.WebSocketReceiveBufferSize).Returns(1024);
             environment.SetupGet(x => x.WebSocketSendBufferSize).Returns(1024);
@@ -101,7 +107,17 @@ namespace Capibara.Test
             // RestClient のセットアップ
             var restClient = new Mock<IRestClient>();
             restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-            if (this.IsInfiniteWait)
+            restClient
+                .Setup(x => x.GenerateAuthenticationHeader(It.IsAny<string>()))
+                .Returns<string>(token => new AuthenticationHeaderValue("Token", token));
+
+            if (this.RestException.IsPresent())
+            {
+                restClient
+                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
+                    .ThrowsAsync(this.RestException);
+            }
+            else if (this.IsInfiniteWait)
             {
                 this.RestSendAsyncSource = new TaskCompletionSource<HttpResponseMessage>();
                 restClient
@@ -116,12 +132,15 @@ namespace Capibara.Test
                         StatusCode = this.HttpStabStatusCode,
                         Content = new Net.HttpContentHandler()
                         {
-                            ResultOfString = this.HttpStabResponse
+                            ResultOfString = this.HttpStabResponse ?? string.Empty
                         }
                     };
                 restClient
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
+                    .ReturnsAsync((HttpRequestMessage request) => {
+                        this.RequestMessage = request;
+                        return responseMessage;
+                    });
             }
 
             // ISecureIsolatedStorage のセットアップ

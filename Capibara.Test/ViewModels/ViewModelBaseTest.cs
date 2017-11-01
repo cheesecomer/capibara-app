@@ -1,16 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Capibara.Services;
-using Capibara.Models;
+﻿using Capibara.Models;
 using Capibara.ViewModels;
-using Capibara.Net;
 
-using Moq;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 
 using Prism.Navigation;
@@ -32,40 +22,6 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
     {
         public StabViewModel(INavigationService navigationService = null, StabModel model = null) 
             : base(navigationService, null, model) { }
-    }
-
-    public class TestHelper
-    {
-        public static IUnityContainer GenerateContainer()
-        {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-
-            // ISecureIsolatedStorage のセットアップ
-            var isolatedStorage = new Mock<IIsolatedStorage>();
-            isolatedStorage.SetupAllProperties();
-
-            var application = new Mock<ICapibaraApplication>();
-            application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-            var progressDialogService = new Mock<IProgressDialogService>();
-            progressDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<Task>(), It.IsAny<string>())).Returns((Task task) => task);
-
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-            container.RegisterInstance<IProgressDialogService>(progressDialogService.Object);
-
-            return container;
-        }
     }
 
     namespace ModelTest
@@ -104,12 +60,12 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
         }
 
         [TestFixture]
-        public class WhenValueIsPresent
+        public class WhenValueIsPresent : TestFixtureBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {   
-                Assert.DoesNotThrow(() => new StabViewModel().Container = TestHelper.GenerateContainer());
+                Assert.DoesNotThrow(() => new StabViewModel().Container = this.GenerateUnityContainer());
             }
         }
     }

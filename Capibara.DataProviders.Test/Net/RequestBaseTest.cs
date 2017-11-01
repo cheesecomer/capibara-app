@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.IO;
 
 using Moq;
@@ -31,10 +32,15 @@ namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
     }
 
     [TestFixture]
-    public class WhenGetSuccess : WhenSuccessBase<object>
+    public class WhenGetSuccess : TestFixtureBase
     {
-        protected override RequestBase<object> Request
-            => new GetRequest();
+        [SetUp]
+        public void Setup()
+        {
+            var container = this.GenerateUnityContainer();
+
+            new GetRequest().BuildUp(container).Execute().Wait();
+        }
 
         [TestCase]
         public void ItShouldRequestToExpectedUrl()
@@ -44,12 +50,17 @@ namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
     }
 
     [TestFixture]
-    public class WhenGetWithAuthenticationSuccess : WhenSuccessBase<object>
+    public class WhenGetWithAuthenticationSuccess : TestFixtureBase
     {
-        protected override RequestBase<object> Request
-            => new GetWithAuthenticationRequest();
+        [SetUp]
+        public void Setup()
+        {
+            var container = this.GenerateUnityContainer();
 
-        protected override string AccessToken { get; } = "1:bGbDyyVxbSQorRhgyt6R";
+            this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
+
+            new GetWithAuthenticationRequest().BuildUp(container).Execute().Wait();
+        }
 
         [TestCase]
         public void ItShouldRequestToExpectedUrl()
@@ -70,36 +81,17 @@ namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
         }
     }
 
-    public class WhenHasntPlatformInitializer
+    public class WhenHasntPlatformInitializer : TestFixtureBase
     {
         private object result;
 
         [SetUp]
         public void SetUp()
         {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-            restClient
-                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                .ReturnsAsync(new HttpResponseMessage());
-
-            // ISecureIsolatedStorage のセットアップ
-            var isolatedStorage = new Mock<IIsolatedStorage>();
-            isolatedStorage.SetupAllProperties();
-
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
 
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
+            var container = this.GenerateUnityContainer();
             container.RegisterInstance<ICapibaraApplication>(application.Object);
 
             // RequestBase のセットアップ
@@ -117,8 +109,12 @@ namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
 
     [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
     [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
-    public class WhenGetFail
+    public class WhenGetFail : TestFixtureBase
     {
+        protected override HttpStatusCode HttpStabStatusCode => httpStatus;
+
+        protected override string HttpStabResponse => response;
+
         private HttpStatusCode httpStatus;
 
         private string response;
@@ -140,43 +136,8 @@ namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
         [SetUp]
         public void SetUp()
         {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-            var responseMessage =
-                new HttpResponseMessage()
-                {
-                    StatusCode = httpStatus,
-                    Content = new HttpContentHandler()
-                    {
-                        ResultOfString = this.response
-                    }
-                };
-
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-            restClient
-                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                .ReturnsAsync(responseMessage);
-
-            // ISecureIsolatedStorage のセットアップ
-            var isolatedStorage = new Mock<IIsolatedStorage>();
-            isolatedStorage.SetupAllProperties();
-
-            var application = new Mock<ICapibaraApplication>();
-            application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-
             // RequestBase のセットアップ
-            this.request = new GetRequest().BuildUp(container);
+            this.request = new GetRequest().BuildUp(this.GenerateUnityContainer());
         }
 
         [TestCase]
