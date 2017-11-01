@@ -64,7 +64,14 @@
             VerticalOptions="FillAndExpand"
             SeparatorColor="Transparent"
             ItemsSource="{Binding Messages}"
-            ItemTemplate="{StaticResource messageDataTemplateSelector}" />
+            ItemTemplate="{StaticResource messageDataTemplateSelector}">
+            <ListView.Header>
+                <BoxView HeightRequest="0" />
+            </ListView.Header>
+            <ListView.Footer>
+                <BoxView HeightRequest="0" />
+            </ListView.Footer>
+        </ListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

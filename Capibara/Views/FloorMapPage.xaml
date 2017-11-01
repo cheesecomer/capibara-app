@@ -11,6 +11,12 @@
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
     </ContentView.Behaviors>
     <ListView ItemsSource="{Binding Rooms}" HasUnevenRows="true">
+        <ListView.Header>
+            <BoxView HeightRequest="0" />
+        </ListView.Header>
+        <ListView.Footer>
+            <BoxView HeightRequest="0" />
+        </ListView.Footer>
         <ListView.Behaviors>
             <behaviors:EventToCommandBehavior
                 EventName="ItemTapped" 
