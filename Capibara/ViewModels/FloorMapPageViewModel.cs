@@ -33,7 +33,7 @@ namespace Capibara.ViewModels
 
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(this.Model.Refresh);
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Refresh()));
 
             this.ItemTappedCommand = new AsyncReactiveCommand<Room>();
             this.ItemTappedCommand.Subscribe(async x =>

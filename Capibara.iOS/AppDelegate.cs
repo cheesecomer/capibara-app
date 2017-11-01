@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Capibara.iOS.Services;
+using Capibara.Services;
 
 using Foundation;
-using UIKit;
-
-using Prism.Unity;
-using Microsoft.Practices.Unity;
 
 using Lottie.Forms.iOS.Renderers;
 
-using KeyboardOverlap.Forms.Plugin.iOSUnified;
+using Microsoft.Practices.Unity;
+
+using Prism.Unity;
+
+using UIKit;
 
 namespace Capibara.iOS
 {
@@ -48,6 +47,7 @@ namespace Capibara.iOS
         public void RegisterTypes(IUnityContainer container)
         {
             container.RegisterInstance<ISecureIsolatedStorage>(new SecureIsolatedStorage());
+            container.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
         }
     }
 }

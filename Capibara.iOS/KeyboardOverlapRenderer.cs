@@ -112,7 +112,7 @@ namespace Capibara.iOS
 
         private void OnKeyboardWillHide(NSNotification notification)
         {
-            if (!IsViewLoaded)
+            if (!IsViewLoaded | !this.isKeyboardShown)
                 return;
 
             this.isKeyboardShown = false;

@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-
+using Capibara.Services;
 using Capibara.Models;
 using Capibara.ViewModels;
 using Capibara.Net;
@@ -53,12 +53,16 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
 
+            var progressDialogService = new Mock<IProgressDialogService>();
+            progressDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<Task>(), It.IsAny<string>())).Returns((Task task) => task);
+
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(environment.Object);
             container.RegisterInstance<IRestClient>(restClient.Object);
             container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
             container.RegisterInstance<ICapibaraApplication>(application.Object);
+            container.RegisterInstance<IProgressDialogService>(progressDialogService.Object);
 
             return container;
         }

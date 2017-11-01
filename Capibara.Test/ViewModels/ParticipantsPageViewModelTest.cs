@@ -9,7 +9,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
     namespace ParticipantsPropertyTest
     {
         [TestFixture]
-        public class WhenUpdate : TestFixtureBase
+        public class WhenUpdate : ViewModelTestBase
         {
             protected ParticipantsPageViewModel ViewModel { get; private set; }
 

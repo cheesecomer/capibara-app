@@ -18,7 +18,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
     [TestFixture("FloorMapPage")]
     [TestFixture("MyProfilePage")]
     [TestFixture("SettingPage")]
-    public class ItemTappedCommandTest : TestFixtureBase
+    public class ItemTappedCommandTest : ViewModelTestBase
     {
         private string pagePath;
 
@@ -59,7 +59,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         }
     }
 
-    public class MenuItemsPropertyTest : TestFixtureBase
+    public class MenuItemsPropertyTest : ViewModelTestBase
     {
         protected MainPageViewModel actual;
 
@@ -79,7 +79,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
     [TestFixture(0, "ホーム", "NavigationPage/FloorMapPage")]
     [TestFixture(1, "プロフィール", "NavigationPage/MyProfilePage")]
     [TestFixture(2, "設定", "NavigationPage/SettingPage")]
-    public class MenuItemsItemPropertyTest : TestFixtureBase
+    public class MenuItemsItemPropertyTest : ViewModelTestBase
     {
         protected MainPageViewModel actual;
 

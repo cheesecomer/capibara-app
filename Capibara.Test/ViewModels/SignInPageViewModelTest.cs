@@ -12,7 +12,7 @@ using Prism.Navigation;
 namespace Capibara.Test.ViewModels.SignInPageViewModelTest
 {
     [TestFixture]
-    public class SignInCommandCanExecuteTest : TestFixtureBase
+    public class SignInCommandCanExecuteTest : ViewModelTestBase
     {
         [TestCase("", "", false)]
         [TestCase("", "password", false)]
@@ -34,7 +34,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
 
     namespace SignInCommandExecuteTest
     {
-        public abstract class ExecuteTestBase : TestFixtureBase
+        public abstract class ExecuteTestBase : ViewModelTestBase
         {
             protected Task<bool> loginTask;
 
@@ -140,7 +140,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
     }
 
     [TestFixture]
-    public class SignUpCommandTest : TestFixtureBase
+    public class SignUpCommandTest : ViewModelTestBase
     {
         protected string NavigatePageName { get; private set; }
 
