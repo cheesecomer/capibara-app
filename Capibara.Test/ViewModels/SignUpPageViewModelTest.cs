@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 using Capibara.Models;
@@ -109,6 +110,12 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             {
                 Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
             }
+        }
+
+        [TestFixture]
+        public class WhenFailNetworkError : WhenFail
+        {
+            protected override Exception RestException => new Exception();
         }
     }
 

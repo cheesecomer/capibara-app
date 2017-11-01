@@ -79,7 +79,10 @@ namespace Capibara.ViewModels
 
         private void OnSignInFail(object sender, Exception args)
         {
-            this.Error.Value = args.Message;
+            if (args is Net.HttpUnauthorizedException)
+            {
+                this.Error.Value = args.Message;
+            }
         }
     }
 }
