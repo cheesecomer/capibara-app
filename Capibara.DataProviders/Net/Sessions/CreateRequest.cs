@@ -16,9 +16,9 @@ namespace Capibara.Net.Sessions
         [JsonProperty("password")]
         public string Password { get; set; }
 
-        protected override string StringContent
+        public override string StringContent
             => JsonConvert.SerializeObject(this);
 
-        protected override string ContentType { get; } = "application/json";
+        public override string ContentType { get; } = "application/json";
     }
 }

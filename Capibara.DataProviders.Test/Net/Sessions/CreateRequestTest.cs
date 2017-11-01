@@ -12,40 +12,40 @@ using Capibara.Net.Sessions;
 using NUnit.Framework;
 using Moq;
 
-namespace Capibara.Test.Net.Sessions.CreateRequestTest.ExecuteTest
+namespace Capibara.Test.Net.Sessions.CreateRequestTest
 {
     [TestFixture]
-    public class WhenSuccess : WhenSuccessBase<CreateResponse>
+    public class ExecuteTest : TestFixtureBase
     {
-        protected override RequestBase<CreateResponse> Request
-            => new CreateRequest()
-                {
-                    Email = "user@email.com",
-                    Password = "p@ssword"
-                };
+        private CreateRequest Actual { get; set; }
 
-        protected override string ResultOfString
-            => "{ \"id\": 1, \"nickname\": \"Test User\", \"gender\": 0 }";
+        [SetUp]
+        public void SetUp()
+        {
+            this.Actual = new CreateRequest()
+            {
+                Email = "user@email.com",
+                Password = "p@ssword"
+            };
+        }
 
         [TestCase]
         public void ItShouldRequestWithHttpMethodPost()
         {
-            Assert.That(this.RequestMessage.Method, Is.EqualTo(HttpMethod.Post));
+            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
         }
 
         [TestCase]
-        public void ItShouldRequestToExpectedUrl()
+        public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/session"));
+            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "session" }));
         }
 
         [TestCase]
-        public void ItShouldRequestWithExpectedJson()
+        public void ItShouldStringContentWithExpected()
         {
             var expected = "{\"email\":\"user@email.com\",\"password\":\"p@ssword\"}".ToSlim();
-            var task = this.RequestMessage.Content?.ReadAsStringAsync();
-            task?.Wait();
-            Assert.That(task?.Result?.ToSlim(), Is.EqualTo(expected));
+            Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
         }
     }
 }

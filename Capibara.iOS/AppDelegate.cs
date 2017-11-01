@@ -46,7 +46,7 @@ namespace Capibara.iOS
     {
         public void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterInstance<ISecureIsolatedStorage>(new SecureIsolatedStorage());
+            container.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
             container.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
         }
     }

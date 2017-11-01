@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Capibara.Models;
 using Capibara.ViewModels;
 
+using Microsoft.Practices.Unity;
+
 using Moq;
 using NUnit.Framework;
 
 using Prism.Navigation;
-using Prism.Services;
 
 using MenuItem = Capibara.ViewModels.MainPageViewModel.MenuItem;
 
@@ -56,6 +57,33 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         public void ItShouldNavigateToParticipantsPage()
         {
             Assert.That(this.NavigatePageName, Is.EqualTo(this.pagePath));
+        }
+    }
+
+    public class NicknamePropertyTest : ViewModelTestBase
+    {
+        protected MainPageViewModel actual;
+
+        [SetUp]
+        public void SetUp()
+        {
+            var container = this.GenerateUnityContainer();
+            container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
+
+            this.actual = new MainPageViewModel().BuildUp(container);
+        }
+
+        [TestCase]
+        public void ItShouldValueWithExpect()
+        {
+            Assert.That(this.actual.Nickname.Value, Is.EqualTo("xxxx"));
+        }
+
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            this.actual.CurrentUser.Nickname = "xxxx!!!";
+            Assert.That(this.actual.Nickname.Value, Is.EqualTo("xxxx!!!"));
         }
     }
 

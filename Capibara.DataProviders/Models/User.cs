@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Capibara.Net;
 using Capibara.Net.Users;
+
+using Microsoft.Practices.Unity;
 
 namespace Capibara.Models
 {
@@ -12,11 +13,13 @@ namespace Capibara.Models
 
         private string nickname;
 
-        private Error error;
-
         public event EventHandler SignUpSuccess;
 
         public event EventHandler<Exception> SignUpFail;
+
+        public event EventHandler RefreshSuccess;
+
+        public event EventHandler<Exception> RefreshFail;
 
         public int Id
         {
@@ -30,43 +33,68 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.nickname, value);
         }
 
-        /// <summary>
-        /// APIエラー
-        /// </summary>
-        /// <value>The error.</value>
-        public Error Error
+        public override void Restore(User model)
         {
-            get => this.error;
-            set => this.SetProperty(ref this.error, value);
+            base.Restore(model);
+
+            this.Nickname = model.Nickname;
         }
 
         /// <summary>
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignUp()
+        public async Task<bool> Refresh()
         {
-            var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
+            var request = new ShowRequest(this).BuildUp(this.Container);
 
             try
             {
                 var response = await request.Execute();
 
-                this.Error = null;
+                this.Restore(response);
 
-                this.SecureIsolatedStorage.AccessToken = response.AccessToken;
-                this.SecureIsolatedStorage.UserId = response.UserId;
-                this.SecureIsolatedStorage.Save();
+                if (this.IsolatedStorage.UserId == this.Id)
+                {
+                    this.IsolatedStorage.UserNickname = this.Nickname;
+                    this.IsolatedStorage.Save();
+
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
+
+                this.RefreshSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.RefreshFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザ登録を行います
+        /// </summary>
+        /// <returns>The login.</returns>
+        public async Task SignUp()
+        {
+            var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
+            try
+            {
+                var response = await request.Execute();
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserId = response.UserId;
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
 
                 this.SignUpSuccess?.Invoke(this, null);
             }
             catch (Exception e)
             {
-                if (e is HttpUnauthorizedException)
-                {
-                    this.Error = (e as HttpUnauthorizedException).Detail;
-                }
-
                 this.SignUpFail?.Invoke(this, e);
             }
         }

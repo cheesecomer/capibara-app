@@ -8,15 +8,16 @@ using Foundation;
 
 namespace Capibara.iOS
 {
-    public class SecureIsolatedStorage : ISecureIsolatedStorage
+    public class IsolatedStorage : IIsolatedStorage
     {
-        public SecureIsolatedStorage()
+        public IsolatedStorage()
         {
+            var preference = NSUserDefaults.StandardUserDefaults;
+            this.UserNickname = preference.StringForKey("user_nickname");
+
 #if USE_USER_DEFAULTS
-            var pref = NSUserDefaults.StandardUserDefaults;
-            this.UserId = (int)pref.IntForKey("AUTH.user_id");
-            this.Email = pref.StringForKey("AUTH.email");
-            this.AccessToken = pref.StringForKey("AUTH.access_token");
+            this.UserId = (int)preference.IntForKey("AUTH.user_id");
+            this.AccessToken = preference.StringForKey("AUTH.access_token");
 #else
             var properties = AccountStore.Create().FindAccountsForService("com.cheese-comer.Capibara").SingleOrDefault()?.Properties;
 
@@ -27,18 +28,18 @@ namespace Capibara.iOS
 
         public int UserId { get; set; }
 
-        public string Email { get; set; }
+        public string UserNickname { get; set; }
 
         public string AccessToken { get; set; }
 
         public void Save()
         {
+            var preference = NSUserDefaults.StandardUserDefaults;
+            preference.SetString(this.UserNickname ?? string.Empty, "user_nickname");
+
 #if USE_USER_DEFAULTS
-            var pref = NSUserDefaults.StandardUserDefaults;
-            pref.SetInt(this.UserId, "AUTH.user_id");
-            pref.SetString(this.Email ?? string.Empty, "AUTH.email");
-            pref.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
-            pref.Synchronize();
+            preference.SetInt(this.UserId, "AUTH.user_id");
+            preference.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
 #else
             var properties = new Dictionary<string, string>()
             {

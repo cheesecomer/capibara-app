@@ -49,7 +49,7 @@
                     Padding="40"
                     Margin="-10, -20, -10, -10">
                     <StackLayout Padding="0">
-                        <Label Text="{Binding Nickname}" />
+                        <Label Text="{Binding Nickname.Value}" />
                     </StackLayout>
                 </Frame>
             </Grid>

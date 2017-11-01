@@ -54,6 +54,7 @@
     <Compile Include="Net\Channels\IChannel.cs" />
     <Compile Include="Net\Channels\Command.cs" />
     <Compile Include="Net\Users\CreateRequest.cs" />
+    <Compile Include="Net\Users\ShowRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

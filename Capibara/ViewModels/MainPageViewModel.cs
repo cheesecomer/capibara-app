@@ -20,7 +20,7 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand<MenuItem> ItemTappedCommand { get; }
 
-        public ReactiveProperty<string> Nickname { get; }
+        public ReactiveProperty<string> Nickname { get; } = new ReactiveProperty<string>();
 
         public MainPageViewModel(
             INavigationService navigationService = null,
@@ -33,6 +33,13 @@ namespace Capibara.ViewModels
 
             this.ItemTappedCommand = new AsyncReactiveCommand<MenuItem>();
             this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath));
+        }
+
+        protected override void OnContainerChanged()
+        {
+            base.OnContainerChanged();
+
+            this.CurrentUser.ObserveProperty(x => x.Nickname).Subscribe(x => this.Nickname.Value = x);
         }
 
         public class MenuItem

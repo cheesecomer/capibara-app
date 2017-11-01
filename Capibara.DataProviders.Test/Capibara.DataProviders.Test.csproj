@@ -116,6 +116,7 @@
     <Compile Include="Models\UserComparer.cs" />
     <Compile Include="TestFixtureBase.cs" />
     <Compile Include="Net\Users\CreateRequestTest.cs" />
+    <Compile Include="Net\Users\ShowRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />

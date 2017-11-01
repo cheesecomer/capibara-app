@@ -15,9 +15,9 @@ namespace Capibara.Net.Users
         [JsonProperty("nickname")]
         public string Nickname { get; set; }
 
-        protected override string StringContent
+        public override string StringContent
             => JsonConvert.SerializeObject(this);
 
-        protected override string ContentType { get; } = "application/json";
+        public override string ContentType { get; } = "application/json";
     }
 }

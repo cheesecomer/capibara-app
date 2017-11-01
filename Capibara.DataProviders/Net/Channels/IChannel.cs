@@ -32,7 +32,7 @@ namespace Capibara.Net.Channels
         /// </summary>
         /// <value>The secure isolated storage.</value>
         [Dependency]
-        ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        IIsolatedStorage IsolatedStorage { get; set; }
 
         bool IsOpen { get; }
 

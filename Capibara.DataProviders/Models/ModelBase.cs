@@ -16,7 +16,7 @@ namespace Capibara.Models
         public IUnityContainer Container { get; set; }
 
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         public virtual void Restore(TModel model)
         {

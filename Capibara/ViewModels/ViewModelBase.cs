@@ -35,7 +35,10 @@ namespace Capibara.ViewModels
         public IProgressDialogService ProgressDialogService { get; set; }
 
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
+
+        [Dependency(UnityInstanceNames.CurrentUser)]
+        public Models.User CurrentUser { get; set; } 
 
         /// <summary>
         /// DIコンテナ
