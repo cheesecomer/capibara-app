@@ -53,6 +53,8 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
+                this.Restore(response);
+
                 if (this.IsolatedStorage.UserId == this.Id)
                 {
                     this.IsolatedStorage.UserNickname = this.Nickname;
@@ -61,11 +63,11 @@ namespace Capibara.Models
                     this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
                 }
 
-                this.SignUpSuccess?.Invoke(this, null);
+                this.RefreshSuccess?.Invoke(this, null);
             }
             catch (Exception e)
             {
-                this.SignUpFail?.Invoke(this, e);
+                this.RefreshFail?.Invoke(this, e);
             }
         }
 
