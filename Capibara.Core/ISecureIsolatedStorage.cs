@@ -5,7 +5,7 @@ namespace Capibara
     {
         int UserId { get; set; }
 
-        string Email { get; set; }
+        string UserNickname { get; set; }
 
         string AccessToken { get; set; }
 

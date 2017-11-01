@@ -68,7 +68,7 @@ namespace Capibara
 
         private class SecureIsolatedStorageStub : ISecureIsolatedStorage
         {
-            public string Email { get; set; }
+            public string UserNickname { get; set; }
             public string AccessToken { get; set; }
             public int UserId { get; set; }
 

@@ -114,7 +114,8 @@ namespace Capibara.Net
             }
             else if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                this.SecureIsolatedStorage.Email = string.Empty;
+                this.SecureIsolatedStorage.UserId = 0;
+                this.SecureIsolatedStorage.UserNickname = string.Empty;
                 this.SecureIsolatedStorage.AccessToken = string.Empty;
                 this.SecureIsolatedStorage.Save();
 

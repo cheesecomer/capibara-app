@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Capibara.Net;
 using Capibara.Net.Users;
 
+using Microsoft.Practices.Unity;
+
 namespace Capibara.Models
 {
     public class User : ModelBase<User>
@@ -12,11 +14,13 @@ namespace Capibara.Models
 
         private string nickname;
 
-        private Error error;
-
         public event EventHandler SignUpSuccess;
 
         public event EventHandler<Exception> SignUpFail;
+
+        public event EventHandler RefreshSuccess;
+
+        public event EventHandler<Exception> RefreshFail;
 
         public int Id
         {
@@ -30,18 +34,43 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.nickname, value);
         }
 
-        /// <summary>
-        /// APIエラー
-        /// </summary>
-        /// <value>The error.</value>
-        public Error Error
+        public override void Restore(User model)
         {
-            get => this.error;
-            set => this.SetProperty(ref this.error, value);
+            base.Restore(model);
+
+            this.Nickname = model.Nickname;
         }
 
         /// <summary>
         /// メールアドレスとパスワードでログインを行います
+        /// </summary>
+        /// <returns>The login.</returns>
+        public async Task Refresh()
+        {
+            var request = new ShowRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                if (this.SecureIsolatedStorage.UserId == this.Id)
+                {
+                    this.SecureIsolatedStorage.UserNickname = this.Nickname;
+                    this.SecureIsolatedStorage.Save();
+
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
+                }
+
+                this.SignUpSuccess?.Invoke(this, null);
+            }
+            catch (Exception e)
+            {
+                this.SignUpFail?.Invoke(this, e);
+            }
+        }
+
+        /// <summary>
+        /// ユーザ登録を行います
         /// </summary>
         /// <returns>The login.</returns>
         public async Task SignUp()
@@ -52,21 +81,15 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                this.Error = null;
-
                 this.SecureIsolatedStorage.AccessToken = response.AccessToken;
                 this.SecureIsolatedStorage.UserId = response.UserId;
+                this.SecureIsolatedStorage.UserNickname = this.Nickname;
                 this.SecureIsolatedStorage.Save();
 
                 this.SignUpSuccess?.Invoke(this, null);
             }
             catch (Exception e)
             {
-                if (e is HttpUnauthorizedException)
-                {
-                    this.Error = (e as HttpUnauthorizedException).Detail;
-                }
-
                 this.SignUpFail?.Invoke(this, e);
             }
         }

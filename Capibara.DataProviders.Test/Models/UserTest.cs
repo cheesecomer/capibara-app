@@ -107,21 +107,9 @@ namespace Capibara.Test.Models.UserTest
             }
 
             [TestCase]
-            public void IsShouldSaveEmailInSecureStorage()
-            {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
             public void IsShouldSaveUserIdInSecureStorage()
             {
                 Assert.That(this.model.SecureIsolatedStorage.UserId, Is.EqualTo(999));
-            }
-
-            [TestCase]
-            public void ItShouldNotBeError()
-            {
-                Assert.That(this.model.Error, Is.Null);
             }
 
             [TestCase]
@@ -196,18 +184,6 @@ namespace Capibara.Test.Models.UserTest
             public void IsShouldDontSaveTokenInSecureStorage()
             {
                 Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveEmailInSecureStorage()
-            {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldBeError()
-            {
-                Assert.That(this.model.Error, Is.Not.Null);
             }
 
             [TestCase]
@@ -379,18 +355,6 @@ namespace Capibara.Test.Models.UserTest
             public void IsShouldDontSaveTokenInSecureStorage()
             {
                 Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveEmailInSecureStorage()
-            {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldBeError()
-            {
-                Assert.That(this.model.Error, Is.Null);
             }
 
             [TestCase]

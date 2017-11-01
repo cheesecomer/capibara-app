@@ -67,8 +67,8 @@ namespace Capibara.Models
 
                 this.Error = null;
 
-                this.SecureIsolatedStorage.Email = this.Email;
                 this.SecureIsolatedStorage.AccessToken = response.AccessToken;
+                this.SecureIsolatedStorage.UserNickname = response.Nickname;
                 this.SecureIsolatedStorage.UserId = response.UserId;
                 this.SecureIsolatedStorage.Save();
 

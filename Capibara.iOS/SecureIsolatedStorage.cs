@@ -14,8 +14,8 @@ namespace Capibara.iOS
         {
 #if USE_USER_DEFAULTS
             var pref = NSUserDefaults.StandardUserDefaults;
+            this.UserNickname = pref.StringForKey("user_nickname");
             this.UserId = (int)pref.IntForKey("AUTH.user_id");
-            this.Email = pref.StringForKey("AUTH.email");
             this.AccessToken = pref.StringForKey("AUTH.access_token");
 #else
             var properties = AccountStore.Create().FindAccountsForService("com.cheese-comer.Capibara").SingleOrDefault()?.Properties;
@@ -27,7 +27,7 @@ namespace Capibara.iOS
 
         public int UserId { get; set; }
 
-        public string Email { get; set; }
+        public string UserNickname { get; set; }
 
         public string AccessToken { get; set; }
 
@@ -35,8 +35,8 @@ namespace Capibara.iOS
         {
 #if USE_USER_DEFAULTS
             var pref = NSUserDefaults.StandardUserDefaults;
+            pref.SetString(this.UserNickname ?? string.Empty, "user_nickname");
             pref.SetInt(this.UserId, "AUTH.user_id");
-            pref.SetString(this.Email ?? string.Empty, "AUTH.email");
             pref.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
             pref.Synchronize();
 #else
