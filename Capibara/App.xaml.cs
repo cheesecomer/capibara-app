@@ -35,7 +35,7 @@ namespace Capibara
         public IEnvironment Environment { get; } = new EnvironmentLocal();
 
         [UnityDependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         protected override void OnInitialized()
         {
@@ -52,7 +52,7 @@ namespace Capibara
             this.Container.RegisterInstance<IUnityContainer>(this.Container);
             this.Container.RegisterInstance<IRestClient>(new RestClient());
             this.Container.RegisterInstance<IEnvironment>(this.Environment);
-            this.Container.RegisterInstance<ISecureIsolatedStorage>(new SecureIsolatedStorageStub());
+            this.Container.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
             this.Container.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
             this.Container.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
@@ -66,7 +66,7 @@ namespace Capibara
             this.Container.RegisterTypeForNavigation<ParticipantsPage>();
         }
 
-        private class SecureIsolatedStorageStub : ISecureIsolatedStorage
+        private class IsolatedStorageStub : IIsolatedStorage
         {
             public string UserNickname { get; set; }
             public string AccessToken { get; set; }

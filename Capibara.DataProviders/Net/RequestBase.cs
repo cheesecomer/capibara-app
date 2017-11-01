@@ -66,7 +66,7 @@ namespace Capibara.Net
         /// <value>The secure isolated storage.</value>
         [JsonIgnore]
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         [JsonIgnore]
         [Dependency]
@@ -94,10 +94,10 @@ namespace Capibara.Net
 
             this.RestClient.ApplyRequestHeader(requestMessage);
 
-            if (this.NeedAuthentication && this.SecureIsolatedStorage.AccessToken.IsPresent())
+            if (this.NeedAuthentication && this.IsolatedStorage.AccessToken.IsPresent())
             {
                 requestMessage.Headers.Authorization
-                      = this.RestClient.GenerateAuthenticationHeader(this.SecureIsolatedStorage.AccessToken);
+                      = this.RestClient.GenerateAuthenticationHeader(this.IsolatedStorage.AccessToken);
             }
 
             if (new HttpMethod[] { HttpMethod.Post, HttpMethod.Put }.Any(x => x == this.Method))
@@ -114,10 +114,10 @@ namespace Capibara.Net
             }
             else if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                this.SecureIsolatedStorage.UserId = 0;
-                this.SecureIsolatedStorage.UserNickname = string.Empty;
-                this.SecureIsolatedStorage.AccessToken = string.Empty;
-                this.SecureIsolatedStorage.Save();
+                this.IsolatedStorage.UserId = 0;
+                this.IsolatedStorage.UserNickname = string.Empty;
+                this.IsolatedStorage.AccessToken = string.Empty;
+                this.IsolatedStorage.Save();
 
                 throw new HttpUnauthorizedException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
             }

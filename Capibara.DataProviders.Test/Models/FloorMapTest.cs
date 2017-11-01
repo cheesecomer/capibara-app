@@ -48,8 +48,8 @@ namespace Capibara.Test.Models.FloorMapTest
                     };
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
 
                 // RestClient のセットアップ
                 var restClient = new Mock<IRestClient>();
@@ -65,7 +65,7 @@ namespace Capibara.Test.Models.FloorMapTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new FloorMap().BuildUp(container);

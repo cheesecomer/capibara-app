@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Capibara
 {
-    public interface ISecureIsolatedStorage
+    public interface IIsolatedStorage
     {
         int UserId { get; set; }
 

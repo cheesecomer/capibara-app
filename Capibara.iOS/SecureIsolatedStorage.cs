@@ -8,9 +8,9 @@ using Foundation;
 
 namespace Capibara.iOS
 {
-    public class SecureIsolatedStorage : ISecureIsolatedStorage
+    public class IsolatedStorage : IIsolatedStorage
     {
-        public SecureIsolatedStorage()
+        public IsolatedStorage()
         {
 #if USE_USER_DEFAULTS
             var pref = NSUserDefaults.StandardUserDefaults;

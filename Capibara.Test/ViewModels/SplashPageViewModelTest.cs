@@ -99,7 +99,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
                 this.Actual = new SplashPageViewModel(navigationService.Object);
                 this.Actual.BuildUp(this.GenerateUnityContainer());
 
-                this.SecureIsolatedStorage.AccessToken = this.AccessToken;
+                this.IsolatedStorage.AccessToken = this.AccessToken;
 
                 this.Actual.RefreshCommand.Execute();
                 while (!this.Actual.RefreshCommand.CanExecute()) { }

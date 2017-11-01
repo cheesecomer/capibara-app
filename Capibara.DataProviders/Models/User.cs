@@ -53,10 +53,10 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                if (this.SecureIsolatedStorage.UserId == this.Id)
+                if (this.IsolatedStorage.UserId == this.Id)
                 {
-                    this.SecureIsolatedStorage.UserNickname = this.Nickname;
-                    this.SecureIsolatedStorage.Save();
+                    this.IsolatedStorage.UserNickname = this.Nickname;
+                    this.IsolatedStorage.Save();
 
                     this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
                 }
@@ -81,10 +81,10 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                this.SecureIsolatedStorage.AccessToken = response.AccessToken;
-                this.SecureIsolatedStorage.UserId = response.UserId;
-                this.SecureIsolatedStorage.UserNickname = this.Nickname;
-                this.SecureIsolatedStorage.Save();
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserId = response.UserId;
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
 
                 this.SignUpSuccess?.Invoke(this, null);
             }

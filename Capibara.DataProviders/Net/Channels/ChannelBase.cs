@@ -38,7 +38,7 @@ namespace Capibara.Net.Channels
         /// </summary>
         /// <value>The secure isolated storage.</value>
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         protected abstract IChannelIdentifier ChannelIdentifier { get; }
 

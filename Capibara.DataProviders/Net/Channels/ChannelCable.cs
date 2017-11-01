@@ -61,7 +61,7 @@ namespace Capibara.Net.Channels
         /// </summary>
         /// <value>The secure isolated storage.</value>
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         /// <summary>
         /// セキュア分離ストレージ
@@ -87,7 +87,7 @@ namespace Capibara.Net.Channels
             var url = new Uri(this.Environment.WebSocketUrl);
             this.webSocket = this.WebSocketClientFactory.Create();
 
-            this.webSocket.Options.SetRequestHeader("Authorization", $"Token {this.SecureIsolatedStorage.AccessToken}");
+            this.webSocket.Options.SetRequestHeader("Authorization", $"Token {this.IsolatedStorage.AccessToken}");
             this.webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
 
             this.webSocket

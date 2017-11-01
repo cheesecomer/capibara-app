@@ -78,9 +78,9 @@ namespace Capibara.Test.Models.UserTest
                     .ReturnsAsync(responseMessage);
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.Setup(x => x.Save());
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
+                isolatedStorage.Setup(x => x.Save());
 
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -89,7 +89,7 @@ namespace Capibara.Test.Models.UserTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new User() { Nickname = "xxxxx" }.BuildUp(container);
@@ -103,13 +103,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldSaveTokenInSecureStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+                Assert.That(this.model.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
             public void IsShouldSaveUserIdInSecureStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.UserId, Is.EqualTo(999));
+                Assert.That(this.model.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
@@ -159,8 +159,8 @@ namespace Capibara.Test.Models.UserTest
                     .ReturnsAsync(responseMessage);
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
 
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -169,7 +169,7 @@ namespace Capibara.Test.Models.UserTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new User() { Nickname = "xxxxx" }.BuildUp(container);
@@ -183,7 +183,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldDontSaveTokenInSecureStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.model.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
@@ -229,9 +229,9 @@ namespace Capibara.Test.Models.UserTest
                     .ReturnsAsync(responseMessage);
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.Setup(x => x.Save());
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
+                isolatedStorage.Setup(x => x.Save());
 
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -240,7 +240,7 @@ namespace Capibara.Test.Models.UserTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new User() { Nickname = "xxxxx" }.BuildUp(container);
@@ -283,8 +283,8 @@ namespace Capibara.Test.Models.UserTest
                     .ReturnsAsync(responseMessage);
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
 
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -293,7 +293,7 @@ namespace Capibara.Test.Models.UserTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new User() { Nickname = "xxxxx" }.BuildUp(container);
@@ -330,8 +330,8 @@ namespace Capibara.Test.Models.UserTest
                     .ThrowsAsync(new WebException());
 
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
 
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -340,7 +340,7 @@ namespace Capibara.Test.Models.UserTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IEnvironment>(environment.Object);
                 container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 this.model = new User() { Nickname = "xxxxx" }.BuildUp(container);
@@ -354,7 +354,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldDontSaveTokenInSecureStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.model.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]

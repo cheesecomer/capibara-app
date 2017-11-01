@@ -67,10 +67,10 @@ namespace Capibara.Models
 
                 this.Error = null;
 
-                this.SecureIsolatedStorage.AccessToken = response.AccessToken;
-                this.SecureIsolatedStorage.UserNickname = response.Nickname;
-                this.SecureIsolatedStorage.UserId = response.UserId;
-                this.SecureIsolatedStorage.Save();
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.UserId;
+                this.IsolatedStorage.Save();
 
                 this.SignInSuccess?.Invoke(this, null);
             }

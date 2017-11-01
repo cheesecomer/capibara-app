@@ -19,13 +19,13 @@ namespace Capibara.Test.Models.MessageTest
             public void Setup()
             {
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.SetupGet(x => x.UserId).Returns(10);
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
+                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
 
                 var container = new UnityContainer();
                 container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
 
                 var json = "{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.actual = JsonConvert.DeserializeObject<Message>(json);
@@ -73,13 +73,13 @@ namespace Capibara.Test.Models.MessageTest
             public void Setup()
             {
                 // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.SetupGet(x => x.UserId).Returns(10);
+                var isolatedStorage = new Mock<IIsolatedStorage>();
+                isolatedStorage.SetupAllProperties();
+                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
 
                 var container = new UnityContainer();
                 container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
 
                 var json = "{ \"sender\": { \"id\": 11, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.actual = JsonConvert.DeserializeObject<Message>(json);

@@ -38,7 +38,7 @@ namespace Capibara.ViewModels
 
         protected Task RefreshCommandExecute()
         {
-            if (this.SecureIsolatedStorage.AccessToken.IsNullOrEmpty())
+            if (this.IsolatedStorage.AccessToken.IsNullOrEmpty())
             {
                 return this.ToSignUpPage();
             }

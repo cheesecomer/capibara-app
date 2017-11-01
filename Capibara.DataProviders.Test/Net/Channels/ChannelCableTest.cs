@@ -104,7 +104,7 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
         [TestCase]
         public void ItShouldAuthorizationWithExpected()
         {
-            Assert.That(this.WebSocketRequestHeaders.ValueOrDefault("Authorization"), Is.EqualTo($"Token {this.SecureIsolatedStorage.AccessToken}"));
+            Assert.That(this.WebSocketRequestHeaders.ValueOrDefault("Authorization"), Is.EqualTo($"Token {this.IsolatedStorage.AccessToken}"));
         }
 
         [TestCase]

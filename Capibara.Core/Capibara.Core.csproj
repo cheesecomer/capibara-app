@@ -31,7 +31,7 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
-    <Compile Include="ISecureIsolatedStorage.cs" />
+    <Compile Include="IIsolatedStorage.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="ICapibaraApplication.cs" />

@@ -77,7 +77,7 @@ namespace Capibara.Test
 
         protected IEnvironment Environment { get; private set; }
 
-        protected ISecureIsolatedStorage SecureIsolatedStorage { get; private set; }
+        protected IIsolatedStorage IsolatedStorage { get; private set; }
 
         protected virtual string HttpStabResponse { get; } = string.Empty;
 
@@ -125,8 +125,8 @@ namespace Capibara.Test
             }
 
             // ISecureIsolatedStorage のセットアップ
-            var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-            secureIsolatedStorage.SetupAllProperties();
+            var isolatedStorage = new Mock<IIsolatedStorage>();
+            isolatedStorage.SetupAllProperties();
 
             var clientWebSocketOptions = new Mock<IWebSocketOptions>();
             clientWebSocketOptions.SetupAllProperties();
@@ -192,7 +192,7 @@ namespace Capibara.Test
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(this.Environment = environment.Object);
             container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<ISecureIsolatedStorage>(this.SecureIsolatedStorage = secureIsolatedStorage.Object);
+            container.RegisterInstance<IIsolatedStorage>(this.IsolatedStorage = isolatedStorage.Object);
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
 

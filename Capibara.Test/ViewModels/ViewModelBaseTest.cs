@@ -47,8 +47,8 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
             restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
 
             // ISecureIsolatedStorage のセットアップ
-            var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-            secureIsolatedStorage.SetupAllProperties();
+            var isolatedStorage = new Mock<IIsolatedStorage>();
+            isolatedStorage.SetupAllProperties();
 
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -60,7 +60,7 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(environment.Object);
             container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
+            container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IProgressDialogService>(progressDialogService.Object);
 
