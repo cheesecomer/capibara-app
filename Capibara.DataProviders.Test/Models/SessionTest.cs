@@ -70,7 +70,7 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(true));
+                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(true));
             }
 
             [TestCase]
@@ -112,7 +112,7 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldNotRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(false));
+                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]

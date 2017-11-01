@@ -119,7 +119,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldNicknameWithExpect()
             {
-                Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx"));
+                Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
@@ -150,7 +150,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "MyProfile"), Is.EqualTo(this.Actual));
+                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
             }
         }
 
@@ -267,7 +267,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "MyProfile"), Is.EqualTo(this.Actual));
+                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
             }
 
             [TestCase]
@@ -310,7 +310,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(false));
+                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]

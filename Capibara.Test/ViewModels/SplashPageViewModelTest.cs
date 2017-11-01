@@ -3,14 +3,13 @@
 using System.Net;
 using System.Threading.Tasks;
 
-using Capibara.Models;
 using Capibara.ViewModels;
 
 using Moq;
 using NUnit.Framework;
 
 using Prism.Navigation;
-using Prism.Services;
+
 namespace Capibara.Test.ViewModels.SplashPageViewModelTest
 {
     namespace LogoTopMarginPropertyTest
@@ -96,9 +95,9 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
                         return Task.Run(() => { });
                     });
 
-                this.Actual = new SplashPageViewModel(navigationService.Object);
-                this.Actual.BuildUp(this.GenerateUnityContainer());
+                this.Actual = new SplashPageViewModel(navigationService.Object).BuildUp(this.GenerateUnityContainer());
 
+                this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = this.AccessToken;
 
                 this.Actual.RefreshCommand.Execute();
@@ -135,7 +134,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             }
         }
 
-        public class WhenHasAccessToken : TestBase
+        public class WhenHasValidAccessToken : TestBase
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
@@ -161,6 +160,31 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             public void ItShouldNavigateToFloorMapPage()
             {
                 Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+            }
+        }
+
+        public class WhenHasInvalidAccessToken : WhenHasNotAccessToken
+        {
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            protected override string AccessToken => Guid.NewGuid().ToString();
+
+            [TestCase]
+            public void IsShouldDontSaveUserIdInStorage()
+            {
+                Assert.That(this.IsolatedStorage.UserId, Is.EqualTo(0));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveTokenInStorage()
+            {
+                Assert.That(this.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
         }
     }

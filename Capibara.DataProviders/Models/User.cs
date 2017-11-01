@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Capibara.Net;
 using Capibara.Net.Users;
 
 using Microsoft.Practices.Unity;
@@ -45,7 +44,7 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task Refresh()
+        public async Task<bool> Refresh()
         {
             var request = new ShowRequest(this).BuildUp(this.Container);
 
@@ -60,14 +59,17 @@ namespace Capibara.Models
                     this.IsolatedStorage.UserNickname = this.Nickname;
                     this.IsolatedStorage.Save();
 
-                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
                 }
 
                 this.RefreshSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.RefreshFail?.Invoke(this, e);
+                return false;
             }
         }
 
@@ -78,7 +80,6 @@ namespace Capibara.Models
         public async Task SignUp()
         {
             var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
-
             try
             {
                 var response = await request.Execute();
@@ -88,7 +89,7 @@ namespace Capibara.Models
                 this.IsolatedStorage.UserNickname = this.Nickname;
                 this.IsolatedStorage.Save();
 
-                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
 
                 this.SignUpSuccess?.Invoke(this, null);
             }

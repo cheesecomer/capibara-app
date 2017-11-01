@@ -1,16 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-using Prism.Mvvm;
+using Capibara.Models;
+
 using Prism.Navigation;
 using Prism.Services;
 
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
-
-using Xamarin.Forms;
 
 namespace Capibara.ViewModels
 {
@@ -64,9 +59,16 @@ namespace Capibara.ViewModels
 
         private async Task ToFloorMapPage()
         {
-            await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
+            if (await new User{ Id = this.IsolatedStorage.UserId }.BuildUp(this.Container).Refresh())
+            {
+                await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
-            await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+                await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+            }
+            else
+            {
+                await this.ToSignUpPage();
+            }
         }
 
         private async Task LogoScaleChangeAsync()
