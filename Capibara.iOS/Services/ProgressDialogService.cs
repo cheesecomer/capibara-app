@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
-
-using UIKit;
-using CoreGraphics;
-
+using System.Linq;
 using System.Threading.Tasks;
 
+using Airbnb.Lottie;
+
 using Capibara.Services;
+
+using CoreGraphics;
+using Foundation;
+using UIKit;
 
 namespace Capibara.iOS.Services
 {
@@ -22,51 +25,51 @@ namespace Capibara.iOS.Services
             }
 
             var bounds = UIScreen.MainScreen.Bounds;
+            var centerX = bounds.Width / 2;
+            var centerY = bounds.Height / 2 - 50;
 
             var container = new UIView(bounds)
             {
-                BackgroundColor = UIColor.Black,
+                BackgroundColor = UIColor.FromRGB(0x2f, 0x8e, 0x5b),
                 Alpha = 0.75f,
                 AutoresizingMask = UIViewAutoresizing.All,
             };
 
             rootViewController.Add(container);
 
-            nfloat labelHeight = 22;
-            nfloat labelWidth = bounds.Width - 20;
+            var animationSize = new[] { bounds.Width, bounds.Height }.Min();
+            var animationHalfSize = animationSize / 2;
 
-            // derive the center x and y
-            nfloat centerX = bounds.Width / 2;
-            nfloat centerY = bounds.Height / 2;
-
-            // create the activity spinner, center it horizontall and put it 5 points above center x
-            var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge)
+            var animationView = new LOTAnimationView(NSUrl.FromFilename("loading.json"))
             {
                 AutoresizingMask = UIViewAutoresizing.All,
+                ContentMode = UIViewContentMode.ScaleAspectFit,
+                LoopAnimation = true,
+                Frame = new CGRect(
+                    centerX - animationHalfSize,
+                    centerY - animationHalfSize,
+                    animationSize,
+                    animationSize)
             };
 
-            activitySpinner.Frame = new CGRect(
-                centerX - (activitySpinner.Frame.Width / 2),
-                centerY - activitySpinner.Frame.Height - 20,
-                activitySpinner.Frame.Width,
-                activitySpinner.Frame.Height);
+            animationView.Play();
 
-            container.AddSubview(activitySpinner);
-
-            activitySpinner.StartAnimating();
+            container.AddSubview(animationView);
 
             // create and configure the "Loading Data" label
-            if (message.IsNullOrEmpty())
+            //if (message.IsPresent())
             {
+                nfloat labelHeight = 22;
+                nfloat labelWidth = bounds.Width - 20;
                 var loadingLabel = new UILabel(new CGRect(
                     centerX - (labelWidth / 2),
-                    centerY + 20,
+                    centerY + animationHalfSize - 50,
                     labelWidth,
                     labelHeight
                 ));
                 loadingLabel.BackgroundColor = UIColor.Clear;
                 loadingLabel.TextColor = UIColor.White;
-                loadingLabel.Text = message;
+                loadingLabel.Text = "Loading Data";
                 loadingLabel.TextAlignment = UITextAlignment.Center;
                 loadingLabel.AutoresizingMask = UIViewAutoresizing.All;
                 container.AddSubview(loadingLabel);
@@ -83,8 +86,8 @@ namespace Capibara.iOS.Services
 
             UIView.Animate(
                 0.5, // duration
-                () => { container.Alpha = 0; },
-                () => { container.RemoveFromSuperview(); }
+                () => container.Alpha = 0,
+                () => container.RemoveFromSuperview()
             );
 
             await Task.Delay(TimeSpan.FromSeconds(0.5));
