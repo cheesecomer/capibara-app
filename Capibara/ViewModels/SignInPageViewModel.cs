@@ -73,7 +73,7 @@ namespace Capibara.ViewModels
             // SignUpCommand
             //   ログイン処理中以外で実行可能
             this.SignUpCommand = this.IsBusy.Select(x => !x).ToAsyncReactiveCommand();
-            this.SignUpCommand.Subscribe(() => this.NavigationService.NavigateAsync("SignUpPage"));
+            this.SignUpCommand.Subscribe(() => this.NavigationService.NavigateAsync("SignUpPage", animated: false));
         }
 
         private void OnSignInSuccess(object sender, EventArgs args)

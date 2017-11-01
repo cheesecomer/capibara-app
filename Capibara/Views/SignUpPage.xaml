@@ -12,6 +12,7 @@
             Source="bg_launch"
             Aspect="Fill" />
         <StackLayout
+            Spacing="0"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand">
 
@@ -24,10 +25,10 @@
             
             <Image
                 Source="logo"
-                Margin="0, 20, 0, 20"
+                Margin="-20, 20, -20, 0"
                 />
             <Label
-                Margin="0, 30, 0, 0"
+                Margin="0, 50, 0, 0"
                 TextColor="#eee"
                 Text="ニックネームを登録して"
                 HorizontalTextAlignment="Center"

@@ -83,8 +83,6 @@ namespace Capibara.Test
 
         protected virtual HttpStatusCode HttpStabStatusCode { get; } = HttpStatusCode.OK;
 
-        protected virtual string AccessToken { get; }
-
         protected virtual bool IsInfiniteWait { get; }
 
         private Mock<IWebSocketClient> webSocketClient;
@@ -129,8 +127,6 @@ namespace Capibara.Test
             // ISecureIsolatedStorage のセットアップ
             var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
             secureIsolatedStorage.SetupAllProperties();
-            secureIsolatedStorage.SetupGet(x => x.AccessToken).Returns("1:bGbDyyVxbSQorRhgyt6R");
-            secureIsolatedStorage.SetupGet(x => x.UserId).Returns(10);
 
             var clientWebSocketOptions = new Mock<IWebSocketOptions>();
             clientWebSocketOptions.SetupAllProperties();

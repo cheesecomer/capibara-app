@@ -22,8 +22,6 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-
             var navigateTaskSource = new TaskCompletionSource<bool>();
             var navigationService = new Mock<INavigationService>();
             navigationService
