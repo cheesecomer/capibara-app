@@ -12,11 +12,12 @@ namespace Capibara.iOS
     {
         public IsolatedStorage()
         {
+            var preference = NSUserDefaults.StandardUserDefaults;
+            this.UserNickname = preference.StringForKey("user_nickname");
+
 #if USE_USER_DEFAULTS
-            var pref = NSUserDefaults.StandardUserDefaults;
-            this.UserNickname = pref.StringForKey("user_nickname");
-            this.UserId = (int)pref.IntForKey("AUTH.user_id");
-            this.AccessToken = pref.StringForKey("AUTH.access_token");
+            this.UserId = (int)preference.IntForKey("AUTH.user_id");
+            this.AccessToken = preference.StringForKey("AUTH.access_token");
 #else
             var properties = AccountStore.Create().FindAccountsForService("com.cheese-comer.Capibara").SingleOrDefault()?.Properties;
 
@@ -33,12 +34,12 @@ namespace Capibara.iOS
 
         public void Save()
         {
+            var preference = NSUserDefaults.StandardUserDefaults;
+            preference.SetString(this.UserNickname ?? string.Empty, "user_nickname");
+
 #if USE_USER_DEFAULTS
-            var pref = NSUserDefaults.StandardUserDefaults;
-            pref.SetString(this.UserNickname ?? string.Empty, "user_nickname");
-            pref.SetInt(this.UserId, "AUTH.user_id");
-            pref.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
-            pref.Synchronize();
+            preference.SetInt(this.UserId, "AUTH.user_id");
+            preference.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
 #else
             var properties = new Dictionary<string, string>()
             {

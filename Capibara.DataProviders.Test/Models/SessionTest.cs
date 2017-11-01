@@ -37,7 +37,7 @@ namespace Capibara.Test.Models.SessionTest
                         StatusCode = HttpStatusCode.OK,
                         Content = new Net.HttpContentHandler()
                         {
-                            ResultOfString = "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999}"
+                            ResultOfString = "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999, \"user_nickname\": \"Foo.Bar\"}"
                         }
                     };
 
@@ -48,7 +48,7 @@ namespace Capibara.Test.Models.SessionTest
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
                     .ReturnsAsync(responseMessage);
 
-                // ISecureIsolatedStorage のセットアップ
+                // IIsolatedStorage のセットアップ
                 var isolatedStorage = new Mock<IIsolatedStorage>();
                 isolatedStorage.SetupAllProperties();
                 isolatedStorage.Setup(x => x.Save());
@@ -72,13 +72,19 @@ namespace Capibara.Test.Models.SessionTest
             }
 
             [TestCase]
-            public void IsShouldSaveTokenInSecureStorage()
+            public void IsShouldSaveTokenInStorage()
             {
                 Assert.That(this.model.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
-            public void IsShouldSaveUserIdInSecureStorage()
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.model.IsolatedStorage.UserNickname, Is.EqualTo("Foo.Bar"));
+            }
+
+            [TestCase]
+            public void IsShouldSaveUserIdInStorage()
             {
                 Assert.That(this.model.IsolatedStorage.UserId, Is.EqualTo(999));
             }
@@ -135,7 +141,7 @@ namespace Capibara.Test.Models.SessionTest
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
                     .ReturnsAsync(responseMessage);
 
-                // ISecureIsolatedStorage のセットアップ
+                // IIsolatedStorage のセットアップ
                 var isolatedStorage = new Mock<IIsolatedStorage>();
                 isolatedStorage.SetupAllProperties();
 
@@ -158,9 +164,15 @@ namespace Capibara.Test.Models.SessionTest
             }
 
             [TestCase]
-            public void IsShouldDontSaveTokenInSecureStorage()
+            public void IsShouldDontSaveTokenInStorage()
             {
                 Assert.That(this.model.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.model.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
@@ -211,7 +223,7 @@ namespace Capibara.Test.Models.SessionTest
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
                     .ReturnsAsync(responseMessage);
 
-                // ISecureIsolatedStorage のセットアップ
+                // IIsolatedStorage のセットアップ
                 var isolatedStorage = new Mock<IIsolatedStorage>();
                 isolatedStorage.SetupAllProperties();
                 isolatedStorage.Setup(x => x.Save());
@@ -265,7 +277,7 @@ namespace Capibara.Test.Models.SessionTest
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
                     .ReturnsAsync(responseMessage);
 
-                // ISecureIsolatedStorage のセットアップ
+                // IIsolatedStorage のセットアップ
                 var isolatedStorage = new Mock<IIsolatedStorage>();
                 isolatedStorage.SetupAllProperties();
 
@@ -312,7 +324,7 @@ namespace Capibara.Test.Models.SessionTest
                     .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
                     .ThrowsAsync(new WebException());
 
-                // ISecureIsolatedStorage のセットアップ
+                // IIsolatedStorage のセットアップ
                 var isolatedStorage = new Mock<IIsolatedStorage>();
                 isolatedStorage.SetupAllProperties();
 
@@ -335,9 +347,15 @@ namespace Capibara.Test.Models.SessionTest
             }
 
             [TestCase]
-            public void IsShouldDontSaveTokenInSecureStorage()
+            public void IsShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.model.IsolatedStorage.AccessToken, Is.Null);
+                Assert.That(this.model.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.model.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
