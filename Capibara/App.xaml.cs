@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Capibara.Net;
+using Capibara.Services;
 using Capibara.Views;
 
 using Microsoft.Practices.Unity;
-using UnityDependency = Microsoft.Practices.Unity.DependencyAttribute;
+
 using Prism.Unity;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+
+using UnityDependency = Microsoft.Practices.Unity.DependencyAttribute;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Capibara
@@ -39,10 +43,7 @@ namespace Capibara
 
             this.BuildUp(this.Container);
 
-            this.NavigationService.NavigateAsync(
-                this.SecureIsolatedStorage.AccessToken.IsNullOrEmpty()
-                    ? "SignUpPage"
-                    : "/MainPage/NavigationPage/FloorMapPage");
+            this.NavigationService.NavigateAsync("SplashPage");
         }
 
         protected override void RegisterTypes()
@@ -52,6 +53,7 @@ namespace Capibara
             this.Container.RegisterInstance<IRestClient>(new RestClient());
             this.Container.RegisterInstance<IEnvironment>(this.Environment);
             this.Container.RegisterInstance<ISecureIsolatedStorage>(new SecureIsolatedStorageStub());
+            this.Container.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
             this.Container.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
             this.Container.RegisterTypeForNavigation<MainPage>();
@@ -74,6 +76,12 @@ namespace Capibara
             {
                 throw new NotImplementedException();
             }
+        }
+
+        private class ProgressDialogServiceStub : IProgressDialogService
+        {
+            public Task DisplayAlertAsync(Task task, string message = null)
+                => throw new NotImplementedException();
         }
     }
 }

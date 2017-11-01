@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 using Prism.Mvvm;
 using Prism.Navigation;
+using Prism.Services;
+
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
@@ -12,50 +14,83 @@ using Xamarin.Forms;
 
 namespace Capibara.ViewModels
 {
-    public class SplashPageViewModel : BindableBase, INavigationAware
+    public class SplashPageViewModel : ViewModelBase
     {
-        private readonly INavigationService navigationService;
+        public ReactiveProperty<double> LogoTopMargin { get; }
+            = new ReactiveProperty<double>(180);
 
-        public ReactiveProperty<bool> IsPlaying { get; } = new ReactiveProperty<bool>();
+        public ReactiveProperty<double> LogoScale { get; }
+            = new ReactiveProperty<double>(1);
 
-        public SplashPageViewModel(INavigationService navigationService)
+        public ReactiveProperty<double> LogoOpacity { get; }
+            = new ReactiveProperty<double>(1);
+
+        public AsyncReactiveCommand RefreshCommand { get; }
+
+        public SplashPageViewModel(
+            INavigationService navigationService = null,
+            IPageDialogService pageDialogService = null)
+            : base(navigationService, pageDialogService)
         {
-            this.navigationService = navigationService;
-
-            //var timer = new ReactiveTimer(TimeSpan.FromSeconds(3));
-            //timer.Subscribe(async _ =>
-            //    {
-            //        timer.Stop();
-            //        Console.WriteLine("Go to FloorMapPage");
-            //        await DeviceUtil.BeginInvokeOnMainThreadAsync(async () => await this.navigationService.NavigateAsync("/FloorMapPage", null, false, false));
-            //        Console.WriteLine("Forwarded FloorMapPage");
-            //    });
-            //timer.Start(TimeSpan.FromSeconds(3));
-
-            this.IsPlaying
-                .Where(x => !x)
-                .Delay(TimeSpan.FromSeconds(3))
-                .ObserveOnUIDispatcher()
-                .Subscribe(async _ =>
-                {
-                    Console.WriteLine("Go to FloorMapPage");
-                    await this.navigationService.NavigateAsync("/FloorMapPage", null, false, false);
-                    Console.WriteLine("Forwarded FloorMapPage");
-                });
+            this.RefreshCommand = new AsyncReactiveCommand();
+            this.RefreshCommand.Subscribe(this.RefreshCommandExecute);
         }
 
-        public void OnNavigatedFrom(NavigationParameters parameters)
+        protected Task RefreshCommandExecute()
         {
-
+            if (this.SecureIsolatedStorage.AccessToken.IsNullOrEmpty())
+            {
+                return this.ToSignUpPage();
+            }
+            else
+            {
+                return this.ToFloorMapPage();
+            }
         }
 
-        public void OnNavigatedTo(NavigationParameters parameters)
+        private async Task ToSignUpPage()
         {
+            var millisecondPerFrame = 10;
+            while (this.LogoTopMargin.Value > 20)
+            {
+                await Task.Delay(millisecondPerFrame);
+                this.LogoTopMargin.Value -= (180d - 20d) / (500d / (double)millisecondPerFrame);
+            }
+
+            this.LogoTopMargin.Value = 20;
+
+            await this.NavigationService.NavigateAsync("SignUpPage", animated: false);
         }
 
-        public void OnNavigatingTo(NavigationParameters parameters)
+        private async Task ToFloorMapPage()
         {
+            await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
+            await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+        }
+
+        private async Task LogoScaleChangeAsync()
+        {
+            var millisecondPerFrame = 10;
+            while (this.LogoScale.Value < 3)
+            {
+                await Task.Delay(millisecondPerFrame);
+                this.LogoScale.Value += 2 / (500d / (double)millisecondPerFrame);
+            }
+
+            this.LogoScale.Value = 3;
+        }
+
+        private async Task LogoOpacityChangeAsync()
+        {
+            var millisecondPerFrame = 10;
+            while (this.LogoOpacity.Value > 0)
+            {
+                await Task.Delay(millisecondPerFrame);
+                this.LogoOpacity.Value -= 1 / (500d / (double)millisecondPerFrame);
+            }
+
+            this.LogoOpacity.Value = 0;
         }
     }
 }
