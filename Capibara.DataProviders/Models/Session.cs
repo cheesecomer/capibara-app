@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Capibara.Net;
 using Capibara.Net.Sessions;
 
+using Microsoft.Practices.Unity;
+
 namespace Capibara.Models
 {
     public class Session : ModelBase<Session>
@@ -71,6 +73,8 @@ namespace Capibara.Models
                 this.IsolatedStorage.UserNickname = response.Nickname;
                 this.IsolatedStorage.UserId = response.UserId;
                 this.IsolatedStorage.Save();
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, new User { Id = response.UserId, Nickname = response.Nickname });
 
                 this.SignInSuccess?.Invoke(this, null);
             }

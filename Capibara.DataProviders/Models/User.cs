@@ -86,6 +86,8 @@ namespace Capibara.Models
                 this.IsolatedStorage.UserNickname = this.Nickname;
                 this.IsolatedStorage.Save();
 
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.MyProfile, this);
+
                 this.SignUpSuccess?.Invoke(this, null);
             }
             catch (Exception e)

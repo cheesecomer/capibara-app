@@ -119,6 +119,12 @@ namespace Capibara.Test.Models.UserTest
             }
 
             [TestCase]
+            public void IsShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.model.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(true));
+            }
+
+            [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
                 Assert.That(this.isSucceed, Is.EqualTo(true));
@@ -196,6 +202,12 @@ namespace Capibara.Test.Models.UserTest
             public void IsShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.model.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontRegisterUserInDIContainer()
+            {
+                Assert.That(this.model.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(false));
             }
 
             [TestCase]
@@ -373,6 +385,12 @@ namespace Capibara.Test.Models.UserTest
             public void IsShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.model.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontRegisterUserInDIContainer()
+            {
+                Assert.That(this.model.Container.IsRegistered(typeof(User), "MyProfile"), Is.EqualTo(false));
             }
 
             [TestCase]
