@@ -74,12 +74,6 @@ namespace Capibara.Test.Models.SessionTest
             }
 
             [TestCase]
-            public void ItShouldNotBeError()
-            {
-                Assert.That(this.Actual.Error, Is.Null);
-            }
-
-            [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
                 Assert.That(this.IsSucceed, Is.EqualTo(true));
@@ -93,7 +87,7 @@ namespace Capibara.Test.Models.SessionTest
         }
 
         [TestFixture]
-        public class WhenFailNetworkError : TestBase
+        public class WhenFail : TestBase
         {
             protected override Exception RestException => new WebException();
 
@@ -125,23 +119,6 @@ namespace Capibara.Test.Models.SessionTest
             public void ItShouldSignInFailEventToOccur()
             {
                 Assert.That(this.IsFailed, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenFailUnauthorized : WhenFailNetworkError
-        {
-            protected override Exception RestException => null;
-
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            protected override string HttpStabResponse =>
-            "{ \"message\": \"booo...\"}";
-
-            [TestCase]
-            public void ItShouldBeError()
-            {
-                Assert.That(this.Actual.Error, Is.Not.Null);
             }
         }
 
