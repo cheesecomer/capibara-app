@@ -17,7 +17,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<string> Password { get; }
 
-        public ReactiveProperty<string> Error { get;}
+        public ReactiveProperty<string> Error { get; } = new ReactiveProperty<string>();
 
         public ReadOnlyReactiveProperty<bool> IsBusy { get; }
 
@@ -44,11 +44,6 @@ namespace Capibara.ViewModels
             this.Password.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Password)));
 
             // Error property
-            this.Error = this.Model
-                .ObserveProperty(x => x.Error)
-                .Select(x => x?.Message)
-                .ToReactiveProperty()
-                .AddTo(this.Disposable);
             this.Error.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Error)));
 
             // SignIn Command
@@ -61,6 +56,7 @@ namespace Capibara.ViewModels
 
             // Event Listener
             this.Model.SignInSuccess += this.OnSignInSuccess;
+            this.Model.SignInFail += this.OnSignInFail;
 
             // IsBusy Command
             this.IsBusy = this.SignInCommand
@@ -79,6 +75,14 @@ namespace Capibara.ViewModels
         private void OnSignInSuccess(object sender, EventArgs args)
         {
             this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
+        }
+
+        private void OnSignInFail(object sender, Exception args)
+        {
+            if (args is Net.HttpUnauthorizedException)
+            {
+                this.Error.Value = args.Message;
+            }
         }
     }
 }

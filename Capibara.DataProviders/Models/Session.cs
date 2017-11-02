@@ -15,8 +15,6 @@ namespace Capibara.Models
 
         private string password;
 
-        private Error error;
-
         public event EventHandler SignInSuccess;
 
         public event EventHandler<Exception> SignInFail;
@@ -42,16 +40,6 @@ namespace Capibara.Models
         }
 
         /// <summary>
-        /// APIエラー
-        /// </summary>
-        /// <value>The error.</value>
-        public Error Error
-        {
-            get => this.error;
-            set => this.SetProperty(ref this.error, value);
-        }
-
-        /// <summary>
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
@@ -67,8 +55,6 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                this.Error = null;
-
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
                 this.IsolatedStorage.UserId = response.UserId;
@@ -80,11 +66,6 @@ namespace Capibara.Models
             }
             catch (Exception e)
             {
-                if (e is HttpUnauthorizedException)
-                {
-                    this.Error = (e as HttpUnauthorizedException).Detail;
-                }
-
                 this.SignInFail?.Invoke(this, e);
             }
         }
