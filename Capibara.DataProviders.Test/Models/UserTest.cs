@@ -77,7 +77,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Actual = new User { Id = 99999 };
-            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "..." });
+            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999 });
         }
 
         [TestCase]
@@ -146,7 +146,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-            => "{ \"id\": 999, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
+            => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
 
             [TestCase]
             public void IsShouldNicknameWithExpect()
@@ -175,7 +175,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"id\": 999, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
+                => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
 
             protected override bool IsOWn => true;
 

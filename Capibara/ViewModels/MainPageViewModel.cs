@@ -25,9 +25,6 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<string> Nickname { get; } = new ReactiveProperty<string>();
 
-        [Dependency(UnityInstanceNames.CurrentUser)]
-        public User CurrentUser { get; set; }
-
         public MainPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)

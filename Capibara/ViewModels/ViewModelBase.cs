@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Disposables;
 
 using Capibara.Services;
+using Capibara.Models;
 
 using Microsoft.Practices.Unity;
 
@@ -36,6 +37,9 @@ namespace Capibara.ViewModels
 
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
+
+        [Dependency(UnityInstanceNames.CurrentUser)]
+        public User CurrentUser { get; set; }
 
         /// <summary>
         /// DIコンテナ

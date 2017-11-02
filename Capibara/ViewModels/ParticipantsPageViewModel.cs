@@ -30,8 +30,16 @@ namespace Capibara.ViewModels
             this.ItemTappedCommand = new AsyncReactiveCommand<User>();
             this.ItemTappedCommand.Subscribe(async x =>
             {
-                var parameters = new NavigationParameters { { ParameterNames.Model, x } };
-                await this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+                if (x.Id == this.IsolatedStorage.UserId)
+                {
+                    var parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
+                    await this.NavigationService.NavigateAsync("MyProfilePage", parameters);
+                }
+                else
+                {
+                    var parameters = new NavigationParameters { { ParameterNames.Model, x } };
+                    await this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+                }
             });
         }
     }
