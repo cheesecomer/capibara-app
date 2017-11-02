@@ -16,6 +16,8 @@ namespace Capibara.ViewModels
     {
         public ReadOnlyReactiveCollection<User> Participants { get; }
 
+        public AsyncReactiveCommand<User> ItemTappedCommand { get; }
+
         public ParticipantsPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -24,6 +26,13 @@ namespace Capibara.ViewModels
         {
             this.Participants =
                     this.Model.Participants.ToReadOnlyReactiveCollection();
+            
+            this.ItemTappedCommand = new AsyncReactiveCommand<User>();
+            this.ItemTappedCommand.Subscribe(async x =>
+            {
+                var parameters = new NavigationParameters { { ParameterNames.Model, x } };
+                await this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+            });
         }
     }
 }
