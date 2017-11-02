@@ -41,6 +41,8 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.biography, value);
         }
 
+        public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
+
         public override void Restore(User model)
         {
             base.Restore(model);

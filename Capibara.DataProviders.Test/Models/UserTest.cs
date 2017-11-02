@@ -16,28 +16,54 @@ namespace Capibara.Test.Models.UserTest
 {
     namespace DeserializeTest
     {
-        [TestFixture]
-        public class WhenSuccess
+        public abstract class TestBase : TestFixtureBase
         {
-            private User actual;
+            protected User Actual { get; private set; }
+
+            protected abstract int LoginUserId { get; }
 
             [SetUp]
             public void Setup()
             {
                 var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\"}";
-                this.actual = JsonConvert.DeserializeObject<User>(json);
+                this.Actual = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
+                this.IsolatedStorage.UserId = this.LoginUserId;
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+                Assert.That(this.Actual.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Actual.Id, Is.EqualTo(99999));
+            }
+        }
+
+        [TestFixture]
+        public class WhenIsOwn : TestBase
+        {
+            protected override int LoginUserId => 99999;
+
+            [TestCase]
+            public void ItShouldIsOwn()
+            {
+                Assert.That(this.Actual.IsOwn, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenIsOther : TestBase
+        {
+            protected override int LoginUserId => 99998;
+
+            [TestCase]
+            public void ItShouldIsNotOwn()
+            {
+                Assert.That(this.Actual.IsOwn, Is.EqualTo(false));
             }
         }
     }
