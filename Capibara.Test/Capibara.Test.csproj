@@ -150,6 +150,7 @@
     <Compile Include="ViewModels\SettingPageViewModelTest.cs" />
     <Compile Include="Converters\DoubleMultiplierConverterTest.cs" />
     <Compile Include="Converters\FloatMultiplierConverterTest.cs" />
+    <Compile Include="ViewModels\MyProfilePageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />
