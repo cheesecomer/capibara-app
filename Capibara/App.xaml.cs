@@ -67,6 +67,7 @@ namespace Capibara
             this.Container.RegisterTypeForNavigation<ParticipantsPage>();
             this.Container.RegisterTypeForNavigation<SettingPage>();
             this.Container.RegisterTypeForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
+            this.Container.RegisterTypeForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage
