@@ -59,6 +59,7 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <ListView
+            x:Name="ListView"
             Grid.Row="0"
             HasUnevenRows="true"
             VerticalOptions="FillAndExpand"

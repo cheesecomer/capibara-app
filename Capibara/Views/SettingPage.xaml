@@ -5,7 +5,8 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     prism:ViewModelLocator.AutowireViewModel="True" 
-    x:Class="Capibara.Views.SettingPage">
+    x:Class="Capibara.Views.SettingPage"
+    Title="設定">
     <ListView
         BackgroundColor="#EEE"
         ItemsSource="{Binding SettingItems}"

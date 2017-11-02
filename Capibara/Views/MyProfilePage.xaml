@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True" 
+    x:Class="Capibara.Views.MyProfilePage"
+    Title="プロフィール"
+    BackgroundColor="#FEFEFE">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="編集" Priority="1" Command="{Binding EditCommand}" />
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+      <StackLayout Padding="20">
+        <Frame
+            x:Name="box"
+            BackgroundColor="#58CE91"
+            Margin="50, 20, 50, 20"
+            Padding="0"
+            CornerRadius="{Binding Width, Source={x:Reference box}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+            HeightRequest="{Binding Width, Source={x:Reference box}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
+
+            <Frame
+                x:Name="innerBox"
+                BackgroundColor="White"
+                Margin="5"
+                Padding="0"
+                HasShadow="false"
+                CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
+            </Frame>
+        </Frame>
+        <Label Text="ユーザー名" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
+        <Label Text="自己紹介" />
+        <Label Text="ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ" Margin="10, 10, 0,0"  />
+      </StackLayout>
+    </ScrollView>
+</ContentPage>
