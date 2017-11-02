@@ -37,7 +37,7 @@
                 CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
             </Frame>
         </Frame>
-        <Label Text="ユーザー名" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
+        <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
         <Label Text="自己紹介" />
         <Label Text="ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ" Margin="10, 10, 0,0"  />
       </StackLayout>
