@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 using Capibara.Models;
@@ -101,9 +102,9 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         }
 
         [TestFixture]
-        public class WhenFail : ExecuteTestBase
+        public class WhenFailWebException : ExecuteTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+            protected override Exception RestException => new WebException();
 
             [TestCase]
             public void ItShouldNotNavigate()
@@ -115,6 +116,38 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             public void ItShouldNotBusy()
             {
                 Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldErrorIsEmpty()
+            {
+                Assert.That(this.ViewModel.Error.Value, Is.EqualTo(string.Empty).Or.Null);
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailUnauthorized : ExecuteTestBase
+        {
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            protected override string HttpStabResponse => "{ \"message\": \"m9(^Д^)\"}";
+
+            [TestCase]
+            public void ItShouldNotNavigate()
+            {
+                Assert.That(this.navigatePageName, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldNotBusy()
+            {
+                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldErrorWithExpect()
+            {
+                Assert.That(this.ViewModel.Error.Value, Is.EqualTo("m9(^Д^)"));
             }
         }
     }

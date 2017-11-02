@@ -81,7 +81,7 @@ namespace Capibara.ViewModels
         {
             if (args is Net.HttpUnauthorizedException)
             {
-                this.Error.Value = args.Message;
+                this.Error.Value = ((Net.HttpUnauthorizedException)args).Detail.Message;
             }
         }
     }
