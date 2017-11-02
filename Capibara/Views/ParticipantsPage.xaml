@@ -13,6 +13,12 @@
         VerticalOptions="FillAndExpand"
         SeparatorColor="Transparent"
         ItemsSource="{Binding Participants}">
+        <ListView.Behaviors>
+            <behaviors:EventToCommandBehavior
+                EventName="ItemTapped" 
+                EventArgsParameterPath="Item"
+                Command="{Binding ItemTappedCommand}" />
+        </ListView.Behaviors>
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>

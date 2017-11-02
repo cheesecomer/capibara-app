@@ -1,8 +1,9 @@
 ﻿using System.Reactive.Disposables;
 
-using Microsoft.Practices.Unity;
-
 using Capibara.Services;
+using Capibara.Models;
+
+using Microsoft.Practices.Unity;
 
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -38,7 +39,7 @@ namespace Capibara.ViewModels
         public IIsolatedStorage IsolatedStorage { get; set; }
 
         [Dependency(UnityInstanceNames.CurrentUser)]
-        public Models.User CurrentUser { get; set; } 
+        public User CurrentUser { get; set; }
 
         /// <summary>
         /// DIコンテナ
