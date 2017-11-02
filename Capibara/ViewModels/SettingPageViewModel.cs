@@ -20,8 +20,6 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand<SettingItem> ItemTappedCommand { get; }
 
-        public ReactiveProperty<string> Nickname { get; } = new ReactiveProperty<string>();
-
         public SettingPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)
@@ -31,13 +29,6 @@ namespace Capibara.ViewModels
 
             this.ItemTappedCommand = new AsyncReactiveCommand<SettingItem>();
             this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath));
-        }
-
-        protected override void OnContainerChanged()
-        {
-            base.OnContainerChanged();
-
-            this.CurrentUser.ObserveProperty(x => x.Nickname).Subscribe(x => this.Nickname.Value = x);
         }
 
         public class SettingItem
