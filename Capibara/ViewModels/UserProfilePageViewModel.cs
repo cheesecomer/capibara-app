@@ -17,6 +17,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<string> Biography { get; }
 
+        public AsyncReactiveCommand RefreshCommand { get; }
+
         public UserProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -25,11 +27,17 @@ namespace Capibara.ViewModels
         {
             this.Nickname = this.Model
                 .ObserveProperty(x => x.Nickname)
-                .ToReactiveProperty();
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
 
             this.Biography = this.Model
                 .ObserveProperty(x => x.Biography)
-                .ToReactiveProperty();
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            // RefreshCommand
+            this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Refresh()));
         }
     }
 }

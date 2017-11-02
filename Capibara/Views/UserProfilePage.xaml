@@ -15,6 +15,9 @@
             <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
+    </ContentView.Behaviors>
     <ScrollView>
       <StackLayout Padding="20">
         <Frame

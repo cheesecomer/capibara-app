@@ -47,6 +47,7 @@ namespace Capibara.Models
         {
             base.Restore(model);
 
+            this.Id = model.Id;
             this.Nickname = model.Nickname;
             this.Biography = model.Biography;
         }
