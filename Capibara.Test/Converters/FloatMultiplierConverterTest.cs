@@ -5,6 +5,7 @@ using Capibara.Converters;
 
 namespace Capibara.Test.Converters.FloatMultiplierConverterTest
 {
+    [TestFixture]
     public class Convert
     {
         [TestCase(1, "", 1f)]
@@ -19,6 +20,7 @@ namespace Capibara.Test.Converters.FloatMultiplierConverterTest
         [TestCase(-1f, "2", 0f)]
         [TestCase(-1d, "", 0f)]
         [TestCase(-1d, "2", 0f)]
+        [TestCase("", "2", 0f)]
         public void ItShouldResultIsExpect(object value, object parameter, double expect)
         {
             Assert.That(new FloatMultiplierConverter().Convert(value, null, parameter, null), Is.EqualTo(expect));
@@ -27,6 +29,7 @@ namespace Capibara.Test.Converters.FloatMultiplierConverterTest
 
     public class ConvertBack
     {
+        [TestCase]
         public void ItShouldThrowNotSupportedException()
         {
             Assert.Throws<NotSupportedException>(() => new FloatMultiplierConverter().ConvertBack(null, null, null, null));
