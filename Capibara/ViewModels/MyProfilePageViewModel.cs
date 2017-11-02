@@ -13,6 +13,8 @@ namespace Capibara.ViewModels
     {
         public ReactiveProperty<string> Nickname { get; } = new ReactiveProperty<string>();
 
+        public ReactiveProperty<string> Biography { get; } = new ReactiveProperty<string>();
+
         public MyProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)
@@ -25,6 +27,7 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
 
             this.CurrentUser.ObserveProperty(x => x.Nickname).Subscribe(x => this.Nickname.Value = x);
+            this.CurrentUser.ObserveProperty(x => x.Biography).Subscribe(x => this.Biography.Value = x);
         }
     }
 }

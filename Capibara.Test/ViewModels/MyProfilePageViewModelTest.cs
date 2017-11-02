@@ -40,4 +40,31 @@ namespace Capibara.Test.ViewModels.MyProfilePageViewModelTest
             Assert.That(this.Actual.Nickname.Value, Is.EqualTo("xxxx!!!"));
         }
     }
+
+    public class BiographyPropertyTest : ViewModelTestBase
+    {
+        protected MyProfilePageViewModel Actual;
+
+        [SetUp]
+        public void SetUp()
+        {
+            var container = this.GenerateUnityContainer();
+            container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = string.Empty, Biography = "xxxx" });
+
+            this.Actual = new MyProfilePageViewModel().BuildUp(container);
+        }
+
+        [TestCase]
+        public void ItShouldValueWithExpect()
+        {
+            Assert.That(this.Actual.Biography.Value, Is.EqualTo("xxxx"));
+        }
+
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            this.Actual.CurrentUser.Biography = "xxxx!!!";
+            Assert.That(this.Actual.Biography.Value, Is.EqualTo("xxxx!!!"));
+        }
+    }
 }
