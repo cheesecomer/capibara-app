@@ -13,6 +13,8 @@ namespace Capibara.Models
 
         private string nickname;
 
+        private string biography;
+
         public event EventHandler SignUpSuccess;
 
         public event EventHandler<Exception> SignUpFail;
@@ -33,11 +35,18 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.nickname, value);
         }
 
+        public string Biography
+        {
+            get => this.biography;
+            set => this.SetProperty(ref this.biography, value);
+        }
+
         public override void Restore(User model)
         {
             base.Restore(model);
 
             this.Nickname = model.Nickname;
+            this.Biography = model.Biography;
         }
 
         /// <summary>

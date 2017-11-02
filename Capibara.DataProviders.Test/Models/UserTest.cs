@@ -51,7 +51,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Actual = new User { Id = 99999 };
-            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!" });
+            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "..." });
         }
 
         [TestCase]
@@ -64,6 +64,12 @@ namespace Capibara.Test.Models.UserTest
         public void ItShouldIdWithExpected()
         {
             Assert.That(this.Actual.Id, Is.EqualTo(99999));
+        }
+
+        [TestCase]
+        public void ItShouldBiographyWithExpected()
+        {
+            Assert.That(this.Actual.Biography, Is.EqualTo("..."));
         }
     }
 
@@ -114,12 +120,18 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"id\": 999, \"nickname\": \"xxxxx!\"}";
+            => "{ \"id\": 999, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
 
             [TestCase]
             public void IsShouldNicknameWithExpect()
             {
                 Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx!"));
+            }
+
+            [TestCase]
+            public void IsShouldBiographyWithExpect()
+            {
+                Assert.That(this.Actual.Biography, Is.EqualTo("..."));
             }
 
             [TestCase]
@@ -137,7 +149,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"id\": 999, \"nickname\": \"xxxxx!\"}";
+                => "{ \"id\": 999, \"nickname\": \"xxxxx!\", \"biography\":\"...\"}";
 
             protected override bool IsOWn => true;
 
@@ -188,6 +200,12 @@ namespace Capibara.Test.Models.UserTest
             public void IsShouldNicknameWithExpect()
             {
                 Assert.That(this.Actual.Nickname, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldBiographyWithExpect()
+            {
+                Assert.That(this.Actual.Biography, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]

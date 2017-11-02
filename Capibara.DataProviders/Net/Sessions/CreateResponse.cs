@@ -14,5 +14,8 @@ namespace Capibara.Net.Sessions
 
         [JsonProperty("user_nickname")]
         public string Nickname { get; set; }
+
+        [JsonProperty("user_biography")]
+        public string Biography { get; set; }
     }
 }

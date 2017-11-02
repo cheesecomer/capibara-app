@@ -5,16 +5,22 @@
     xmlns:views="clr-namespace:Capibara.Views;assembly=Capibara"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MainPage">
     <MasterDetailPage.Master>
         <ContentPage
-            BackgroundColor="White"
             Title="Menu">
+            <ContentPage.Resources>
+                <ResourceDictionary>
+                    <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+                    <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
+                </ResourceDictionary>
+            </ContentPage.Resources>
             <ContentPage.Padding>
                 <OnPlatform x:TypeArguments="Thickness">
                     <OnPlatform.iOS>0, 20, 0, 0</OnPlatform.iOS>
-                    <OnPlatform.Android>0, 0, 0, 30</OnPlatform.Android>
+                    <OnPlatform.Android>0, 0, 0, 0</OnPlatform.Android>
                 </OnPlatform>
             </ContentPage.Padding>
             <Grid>
@@ -22,6 +28,17 @@
                     <RowDefinition Height="100" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <Image
+                    Source="bg_launch"
+                    Aspect="Fill"
+                    Grid.RowSpan="2">
+                    <Image.Margin>
+                        <OnPlatform x:TypeArguments="Thickness">
+                            <OnPlatform.iOS>0, -20, 0, 0</OnPlatform.iOS>
+                            <OnPlatform.Android>0, 0, 0, 0</OnPlatform.Android>
+                        </OnPlatform>
+                    </Image.Margin>
+                </Image>
                 <ListView
                     BackgroundColor="#EEE"
                     ItemsSource="{Binding MenuItems}"
@@ -45,17 +62,38 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <Frame
-                    BackgroundColor="#C5DBCF"
-                    Padding="40"
-                    Margin="-10, -20, -10, -10">
-                    <StackLayout Padding="0">
-                        <Label Text="{Binding Nickname.Value}" />
-                    </StackLayout>
+                    BackgroundColor="Transparent"
+                    Padding="10, 20, 10, 10"
+                    Margin="-10, -20, -10, -10"
+                    HasShadow="false">
+                    <Grid Padding="10, 0, 0, 0" ColumnSpacing="20" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Frame
+                            x:Name="outerCircle"
+                            BackgroundColor="#58CE91"
+                            Margin="10"
+                            Padding="0"
+                            CornerRadius="{Binding Width, Source={x:Reference outerCircle}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                            HeightRequest="{Binding Width, Source={x:Reference outerCircle}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
+                            <Frame
+                                x:Name="innerBox"
+                                BackgroundColor="White"
+                                Margin="5"
+                                Padding="0"
+                                HasShadow="false"
+                                CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
+                            </Frame>
+                        </Frame>
+                        <Label Grid.Column="1" Text="{Binding Nickname.Value}" VerticalTextAlignment="Center" TextColor="White" />
+                    </Grid>
                 </Frame>
             </Grid>
         </ContentPage>
     </MasterDetailPage.Master>
     <MasterDetailPage.Detail>
-        <ContentPage Title="Dummy" /> <!-- Dummy -->
+        <ContentPage Title="Dummy" />
     </MasterDetailPage.Detail>
 </MasterDetailPage>
