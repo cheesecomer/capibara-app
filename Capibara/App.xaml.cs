@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Capibara.Net;
 using Capibara.Services;
+using Capibara.ViewModels;
 using Capibara.Views;
 
 using Microsoft.Practices.Unity;
@@ -65,7 +66,7 @@ namespace Capibara
             this.Container.RegisterTypeForNavigation<RoomPage>();
             this.Container.RegisterTypeForNavigation<ParticipantsPage>();
             this.Container.RegisterTypeForNavigation<SettingPage>();
-            this.Container.RegisterTypeForNavigation<MyProfilePage>();
+            this.Container.RegisterTypeForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage

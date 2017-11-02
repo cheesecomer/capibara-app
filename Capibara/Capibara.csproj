@@ -72,7 +72,7 @@
     </Compile>
     <Compile Include="Converters\DoubleMultiplierConverter.cs" />
     <Compile Include="Converters\FloatMultiplierConverter.cs" />
-    <Compile Include="ViewModels\MyProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\UserProfilePageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
