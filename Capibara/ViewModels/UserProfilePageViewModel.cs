@@ -19,6 +19,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
+        public AsyncReactiveCommand EditCommand { get; }
+
         public UserProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -38,6 +40,13 @@ namespace Capibara.ViewModels
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Refresh()));
+
+            // EditCommand
+            this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.EditCommand.Subscribe(async () => {
+                var parameters = new NavigationParameters() { { ParameterNames.Model, this.Model } };
+                await this.NavigationService.NavigateAsync("EditProfilePage", parameters);
+            });
         }
     }
 }

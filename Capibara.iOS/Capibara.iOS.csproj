@@ -208,12 +208,14 @@
     <Compile Include="ViewExtensions.cs" />
     <Compile Include="KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
+    <Compile Include="Effects\BorderEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
     <Folder Include="Resources\Images.xcassets\bg_launch.imageset\" />
     <Folder Include="Resources\Images.xcassets\bg_header.imageset\" />
     <Folder Include="Services\" />
+    <Folder Include="Effects\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\LottieResources\loading.json">

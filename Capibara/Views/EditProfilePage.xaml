@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True" 
+    x:Class="Capibara.Views.EditProfilePage"
+    BackgroundColor="#FEFEFE">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="保存" Priority="1" Command="{Binding CommitCommand}" />
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+      <StackLayout Padding="20">
+        <Frame
+            x:Name="box"
+            BackgroundColor="#58CE91"
+            Margin="50, 20, 50, 20"
+            Padding="0"
+            CornerRadius="{Binding Width, Source={x:Reference box}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+            HeightRequest="{Binding Width, Source={x:Reference box}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
+            <Frame
+                x:Name="innerBox"
+                BackgroundColor="White"
+                Margin="5"
+                Padding="0"
+                HasShadow="false"
+                CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
+            </Frame>
+        </Frame>
+        <Entry Text="{Binding Nickname.Value}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
+        <Label Text="自己紹介" />
+        <Editor
+            Text="{Binding Biography.Value}" 
+            Margin="10, 10, 0, 10"
+            HeightRequest="150">
+            <Editor.Effects>
+                <effects:BorderEffect />
+            </Editor.Effects>
+        </Editor>
+      </StackLayout>
+    </ScrollView>
+</ContentPage>
