@@ -5,6 +5,8 @@ using Capibara.Net.Users;
 
 using Microsoft.Practices.Unity;
 
+using Newtonsoft.Json;
+
 namespace Capibara.Models
 {
     public class User : ModelBase<User>
@@ -15,6 +17,10 @@ namespace Capibara.Models
 
         private string biography;
 
+        private string iconUrl;
+
+        private string iconBase64;
+
         public event EventHandler SignUpSuccess;
 
         public event EventHandler<Exception> SignUpFail;
@@ -22,6 +28,10 @@ namespace Capibara.Models
         public event EventHandler RefreshSuccess;
 
         public event EventHandler<Exception> RefreshFail;
+
+        public event EventHandler CommitSuccess;
+
+        public event EventHandler<Exception> CommitFail;
 
         public int Id
         {
@@ -41,6 +51,19 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.biography, value);
         }
 
+        [JsonProperty("icon_url")]
+        public string IconUrl
+        {
+            get => this.iconUrl;
+            set => this.SetProperty(ref this.iconUrl, value);
+        }
+
+        public string IconBase64
+        {
+            get => this.iconBase64;
+            set => this.SetProperty(ref this.iconBase64, value);
+        }
+
         public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
         public override void Restore(User model)
@@ -50,6 +73,7 @@ namespace Capibara.Models
             this.Id = model.Id;
             this.Nickname = model.Nickname;
             this.Biography = model.Biography;
+            this.IconUrl = model.IconUrl;
         }
 
         /// <summary>
@@ -108,6 +132,43 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.SignUpFail?.Invoke(this, e);
+            }
+        }
+
+        /// <summary>
+        /// ユーザー情報を更新します。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public async Task<bool> Commit()
+        {
+            var request = new UpdateRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.Restore(response);
+
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                if (this.Container.IsRegistered(typeof(User), UnityInstanceNames.CurrentUser))
+                {
+                    this.Container.Resolve<User>(UnityInstanceNames.CurrentUser).Restore(this);
+                }
+                else
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
+
+                this.CommitSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.CommitFail?.Invoke(this, e);
+                return false;
             }
         }
     }

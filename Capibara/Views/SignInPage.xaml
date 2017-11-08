@@ -24,7 +24,19 @@
             </StackLayout.Padding>
             <Image
                 Source="logo"
-                Margin="-20, 20, -20, 20"
+                Margin="-20, 20, -20, 0"
+                />
+            <Label
+                Margin="0, 50, 0, 0"
+                TextColor="#eee"
+                Text=" "
+                HorizontalTextAlignment="Center"
+                />
+            <Label
+                Margin="0, 0, 0, 30"
+                TextColor="#eee"
+                Text="アプリを始めよう！"
+                HorizontalTextAlignment="Center"
                 />
             <Entry
                 HorizontalOptions="FillAndExpand"

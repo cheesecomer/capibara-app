@@ -81,7 +81,6 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         }
     }
 
-
     namespace RefreshCommandTest
     {
         [TestFixture]
@@ -101,6 +100,81 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
                 viewModel.RefreshCommand.Execute();
 
                 while (!viewModel.RefreshCommand.CanExecute()) { };
+            }
+
+            [TestCase]
+            public void ItShouldShowDialog()
+            {
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+        }
+    }
+
+    [TestFixture]
+    public class EditCommandTest : ViewModelTestBase
+    {
+        protected string NavigatePageName { get; private set; }
+
+        protected NavigationParameters NavigationParameters { get; private set; }
+
+        [SetUp]
+        public void SetUp()
+        {
+            var navigationService = new Mock<INavigationService>();
+            navigationService
+                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
+                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
+                {
+                    this.NavigatePageName = name;
+                    this.NavigationParameters = parameters;
+                    return Task.Run(() => { });
+                });
+
+            var viewModel = new UserProfilePageViewModel(navigationService.Object);
+
+            viewModel.EditCommand.Execute();
+
+            while (!viewModel.EditCommand.CanExecute()) { }
+        }
+
+        [TestCase]
+        public void ItShouldNavigateToParticipantsPage()
+        {
+            Assert.That(this.NavigatePageName, Is.EqualTo("EditProfilePage"));
+        }
+
+        [TestCase]
+        public void ItShouldNavigationParametersHsaModel()
+        {
+            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
+        }
+
+        [TestCase]
+        public void ItShouldNavigationParameterModelIsUser()
+        {
+            Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
+        }
+    }
+
+    namespace CommitCommandTest
+    {
+        [TestFixture]
+        public class WhenSuccess : ViewModelTestBase
+        {
+            [SetUp]
+            public void SetUp()
+            {
+                var container = this.GenerateUnityContainer();
+                var navigationService = new Mock<INavigationService>();
+                var viewModel = new UserProfilePageViewModel(navigationService.Object);
+
+                viewModel.Model.Id = 1;
+
+                viewModel.BuildUp(container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { };
             }
 
             [TestCase]
