@@ -55,6 +55,7 @@
     <Compile Include="Net\Channels\Command.cs" />
     <Compile Include="Net\Users\CreateRequest.cs" />
     <Compile Include="Net\Users\ShowRequest.cs" />
+    <Compile Include="Net\Users\UpdateRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

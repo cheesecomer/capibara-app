@@ -117,6 +117,7 @@
     <Compile Include="TestFixtureBase.cs" />
     <Compile Include="Net\Users\CreateRequestTest.cs" />
     <Compile Include="Net\Users\ShowRequestTest.cs" />
+    <Compile Include="Net\Users\UpdateRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />
