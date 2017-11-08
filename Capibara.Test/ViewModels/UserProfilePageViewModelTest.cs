@@ -155,4 +155,33 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
         }
     }
+
+    namespace CommitCommandTest
+    {
+        [TestFixture]
+        public class WhenSuccess : ViewModelTestBase
+        {
+            [SetUp]
+            public void SetUp()
+            {
+                var container = this.GenerateUnityContainer();
+
+                var viewModel = new UserProfilePageViewModel();
+
+                viewModel.Model.Id = 1;
+
+                viewModel.BuildUp(container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { };
+            }
+
+            [TestCase]
+            public void ItShouldShowDialog()
+            {
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+        }
+    }
 }
