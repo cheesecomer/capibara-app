@@ -28,8 +28,10 @@ namespace Capibara.Net.Users
 
         public override string ContentType { get; } = "application/json";
 
+        [JsonProperty("nickname")]
         public string Nickname => this.user.Nickname;
 
+        [JsonProperty("biography")]
         public string Biography => this.user.Biography;
 
         [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]

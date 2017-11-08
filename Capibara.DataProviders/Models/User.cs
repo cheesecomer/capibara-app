@@ -152,7 +152,14 @@ namespace Capibara.Models
                 this.IsolatedStorage.UserNickname = this.Nickname;
                 this.IsolatedStorage.Save();
 
-                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                if (this.Container.IsRegistered(typeof(User), UnityInstanceNames.CurrentUser))
+                {
+                    this.Container.Resolve<User>(UnityInstanceNames.CurrentUser).Restore(this);
+                }
+                else
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
 
                 this.CommitSuccess?.Invoke(this, null);
 

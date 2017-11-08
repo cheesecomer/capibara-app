@@ -439,7 +439,11 @@ namespace Capibara.Test.Models.UserTest
 
             protected User Actual { get; private set; }
 
+            protected User CurrentUser { get; private set; }
+
             protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedCurrentUserRegistration { get; }
 
             protected abstract bool NeedExecute { get; }
 
@@ -456,6 +460,11 @@ namespace Capibara.Test.Models.UserTest
                     this.Actual.CommitSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
+                if (this.NeedCurrentUserRegistration)
+                {
+                    container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.CurrentUser = new User());
+                }
+
                 if (this.NeedExecute)
                     this.Actual.Commit().Wait();
             }
@@ -467,6 +476,8 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => true;
+
+            protected override bool NeedCurrentUserRegistration => true;
 
             protected override string HttpStabResponse
                 => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\" }";
@@ -508,12 +519,66 @@ namespace Capibara.Test.Models.UserTest
             }
         }
 
+
+        [TestFixture]
+        public class WhenSuccessWithCurrentUser : WhenSuccess
+        {
+            protected override bool NeedCurrentUserRegistration => true;
+
+
+            [TestCase]
+            public void IsShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.CurrentUser));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserNameWithExpected()
+            {
+                Assert.That(this.CurrentUser.Nickname, Is.EqualTo("xxxxx!"));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserIdWithExpected()
+            {
+                Assert.That(this.CurrentUser.Id, Is.EqualTo(1));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserBiographyWithExpected()
+            {
+                Assert.That(this.CurrentUser.Biography, Is.EqualTo("..."));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserIconUrlWithExpected()
+            {
+                Assert.That(this.CurrentUser.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+        }
+
+
+        [TestFixture]
+        public class WhenSuccessWithoutCurrentUser : WhenSuccess
+        {
+            protected override bool NeedCurrentUserRegistration => false;
+
+
+            [TestCase]
+            public void IsShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
+            }
+        }
+
         [TestFixture]
         public class WhenFail : TestBase
         {
             protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => true;
+
+            protected override bool NeedCurrentUserRegistration => false;
 
             protected override string HttpStabResponse
             => "{ \"message\": \"booo...\"}";
@@ -558,6 +623,8 @@ namespace Capibara.Test.Models.UserTest
 
             protected override bool NeedEventHandler => false;
 
+            protected override bool NeedCurrentUserRegistration => true;
+
             protected override string HttpStabResponse
                 => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
 
@@ -574,6 +641,8 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedExecute => false;
 
             protected override bool NeedEventHandler => false;
+
+            protected override bool NeedCurrentUserRegistration => true;
 
             protected override string HttpStabResponse
                 => "{ \"message\": \"booo...\"}";

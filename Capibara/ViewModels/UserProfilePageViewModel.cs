@@ -30,13 +30,11 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService, model)
         {
             this.Nickname = this.Model
-                .ObserveProperty(x => x.Nickname)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.Nickname)
                 .AddTo(this.Disposable);
 
             this.Biography = this.Model
-                .ObserveProperty(x => x.Biography)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.Biography)
                 .AddTo(this.Disposable);
 
             // RefreshCommand
@@ -46,13 +44,18 @@ namespace Capibara.ViewModels
             // EditCommand
             this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.EditCommand.Subscribe(async () => {
-                var parameters = new NavigationParameters() { { ParameterNames.Model, this.Model } };
+                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 await this.NavigationService.NavigateAsync("EditProfilePage", parameters);
             });
 
             // CommitCommand
             this.CommitCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Commit()));
+
+            this.Model.CommitSuccess += async (sender, e) => {
+                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
+                await this.NavigationService.GoBackAsync(parameters);
+            };
         }
     }
 }

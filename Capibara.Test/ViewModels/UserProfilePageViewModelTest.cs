@@ -165,8 +165,8 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-
-                var viewModel = new UserProfilePageViewModel();
+                var navigationService = new Mock<INavigationService>();
+                var viewModel = new UserProfilePageViewModel(navigationService.Object);
 
                 viewModel.Model.Id = 1;
 

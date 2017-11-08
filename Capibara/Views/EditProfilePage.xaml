@@ -36,10 +36,10 @@
                 CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
             </Frame>
         </Frame>
-        <Entry Text="{Binding Nickname.Value}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
+        <Entry Text="{Binding Nickname.Value, Mode=TwoWay}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
         <Label Text="自己紹介" />
         <Editor
-            Text="{Binding Biography.Value}" 
+            Text="{Binding Biography.Value, Mode=TwoWay}" 
             Margin="10, 10, 0, 10"
             HeightRequest="150">
             <Editor.Effects>
