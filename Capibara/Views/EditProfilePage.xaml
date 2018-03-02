@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage 
-    xmlns="http://xamarin.com/schemas/2014/forms" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
-    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
-    prism:ViewModelLocator.AutowireViewModel="True" 
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.EditProfilePage"
     BackgroundColor="#FEFEFE">
     <ContentPage.Resources>
@@ -20,26 +21,20 @@
     </ContentPage.ToolbarItems>
     <ScrollView>
       <StackLayout Padding="20">
-        <Frame
-            x:Name="box"
-            BackgroundColor="#58CE91"
+        <fomrs:RoundImage
+            x:Name="image"
+            HasShadow="true"
             Margin="50, 20, 50, 20"
-            Padding="0"
-            CornerRadius="{Binding Width, Source={x:Reference box}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-            HeightRequest="{Binding Width, Source={x:Reference box}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
-            <Frame
-                x:Name="innerBox"
-                BackgroundColor="White"
-                Margin="5"
-                Padding="0"
-                HasShadow="false"
-                CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
-            </Frame>
-        </Frame>
+            BorderColor="#58CE91"
+            BorderWidth="5"
+            BackgroundColor="White"
+            CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+            HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
+            />
         <Entry Text="{Binding Nickname.Value, Mode=TwoWay}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
         <Label Text="自己紹介" />
         <Editor
-            Text="{Binding Biography.Value, Mode=TwoWay}" 
+            Text="{Binding Biography.Value, Mode=TwoWay}"
             Margin="10, 10, 0, 10"
             HeightRequest="150">
             <Editor.Effects>

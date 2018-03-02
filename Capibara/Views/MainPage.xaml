@@ -6,6 +6,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MainPage">
     <MasterDetailPage.Master>
@@ -71,22 +72,16 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Frame
-                            x:Name="outerCircle"
-                            BackgroundColor="#58CE91"
+                        <fomrs:RoundImage
+                            x:Name="image"
+                            HasShadow="true"
                             Margin="10"
-                            Padding="0"
-                            CornerRadius="{Binding Width, Source={x:Reference outerCircle}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-                            HeightRequest="{Binding Width, Source={x:Reference outerCircle}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
-                            <Frame
-                                x:Name="innerBox"
-                                BackgroundColor="White"
-                                Margin="5"
-                                Padding="0"
-                                HasShadow="false"
-                                CornerRadius="{Binding Width, Source={x:Reference innerBox}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}">
-                            </Frame>
-                        </Frame>
+                            BorderColor="#58CE91"
+                            BorderWidth="5"
+                            BackgroundColor="White"
+                            CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                            HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
+                            />
                         <Label Grid.Column="1" Text="{Binding Nickname.Value}" VerticalTextAlignment="Center" TextColor="White" />
                     </Grid>
                 </Frame>
