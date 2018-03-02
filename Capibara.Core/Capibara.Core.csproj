@@ -36,6 +36,7 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="ICapibaraApplication.cs" />
     <Compile Include="UnityInstanceNames.cs" />
+    <Compile Include="StreamExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

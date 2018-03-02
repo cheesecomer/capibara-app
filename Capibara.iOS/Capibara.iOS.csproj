@@ -209,6 +209,7 @@
     <Compile Include="KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="Effects\BorderEffect.cs" />
+    <Compile Include="Services\PickupPhotoService.cs" />
     <Compile Include="Renderers\RoundImageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -80,6 +80,7 @@
       <DependentUpon>EditProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Effects\BorderEffect.cs" />
+    <Compile Include="Services\IPickupPhotoService.cs" />
     <Compile Include="Forms\RoundImage.cs" />
   </ItemGroup>
   <ItemGroup>

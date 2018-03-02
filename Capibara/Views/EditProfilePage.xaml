@@ -21,16 +21,34 @@
     </ContentPage.ToolbarItems>
     <ScrollView>
       <StackLayout Padding="20">
-        <fomrs:RoundImage
-            x:Name="image"
-            HasShadow="true"
+        <Grid
+            x:Name="container"
             Margin="50, 20, 50, 20"
-            BorderColor="#58CE91"
-            BorderWidth="5"
-            BackgroundColor="White"
-            CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-            HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
-            />
+            HeightRequest="{Binding Width, Source={x:Reference container}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
+            <fomrs:RoundImage
+                x:Name="image"
+                HasShadow="true"
+                Source="{Binding Image.Value}"
+                BorderColor="#58CE91"
+                BorderWidth="5"
+                BackgroundColor="White"
+                Aspect="AspectFill"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                />
+            <Button
+                x:Name="button"
+                Margin="5"
+                BackgroundColor="#330D1015"
+                TextColor="White"
+                Text="Change your profile photo"
+                Command="{Binding ChangePhotoCommand}"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                BorderRadius="{Binding Width, Source={x:Reference button}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                />
+        </Grid>
         <Entry Text="{Binding Nickname.Value, Mode=TwoWay}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
         <Label Text="自己紹介" />
         <Editor
