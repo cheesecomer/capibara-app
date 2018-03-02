@@ -34,6 +34,6 @@ after_test:
       -output:"coverage.xml" `
       -mergeoutput
 
-    pip install codecov
+    pip install codecov==2.0.5
 
     codecov -f "coverage.xml" -X gcov
