@@ -22,7 +22,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<string> Biography { get; }
 
-        public ReactiveProperty<ImageSource> Image { get; } = new ReactiveProperty<ImageSource>();
+        public ReactiveProperty<ImageSource> Icon { get; }
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
@@ -49,6 +49,13 @@ namespace Capibara.ViewModels
                 .ToReactivePropertyAsSynchronized(x => x.Biography)
                 .AddTo(this.Disposable);
 
+            this.Icon = new ReactiveProperty<ImageSource>()
+                .AddTo(this.Disposable);
+
+            this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x =>
+                this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri($"{this.Environment.BaseUrl}{x}")));
+            this.Icon.Subscribe(x => this.Model.IconBase64 = Convert.ToBase64String(x.ToByteArray()));
+            
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Refresh()));
@@ -68,10 +75,13 @@ namespace Capibara.ViewModels
             this.ChangePhotoCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.ChangePhotoCommand.Subscribe(async () => {
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
-                var deleteButton = ActionSheetButton.CreateDestroyButton("削除", () => { });
+                var deleteButton = ActionSheetButton.CreateDestroyButton("削除", () => this.Icon.Value = null);
                 var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
-                    var stream = await this.PickupPhotoService.DisplayAlbumAsync();
-                    this.Image.Value = ImageSource.FromStream(() => stream);
+                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
+                    if (bytes != null)
+                    {
+                        this.Icon.Value = ImageSource.FromStream(() => new MemoryStream(bytes));
+                    }
                 });
                 var takeButton = ActionSheetButton.CreateButton("カメラで撮影", () => { });
                 await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, deleteButton, pickupButton, takeButton);
@@ -81,6 +91,11 @@ namespace Capibara.ViewModels
                 var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 await this.NavigationService.GoBackAsync(parameters);
             };
+        }
+
+        protected override void OnContainerChanged()
+        {
+            base.OnContainerChanged();
         }
     }
 }

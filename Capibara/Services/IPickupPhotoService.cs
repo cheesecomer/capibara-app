@@ -5,6 +5,6 @@ namespace Capibara.Services
 {
     public interface IPickupPhotoService
     {
-        Task<Stream> DisplayAlbumAsync();
+        Task<byte[]> DisplayAlbumAsync();
     }
 }

@@ -92,7 +92,7 @@ namespace Capibara
 
         private class PickupPhotoServiceStub : IPickupPhotoService
         {
-            public Task<System.IO.Stream> DisplayAlbumAsync()
+            public Task<byte[]> DisplayAlbumAsync()
                 => throw new NotImplementedException();
         }
     }

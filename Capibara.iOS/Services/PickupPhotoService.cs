@@ -14,9 +14,9 @@ namespace Capibara.iOS.Services
 {
     public class PickupPhotoService : IPickupPhotoService
     {
-        async Task<Stream> IPickupPhotoService.DisplayAlbumAsync()
+        async Task<byte[]> IPickupPhotoService.DisplayAlbumAsync()
         {
-            var taskSource = new TaskCompletionSource<Stream>();
+            var taskSource = new TaskCompletionSource<byte[]>();
             await Task.Delay(100);
 
             var imagePickerController = new UIImagePickerController();
@@ -31,18 +31,22 @@ namespace Capibara.iOS.Services
             return await taskSource.Task;
         }
 
-        private EventHandler<UIImagePickerMediaPickedEventArgs> OnFinishedPickingMedia(TaskCompletionSource<Stream> taskSource)
+        private EventHandler<UIImagePickerMediaPickedEventArgs> OnFinishedPickingMedia(TaskCompletionSource<byte[]> taskSource)
         {
             return async (sender, args) => {
                 //Console.WriteLine(args.Info[UIImagePickerController.ImageUrl]);
                 var image = args.Info[UIImagePickerController.OriginalImage] as UIImage;
                 await (sender as UIImagePickerController).DismissViewControllerAsync(true);
-                taskSource.SetResult((args.Info[UIImagePickerController.OriginalImage] as UIImage).AsPNG().AsStream());
+                using (var memoryStream = new MemoryStream())
+                {
+                    (args.Info[UIImagePickerController.OriginalImage] as UIImage).AsPNG().AsStream().CopyTo(memoryStream);
+                    taskSource.SetResult(memoryStream.ToArray());
+                }
                 image.Dispose();
             };
         }
 
-        private EventHandler OnCancel(TaskCompletionSource<Stream> taskSource)
+        private EventHandler OnCancel(TaskCompletionSource<byte[]> taskSource)
         {
             return async (sender, args) => {
                 await (sender as UIImagePickerController).DismissViewControllerAsync(true);

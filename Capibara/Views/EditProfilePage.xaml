@@ -28,7 +28,7 @@
             <fomrs:RoundImage
                 x:Name="image"
                 HasShadow="true"
-                Source="{Binding Image.Value}"
+                Source="{Binding Icon.Value, Mode=TwoWay}"
                 BorderColor="#58CE91"
                 BorderWidth="5"
                 BackgroundColor="White"

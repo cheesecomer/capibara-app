@@ -4,6 +4,12 @@ namespace Capibara
     public interface IEnvironment
     {
         /// <summary>
+        /// 基底のURLを取得します
+        /// </summary>
+        /// <value>The base URL.</value>
+        string BaseUrl { get; }
+
+        /// <summary>
         /// APIの基底URLを取得します
         /// </summary>
         string ApiBaseUrl { get; }

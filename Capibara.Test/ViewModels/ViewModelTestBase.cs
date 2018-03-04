@@ -33,8 +33,8 @@ namespace Capibara.Test.ViewModels
             pickupPhotoService
                 .Setup(x => x.DisplayAlbumAsync())
                 .Returns(() => {
-                    var taskSource = new TaskCompletionSource<System.IO.Stream>();
-                    taskSource.SetResult(new System.IO.MemoryStream());
+                    var taskSource = new TaskCompletionSource<byte[]>();
+                    taskSource.SetResult(new byte[0]);
                     this.IsDisplayedPhotoPicker = true;
                     return taskSource.Task;
                 });
