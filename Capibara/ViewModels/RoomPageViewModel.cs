@@ -24,7 +24,7 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ShowParticipantsCommand { get; }
 
-        public ReadOnlyReactiveCollection<Message> Messages { get; }
+        public ReadOnlyReactiveCollection<MessageViewModel> Messages { get; }
 
         public ReactiveProperty<string> Message { get; } = new ReactiveProperty<string>();
 
@@ -43,7 +43,7 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService, model)
         {
             this.Messages =
-                    this.Model.Messages.ToReadOnlyReactiveCollection();
+                    this.Model.Messages.ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x));
 
             // Name Property
             this.Name = this.Model

@@ -83,6 +83,7 @@
     <Compile Include="Services\IPickupPhotoService.cs" />
     <Compile Include="Forms\RoundImage.cs" />
     <Compile Include="ImageSourceExtensions.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

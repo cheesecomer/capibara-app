@@ -52,8 +52,9 @@ namespace Capibara.ViewModels
             this.Icon = new ReactiveProperty<ImageSource>()
                 .AddTo(this.Disposable);
 
+            this.Icon.Value = this.Model.IconUrl.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(this.Model.IconUrl));
             this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x =>
-                this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri($"{this.Environment.BaseUrl}{x}")));
+                this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)));
             this.Icon.Subscribe(x => this.Model.IconBase64 = Convert.ToBase64String(x.ToByteArray()));
             
             // RefreshCommand
