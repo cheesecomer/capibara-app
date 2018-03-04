@@ -82,6 +82,7 @@
     <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Services\IPickupPhotoService.cs" />
     <Compile Include="Forms\RoundImage.cs" />
+    <Compile Include="ImageSourceExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

@@ -23,11 +23,13 @@
       <StackLayout Padding="20">
         <fomrs:RoundImage
             x:Name="image"
+            Source="{Binding Icon.Value, Mode=TwoWay}"
             HasShadow="true"
             Margin="50, 20, 50, 20"
             BorderColor="#58CE91"
             BorderWidth="5"
             BackgroundColor="White"
+            Aspect="AspectFill"
             CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
             HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
             />
