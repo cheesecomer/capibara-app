@@ -209,6 +209,8 @@
     <Compile Include="KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="Effects\BorderEffect.cs" />
+    <Compile Include="Services\PickupPhotoService.cs" />
+    <Compile Include="Renderers\RoundImageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
@@ -216,6 +218,7 @@
     <Folder Include="Resources\Images.xcassets\bg_header.imageset\" />
     <Folder Include="Services\" />
     <Folder Include="Effects\" />
+    <Folder Include="Renderers\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\LottieResources\loading.json">

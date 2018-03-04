@@ -34,9 +34,9 @@ namespace Capibara.iOS
 
             AnimationViewRenderer.Init();
 
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromPatternImage(UIImage.FromBundle("bg_header"));
+            UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromBundle("bg_header"), UIBarMetrics.Default);
             UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes() { TextColor = UIColor.White });
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
 
             return base.FinishedLaunching(app, options);
         }
@@ -48,6 +48,7 @@ namespace Capibara.iOS
         {
             container.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
             container.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
+            container.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
         }
     }
 }

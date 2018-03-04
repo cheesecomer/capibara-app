@@ -55,6 +55,7 @@ namespace Capibara
             this.Container.RegisterInstance<IEnvironment>(this.Environment);
             this.Container.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
             this.Container.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
+            this.Container.RegisterInstance<IPickupPhotoService>(new PickupPhotoServiceStub());
             this.Container.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
             this.Container.RegisterTypeForNavigation<MainPage>();
@@ -86,6 +87,12 @@ namespace Capibara
         private class ProgressDialogServiceStub : IProgressDialogService
         {
             public Task DisplayAlertAsync(Task task, string message = null)
+                => throw new NotImplementedException();
+        }
+
+        private class PickupPhotoServiceStub : IPickupPhotoService
+        {
+            public Task<byte[]> DisplayAlbumAsync()
                 => throw new NotImplementedException();
         }
     }

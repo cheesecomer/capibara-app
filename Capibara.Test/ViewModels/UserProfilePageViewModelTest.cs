@@ -12,6 +12,7 @@ using Moq;
 using NUnit.Framework;
 
 using Prism.Navigation;
+using Prism.Services;
 
 namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
 {
@@ -106,6 +107,108 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             public void ItShouldShowDialog()
             {
                 Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+        }
+    }
+
+    namespace ChangePhotoCommandTest
+    {
+        [TestFixture]
+        public class WhenSuccess : ViewModelTestBase
+        {
+            private ActionSheetButton[] buttons;
+
+            [SetUp]
+            public void SetUp()
+            {
+                var pageDialogService = new Mock<IPageDialogService>();
+                pageDialogService
+                    .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
+                    .Returns((string name, IActionSheetButton[] buttons) =>
+                    {
+                        this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
+                        return Task.Run(() => { });
+                    });
+
+                var container = this.GenerateUnityContainer();
+
+                var viewModel = new UserProfilePageViewModel(pageDialogService: pageDialogService.Object);
+
+                viewModel.Model.Id = 1;
+
+                viewModel.BuildUp(container);
+
+                viewModel.ChangePhotoCommand.Execute();
+
+                while (!viewModel.RefreshCommand.CanExecute()) { };
+            }
+
+            [TestCase]
+            public void ItShouldHasFourButtons()
+            {
+                Assert.That(this.buttons?.Length, Is.EqualTo(4));
+            }
+
+            [TestCase]
+            public void ItShouldCancelIsFirstButton()
+            {
+                Assert.That(this.buttons.ElementAtOrDefault(0).Text, Is.EqualTo("キャンセル"));
+            }
+
+            [TestCase]
+            public void ItShouldDeleteIsSecondButton()
+            {
+                Assert.That(this.buttons.ElementAtOrDefault(1).Text, Is.EqualTo("削除"));
+            }
+
+            [TestCase]
+            public void ItShouldPickupIsThaadButton()
+            {
+                Assert.That(this.buttons.ElementAtOrDefault(2).Text, Is.EqualTo("アルバムから選択"));
+            }
+
+            [TestCase]
+            public void ItShouldTakeIsForthButton()
+            {
+                Assert.That(this.buttons.ElementAtOrDefault(3).Text, Is.EqualTo("カメラで撮影"));
+            }
+        }
+        [TestFixture]
+        public class WhenPickupSuccess : ViewModelTestBase
+        {
+            private ActionSheetButton[] buttons;
+
+            [SetUp]
+            public void SetUp()
+            {
+                var pageDialogService = new Mock<IPageDialogService>();
+                pageDialogService
+                    .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
+                    .Returns((string name, IActionSheetButton[] buttons) =>
+                    {
+                        this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
+                        return Task.Run(() => { });
+                    });
+
+                var container = this.GenerateUnityContainer();
+
+                var viewModel = new UserProfilePageViewModel(pageDialogService: pageDialogService.Object);
+
+                viewModel.Model.Id = 1;
+
+                viewModel.BuildUp(container);
+
+                viewModel.ChangePhotoCommand.Execute();
+
+                while (!viewModel.RefreshCommand.CanExecute()) { };
+
+                this.buttons.ElementAtOrDefault(2)?.Action?.Invoke();
+            }
+
+            [TestCase]
+            public void ItShouldShowPhotoPicker()
+            {
+                Assert.That(this.IsDisplayedPhotoPicker, Is.EqualTo(true));
             }
         }
     }

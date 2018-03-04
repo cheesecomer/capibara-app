@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Capibara.Models;
+using Capibara.ViewModels;
 
 using Xamarin.Forms;
 
@@ -14,9 +14,9 @@ namespace Capibara.Selectors
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
-            var message = item as Message;
+            var message = item as MessageViewModel;
             
-            return message.IsOwn ? this.OwnMessageTemplate : this.OthersMessageTemplate;
+            return message.IsOwn.Value ? this.OwnMessageTemplate : this.OthersMessageTemplate;
         }
     }
 }

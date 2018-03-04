@@ -38,6 +38,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
+        [Dependency]
+        public IEnvironment Environment { get; set; }
+
         [Dependency(UnityInstanceNames.CurrentUser)]
         public User CurrentUser { get; set; }
 

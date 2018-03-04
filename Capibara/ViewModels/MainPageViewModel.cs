@@ -14,6 +14,8 @@ using Prism.Services;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
+using Xamarin.Forms;
+
 namespace Capibara.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
@@ -22,6 +24,8 @@ namespace Capibara.ViewModels
             new ReactiveCollection<MenuItem>();
 
         public AsyncReactiveCommand<MenuItem> ItemTappedCommand { get; }
+
+        public ReactiveProperty<ImageSource> Icon { get; }
 
         public ReactiveProperty<string> Nickname { get; } = new ReactiveProperty<string>();
 
@@ -34,6 +38,9 @@ namespace Capibara.ViewModels
             this.MenuItems.Add(new MenuItem { Name = "プロフィール", PagePath = "NavigationPage/MyProfilePage" });
             this.MenuItems.Add(new MenuItem { Name = "設定", PagePath = "NavigationPage/SettingPage" });
 
+            this.Icon = new ReactiveProperty<ImageSource>()
+                .AddTo(this.Disposable);
+
             this.ItemTappedCommand = new AsyncReactiveCommand<MenuItem>();
             this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath, x.Parameters));
         }
@@ -45,6 +52,9 @@ namespace Capibara.ViewModels
             this.CurrentUser.ObserveProperty(x => x.Nickname).Subscribe(x => this.Nickname.Value = x);
 
             this.MenuItems[1].Parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
+            this.CurrentUser
+                .ObserveProperty(x => x.IconUrl)
+                .Subscribe(x => this.Icon.Value = this.CurrentUser.IconUrl.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)));
         }
 
         public class MenuItem

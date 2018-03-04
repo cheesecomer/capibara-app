@@ -35,6 +35,6 @@ namespace Capibara.Net.Users
         public string Biography => this.user.Biography;
 
         [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
-        public string IconBase64 => this.user.IconBase64;
+        public string IconBase64 => $"data:image/png;base64,{this.user.IconBase64}";
     }
 }
