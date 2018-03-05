@@ -211,6 +211,7 @@
     <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
     <Compile Include="Renderers\RoundImageRenderer.cs" />
+    <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

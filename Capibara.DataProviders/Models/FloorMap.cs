@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -24,10 +25,19 @@ namespace Capibara.Models
             try
             {
                 var response = await request.Execute();
-                
-                this.Rooms.Clear();
 
-                response.Rooms?.ForEach(x => this.Rooms.Add(x));
+                //this.Rooms.Clear();
+                this.Rooms.Any(y => y.Id == response.Rooms[0].Id);
+                response.Rooms?.ForEach(x => {
+                    if (this.Rooms.Any(y => y.Id == x.Id))
+                    {
+                        this.Rooms.First(y => y.Id == x.Id).Restore(x);
+                    }
+                    else
+                    {
+                        this.Rooms.Add(x);
+                    }
+                });
 
                 this.RefreshSuccess?.Invoke(this, null);
             }
