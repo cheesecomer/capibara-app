@@ -88,7 +88,7 @@ namespace Capibara.Models
 
                 this.Restore(result);
 
-                result.Messages?.Where(x => this.Messages.All(y => y.Id != x.Id) )?.ForEach(x => this.Messages.Add(x.BuildUp(this.Container)));
+                result.Messages?.Where(x => this.Messages.All(y => y.Id != x.Id))?.ForEach(x => this.Messages.Insert(0, x.BuildUp(this.Container)));
 
                 this.RefreshSuccess?.Invoke(this, null);
             }
@@ -155,7 +155,7 @@ namespace Capibara.Models
         {
             if (message.Id != 0)
             {
-                this.Messages.Add(message.BuildUp(this.Container));
+                this.Messages.Insert(0, message.BuildUp(this.Container));
             }
             else
             {

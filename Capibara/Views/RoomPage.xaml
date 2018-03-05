@@ -5,7 +5,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:selectors="clr-namespace:Capibara.Selectors;assembly=Capibara"
-    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.RoomPage"
     Title="{Binding Name.Value}"
@@ -21,7 +21,7 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ownMessageTemplate">
                 <ViewCell>
-                    <Grid Padding="75, 10, 10, 10">
+                    <Grid Padding="75, 10, 10, 10" Rotation="180" RotationY="180">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
@@ -35,7 +35,7 @@
             </DataTemplate>
             <DataTemplate x:Key="othersMessageTemplate">
                 <ViewCell>
-                    <Grid Padding="10, 10, 50, 10">
+                    <Grid Padding="10, 10, 50, 10" Rotation="180" RotationY="180">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="5" />
@@ -46,7 +46,7 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <fomrs:RoundImage
+                        <forms:RoundImage
                             Source="{Binding Sender.Value.Icon.Value}"
                             HasShadow="true"
                             BorderColor="#58CE91"
@@ -76,7 +76,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <ListView
+        <forms:ExtendedListView
             x:Name="ListView"
             Grid.Row="0"
             HasUnevenRows="true"
@@ -90,7 +90,7 @@
             <ListView.Footer>
                 <BoxView HeightRequest="0" />
             </ListView.Footer>
-        </ListView>
+        </forms:ExtendedListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
