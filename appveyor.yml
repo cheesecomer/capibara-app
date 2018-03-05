@@ -30,7 +30,7 @@ after_test:
       -targetargs:"Capibara.Test/bin/Debug/Capibara.Test.dll" `
       -target:"nunit3-console.exe" `
       -register:user `
-      -filter:"+[Capibara]* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment*" `
+      -filter:"+[Capibara]* -[Capibara]Capibara.Forms.* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment*" `
       -output:"coverage.xml" `
       -mergeoutput
 
