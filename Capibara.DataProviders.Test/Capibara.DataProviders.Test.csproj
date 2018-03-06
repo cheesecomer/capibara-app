@@ -97,8 +97,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\FloorMapTest.cs" />
-    <Compile Include="Models\RoomComparer.cs" />
     <Compile Include="Models\RoomTest.cs" />
     <Compile Include="Models\SessionTest.cs" />
     <Compile Include="Net\HttpContentHandler.cs" />

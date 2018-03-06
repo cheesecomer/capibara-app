@@ -67,6 +67,7 @@ namespace Capibara
             this.Container.RegisterTypeForNavigation<RoomPage>();
             this.Container.RegisterTypeForNavigation<ParticipantsPage>();
             this.Container.RegisterTypeForNavigation<SettingPage>();
+            this.Container.RegisterTypeForNavigation<BlockUsersPage>();
             this.Container.RegisterTypeForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
             this.Container.RegisterTypeForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
             this.Container.RegisterTypeForNavigationOnIdiom<EditProfilePage, UserProfilePageViewModel>();
@@ -86,7 +87,7 @@ namespace Capibara
 
         private class ProgressDialogServiceStub : IProgressDialogService
         {
-            public Task DisplayAlertAsync(Task task, string message = null)
+            public Task DisplayProgressAsync(Task task, string message = null)
                 => throw new NotImplementedException();
         }
 

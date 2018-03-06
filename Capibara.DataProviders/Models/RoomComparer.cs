@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Capibara.Models;
-
-namespace Capibara.Test.Models
+namespace Capibara.Models
 {
     public class RoomComparer : IEqualityComparer<Room>
     {

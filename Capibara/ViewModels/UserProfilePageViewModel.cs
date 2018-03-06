@@ -59,7 +59,7 @@ namespace Capibara.ViewModels
             
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Refresh()));
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
             // EditCommand
             this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -70,7 +70,7 @@ namespace Capibara.ViewModels
 
             // CommitCommand
             this.CommitCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(this.Model.Commit()));
+            this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
 
             // ChangePhotoCommand
             this.ChangePhotoCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

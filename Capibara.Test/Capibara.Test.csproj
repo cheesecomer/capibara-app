@@ -151,6 +151,7 @@
     <Compile Include="Converters\DoubleMultiplierConverterTest.cs" />
     <Compile Include="Converters\FloatMultiplierConverterTest.cs" />
     <Compile Include="ViewModels\UserProfilePageViewModelTest.cs" />
+    <Compile Include="ViewModels\BlockUsersPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

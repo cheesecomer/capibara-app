@@ -39,7 +39,6 @@
     <Compile Include="Net\Rooms\IndexResponse.cs" />
     <Compile Include="Net\Sessions\CreateRequest.cs" />
     <Compile Include="Net\Sessions\CreateResponse.cs" />
-    <Compile Include="Models\FloorMap.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\Error.cs" />
@@ -61,6 +60,7 @@
     <Compile Include="Net\Blocks\CreateRequest.cs" />
     <Compile Include="Net\Blocks\IndexResponse.cs" />
     <Compile Include="Net\Blocks\DestroyRequest.cs" />
+    <Compile Include="Models\RoomComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

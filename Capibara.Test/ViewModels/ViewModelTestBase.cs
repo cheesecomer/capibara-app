@@ -19,7 +19,7 @@ namespace Capibara.Test.ViewModels
 
             var progressDialogService = new Mock<IProgressDialogService>();
             progressDialogService
-                .Setup(x => x.DisplayAlertAsync(It.IsAny<Task>(), It.IsAny<string>()))
+                .Setup(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()))
                 .Returns<Task, string>((task, message) => {
                     this.IsDisplayedProgressDialog = true;
                     return task;
