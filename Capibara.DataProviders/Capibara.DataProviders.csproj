@@ -57,6 +57,10 @@
     <Compile Include="Net\Users\ShowRequest.cs" />
     <Compile Include="Net\Users\UpdateRequest.cs" />
     <Compile Include="Models\Block.cs" />
+    <Compile Include="Net\Blocks\IndexRequest.cs" />
+    <Compile Include="Net\Blocks\CreateRequest.cs" />
+    <Compile Include="Net\Blocks\IndexResponse.cs" />
+    <Compile Include="Net\Blocks\DestroyRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

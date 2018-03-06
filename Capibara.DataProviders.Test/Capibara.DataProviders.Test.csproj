@@ -119,6 +119,9 @@
     <Compile Include="Net\Users\ShowRequestTest.cs" />
     <Compile Include="Net\Users\UpdateRequestTest.cs" />
     <Compile Include="Models\BlockTest.cs" />
+    <Compile Include="Net\Blocks\IndexRequestTest.cs" />
+    <Compile Include="Net\Blocks\CreateRequestTest.cs" />
+    <Compile Include="Net\Blocks\DestroyRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />

@@ -13,7 +13,7 @@ using Microsoft.Practices.Unity;
 
 namespace Capibara.Net
 {
-    public abstract class RequestBase<TResponse> : IRequest<TResponse> where TResponse : class, new()
+    public abstract class RequestBaseCore
     {
         /// <summary>
         /// HTTP メソッドを取得します。
@@ -78,11 +78,7 @@ namespace Capibara.Net
         [JsonIgnore]
         public virtual string ContentType => string.Empty;
 
-        /// <summary>
-        /// Execute this instance.
-        /// </summary>
-        /// <returns>The execute.</returns>
-        public async Task<TResponse> Execute()
+        internal async Task<HttpResponseMessage> ExecuteInternal()
         {
             if (!this.Application.HasPlatformInitializer)
             {
@@ -109,6 +105,7 @@ namespace Capibara.Net
             }
 
             var responseMessage = await this.RestClient.SendAsync(requestMessage);
+            requestMessage.Dispose();
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
@@ -124,16 +121,53 @@ namespace Capibara.Net
                 throw new HttpUnauthorizedException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
             }
 
-            using (var stream = await responseMessage.Content.ReadAsStreamAsync())
-            using (var reader = new StreamReader(stream))
-            {
-                var response = reader.ReadToEnd();
-                if (response.IsNullOrEmpty())
-                {
-                    return new TResponse().BuildUp(this.Container);
-                }
+            return responseMessage;
+        }
+    }
 
-                return JsonConvert.DeserializeObject<TResponse>(response).BuildUp(this.Container);
+    public abstract class RequestBase : RequestBaseCore, IRequest
+    {
+        /// <summary>
+        /// Execute this instance.
+        /// </summary>
+        /// <returns>The execute.</returns>
+        public async Task Execute()
+        {
+            (await this.ExecuteInternal())?.Dispose();
+        }
+    }
+
+    public abstract class RequestBase<TResponse> : RequestBaseCore, IRequest<TResponse> where TResponse : class, new()
+    {
+        /// <summary>
+        /// Execute this instance.
+        /// </summary>
+        /// <returns>The execute.</returns>
+        public async Task<TResponse> Execute()
+        {
+            var responseMessage = await this.ExecuteInternal();
+            if (responseMessage == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var stream = await responseMessage.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                {
+                    var response = reader.ReadToEnd();
+                    if (response.IsNullOrEmpty())
+                    {
+                        return new TResponse().BuildUp(this.Container);
+                    }
+
+                    return JsonConvert.DeserializeObject<TResponse>(response).BuildUp(this.Container);
+                }
+            }
+            finally
+            {
+                responseMessage.Dispose();
             }
         }
     }
