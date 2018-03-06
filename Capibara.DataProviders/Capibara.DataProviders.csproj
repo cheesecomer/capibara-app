@@ -56,6 +56,7 @@
     <Compile Include="Net\Users\CreateRequest.cs" />
     <Compile Include="Net\Users\ShowRequest.cs" />
     <Compile Include="Net\Users\UpdateRequest.cs" />
+    <Compile Include="Models\Block.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -67,6 +68,7 @@
     <Folder Include="Net\Sessions\" />
     <Folder Include="Net\Channels\" />
     <Folder Include="Net\Users\" />
+    <Folder Include="Net\Blocks\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
