@@ -24,6 +24,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<UserProfilePageViewModel> Sender { get; }
 
+        public AsyncReactiveCommand ShowProfileCommand { get; }
+
         public MessageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -55,6 +57,15 @@ namespace Capibara.ViewModels
                 .ObserveProperty(x => x.IsOwn)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
+
+            // ShowProfileCommand
+            this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.ShowProfileCommand.Subscribe(() =>
+            {
+                var parameters = new NavigationParameters();
+                parameters.Add(ParameterNames.Model, this.Sender.Value.Model);
+                return this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+            });
         }
     }
 }
