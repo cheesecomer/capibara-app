@@ -287,4 +287,52 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             }
         }
     }
+
+    namespace BlockCommandTest
+    {
+        [TestFixture]
+        public class WhenSuccess : ViewModelTestBase
+        {
+            private UserProfilePageViewModel ViewModel;
+
+            [SetUp]
+            public void SetUp()
+            {
+                var container = this.GenerateUnityContainer();
+                var navigationService = new Mock<INavigationService>();
+
+                this.ViewModel = new UserProfilePageViewModel(navigationService.Object);
+
+                this.ViewModel.Model.Id = 1;
+
+                this.ViewModel.BuildUp(container);
+
+                var blockTaskSource = new TaskCompletionSource<bool>();
+                this.ViewModel.Model.BlockSuccess += (sender, e) => blockTaskSource.SetResult(true);
+                this.ViewModel.Model.BlockFail += (sender, e) => blockTaskSource.SetResult(false);
+
+                this.ViewModel.BlockCommand.Execute();
+
+                blockTaskSource.Task.Wait();
+            }
+
+            [TestCase]
+            public void ItShouldShowDialog()
+            {
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldCanNotExecute()
+            {
+                Assert.That(this.ViewModel.BlockCommand.CanExecute(), Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldIsBlocked()
+            {
+                Assert.That(this.ViewModel.IsBlock.Value, Is.EqualTo(true));
+            }
+        }
+    }
 }

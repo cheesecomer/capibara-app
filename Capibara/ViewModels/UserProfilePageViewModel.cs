@@ -24,11 +24,15 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> Icon { get; }
 
+        public ReactiveProperty<bool> IsBlock { get; }
+
         public AsyncReactiveCommand RefreshCommand { get; }
 
         public AsyncReactiveCommand EditCommand { get; }
 
         public AsyncReactiveCommand CommitCommand { get; }
+
+        public AsyncReactiveCommand BlockCommand { get; }
 
         public AsyncReactiveCommand ChangePhotoCommand { get; }
 
@@ -56,6 +60,10 @@ namespace Capibara.ViewModels
             this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x =>
                 this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)));
             this.Icon.Subscribe(x => this.Model.IconBase64 = Convert.ToBase64String(x.ToByteArray()));
+
+            this.IsBlock = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.IsBlock)
+                .AddTo(this.Disposable);
             
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -92,6 +100,14 @@ namespace Capibara.ViewModels
                 var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 await this.NavigationService.GoBackAsync(parameters);
             };
+
+            // BlockCommand
+            this.BlockCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.BlockCommand = this.Model.PropertyChangedAsObservable()
+                .Select(x => !this.Model.IsBlock)
+                .ToAsyncReactiveCommand()
+                .AddTo(this.Disposable);
+            this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
         }
 
         protected override void OnContainerChanged()
