@@ -14,6 +14,8 @@ namespace Capibara.Net.Blocks
 
         public override string[] Paths { get; } = new string[] { "blocks" };
 
+        public override bool NeedAuthentication { get; } = true;
+
         [JsonProperty("target_id")]
         public int TargetId => this.target.Id;
 

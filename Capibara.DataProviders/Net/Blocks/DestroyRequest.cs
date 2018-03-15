@@ -14,6 +14,8 @@ namespace Capibara.Net.Blocks
 
         public override string[] Paths => new string[] { "blocks", $"{block.Id}" };
 
+        public override bool NeedAuthentication { get; } = true;
+
         public override string StringContent
             => JsonConvert.SerializeObject(this);
 
