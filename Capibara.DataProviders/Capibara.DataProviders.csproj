@@ -62,6 +62,8 @@
     <Compile Include="Net\Blocks\DestroyRequest.cs" />
     <Compile Include="Models\RoomComparer.cs" />
     <Compile Include="Models\Information.cs" />
+    <Compile Include="Net\Informations\IndexRequest.cs" />
+    <Compile Include="Net\Informations\IndexResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -74,6 +76,7 @@
     <Folder Include="Net\Channels\" />
     <Folder Include="Net\Users\" />
     <Folder Include="Net\Blocks\" />
+    <Folder Include="Net\Informations\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
