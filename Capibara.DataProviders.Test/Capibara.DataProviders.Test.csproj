@@ -120,6 +120,7 @@
     <Compile Include="Net\Blocks\IndexRequestTest.cs" />
     <Compile Include="Net\Blocks\CreateRequestTest.cs" />
     <Compile Include="Net\Blocks\DestroyRequestTest.cs" />
+    <Compile Include="Models\InformationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />

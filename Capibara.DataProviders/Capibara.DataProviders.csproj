@@ -61,6 +61,7 @@
     <Compile Include="Net\Blocks\IndexResponse.cs" />
     <Compile Include="Net\Blocks\DestroyRequest.cs" />
     <Compile Include="Models\RoomComparer.cs" />
+    <Compile Include="Models\Information.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
