@@ -89,6 +89,7 @@
     <Compile Include="Views\BlockUsersPage.xaml.cs">
       <DependentUpon>BlockUsersPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\InformationsPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

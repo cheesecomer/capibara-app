@@ -153,6 +153,7 @@
     <Compile Include="ViewModels\UserProfilePageViewModelTest.cs" />
     <Compile Include="ViewModels\BlockUsersPageViewModelTest.cs" />
     <Compile Include="ViewModels\MessageViewModelTest.cs" />
+    <Compile Include="ViewModels\InformationsPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />
