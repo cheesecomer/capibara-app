@@ -78,7 +78,7 @@ namespace Capibara.ViewModels
 
             // ConnectCommand
             this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayAlertAsync(ConnectCommandExecute()));
+            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(ConnectCommandExecute()));
 
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

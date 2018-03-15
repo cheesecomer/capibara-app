@@ -58,6 +58,13 @@
                             VerticalOptions="Start"
                             CornerRadius="30"
                             />
+                        <Button
+                            Grid.RowSpan="3"
+                            HeightRequest="60"
+                            VerticalOptions="Start"
+                            WidthRequest="60"
+                            Command="{Binding ShowProfileCommand}"
+                            />
                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
                         <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" CornerRadius="5" HasShadow="false">
                             <Label Text="{Binding Content.Value}" TextColor="#444" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using BlockRequest = Capibara.Net.Blocks.CreateRequest;
 using Capibara.Net.Users;
 
 using Microsoft.Practices.Unity;
@@ -21,6 +22,8 @@ namespace Capibara.Models
 
         private string iconBase64;
 
+        private bool isBlock;
+
         public event EventHandler SignUpSuccess;
 
         public event EventHandler<Exception> SignUpFail;
@@ -32,6 +35,10 @@ namespace Capibara.Models
         public event EventHandler CommitSuccess;
 
         public event EventHandler<Exception> CommitFail;
+
+        public event EventHandler BlockSuccess;
+
+        public event EventHandler<Exception> BlockFail;
 
         public int Id
         {
@@ -64,6 +71,13 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.iconBase64, value);
         }
 
+        [JsonProperty("is_block")]
+        public bool IsBlock
+        {
+            get => this.isBlock;
+            set => this.SetProperty(ref this.isBlock, value);
+        }
+
         public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
         public override void Restore(User model)
@@ -74,6 +88,7 @@ namespace Capibara.Models
             this.Nickname = model.Nickname;
             this.Biography = model.Biography;
             this.IconUrl = model.IconUrl;
+            this.IsBlock = model.IsBlock;
         }
 
         /// <summary>
@@ -168,6 +183,31 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.CommitFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザーをブロックします。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public async Task<bool> Block()
+        {
+            var request = new BlockRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.IsBlock = true;
+
+                this.BlockSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.BlockFail?.Invoke(this, e);
                 return false;
             }
         }

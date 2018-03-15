@@ -25,7 +25,7 @@ namespace Capibara.Test.Models.UserTest
             [SetUp]
             public void Setup()
             {
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\" }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
                 this.Actual = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -46,6 +46,12 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIconUrlWithExpected()
             {
                 Assert.That(this.Actual.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
             }
         }
 
@@ -83,7 +89,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Actual = new User { Id = 99999 };
-            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!" });
+            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true });
         }
 
         [TestCase]
@@ -108,6 +114,12 @@ namespace Capibara.Test.Models.UserTest
         public void ItShouldIconUrlWithExpected()
         {
             Assert.That(this.Actual.IconUrl, Is.EqualTo("...!!!"));
+        }
+
+        [TestCase]
+        public void ItShouldIsBlockWithExpected()
+        {
+            Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
         }
     }
 
@@ -158,7 +170,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\" }";
+            => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
 
             [TestCase]
             public void IsShouldNicknameWithExpect()
@@ -183,6 +195,12 @@ namespace Capibara.Test.Models.UserTest
             {
                 Assert.That(this.Actual.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
             }
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+            }
         }
 
         [TestFixture]
@@ -193,7 +211,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\" }";
+            => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
 
             protected override bool IsOWn => true;
 
@@ -631,7 +649,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignUp);
+                Assert.DoesNotThrowAsync(this.Actual.Commit);
             }
         }
 
@@ -650,7 +668,136 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void IsShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignUp);
+                Assert.DoesNotThrowAsync(this.Actual.Commit);
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception RestException => new WebException();
+        }
+    }
+
+    namespace BlockTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Actual { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedExecute { get; }
+
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Actual.BlockFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.BlockSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                if (this.NeedExecute)
+                    this.Actual.Block().Wait();
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Actual.IsBlock, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+                => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
+
+            [TestCase]
+            public void IsShouldNotException()
+            {
+                Assert.DoesNotThrowAsync(this.Actual.Block);
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+                => "{ \"message\": \"booo...\"}";
+
+            [TestCase]
+            public void IsShouldNotException()
+            {
+                Assert.DoesNotThrowAsync(this.Actual.Block);
             }
         }
 

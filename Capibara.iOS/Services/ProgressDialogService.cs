@@ -15,7 +15,7 @@ namespace Capibara.iOS.Services
 {
     public class ProgressDialogService : IProgressDialogService
     {
-        public async Task DisplayAlertAsync(Task task, string message = null)
+        public async Task DisplayProgressAsync(Task task, string message = null)
         {
             var window = UIApplication.SharedApplication.KeyWindow;
             var rootViewController = window.RootViewController;

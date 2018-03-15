@@ -6,6 +6,6 @@ namespace Capibara.Services
 {
     public interface IProgressDialogService
     {
-        Task DisplayAlertAsync(Task task, string message = null);
+        Task DisplayProgressAsync(Task task, string message = null);
     }
 }
