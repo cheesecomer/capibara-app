@@ -17,24 +17,10 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
         [TestFixture]
         public class WhenOther : ViewModelTestBase
         {
-            protected string NavigatePageName { get; private set; }
-
-            protected NavigationParameters NavigationParameters { get; private set; }
-
             [SetUp]
             public void SetUp()
             {
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.NavigatePageName = name;
-                        this.NavigationParameters = parameters;
-                        return Task.Run(() => { });
-                    });
-
-                var viewModel = new ParticipantsPageViewModel(navigationService.Object).BuildUp(this.GenerateUnityContainer());
+                var viewModel = new ParticipantsPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 viewModel.ItemTappedCommand.Execute(new User { Id = 1 });
 
@@ -63,24 +49,10 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
         [TestFixture]
         public class WhenOwn : ViewModelTestBase
         {
-            protected string NavigatePageName { get; private set; }
-
-            protected NavigationParameters NavigationParameters { get; private set; }
-
             [SetUp]
             public void SetUp()
             {
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.NavigatePageName = name;
-                        this.NavigationParameters = parameters;
-                        return Task.Run(() => { });
-                    });
-
-                var viewModel = new ParticipantsPageViewModel(navigationService.Object).BuildUp(this.GenerateUnityContainer());
+                var viewModel = new ParticipantsPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 this.IsolatedStorage.UserId = 1;
 

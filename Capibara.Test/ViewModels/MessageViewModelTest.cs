@@ -22,10 +22,6 @@ namespace Capibara.Test.ViewModels.MessageViewModelTest
     {
         private Message model;
 
-        protected string NavigatePageName { get; private set; }
-
-        protected NavigationParameters NavigationParameters { get; private set; }
-
         [SetUp]
         public void SetUp()
         {
@@ -33,17 +29,7 @@ namespace Capibara.Test.ViewModels.MessageViewModelTest
 
             this.model = new Message { Sender = new User().BuildUp(container) }.BuildUp(container);
 
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    this.NavigationParameters = parameters;
-                    return Task.Run(() => { });
-                });
-
-            var viewModel = new MessageViewModel(navigationService.Object, model: this.model);
+            var viewModel = new MessageViewModel(this.NavigationService, model: this.model);
             viewModel.BuildUp(container);
 
             viewModel.ShowProfileCommand.Execute();

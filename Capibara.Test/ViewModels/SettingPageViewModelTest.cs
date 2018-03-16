@@ -23,8 +23,6 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
     {
         private string pagePath;
 
-        protected string NavigatePageName { get; private set; }
-
         public ItemTappedCommandTest(string pagePath)
         {
             this.pagePath = pagePath;
@@ -35,18 +33,7 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
         {
             var container = this.GenerateUnityContainer();
 
-            var navigateTaskSource = new TaskCompletionSource<bool>();
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    navigateTaskSource.SetResult(true);
-                });
-
-            var viewModel = new SettingPageViewModel(navigationService.Object);
+            var viewModel = new SettingPageViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new SettingItem { PagePath = this.pagePath });
 

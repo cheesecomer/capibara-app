@@ -31,8 +31,6 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
     {
         public abstract class ExecuteTestBase : ViewModelTestBase
         {
-            protected string navigatePageName;
-
             protected virtual bool NeedSignUpWait { get; } = true;
 
             protected SignUpPageViewModel ViewModel { get; private set; }
@@ -42,15 +40,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
 
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.navigatePageName = name;
-                    });
-
-                this.ViewModel = new SignUpPageViewModel(navigationService.Object).BuildUp(container);
+                this.ViewModel = new SignUpPageViewModel(this.NavigationService).BuildUp(container);
                 this.ViewModel.Nickname.Value = "Foo.Bar";
 
                 this.ViewModel.SignUpCommand.Execute();
@@ -84,7 +74,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             [TestCase]
             public void ItShouldNavigateToFloorMap()
             {
-                Assert.That(this.navigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
             }
 
             [TestCase]
@@ -102,7 +92,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             [TestCase]
             public void ItShouldNotNavigate()
             {
-                Assert.That(this.navigatePageName, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
@@ -122,25 +112,10 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
     [TestFixture]
     public class SignInCommandTest : ViewModelTestBase
     {
-        protected string NavigatePageName { get; private set; }
-
         [SetUp]
         public void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-
-            var navigateTaskSource = new TaskCompletionSource<bool>();
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    navigateTaskSource.SetResult(true);
-                });
-
-            var viewModel = new SignUpPageViewModel(navigationService.Object);
+            var viewModel = new SignUpPageViewModel(this.NavigationService);
 
             viewModel.SignInCommand.Execute();
 

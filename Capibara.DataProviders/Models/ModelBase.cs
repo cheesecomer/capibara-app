@@ -1,6 +1,7 @@
 ﻿using System;
 
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 using Prism.Mvvm;
 

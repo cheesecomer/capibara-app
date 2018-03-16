@@ -6,14 +6,14 @@ using Capibara.Services;
 using Capibara.ViewModels;
 using Capibara.Views;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
+using Prism;
 using Prism.Unity;
+using Prism.Ioc;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
-using UnityDependency = Microsoft.Practices.Unity.DependencyAttribute;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Capibara
@@ -35,42 +35,44 @@ namespace Capibara
         /// <value>The environment.</value>
         public IEnvironment Environment { get; } = new EnvironmentLocal();
 
-        [UnityDependency]
-        public IIsolatedStorage IsolatedStorage { get; set; }
-
         protected override void OnInitialized()
         {
             this.InitializeComponent();
 
-            this.BuildUp(this.Container);
-
             this.NavigationService.NavigateAsync("SplashPage");
         }
 
-        protected override void RegisterTypes()
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            this.Container.RegisterInstance<ICapibaraApplication>(this);
-            this.Container.RegisterInstance<IUnityContainer>(this.Container);
-            this.Container.RegisterInstance<IRestClient>(new RestClient());
-            this.Container.RegisterInstance<IEnvironment>(this.Environment);
-            this.Container.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
-            this.Container.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
-            this.Container.RegisterInstance<IPickupPhotoService>(new PickupPhotoServiceStub());
-            this.Container.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
+            containerRegistry.RegisterInstance<ICapibaraApplication>(this);
+            containerRegistry.RegisterInstance<IContainerRegistry>(containerRegistry);
+            containerRegistry.RegisterInstance<IRestClient>(new RestClient());
+            containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
+            containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
-            this.Container.RegisterTypeForNavigation<MainPage>();
-            this.Container.RegisterTypeForNavigation<NavigationPage>();
-            this.Container.RegisterTypeForNavigation<SplashPage>();
-            this.Container.RegisterTypeForNavigation<SignInPage>();
-            this.Container.RegisterTypeForNavigation<SignUpPage>();
-            this.Container.RegisterTypeForNavigation<FloorMapPage>();
-            this.Container.RegisterTypeForNavigation<RoomPage>();
-            this.Container.RegisterTypeForNavigation<ParticipantsPage>();
-            this.Container.RegisterTypeForNavigation<SettingPage>();
-            this.Container.RegisterTypeForNavigation<BlockUsersPage>();
-            this.Container.RegisterTypeForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
-            this.Container.RegisterTypeForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
-            this.Container.RegisterTypeForNavigationOnIdiom<EditProfilePage, UserProfilePageViewModel>();
+            if (this.Container.Resolve<IIsolatedStorage>() == null)
+                containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
+            
+            if (this.Container.Resolve<IProgressDialogService>() == null)
+                containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
+
+            if (this.Container.Resolve<IPickupPhotoService>() == null)
+                containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoServiceStub());
+
+            containerRegistry.RegisterForNavigation<MainPage>();
+            containerRegistry.RegisterForNavigation<NavigationPage>();
+            containerRegistry.RegisterForNavigation<SplashPage>();
+            containerRegistry.RegisterForNavigation<SignInPage>();
+            containerRegistry.RegisterForNavigation<SignUpPage>();
+            containerRegistry.RegisterForNavigation<FloorMapPage>();
+            containerRegistry.RegisterForNavigation<RoomPage>();
+            containerRegistry.RegisterForNavigation<ParticipantsPage>();
+            containerRegistry.RegisterForNavigation<SettingPage>();
+            containerRegistry.RegisterForNavigation<BlockUsersPage>();
+            containerRegistry.RegisterForNavigation<InformationsPage>();
+            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserProfilePageViewModel>();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage

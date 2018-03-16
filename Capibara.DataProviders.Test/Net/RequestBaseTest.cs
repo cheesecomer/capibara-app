@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.IO;
 
 using Moq;
-using Microsoft.Practices.Unity;
+using Unity;
 using NUnit.Framework;
 
 using Capibara.Net;

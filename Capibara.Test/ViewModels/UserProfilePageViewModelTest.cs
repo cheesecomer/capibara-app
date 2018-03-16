@@ -216,24 +216,10 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
     [TestFixture]
     public class EditCommandTest : ViewModelTestBase
     {
-        protected string NavigatePageName { get; private set; }
-
-        protected NavigationParameters NavigationParameters { get; private set; }
-
         [SetUp]
         public void SetUp()
         {
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    this.NavigationParameters = parameters;
-                    return Task.Run(() => { });
-                });
-
-            var viewModel = new UserProfilePageViewModel(navigationService.Object);
+            var viewModel = new UserProfilePageViewModel(this.NavigationService);
 
             viewModel.EditCommand.Execute();
 
@@ -268,8 +254,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-                var navigationService = new Mock<INavigationService>();
-                var viewModel = new UserProfilePageViewModel(navigationService.Object);
+                var viewModel = new UserProfilePageViewModel(this.NavigationService);
 
                 viewModel.Model.Id = 1;
 
@@ -299,9 +284,8 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-                var navigationService = new Mock<INavigationService>();
 
-                this.ViewModel = new UserProfilePageViewModel(navigationService.Object);
+                this.ViewModel = new UserProfilePageViewModel(this.NavigationService);
 
                 this.ViewModel.Model.Id = 1;
 

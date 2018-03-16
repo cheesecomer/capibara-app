@@ -103,25 +103,12 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            protected string NavigatePageName { get; private set; }
-
             protected bool IsShowDialog { get; private set; }
 
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.NavigatePageName = name;
-                        return Task.Run(() => { });
-                    });
-
 
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService
@@ -130,7 +117,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
                     .Callback(() => this.IsShowDialog = true);
 
                 var viewModel = new FloorMapPageViewModel(
-                    navigationService.Object,
+                    this.NavigationService,
                     pageDialogService.Object);
 
                 viewModel.BuildUp(container);

@@ -4,7 +4,7 @@ using Capibara.Models;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using Moq;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace Capibara.Test.Models.BlockTest
 {

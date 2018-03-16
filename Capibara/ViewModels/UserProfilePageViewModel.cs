@@ -14,6 +14,8 @@ using Reactive.Bindings.Extensions;
 
 using Xamarin.Forms;
 
+using UnityDependency = Unity.Attributes.DependencyAttribute;
+
 namespace Capibara.ViewModels
 {
     public class UserProfilePageViewModel : ViewModelBase<User>
@@ -36,7 +38,7 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ChangePhotoCommand { get; }
 
-        [Microsoft.Practices.Unity.Dependency]
+        [UnityDependency]
         public IPickupPhotoService PickupPhotoService { get; set; }
 
         public UserProfilePageViewModel(

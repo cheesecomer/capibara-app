@@ -8,7 +8,7 @@ using Capibara.Models;
 using Capibara.Net;
 
 using Moq;
-using Microsoft.Practices.Unity;
+using Unity;
 using NUnit.Framework;
 using Newtonsoft.Json;
 

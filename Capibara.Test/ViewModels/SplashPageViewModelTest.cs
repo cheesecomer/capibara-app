@@ -79,23 +79,12 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
         {
             protected abstract string AccessToken { get; }
 
-            protected string NavigatePageName { get; private set; }
-
             protected SplashPageViewModel Actual { get; private set; }
 
             [SetUp]
             public void SetUp()
             {
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.NavigatePageName = name;
-                        return Task.Run(() => { });
-                    });
-
-                this.Actual = new SplashPageViewModel(navigationService.Object).BuildUp(this.GenerateUnityContainer());
+                this.Actual = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = this.AccessToken;

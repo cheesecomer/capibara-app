@@ -9,7 +9,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 using Newtonsoft.Json;
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 namespace Capibara.Net
 {

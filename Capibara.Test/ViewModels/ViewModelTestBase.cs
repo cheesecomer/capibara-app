@@ -3,15 +3,43 @@ using System.Threading.Tasks;
 
 using Capibara.Services;
 
-using Microsoft.Practices.Unity;
+using Unity;
 using Moq;
+
+using Prism.Navigation;
+
+using NUnit.Framework;
 namespace Capibara.Test.ViewModels
 {
     public abstract class ViewModelTestBase : TestFixtureBase
     {
+        protected string NavigatePageName { get; private set; }
+
+        protected NavigationParameters NavigationParameters { get; private set; }
+
+        protected INavigationService NavigationService { get; private set; }
+
         protected bool IsDisplayedProgressDialog { get; private set; }
 
         protected bool IsDisplayedPhotoPicker { get; private set; }
+
+        [SetUp]
+        public void Initialize()
+        {
+            var navigateTaskSource = new TaskCompletionSource<bool>();
+            var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
+            navigationServiceMock
+                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
+                .Returns(navigateTaskSource.Task)
+                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
+                {
+                    this.NavigatePageName = name;
+                    this.NavigationParameters = parameters;
+                    navigateTaskSource.SetResult(true);
+                });
+
+            this.NavigationService = navigationServiceMock.Object;
+        }
 
         public override IUnityContainer GenerateUnityContainer()
         {
