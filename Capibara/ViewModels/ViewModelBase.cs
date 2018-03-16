@@ -3,7 +3,8 @@
 using Capibara.Services;
 using Capibara.Models;
 
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 using Prism.Mvvm;
 using Prism.Navigation;

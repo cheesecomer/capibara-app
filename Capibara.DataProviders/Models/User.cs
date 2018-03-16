@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using BlockRequest = Capibara.Net.Blocks.CreateRequest;
 using Capibara.Net.Users;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Newtonsoft.Json;
 

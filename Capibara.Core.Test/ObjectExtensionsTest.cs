@@ -2,7 +2,7 @@
 
 using NUnit.Framework;
 
-using Microsoft.Practices.Unity;
+using Unity;
 namespace Capibara.Test
 {
     [TestFixture]

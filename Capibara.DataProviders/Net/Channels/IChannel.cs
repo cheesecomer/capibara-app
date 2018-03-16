@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 namespace Capibara.Net.Channels
 {

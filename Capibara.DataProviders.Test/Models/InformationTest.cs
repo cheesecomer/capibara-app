@@ -6,14 +6,14 @@ using Newtonsoft.Json;
 using Moq;
 using Unity;
 
-namespace Capibara.Test.Models.BlockTest
+namespace Capibara.Test.Models.InformationTest
 {
     namespace DeserializeTest
     {
         [TestFixture]
         public class WhenSuccess
         {
-            private Block actual;
+            private Information actual;
 
             [SetUp]
             public void Setup()
@@ -27,8 +27,8 @@ namespace Capibara.Test.Models.BlockTest
                 container.RegisterInstance<IUnityContainer>(container);
                 container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
 
-                var json = "{ \"target\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999 }";
-                this.actual = JsonConvert.DeserializeObject<Block>(json);
+                var json = "{ \"id\": 99999, \"title\": \"Title!!!\", \"message\": \"Message!!!!\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\"}";
+                this.actual = JsonConvert.DeserializeObject<Information>(json);
 
                 this.actual.BuildUp(container);
             }
@@ -40,9 +40,21 @@ namespace Capibara.Test.Models.BlockTest
             }
 
             [TestCase]
-            public void ItShouldSenderWithExpected()
+            public void ItShouldMessageWithExpected()
             {
-                Assert.That(this.actual.Target, Is.EqualTo(new User { Id = 10, Nickname = "ABC" }).Using(new UserComparer()));
+                Assert.That(this.actual.Message, Is.EqualTo("Message!!!!"));
+            }
+
+            [TestCase]
+            public void ItShouldTitleWithExpected()
+            {
+                Assert.That(this.actual.Title, Is.EqualTo("Title!!!"));
+            }
+
+            [TestCase]
+            public void ItShouldPublishedAtWithExpected()
+            {
+                Assert.That(this.actual.PublishedAt, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
             }
         }
     }

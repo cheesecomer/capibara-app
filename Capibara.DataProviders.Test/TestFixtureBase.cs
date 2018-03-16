@@ -15,7 +15,7 @@ using Capibara.Net.Channels;
 
 using Moq;
 using Moq.Language.Flow;
-using Microsoft.Practices.Unity;
+using Unity;
 using NUnit.Framework;
 using Newtonsoft.Json;
 

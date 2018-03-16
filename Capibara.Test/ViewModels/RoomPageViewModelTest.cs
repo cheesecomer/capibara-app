@@ -14,24 +14,10 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     [TestFixture]
     public class ShowParticipantsCommandTest : ViewModelTestBase
     {
-        protected string NavigatePageName { get; private set; }
-
-        protected NavigationParameters NavigationParameters { get; private set; }
-
         [SetUp]
         public void SetUp()
         {
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    this.NavigationParameters = parameters;
-                    return Task.Run(() => { });
-                });
-
-            var viewModel = new RoomPageViewModel(navigationService.Object);
+            var viewModel = new RoomPageViewModel(this.NavigationService);
 
             viewModel.ShowParticipantsCommand.Execute();
 
@@ -243,12 +229,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
 
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) => Task.Run(() => { }));
-
-                ViewModel = new RoomPageViewModel(navigationService.Object);
+                ViewModel = new RoomPageViewModel(this.NavigationService);
                 ViewModel.Model.Restore(new Room() { Id = 1 });
 
                 ViewModel.BuildUp(container);

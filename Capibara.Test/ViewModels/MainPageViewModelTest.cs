@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Capibara.Models;
 using Capibara.ViewModels;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Moq;
 using NUnit.Framework;
@@ -23,8 +23,6 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
     {
         private string pagePath;
 
-        protected string NavigatePageName { get; private set; }
-
         public ItemTappedCommandTest(string pagePath)
         {
             this.pagePath = pagePath;
@@ -33,20 +31,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-
-            var navigateTaskSource = new TaskCompletionSource<bool>();
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    navigateTaskSource.SetResult(true);
-                });
-
-            var viewModel = new MainPageViewModel(navigationService.Object);
+            var viewModel = new MainPageViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
 
@@ -98,15 +83,16 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         }
 
         [TestCase]
-        public void ItShouldCountWith3()
+        public void ItShouldCountExpected()
         {
-            Assert.That(this.actual.MenuItems.Count, Is.EqualTo(3));
+            Assert.That(this.actual.MenuItems.Count, Is.EqualTo(4));
         }
     }
 
     [TestFixture(0, "ホーム", "NavigationPage/FloorMapPage")]
     [TestFixture(1, "プロフィール", "NavigationPage/MyProfilePage")]
-    [TestFixture(2, "設定", "NavigationPage/SettingPage")]
+    [TestFixture(2, "お知らせ", "NavigationPage/InformationsPage")]
+    [TestFixture(3, "設定", "NavigationPage/SettingPage")]
     public class MenuItemsItemPropertyTest : ViewModelTestBase
     {
         protected MainPageViewModel actual;

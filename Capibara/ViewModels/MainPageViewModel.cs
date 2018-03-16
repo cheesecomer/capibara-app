@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
-using Capibara.Models;
-
-using Microsoft.Practices.Unity;
 
 using Prism.Navigation;
 using Prism.Services;
@@ -36,6 +29,7 @@ namespace Capibara.ViewModels
         {
             this.MenuItems.Add(new MenuItem { Name = "ホーム", PagePath = "NavigationPage/FloorMapPage" });
             this.MenuItems.Add(new MenuItem { Name = "プロフィール", PagePath = "NavigationPage/MyProfilePage" });
+            this.MenuItems.Add(new MenuItem { Name = "お知らせ", PagePath = "NavigationPage/InformationsPage" });
             this.MenuItems.Add(new MenuItem { Name = "設定", PagePath = "NavigationPage/SettingPage" });
 
             this.Icon = new ReactiveProperty<ImageSource>()

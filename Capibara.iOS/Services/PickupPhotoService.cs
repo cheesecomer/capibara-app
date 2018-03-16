@@ -4,11 +4,7 @@ using System.Threading.Tasks;
 
 using Capibara.Services;
 
-using CoreGraphics;
 using UIKit;
-using Foundation;
-
-using Microsoft.Practices.Unity;
 
 namespace Capibara.iOS.Services
 {

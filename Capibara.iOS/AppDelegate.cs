@@ -5,9 +5,10 @@ using Foundation;
 
 using Lottie.Forms.iOS.Renderers;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
-using Prism.Unity;
+using Prism;
+using Prism.Ioc;
 
 using UIKit;
 
@@ -44,11 +45,11 @@ namespace Capibara.iOS
 
     public class iOSInitializer : IPlatformInitializer
     {
-        public void RegisterTypes(IUnityContainer container)
+        public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            container.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
-            container.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
-            container.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
+            containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
+            containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
+            containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
         }
     }
 }

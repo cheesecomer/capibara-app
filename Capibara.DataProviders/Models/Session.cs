@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Capibara.Net;
 using Capibara.Net.Sessions;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace Capibara.Models
 {
