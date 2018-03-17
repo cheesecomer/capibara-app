@@ -2,6 +2,9 @@ version: 0.0.{build}
 image: Visual Studio 2017
 before_build:
 - ps: nuget restore Capibara.PCL.sln
+environment:
+  TWITTER_CONSUMER_KEY: foobar
+  TWITTER_CONSUMER_SECRET_KEY: foobar
 build:
   project: Capibara.PCL.sln
   verbosity: quiet

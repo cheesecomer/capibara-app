@@ -28,5 +28,15 @@ namespace Capibara
         /// Webソケット送信バッファサイズを取得します
         /// </summary>
         int WebSocketSendBufferSize { get; }
+
+        /// <summary>
+        /// Twitter API の API KEY を取得します
+        /// </summary>
+        string TwitterConsumerKey { get; }
+
+        /// <summary>
+        /// Twitter API の API SECRET KEY を取得します
+        /// </summary>
+        string TwitterConsumerSecretKey { get; }
     }
 }
