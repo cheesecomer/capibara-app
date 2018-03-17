@@ -1,6 +1,9 @@
 # Autosave files
 *~
 
+# VisualStudio
+.vs/*
+
 # build
 [Oo]bj/
 [Bb]in/
@@ -43,3 +46,6 @@ Thumbs.db
 # nuget
 *.nuget.targets
 *.nuget.props
+
+# backup
+*.bak
