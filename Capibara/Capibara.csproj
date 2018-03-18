@@ -93,6 +93,7 @@
     <Compile Include="Views\InformationsPage.xaml.cs">
       <DependentUpon>InformationsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IContainerProviderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -162,4 +163,23 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PreBuildEvent>
+      copy /Y $(ProjectDir)Environment.cs $(ProjectDir)Environment.cs.bak
+      call $(ProjectDir)..\replace.bat $(ProjectDir)Environment.cs ${TWITTER_CONSUMER_KEY} $(TWITTER_CONSUMER_KEY)
+      call $(ProjectDir)..\replace.bat $(ProjectDir)Environment.cs ${TWITTER_CONSUMER_SECRET_KEY} $(TWITTER_CONSUMER_SECRET_KEY)
+      git diff $(ProjectDir)\Environment.cs
+    </PreBuildEvent>
+    <PostBuildEvent>move /Y $(ProjectDir)\Environment.cs.bak $(ProjectDir)\Environment.cs</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <PreBuildEvent>
+      source ~/.bash_profile
+      cp $(ProjectDir)\Environment.cs $(ProjectDir)\Environment.cs.bak
+      sed -i '' 's/${TWITTER_CONSUMER_KEY}/'$TWITTER_CONSUMER_KEY'/g' $(ProjectDir)\Environment.cs
+      sed -i '' 's/${TWITTER_CONSUMER_SECRET_KEY}/'$TWITTER_CONSUMER_SECRET_KEY'/g' $(ProjectDir)\Environment.cs
+      git diff $(ProjectDir)\Environment.cs
+    </PreBuildEvent>
+    <PostBuildEvent>mv $(ProjectDir)\Environment.cs.bak $(ProjectDir)\Environment.cs</PostBuildEvent>
+  </PropertyGroup>
 </Project>

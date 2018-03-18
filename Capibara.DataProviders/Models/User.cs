@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using BlockRequest = Capibara.Net.Blocks.CreateRequest;
+using Capibara.Net.OAuth;
 using Capibara.Net.Users;
 
 using Unity;
+using Unity.Attributes;
 
 using Newtonsoft.Json;
 
@@ -39,6 +42,10 @@ namespace Capibara.Models
         public event EventHandler BlockSuccess;
 
         public event EventHandler<Exception> BlockFail;
+
+        public event EventHandler<Uri> OAuthAuthorizeSuccess;
+
+        public event EventHandler<Exception> OAuthAuthorizeFail;
 
         public int Id
         {
@@ -77,6 +84,9 @@ namespace Capibara.Models
             get => this.isBlock;
             set => this.SetProperty(ref this.isBlock, value);
         }
+
+        [Dependency]
+        public ITwitterOAuthService TwitterOAuthService { get; set; }
 
         public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
@@ -136,7 +146,7 @@ namespace Capibara.Models
                 var response = await request.Execute();
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
-                this.IsolatedStorage.UserId = response.UserId;
+                this.IsolatedStorage.UserId = response.Id;
                 this.IsolatedStorage.UserNickname = this.Nickname;
                 this.IsolatedStorage.Save();
 
@@ -146,6 +156,78 @@ namespace Capibara.Models
             }
             catch (Exception e)
             {
+                this.SignUpFail?.Invoke(this, e);
+            }
+        }
+
+        public virtual async Task OAuthAuthorize(OAuthProvider provider)
+        {
+            try
+            {
+                Uri authorizeUri = null;
+                if (provider == OAuthProvider.Twitter)
+                {
+                    var session =
+                        await this.TwitterOAuthService.AuthorizeAsync();
+
+                    this.IsolatedStorage.OAuthRequestTokenPair = session.RequestToken;
+                    this.IsolatedStorage.Save();
+
+                    authorizeUri = session.AuthorizeUri;
+                }
+
+                this.OAuthAuthorizeSuccess?.Invoke(this, authorizeUri);
+            }
+            catch (Exception e)
+            {
+                this.OAuthAuthorizeFail?.Invoke(this, e);
+            }
+        }
+
+        public virtual async Task SignUpWithOAuth()
+        {
+            var path = this.IsolatedStorage.OAuthCallbackUrl.LocalPath;
+            var provider = path.Split('/').Skip(1).ElementAtOrDefault(1);
+            try
+            {
+                var query = this.IsolatedStorage.OAuthCallbackUrl.Query
+                   .Replace("?", string.Empty).Split('&')
+                   .Select(x => x.Split('='))
+                   .Where(x => x.Length == 2)
+                   .ToDictionary(x => x.First(), x => x.Last());
+
+                var tokens = await this.TwitterOAuthService.GetAccessTokenAsync(
+                    this.IsolatedStorage.OAuthRequestTokenPair,
+                    query["oauth_verifier"]);
+
+                var request = new Net.Sessions.CreateRequest()
+                {
+                    Provider = provider.ToLower(),
+                    AccessToken = tokens.Token,
+                    AccessTokenSecret = tokens.TokenSecret
+                }.BuildUp(this.Container);
+
+                var response = await request.Execute();
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.OAuthCallbackUrl = null;
+                this.IsolatedStorage.OAuthRequestTokenPair = null;
+                this.IsolatedStorage.Save();
+
+                this.Restore(response);
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
+
+                this.SignUpSuccess?.Invoke(this, null);
+            }
+            catch (Exception e)
+            {
+                this.IsolatedStorage.OAuthCallbackUrl = null;
+                this.IsolatedStorage.OAuthRequestTokenPair = null;
+                this.IsolatedStorage.Save();
+
                 this.SignUpFail?.Invoke(this, e);
             }
         }

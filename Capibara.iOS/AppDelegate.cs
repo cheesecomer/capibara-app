@@ -1,4 +1,9 @@
-﻿using Capibara.iOS.Services;
+﻿using System;
+using System.Net;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Capibara.iOS.Services;
 using Capibara.Services;
 
 using Foundation;
@@ -6,6 +11,7 @@ using Foundation;
 using Lottie.Forms.iOS.Renderers;
 
 using Unity;
+using Unity.Attributes;
 
 using Prism;
 using Prism.Ioc;
@@ -20,18 +26,24 @@ namespace Capibara.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-        //
-        // This method is invoked when the application has loaded and is ready to run. In this 
-        // method you should instantiate the window, load the UI into it and then make the window
-        // visible.
-        //
-        // You have 17 seconds to return from this method, or iOS will terminate your application.
-        //
+        [Dependency]
+        public IIsolatedStorage IsolatedStorage { get; set; }
+
+        /// <summary>
+        /// Finisheds the launching.
+        /// </summary>
+        /// <returns><c>true</c>, if launching was finisheded, <c>false</c> otherwise.</returns>
+        /// <param name="app">App.</param>
+        /// <param name="options">Options.</param>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
 
-            LoadApplication(new App(new iOSInitializer()));
+            var application = new App(new iOSInitializer());
+
+            this.BuildUp(application.Container.Resolve<IUnityContainer>());
+
+            LoadApplication(application);
 
             AnimationViewRenderer.Init();
 
@@ -40,6 +52,19 @@ namespace Capibara.iOS
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            if (url == null) return false;
+            var uri = new Uri(url.AbsoluteString);
+            if (uri.Scheme == "capibara" && uri.PathAndQuery.StartsWith("/oauth", StringComparison.Ordinal))
+            {
+                this.IsolatedStorage.OAuthCallbackUrl = uri;
+                
+            }
+
+            return false;
         }
     }
 

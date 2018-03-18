@@ -45,6 +45,9 @@ namespace Capibara.ViewModels
         [Dependency(UnityInstanceNames.CurrentUser)]
         public User CurrentUser { get; set; }
 
+        [Dependency]
+        public IDeviceService DeviceService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

@@ -47,7 +47,7 @@ namespace Capibara.Test.Models.SessionTest
         public class WhenSuccess : TestBase
         {
             protected override string HttpStabResponse =>
-            "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999, \"user_nickname\": \"Foo.Bar\"}";
+            "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999, \"nickname\": \"Foo.Bar\"}";
 
             [TestCase]
             public void IsShouldSaveTokenInStorage()

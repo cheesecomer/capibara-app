@@ -5,7 +5,8 @@ using System.Net.Http;
 using System.Linq;
 
 using Capibara.Models;
-using Capibara.Net;
+using OAuthSession = Capibara.Net.OAuth.Session;
+using TokenPair = Capibara.Net.OAuth.TokenPair;
 
 using Moq;
 using Unity;
@@ -324,7 +325,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => true;
 
             protected override string HttpStabResponse
-            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999}";
+            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999}";
 
             [TestCase]
             public void IsShouldSaveTokenInStorage()
@@ -805,6 +806,268 @@ namespace Capibara.Test.Models.UserTest
         public class WhenTimeout : WhenFail
         {
             protected override Exception RestException => new WebException();
+        }
+    }
+
+    namespace OAuthAuthorizeTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Actual { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedExecute { get; }
+
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.TwitterOAuthService
+                    .Setup(x => x.AuthorizeAsync())
+                    .ReturnsAsync(this.Authorize);
+
+                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Actual.OAuthAuthorizeFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.OAuthAuthorizeSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                if (this.NeedExecute)
+                    this.Actual.OAuthAuthorize(OAuthProvider.Twitter).Wait();
+            }
+
+            public abstract OAuthSession Authorize();
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+
+            public override OAuthSession Authorize()
+            => new OAuthSession();
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+
+            public override OAuthSession Authorize()
+            => throw new NotImplementedException();
+        }
+    }
+
+
+    namespace SignUpWithOAuthTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Actual { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedExecute { get; }
+
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.IsolatedStorage.OAuthCallbackUrl = new Uri("capibara://cheese-comer.com/oauth/twitter?oauth_verifier=AbcdeFgh");
+
+                this.TwitterOAuthService
+                    .Setup(x => x.GetAccessTokenAsync(It.IsAny<TokenPair>(), It.Is<string>(v => v == "AbcdeFgh")))
+                    .ReturnsAsync(this.GetAccessToken);
+
+                this.Actual = new User().BuildUp(container);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Actual.SignUpFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.SignUpSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                if (this.NeedExecute)
+                    this.Actual.SignUpWithOAuth().Wait();
+            }
+
+            public abstract TokenPair GetAccessToken();
+        }
+
+        [TestFixture]
+        public class WhenGetAccessTokenSuccess : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+
+            public override TokenPair GetAccessToken()
+            => new TokenPair();
+        }
+
+        [TestFixture]
+        public class WhenGetAccessTokenFail : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+
+            public override TokenPair GetAccessToken()
+            => throw new NotImplementedException();
+        }
+
+        [TestFixture]
+        public class WhenSuccess : WhenGetAccessTokenSuccess
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override string HttpStabResponse
+            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999, \"nickname\": \"xxxxx\"}";
+
+            [TestCase]
+            public void IsShouldSaveTokenInStorage()
+            {
+                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
+            }
+
+            [TestCase]
+            public void IsShouldSaveUserIdInStorage()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
+            }
+
+            [TestCase]
+            public void IsShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.Actual.Container.Resolve<User>("CurrentUser").Id, Is.EqualTo(this.Actual.Id));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override string HttpStabResponse
+            => "{ \"message\": \"booo...\"}";
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            public override TokenPair GetAccessToken()
+            => new TokenPair();
+
+            [TestCase]
+            public void IsShouldDontSaveTokenInStorage()
+            {
+                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void IsShouldDontRegisterUserInDIContainer()
+            {
+                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
         }
     }
 }

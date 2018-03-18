@@ -64,6 +64,7 @@
     <Compile Include="Models\Information.cs" />
     <Compile Include="Net\Informations\IndexRequest.cs" />
     <Compile Include="Net\Informations\IndexResponse.cs" />
+    <Compile Include="Models\OAuthProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

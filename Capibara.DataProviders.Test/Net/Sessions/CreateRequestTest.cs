@@ -14,38 +14,77 @@ using Moq;
 
 namespace Capibara.Test.Net.Sessions.CreateRequestTest
 {
-    [TestFixture]
-    public class ExecuteTest : TestFixtureBase
+    namespace ExecuteTest
     {
-        private CreateRequest Actual { get; set; }
-
-        [SetUp]
-        public void SetUp()
+        [TestFixture]
+        public class WhenUsingEmail : TestFixtureBase
         {
-            this.Actual = new CreateRequest()
+            private CreateRequest Actual { get; set; }
+            
+            [SetUp]
+            public void SetUp()
             {
-                Email = "user@email.com",
-                Password = "p@ssword"
-            };
+                this.Actual = new CreateRequest()
+                {
+                    Email = "user@email.com",
+                    Password = "p@ssword"
+                };
+            }
+            
+            [TestCase]
+            public void ItShouldRequestWithHttpMethodPost()
+            {
+                Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
+            }
+            
+            [TestCase]
+            public void ItShouldPathsWithExpect()
+            {
+                Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "session" }));
+            }
+            
+            [TestCase]
+            public void ItShouldStringContentWithExpected()
+            {
+                var expected = "{\"email\":\"user@email.com\",\"password\":\"p@ssword\"}".ToSlim();
+                Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+            }
         }
 
-        [TestCase]
-        public void ItShouldRequestWithHttpMethodPost()
+        [TestFixture]
+        public class WhenUsingOAuth : TestFixtureBase
         {
-            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
-        }
+            private CreateRequest Actual { get; set; }
 
-        [TestCase]
-        public void ItShouldPathsWithExpect()
-        {
-            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "session" }));
-        }
+            [SetUp]
+            public void SetUp()
+            {
+                this.Actual = new CreateRequest()
+                {
+                    Provider = "twitter",
+                    AccessToken = "AccessToken",
+                    AccessTokenSecret = "AccessTokenSecret"
+                };
+            }
 
-        [TestCase]
-        public void ItShouldStringContentWithExpected()
-        {
-            var expected = "{\"email\":\"user@email.com\",\"password\":\"p@ssword\"}".ToSlim();
-            Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+            [TestCase]
+            public void ItShouldRequestWithHttpMethodPost()
+            {
+                Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
+            }
+
+            [TestCase]
+            public void ItShouldPathsWithExpect()
+            {
+                Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "session" }));
+            }
+
+            [TestCase]
+            public void ItShouldStringContentWithExpected()
+            {
+                var expected = "{\"provider\":\"twitter\",\"access_token\":\"AccessToken\",\"access_token_secret\":\"AccessTokenSecret\"}".ToSlim();
+                Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+            }
         }
     }
 }

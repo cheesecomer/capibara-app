@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Capibara.Net.OAuth;
 using Capibara.Services;
 
 using Unity;
 using Moq;
 
+using Prism.Services;
 using Prism.Navigation;
 
 using NUnit.Framework;
@@ -18,6 +20,8 @@ namespace Capibara.Test.ViewModels
         protected NavigationParameters NavigationParameters { get; private set; }
 
         protected INavigationService NavigationService { get; private set; }
+
+        protected Mock<IDeviceService> DeviceService { get; private set; }
 
         protected bool IsDisplayedProgressDialog { get; private set; }
 
@@ -53,7 +57,7 @@ namespace Capibara.Test.ViewModels
                     return task;
                 });
 
-            container.RegisterInstance<IProgressDialogService>(progressDialogService.Object);
+            container.RegisterInstance(progressDialogService.Object);
 
             // IPickupPhotoService のセットアップ
             var pickupPhotoService = new Mock<IPickupPhotoService>();
@@ -67,7 +71,10 @@ namespace Capibara.Test.ViewModels
                     return taskSource.Task;
                 });
 
-            container.RegisterInstance<IPickupPhotoService>(pickupPhotoService.Object);
+            container.RegisterInstance(pickupPhotoService.Object);
+
+            this.DeviceService = new Mock<IDeviceService>();
+            container.RegisterInstance(this.DeviceService.Object);
 
             return container;
         }
