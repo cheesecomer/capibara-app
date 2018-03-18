@@ -65,6 +65,7 @@
     <Compile Include="Net\Informations\IndexRequest.cs" />
     <Compile Include="Net\Informations\IndexResponse.cs" />
     <Compile Include="Models\OAuthProvider.cs" />
+    <Compile Include="Net\Users\DestroyRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
