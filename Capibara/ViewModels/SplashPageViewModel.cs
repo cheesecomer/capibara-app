@@ -2,6 +2,7 @@
 
 using Capibara.Models;
 
+using Prism.AppModel;
 using Prism.Navigation;
 using Prism.Services;
 
@@ -28,11 +29,15 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService)
         {
             this.RefreshCommand = new AsyncReactiveCommand();
-            this.RefreshCommand.Subscribe(this.RefreshCommandExecute);
+            this.RefreshCommand.Subscribe(this.RefreshAsync);
         }
 
-        protected Task RefreshCommandExecute()
+        protected Task RefreshAsync()
         {
+            this.IsolatedStorage.OAuthCallbackUrl = null;
+            this.IsolatedStorage.OAuthRequestTokenPair = null;
+            this.IsolatedStorage.Save();
+
             if (this.IsolatedStorage.AccessToken.IsNullOrEmpty())
             {
                 return this.ToSignUpPage();
