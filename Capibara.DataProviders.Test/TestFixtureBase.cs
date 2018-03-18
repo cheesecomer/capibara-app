@@ -12,6 +12,7 @@ using System.Linq;
 
 using Capibara.Net;
 using Capibara.Net.Channels;
+using Capibara.Net.OAuth;
 
 using Moq;
 using Moq.Language.Flow;
@@ -92,6 +93,8 @@ namespace Capibara.Test
         protected virtual Exception RestException { get; }
 
         private Mock<IWebSocketClient> webSocketClient;
+
+        protected Mock<ITwitterOAuthService> TwitterOAuthService { get; private set; }
 
         public virtual IUnityContainer GenerateUnityContainer()
         {
@@ -207,6 +210,10 @@ namespace Capibara.Test
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
 
+            // ITwitterOAuthService のセットアップ
+            this.TwitterOAuthService = new Mock<ITwitterOAuthService>();
+            this.TwitterOAuthService.SetupAllProperties();
+
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(this.Environment = environment.Object);
@@ -214,6 +221,7 @@ namespace Capibara.Test
             container.RegisterInstance<IIsolatedStorage>(this.IsolatedStorage = isolatedStorage.Object);
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
+            container.RegisterInstance<ITwitterOAuthService>(this.TwitterOAuthService.Object);
 
             return container;
         }

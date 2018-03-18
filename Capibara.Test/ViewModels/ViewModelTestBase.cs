@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Capibara.Net.OAuth;
 using Capibara.Services;
 
 using Unity;
@@ -68,6 +69,10 @@ namespace Capibara.Test.ViewModels
                 });
 
             container.RegisterInstance<IPickupPhotoService>(pickupPhotoService.Object);
+
+            // ITwitterOAuthService のセットアップ
+            var twitterOAuthService = new Mock<ITwitterOAuthService>();
+            container.RegisterInstance<ITwitterOAuthService>(twitterOAuthService.Object);
 
             return container;
         }
