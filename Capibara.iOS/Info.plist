@@ -42,5 +42,16 @@
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>CFBundleName</key>
 	<string>Capibara</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>capibara</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.cheese-comer.capibara</string>
+		</dict>
+	</array>
 </dict>
 </plist>
