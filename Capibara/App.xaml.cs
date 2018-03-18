@@ -50,13 +50,13 @@ namespace Capibara
             containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
 
-            if (this.Container.Resolve<IIsolatedStorage>() == null)
+            if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
             
-            if (this.Container.Resolve<IProgressDialogService>() == null)
+            if (this.Container.TryResolve<IProgressDialogService>() == null)
                 containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
 
-            if (this.Container.Resolve<IPickupPhotoService>() == null)
+            if (this.Container.TryResolve<IPickupPhotoService>() == null)
                 containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoServiceStub());
 
             containerRegistry.RegisterForNavigation<MainPage>();
@@ -79,7 +79,10 @@ namespace Capibara
         {
             public string UserNickname { get; set; }
             public string AccessToken { get; set; }
+            public string OAuthRequestToken { get; set; }
+            public string OAuthRequestTokenSecret { get; set; }
             public int UserId { get; set; }
+            public Uri OAuthCallbackUrl { get; set; }
 
             public void Save()
             {

@@ -9,6 +9,12 @@ namespace Capibara
 
         string AccessToken { get; set; }
 
+        string OAuthRequestToken { get; set; }
+
+        string OAuthRequestTokenSecret { get; set; }
+
+        Uri OAuthCallbackUrl { get; set; }
+
         void Save();
     }
 }
