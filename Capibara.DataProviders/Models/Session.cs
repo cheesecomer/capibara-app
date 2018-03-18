@@ -57,10 +57,10 @@ namespace Capibara.Models
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
-                this.IsolatedStorage.UserId = response.UserId;
+                this.IsolatedStorage.UserId = response.Id;
                 this.IsolatedStorage.Save();
 
-                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User { Id = response.UserId, Nickname = response.Nickname, Biography = response.Biography });
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignInSuccess?.Invoke(this, null);
             }

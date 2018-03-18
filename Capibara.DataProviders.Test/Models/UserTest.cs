@@ -324,7 +324,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => true;
 
             protected override string HttpStabResponse
-            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999}";
+            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999}";
 
             [TestCase]
             public void IsShouldSaveTokenInStorage()
