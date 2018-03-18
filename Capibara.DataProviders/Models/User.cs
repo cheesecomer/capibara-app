@@ -160,7 +160,7 @@ namespace Capibara.Models
             }
         }
 
-        public async Task OAuthAuthorize(OAuthProvider provider)
+        public virtual async Task OAuthAuthorize(OAuthProvider provider)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace Capibara.Models
             }
         }
 
-        public async Task SignUpWithOAuth()
+        public virtual async Task SignUpWithOAuth()
         {
             var path = this.IsolatedStorage.OAuthCallbackUrl.LocalPath;
             var provider = path.Split('/').Skip(1).ElementAtOrDefault(1);
