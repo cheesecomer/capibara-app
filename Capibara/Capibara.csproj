@@ -93,6 +93,7 @@
     <Compile Include="Views\InformationsPage.xaml.cs">
       <DependentUpon>InformationsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IContainerProviderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
