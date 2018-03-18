@@ -29,7 +29,7 @@ namespace Capibara.Test.Net.Users
         [TestCase]
         public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.request.Paths, Is.EqualTo(new[] { "users", "1000" }));
+            Assert.That(this.request.Paths, Is.EqualTo(new[] { "users" }));
         }
 
         [TestCase]
