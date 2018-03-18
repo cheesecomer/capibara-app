@@ -47,6 +47,10 @@ namespace Capibara.Models
 
         public event EventHandler<Exception> OAuthAuthorizeFail;
 
+        public event EventHandler DestroySuccess;
+
+        public event EventHandler<Exception> DestroyFail;
+
         public int Id
         {
             get => this.id;
@@ -290,6 +294,36 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.BlockFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザー情報を更新します。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public async Task<bool> Destroy()
+        {
+            var request = new DestroyRequest().BuildUp(this.Container);
+
+            try
+            {
+                await request.Execute();
+
+                this.IsolatedStorage.AccessToken = null;
+                this.IsolatedStorage.OAuthCallbackUrl = null;
+                this.IsolatedStorage.OAuthRequestTokenPair = null;
+                this.IsolatedStorage.UserId = 0;
+                this.IsolatedStorage.UserNickname = null;
+                this.IsolatedStorage.Save();
+
+                this.DestroySuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.DestroyFail?.Invoke(this, e);
                 return false;
             }
         }
