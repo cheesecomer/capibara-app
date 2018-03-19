@@ -35,6 +35,6 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.sender, value);
         }
 
-        public bool IsOwn => this.IsolatedStorage.UserId == this.Sender.Id;
+        public bool IsOwn => this.IsolatedStorage.UserId == this.Sender?.Id;
     }
 }
