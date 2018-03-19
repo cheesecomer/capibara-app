@@ -27,29 +27,29 @@ namespace Capibara.Models
 
         private bool isBlock;
 
-        public event EventHandler SignUpSuccess;
+        public virtual event EventHandler SignUpSuccess;
 
-        public event EventHandler<Exception> SignUpFail;
+        public virtual event EventHandler<Exception> SignUpFail;
 
-        public event EventHandler RefreshSuccess;
+        public virtual event EventHandler RefreshSuccess;
 
-        public event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<Exception> RefreshFail;
 
-        public event EventHandler CommitSuccess;
+        public virtual event EventHandler CommitSuccess;
 
-        public event EventHandler<Exception> CommitFail;
+        public virtual event EventHandler<Exception> CommitFail;
 
-        public event EventHandler BlockSuccess;
+        public virtual event EventHandler BlockSuccess;
 
-        public event EventHandler<Exception> BlockFail;
+        public virtual event EventHandler<Exception> BlockFail;
 
-        public event EventHandler<Uri> OAuthAuthorizeSuccess;
+        public virtual event EventHandler<Uri> OAuthAuthorizeSuccess;
 
-        public event EventHandler<Exception> OAuthAuthorizeFail;
+        public virtual event EventHandler<Exception> OAuthAuthorizeFail;
 
-        public event EventHandler DestroySuccess;
+        public virtual event EventHandler DestroySuccess;
 
-        public event EventHandler<Exception> DestroyFail;
+        public virtual event EventHandler<Exception> DestroyFail;
 
         public int Id
         {
@@ -302,7 +302,7 @@ namespace Capibara.Models
         /// ユーザー情報を更新します。
         /// </summary>
         /// <returns>The commit.</returns>
-        public async Task<bool> Destroy()
+        public virtual async Task<bool> Destroy()
         {
             var request = new DestroyRequest().BuildUp(this.Container);
 
