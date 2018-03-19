@@ -43,7 +43,7 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignIn()
+        public async Task<bool> SignIn()
         {
             var request = new CreateRequest()
                 {
@@ -63,10 +63,14 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignInSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.SignInFail?.Invoke(this, e);
+
+                return false;
             }
         }
     }

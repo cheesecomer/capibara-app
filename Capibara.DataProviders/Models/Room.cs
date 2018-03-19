@@ -79,7 +79,7 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.numberOfParticipants, value);
         }
 
-        public async Task Refresh()
+        public async Task<bool> Refresh()
         {
             var request = new ShowRequest(this).BuildUp(this.Container);
             try
@@ -91,10 +91,14 @@ namespace Capibara.Models
                 result.Messages?.Where(x => this.Messages.All(y => y.Id != x.Id))?.ForEach(x => this.Messages.Insert(0, x.BuildUp(this.Container)));
 
                 this.RefreshSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.RefreshFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
@@ -137,17 +141,21 @@ namespace Capibara.Models
             model.Participants?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
         }
 
-        public async Task Speak(string message)
+        public async Task<bool> Speak(string message)
         {
             try
             {
                 await this.channel.Speak(message);
 
                 this.SpeakSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.SpeakFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
