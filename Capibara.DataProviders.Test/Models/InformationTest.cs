@@ -8,6 +8,43 @@ using Unity;
 
 namespace Capibara.Test.Models.InformationTest
 {
+    [TestFixture]
+    public class RestoreTest
+    {
+        private Information Actual;
+
+        [SetUp]
+        public void Setup()
+        {
+            this.Actual = new Information { Id = 99999 };
+            this.Actual.Restore(new Information { Id = 99999, Message = "FooBar. Yes!Yes!Yeeeeees!", Title = "...", PublishedAt = new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9)) });
+        }
+
+        [TestCase]
+        public void ItShouldMessageWithExpected()
+        {
+            Assert.That(this.Actual.Message, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+        }
+
+        [TestCase]
+        public void ItShouldIdWithExpected()
+        {
+            Assert.That(this.Actual.Id, Is.EqualTo(99999));
+        }
+
+        [TestCase]
+        public void ItShouldBiographyWithExpected()
+        {
+            Assert.That(this.Actual.Title, Is.EqualTo("..."));
+        }
+
+        [TestCase]
+        public void ItShouldPublishedAtWithExpected()
+        {
+            Assert.That(this.Actual.PublishedAt, Is.EqualTo(new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9))));
+        }
+    }
+
     namespace DeserializeTest
     {
         [TestFixture]

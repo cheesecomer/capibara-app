@@ -19,14 +19,6 @@ namespace Capibara.Models
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
-        public virtual void Restore(TModel model)
-        {
-
-        }
-
-        public override string ToString()
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
+        public virtual void Restore(TModel model) { }
     }
 }
