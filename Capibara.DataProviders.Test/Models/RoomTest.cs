@@ -701,12 +701,18 @@ namespace Capibara.Test.Models.RoomTest
 
             protected virtual bool NeedEventHandler { get; } = true;
 
+            protected virtual Room Response { get; }
+
+            protected virtual Exception Exception { get; }
+
+            protected bool Result { get; private set; }
+
             [SetUp]
             public void Setup()
             {
                 var container = this.GenerateUnityContainer();
 
-                this.model = new Room() { Id = 1 }.BuildUp(container);
+                this.model = new Room { Id = 1 }.BuildUp(container);
 
                 if (this.NeedEventHandler)
                 {
@@ -714,17 +720,36 @@ namespace Capibara.Test.Models.RoomTest
                     this.model.RefreshFail += (sender, e) => this.IsRefreshFail = true;
                 }
 
+                var request = new Mock<RequestBase<Room>>();
+
+                var methodMock = request.Setup(x => x.Execute());
+
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
+
+                this.RequestFactory.Setup(x => x.RoomsShowRequest(It.IsAny<Room>())).Returns(request.Object);
+
                 // リフレッシュの終了を待機
-                this.model.Refresh().Wait();
+                this.Result = this.model.Refresh().Result;
             }
         }
 
         [TestFixture]
         public class WhenUnauthorizedWithoutEventHandler : RefreshTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
             protected override bool NeedEventHandler { get; } = false;
+
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
@@ -742,7 +767,13 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenUnauthorized : RefreshTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
@@ -762,6 +793,14 @@ namespace Capibara.Test.Models.RoomTest
         {
             protected override bool NeedEventHandler { get; } = false;
 
+            protected override Room Response => new Room();
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
             {
@@ -778,6 +817,14 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenEmpty : RefreshTestBase
         {
+            protected override Room Response => new Room();
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
             [TestCase]
             public void ItShouldRefreshSuccessEventToOccur()
             {
@@ -794,8 +841,17 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasNotMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[] }";
+            protected override Room Response => new Room {
+                Name = "AAA",
+                Capacity = 10,
+                NumberOfParticipants = 5
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -835,10 +891,31 @@ namespace Capibara.Test.Models.RoomTest
         }
 
         [TestFixture]
-        public class WhenHasMessage: RefreshTestBase
+        public class WhenHasMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99998, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }, { \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }], \"participants\":[] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Messages.Add(new Message { Id = 1});
+                    result.Messages.Add(new Message { Id = 2});
+
+                    return result;
+                }
+            }
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -881,8 +958,24 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasDuplicateMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }, { \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }], \"participants\":[] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Messages.Add(new Message { Id = 9999 });
+                    result.Messages.Add(new Message { Id = 9999 });
+
+                    return result;
+                }
+            }
+
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -924,8 +1017,18 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasNotParticipants : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[] }";
+            protected override Room Response => new Room
+            {
+                Name = "AAA",
+                Capacity = 10,
+                NumberOfParticipants = 5
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -967,8 +1070,22 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasParticipants : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[{ \"id\": 10, \"nickname\": \"ABC\" }] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Participants.Add(new User());
+
+                    return result;
+                }
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()

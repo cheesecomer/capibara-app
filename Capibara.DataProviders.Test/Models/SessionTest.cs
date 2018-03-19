@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Linq;
 
 using Capibara.Models;
 using Capibara.Net;
+using Capibara.Net.Sessions;
 
 using Moq;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 
 namespace Capibara.Test.Models.SessionTest
@@ -25,12 +22,29 @@ namespace Capibara.Test.Models.SessionTest
 
             protected virtual bool WithEventHandler { get; } = true;
 
-            protected virtual bool NeedExecute { get; } = true;
+            protected virtual CreateResponse Response { get; }
+
+            protected virtual Exception Exception { get; }
+
+            protected bool Result { get; private set; }
 
             [SetUp]
             public void Setup()
             {
-                this.Actual = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(this.GenerateUnityContainer());
+                this.Actual = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.GenerateUnityContainer());
+
+                var request = new Mock<RequestBase<CreateResponse>>();
+
+                var methodMock = request.Setup(x => x.Execute());
+
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
+
+                this.RequestFactory.Setup(x => x.SessionsCreateRequest("user@email.com", "password")).Returns(request.Object);
 
                 if (this.WithEventHandler)
                 {
@@ -38,16 +52,25 @@ namespace Capibara.Test.Models.SessionTest
                     this.Actual.SignInSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                if (this.NeedExecute)
-                    this.Actual.SignIn().Wait();
+                this.Result = this.Actual.SignIn().Result;
             }
         }
 
         [TestFixture]
         public class WhenSuccess : TestBase
         {
-            protected override string HttpStabResponse =>
-            "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999, \"nickname\": \"Foo.Bar\"}";
+            protected override CreateResponse Response => new CreateResponse
+            {
+                AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
+                Id = 999,
+                Nickname = "Foo.Bar"
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void IsShouldSaveTokenInStorage()
@@ -89,7 +112,13 @@ namespace Capibara.Test.Models.SessionTest
         [TestFixture]
         public class WhenFail : TestBase
         {
-            protected override Exception RestException => new WebException();
+            protected override Exception Exception => new WebException();
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void IsShouldDontSaveTokenInStorage()
@@ -125,12 +154,20 @@ namespace Capibara.Test.Models.SessionTest
         [TestFixture]
         public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected override string HttpStabResponse =>
-            "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999, \"user_nickname\": \"Foo.Bar\"}";
-
             protected override bool WithEventHandler { get; } = false;
 
-            protected override bool NeedExecute { get; } = false;
+            protected override CreateResponse Response => new CreateResponse
+            {
+                AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
+                Id = 999,
+                Nickname = "Foo.Bar"
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void IsShouldNotException()
@@ -142,14 +179,15 @@ namespace Capibara.Test.Models.SessionTest
         [TestFixture]
         public class WhenFailWithoutEventHandler : TestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            protected override string HttpStabResponse =>
-            "{ \"message\": \"booo...\"}";
-
             protected override bool WithEventHandler { get; } = false;
 
-            protected override bool NeedExecute { get; } = false;
+            protected override Exception Exception => new WebException();
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void IsShouldNotException()

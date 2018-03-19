@@ -264,11 +264,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
                     });
 
                 var model = new Mock<User>();
-                model.Setup(
-                    x => x.OAuthAuthorize(It.Is<OAuthProvider>(v => v == OAuthProvider.Twitter)))
-                     .Callback((OAuthProvider x) => {
-                    this.IsOAuthAuthorizeCalled = true;
-                });
+                model.Setup(x => x.OAuthAuthorize(OAuthProvider.Twitter)).Callback((OAuthProvider x) => this.IsOAuthAuthorizeCalled = true);
 
                 var container = this.GenerateUnityContainer();
 

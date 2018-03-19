@@ -94,6 +94,8 @@ namespace Capibara.Test
 
         protected Mock<ITwitterOAuthService> TwitterOAuthService { get; private set; }
 
+        protected Mock<IRequestFactory> RequestFactory { get; private set; }
+
         public virtual IUnityContainer GenerateUnityContainer()
         {
             this.Dispose();
@@ -212,6 +214,8 @@ namespace Capibara.Test
             this.TwitterOAuthService = new Mock<ITwitterOAuthService>();
             this.TwitterOAuthService.SetupAllProperties();
 
+            this.RequestFactory = new Mock<IRequestFactory>();
+
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(this.Environment = environment.Object);
@@ -220,7 +224,7 @@ namespace Capibara.Test
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
             container.RegisterInstance<ITwitterOAuthService>(this.TwitterOAuthService.Object);
-            container.RegisterInstance<IRequestFactory>(new RequestFactory());
+            container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
 
             return container;
         }
