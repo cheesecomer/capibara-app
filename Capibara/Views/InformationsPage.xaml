@@ -7,6 +7,9 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.InformationsPage"
     Title="お知らせ">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
+    </ContentView.Behaviors>
     <ListView
         HasUnevenRows="true"
         VerticalOptions="FillAndExpand"
@@ -19,9 +22,11 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Text="{Binding Title}" FontSize="Large" LineBreakMode="TailTruncation" />
-                        <Label Grid.Row="1" Text="{Binding Message}" TextColor="#444" LineBreakMode="TailTruncation" />
+                        <Label Grid.Row="0" Text="{Binding PublishedAt, StringFormat='{0:yyyy/MM/dd HH:mm:ss}'}" FontSize="Small" TextColor="#444" />
+                        <Label Grid.Row="1" Text="{Binding Title}" FontSize="Large" LineBreakMode="TailTruncation" Margin="10, 0, 20, 0" />
+                        <Label Grid.Row="2" Text="{Binding Message}" TextColor="#444" LineBreakMode="TailTruncation" Margin="10, 0, 20, 0" />
                     </Grid>
                 </ViewCell>
             </DataTemplate>
