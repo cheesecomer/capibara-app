@@ -21,7 +21,7 @@ namespace Capibara.Net.Users
         public override bool NeedAuthentication { get; } = true;
 
         public override string[] Paths
-            => new string[] { "users", $"{this.user.Id}" };
+            => new string[] { "users" };
 
         public override string StringContent
             => JsonConvert.SerializeObject(this);
@@ -35,6 +35,6 @@ namespace Capibara.Net.Users
         public string Biography => this.user.Biography;
 
         [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
-        public string IconBase64 => $"data:image/png;base64,{this.user.IconBase64}";
+        public string IconBase64 => this.user.IconBase64.IsPresent() ? $"data:image/png;base64,{this.user.IconBase64}" : null;
     }
 }

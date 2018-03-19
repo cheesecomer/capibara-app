@@ -27,25 +27,29 @@ namespace Capibara.Models
 
         private bool isBlock;
 
-        public event EventHandler SignUpSuccess;
+        public virtual event EventHandler SignUpSuccess;
 
-        public event EventHandler<Exception> SignUpFail;
+        public virtual event EventHandler<Exception> SignUpFail;
 
-        public event EventHandler RefreshSuccess;
+        public virtual event EventHandler RefreshSuccess;
 
-        public event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<Exception> RefreshFail;
 
-        public event EventHandler CommitSuccess;
+        public virtual event EventHandler CommitSuccess;
 
-        public event EventHandler<Exception> CommitFail;
+        public virtual event EventHandler<Exception> CommitFail;
 
-        public event EventHandler BlockSuccess;
+        public virtual event EventHandler BlockSuccess;
 
-        public event EventHandler<Exception> BlockFail;
+        public virtual event EventHandler<Exception> BlockFail;
 
-        public event EventHandler<Uri> OAuthAuthorizeSuccess;
+        public virtual event EventHandler<Uri> OAuthAuthorizeSuccess;
 
-        public event EventHandler<Exception> OAuthAuthorizeFail;
+        public virtual event EventHandler<Exception> OAuthAuthorizeFail;
+
+        public virtual event EventHandler DestroySuccess;
+
+        public virtual event EventHandler<Exception> DestroyFail;
 
         public int Id
         {
@@ -290,6 +294,36 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.BlockFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザー情報を更新します。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public virtual async Task<bool> Destroy()
+        {
+            var request = new DestroyRequest().BuildUp(this.Container);
+
+            try
+            {
+                await request.Execute();
+
+                this.IsolatedStorage.AccessToken = null;
+                this.IsolatedStorage.OAuthCallbackUrl = null;
+                this.IsolatedStorage.OAuthRequestTokenPair = null;
+                this.IsolatedStorage.UserId = 0;
+                this.IsolatedStorage.UserNickname = null;
+                this.IsolatedStorage.Save();
+
+                this.DestroySuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.DestroyFail?.Invoke(this, e);
                 return false;
             }
         }

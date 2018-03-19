@@ -25,7 +25,8 @@ namespace Capibara.ViewModels
             IPageDialogService pageDialogService = null)
             : base(navigationService, pageDialogService)
         {
-            this.SettingItems.Add(new SettingItem { Name = "ブロックしたユーザー", PagePath = "BlockUsersPage" });
+            this.SettingItems.Add(new SettingItem { Name = "ブロック中のユーザー", PagePath = "BlockUsersPage" });
+            this.SettingItems.Add(new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" });
 
             this.ItemTappedCommand = new AsyncReactiveCommand<SettingItem>();
             this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath));

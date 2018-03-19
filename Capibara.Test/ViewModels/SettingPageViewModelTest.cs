@@ -58,13 +58,14 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
         }
 
         [TestCase]
-        public void ItShouldCountWith3()
+        public void ItShouldCountWithExpected()
         {
-            Assert.That(this.Actual.SettingItems.Count, Is.EqualTo(1));
+            Assert.That(this.Actual.SettingItems.Count, Is.EqualTo(2));
         }
     }
 
-    [TestFixture(0, "ブロックしたユーザー", "BlockUsersPage")]
+    [TestFixture(0, "ブロック中のユーザー", "BlockUsersPage")]
+    [TestFixture(1, "退会する", "UnsubscribePage")]
     public class SettingItemsPropertyItemTest : ViewModelTestBase
     {
         protected SettingPageViewModel Actual;

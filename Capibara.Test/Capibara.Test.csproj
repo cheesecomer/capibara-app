@@ -179,6 +179,7 @@
     <Compile Include="ViewModels\MessageViewModelTest.cs" />
     <Compile Include="ViewModels\InformationsPageViewModelTest.cs" />
     <Compile Include="NavigationService.cs" />
+    <Compile Include="ViewModels\UnsubscribePageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

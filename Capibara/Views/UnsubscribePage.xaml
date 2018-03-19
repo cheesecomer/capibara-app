@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    x:Class="Capibara.Views.UnsubscribePage"
+    Title="退会する"
+    BackgroundColor="#FEFEFE">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout
+            Padding="20"
+            VerticalOptions="End"
+            HorizontalOptions="FillAndExpand">
+            <Label
+                Margin="0, 0, 0, 5"
+                Text="本当に退会しますか？"
+                HorizontalTextAlignment="Center"
+                />
+            <Label
+                Margin="0, 0, 0, 20"
+                FontSize="Small"
+                TextColor="#d9534f"
+                Text="この操作は取り消せません"
+                HorizontalTextAlignment="Center"
+                />
+        </StackLayout>
+        <Button 
+            Grid.Row="1"
+            x:Name="UnsubscribeButton"
+            HeightRequest="50"
+            Text="退会する"
+            BackgroundColor="#d9534f"
+            TextColor="White"
+            BorderRadius="{Binding Height, Source={x:Reference UnsubscribeButton}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+            Command="{Binding UnsubscribeCommand}"
+            />
+    </Grid>
+</ContentPage>

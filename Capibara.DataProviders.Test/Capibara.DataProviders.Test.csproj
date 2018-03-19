@@ -148,6 +148,7 @@
     <Compile Include="Net\Blocks\DestroyRequestTest.cs" />
     <Compile Include="Models\InformationTest.cs" />
     <Compile Include="Net\Informations\IndexRequestTest.cs" />
+    <Compile Include="Net\Users\DestroyRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />

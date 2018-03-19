@@ -1070,4 +1070,172 @@ namespace Capibara.Test.Models.UserTest
             }
         }
     }
+
+    namespace DestroytTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Actual { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected override string HttpStabResponse => string.Empty;
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedExecute { get; }
+
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+
+                this.IsolatedStorage.AccessToken = "AccessToken";
+                this.IsolatedStorage.OAuthCallbackUrl = new Uri("foobar://example.com/");
+                this.IsolatedStorage.OAuthRequestTokenPair = new TokenPair
+                {
+                    Token = "Token",
+                    TokenSecret = "TokenSecret"
+                };
+                this.IsolatedStorage.UserId = 1000;
+                this.IsolatedStorage.UserNickname = "UserName";
+                this.IsolatedStorage.Save();
+
+                if (this.NeedEventHandler)
+                {
+                    this.Actual.CommitFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.CommitSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                if (this.NeedExecute)
+                    this.Actual.Destroy().Wait();
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldAccessTokenNull()
+            {
+                Assert.That(this.IsolatedStorage.AccessToken, Is.Null);
+            }
+
+            [TestCase]
+            public void IsShouldUserNicknameNull()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null);
+            }
+
+            [TestCase]
+            public void IsShouldOAuthCallbackUrlNull()
+            {
+                Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl, Is.Null);
+            }
+
+            [TestCase]
+            public void IsShouldOAuthRequestTokenPairNull()
+            {
+                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair, Is.Null);
+            }
+
+            [TestCase]
+            public void IsShouldUserIdIsZero()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserId, Is.Null.Or.EqualTo(0));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.NotFound;
+
+            [TestCase]
+            public void ItShouldAccessTokenPresent()
+            {
+                Assert.That(this.IsolatedStorage.AccessToken, Is.EqualTo("AccessToken"));
+            }
+
+            [TestCase]
+            public void IsShouldUserNicknamePresent()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("UserName"));
+            }
+
+            [TestCase]
+            public void IsShouldOAuthCallbackUrlPresent()
+            {
+                Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl?.ToString(), Is.EqualTo("foobar://example.com/"));
+            }
+
+            [TestCase]
+            public void IsShouldOAuthRequestTokenPairTokenPresent()
+            {
+                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.Token, Is.EqualTo("Token"));
+            }
+
+            [TestCase]
+            public void IsShouldOAuthRequestTokenPairTokenSecretPresent()
+            {
+                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.TokenSecret, Is.EqualTo("TokenSecret"));
+            }
+
+            [TestCase]
+            public void IsShouldUserIdPresent()
+            {
+                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(1000));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            [TestCase]
+            public void IsShouldNotException()
+            {
+                Assert.That(this.Actual.Destroy().Result, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void IsShouldNotException()
+            {
+                Assert.That(this.Actual.Destroy().Result, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception RestException => new WebException();
+        }
+    }
 }

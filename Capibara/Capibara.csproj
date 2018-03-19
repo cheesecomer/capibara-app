@@ -94,6 +94,10 @@
       <DependentUpon>InformationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="IContainerProviderExtensions.cs" />
+    <Compile Include="Views\UnsubscribePage.xaml.cs">
+      <DependentUpon>UnsubscribePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\UnsubscribePageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -139,6 +143,10 @@
     <EmbeddedResource Include="Views\InformationsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UnsubscribePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

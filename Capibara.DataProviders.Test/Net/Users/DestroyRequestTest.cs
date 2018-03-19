@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.IO;
 
 using Capibara.Models;
 using Capibara.Net.Users;
@@ -9,32 +8,31 @@ using NUnit.Framework;
 
 namespace Capibara.Test.Net.Users
 {
-    public class UpdateRequestTest
+    public class DestroyRequestTest
     {
-        private UpdateRequest request;
+        private DestroyRequest Actual;
 
-        [SetUp]
-        public void SetUp()
+        public DestroyRequestTest()
         {
-            this.request = new UpdateRequest(new User { Id = 1000 });
+            this.Actual = new DestroyRequest();
         }
 
         [TestCase]
         public void ItShouldHttMethodToGet()
         {
-            Assert.That(this.request.Method, Is.EqualTo(HttpMethod.Put));
+            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Delete));
         }
 
         [TestCase]
         public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.request.Paths, Is.EqualTo(new[] { "users" }));
+            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "users" }));
         }
 
         [TestCase]
         public void ItShouldNeedAuthentication()
         {
-            Assert.That(this.request.NeedAuthentication, Is.EqualTo(true));
+            Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
         }
     }
 }
