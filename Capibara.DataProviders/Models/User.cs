@@ -179,6 +179,11 @@ namespace Capibara.Models
 
                     authorizeUri = session.AuthorizeUri;
                 }
+                else
+                {
+                    this.OAuthAuthorizeFail?.Invoke(this, new ArgumentException("Invalid OAuthProvider. Can use Twitter only"));
+                    return;
+                }
 
                 this.OAuthAuthorizeSuccess?.Invoke(this, authorizeUri);
             }
@@ -299,7 +304,7 @@ namespace Capibara.Models
         }
 
         /// <summary>
-        /// ユーザー情報を更新します。
+        /// ユーザー情報を削除します。
         /// </summary>
         /// <returns>The commit.</returns>
         public virtual async Task<bool> Destroy()

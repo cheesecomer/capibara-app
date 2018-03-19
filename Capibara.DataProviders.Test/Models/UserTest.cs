@@ -279,6 +279,24 @@ namespace Capibara.Test.Models.UserTest
         }
 
         [TestFixture]
+        public class WhenFailWithEventHandler : WhenFail
+        {
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
         public class WhenTimeout : WhenFail
         {
             protected override Exception RestException => new WebException();
@@ -434,6 +452,8 @@ namespace Capibara.Test.Models.UserTest
             protected override string HttpStabResponse
                 => "{ \"message\": \"booo...\"}";
 
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
             [TestCase]
             public void IsShouldNotException()
             {
@@ -452,6 +472,8 @@ namespace Capibara.Test.Models.UserTest
     {
         public abstract class TestBase : TestFixtureBase
         {
+            protected bool Result { get; private set; }
+
             protected bool IsSucceed { get; private set; }
 
             protected bool IsFailed { get; private set; }
@@ -485,7 +507,7 @@ namespace Capibara.Test.Models.UserTest
                 }
 
                 if (this.NeedExecute)
-                    this.Actual.Commit().Wait();
+                    this.Result = this.Actual.Commit().Result;
             }
         }
 
@@ -638,7 +660,7 @@ namespace Capibara.Test.Models.UserTest
         [TestFixture]
         public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
@@ -647,29 +669,56 @@ namespace Capibara.Test.Models.UserTest
             protected override string HttpStabResponse
                 => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
 
+
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldSuccess()
             {
-                Assert.DoesNotThrowAsync(this.Actual.Commit);
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenFailWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
             protected override bool NeedCurrentUserRegistration => true;
 
             protected override string HttpStabResponse
-                => "{ \"message\": \"booo...\"}";
+            => "{ \"message\": \"booo...\"}";
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldFail()
             {
-                Assert.DoesNotThrowAsync(this.Actual.Commit);
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
@@ -684,6 +733,8 @@ namespace Capibara.Test.Models.UserTest
     {
         public abstract class TestBase : TestFixtureBase
         {
+            protected bool Result { get; private set; }
+
             protected bool IsSucceed { get; private set; }
 
             protected bool IsFailed { get; private set; }
@@ -710,7 +761,7 @@ namespace Capibara.Test.Models.UserTest
                 }
 
                 if (this.NeedExecute)
-                    this.Actual.Block().Wait();
+                    this.Result = this.Actual.Block().Result;
             }
         }
 
@@ -771,7 +822,7 @@ namespace Capibara.Test.Models.UserTest
         [TestFixture]
         public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
@@ -779,26 +830,52 @@ namespace Capibara.Test.Models.UserTest
                 => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
 
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldSuccess()
             {
-                Assert.DoesNotThrowAsync(this.Actual.Block);
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenFailWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
-                => "{ \"message\": \"booo...\"}";
+            => "{ \"message\": \"booo...\"}";
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldFail()
             {
-                Assert.DoesNotThrowAsync(this.Actual.Block);
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
@@ -825,6 +902,8 @@ namespace Capibara.Test.Models.UserTest
 
             protected abstract bool NeedExecute { get; }
 
+            protected virtual OAuthProvider OAuthProvider { get; } = OAuthProvider.Twitter;
+
             [SetUp]
             public void Setup()
             {
@@ -843,7 +922,7 @@ namespace Capibara.Test.Models.UserTest
                 }
 
                 if (this.NeedExecute)
-                    this.Actual.OAuthAuthorize(OAuthProvider.Twitter).Wait();
+                    this.Actual.OAuthAuthorize(this.OAuthProvider).Wait();
             }
 
             public abstract OAuthSession Authorize();
@@ -895,6 +974,104 @@ namespace Capibara.Test.Models.UserTest
 
             public override OAuthSession Authorize()
             => throw new NotImplementedException();
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+
+            public override OAuthSession Authorize()
+            => new OAuthSession();
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => false;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            public override OAuthSession Authorize()
+            => throw new NotImplementedException();
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenInvalidOAuthProvider : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => true;
+
+            protected override OAuthProvider OAuthProvider => OAuthProvider.None; 
+
+            public override OAuthSession Authorize()
+            => throw new NotImplementedException();
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenInvalidOAuthProviderWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override OAuthProvider OAuthProvider => OAuthProvider.None; 
+
+            public override OAuthSession Authorize()
+            => throw new NotImplementedException();
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
         }
     }
 
@@ -1069,6 +1246,61 @@ namespace Capibara.Test.Models.UserTest
                 Assert.That(this.IsFailed, Is.EqualTo(true));
             }
         }
+
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+            => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999, \"nickname\": \"xxxxx\"}";
+
+            public override TokenPair GetAccessToken()
+            => new TokenPair();
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedExecute => true;
+
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+            => "{ \"message\": \"booo...\"}";
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            public override TokenPair GetAccessToken()
+            => new TokenPair();
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
     }
 
     namespace DestroytTest
@@ -1078,6 +1310,8 @@ namespace Capibara.Test.Models.UserTest
             protected bool IsSucceed { get; private set; }
 
             protected bool IsFailed { get; private set; }
+
+            protected bool Result { get; private set; }
 
             protected User Actual { get; private set; }
 
@@ -1109,12 +1343,12 @@ namespace Capibara.Test.Models.UserTest
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.CommitFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.CommitSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Actual.DestroyFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.DestroySuccess += (sender, e) => this.IsSucceed = true;
                 }
 
                 if (this.NeedExecute)
-                    this.Actual.Destroy().Wait();
+                    this.Result = this.Actual.Destroy().Result;
             }
         }
 
@@ -1205,30 +1439,54 @@ namespace Capibara.Test.Models.UserTest
         [TestFixture]
         public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldSuccess()
             {
-                Assert.That(this.Actual.Destroy().Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenFailWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
+            protected override bool NeedExecute => true;
 
             protected override bool NeedEventHandler => false;
 
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldNotException()
+            public void IsShouldFail()
             {
-                Assert.That(this.Actual.Destroy().Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
