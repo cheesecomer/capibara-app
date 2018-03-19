@@ -31,6 +31,12 @@ namespace Capibara.Test.Net.Blocks.CreateRequestTest
         }
 
         [TestCase]
+        public void ItShouldNeedAuthentication()
+        {
+            Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
+        }
+
+        [TestCase]
         public void ItShouldStringContentWithExpected()
         {
             var expected = "{\"target_id\":1}".ToSlim();

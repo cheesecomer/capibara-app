@@ -29,6 +29,12 @@ namespace Capibara.Test.Net.Blocks.DestroyRequestTest
         {
             Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "blocks", "1" }));
         }
+
+        [TestCase]
+        public void ItShouldNeedAuthentication()
+        {
+            Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
+        }
     }
 }
 
