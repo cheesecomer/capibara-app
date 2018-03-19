@@ -14,7 +14,7 @@ namespace Capibara.Test.Net.Users.CreateRequestTest
         [SetUp]
         public void SetUp()
         {
-            this.Actual = new CreateRequest { Nickname = "Foo.BAR" };
+            this.Actual = new CreateRequest("Foo.BAR");
         }
 
         [TestCase]

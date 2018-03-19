@@ -9,7 +9,7 @@ using Unity;
 namespace Capibara.Test.Models.InformationTest
 {
     [TestFixture]
-    public class RestoreTest
+    public class RestoreTest : TestFixtureBase
     {
         private Information Actual;
 
@@ -48,50 +48,39 @@ namespace Capibara.Test.Models.InformationTest
     namespace DeserializeTest
     {
         [TestFixture]
-        public class WhenSuccess
+        public class WhenSuccess : TestFixtureBase
         {
-            private Information actual;
+            private Information Actual;
 
             [SetUp]
             public void Setup()
             {
-                // ISecureIsolatedStorage のセットアップ
-                var isolatedStorage = new Mock<IIsolatedStorage>();
-                isolatedStorage.SetupAllProperties();
-                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-
                 var json = "{ \"id\": 99999, \"title\": \"Title!!!\", \"message\": \"Message!!!!\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\"}";
-                this.actual = JsonConvert.DeserializeObject<Information>(json);
-
-                this.actual.BuildUp(container);
+                this.Actual = JsonConvert.DeserializeObject<Information>(json);
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Actual.Id, Is.EqualTo(99999));
             }
 
             [TestCase]
             public void ItShouldMessageWithExpected()
             {
-                Assert.That(this.actual.Message, Is.EqualTo("Message!!!!"));
+                Assert.That(this.Actual.Message, Is.EqualTo("Message!!!!"));
             }
 
             [TestCase]
             public void ItShouldTitleWithExpected()
             {
-                Assert.That(this.actual.Title, Is.EqualTo("Title!!!"));
+                Assert.That(this.Actual.Title, Is.EqualTo("Title!!!"));
             }
 
             [TestCase]
             public void ItShouldPublishedAtWithExpected()
             {
-                Assert.That(this.actual.PublishedAt, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
+                Assert.That(this.Actual.PublishedAt, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
             }
         }
     }

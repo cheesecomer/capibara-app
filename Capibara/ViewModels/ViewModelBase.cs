@@ -48,6 +48,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public IDeviceService DeviceService { get; set; }
 
+        [Dependency]
+        public Net.IRequestFactory RequestFactory { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

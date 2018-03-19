@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.IO;
 
-using Capibara.Net;
+using Capibara.Net.OAuth;
 using Capibara.Net.Sessions;
 
 using NUnit.Framework;
@@ -24,11 +24,7 @@ namespace Capibara.Test.Net.Sessions.CreateRequestTest
             [SetUp]
             public void SetUp()
             {
-                this.Actual = new CreateRequest()
-                {
-                    Email = "user@email.com",
-                    Password = "p@ssword"
-                };
+                this.Actual = new CreateRequest("user@email.com", "p@ssword");
             }
             
             [TestCase]
@@ -59,12 +55,11 @@ namespace Capibara.Test.Net.Sessions.CreateRequestTest
             [SetUp]
             public void SetUp()
             {
-                this.Actual = new CreateRequest()
+                this.Actual = new CreateRequest("twitter", new TokenPair
                 {
-                    Provider = "twitter",
-                    AccessToken = "AccessToken",
-                    AccessTokenSecret = "AccessTokenSecret"
-                };
+                    Token = "AccessToken",
+                    TokenSecret = "AccessTokenSecret"
+                });
             }
 
             [TestCase]

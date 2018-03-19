@@ -1377,7 +1377,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldAccessTokenNull()
             {
-                Assert.That(this.IsolatedStorage.AccessToken, Is.Null);
+                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null);
             }
 
             [TestCase]
@@ -1417,7 +1417,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldAccessTokenPresent()
             {
-                Assert.That(this.IsolatedStorage.AccessToken, Is.EqualTo("AccessToken"));
+                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("AccessToken"));
             }
 
             [TestCase]

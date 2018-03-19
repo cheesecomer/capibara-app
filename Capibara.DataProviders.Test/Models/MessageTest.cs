@@ -11,80 +11,64 @@ namespace Capibara.Test.Models.MessageTest
     namespace DeserializeTest
     {
         [TestFixture]
-        public class WhenSuccessIsOwn
+        public class WhenSuccessIsOwn : TestFixtureBase
         {
-            private Message actual;
+            private Message Actual;
 
             [SetUp]
             public void Setup()
             {
-                // ISecureIsolatedStorage のセットアップ
-                var isolatedStorage = new Mock<IIsolatedStorage>();
-                isolatedStorage.SetupAllProperties();
-                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-
                 var json = "{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
-                this.actual = JsonConvert.DeserializeObject<Message>(json);
+                this.Actual = JsonConvert.DeserializeObject<Message>(json);
 
-                this.actual.BuildUp(container);
+                this.Actual.BuildUp(this.GenerateUnityContainer());
+                this.IsolatedStorage.UserId = 10;
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Content, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+                Assert.That(this.Actual.Content, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Actual.Id, Is.EqualTo(99999));
             }
 
             [TestCase]
             public void ItShouldAtWithExpected()
             {
-                Assert.That(this.actual.At, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
+                Assert.That(this.Actual.At, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
             }
 
             [TestCase]
             public void ItShouldSenderWithExpected()
             {
-                Assert.That(this.actual.Sender, Is.EqualTo(new User { Id = 10, Nickname = "ABC" }).Using(new UserComparer()));
+                Assert.That(this.Actual.Sender, Is.EqualTo(new User { Id = 10, Nickname = "ABC" }).Using(new UserComparer()));
             }
 
             [TestCase]
             public void ItShouldIsOwnWithExpected()
             {
-                Assert.That(this.actual.IsOwn, Is.EqualTo(true));
+                Assert.That(this.Actual.IsOwn, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
-        public class WhenSuccessIsOthers
+        public class WhenSuccessIsOthers : TestFixtureBase
         {
             private Message actual;
 
             [SetUp]
             public void Setup()
             {
-                // ISecureIsolatedStorage のセットアップ
-                var isolatedStorage = new Mock<IIsolatedStorage>();
-                isolatedStorage.SetupAllProperties();
-                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-
                 var json = "{ \"sender\": { \"id\": 11, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.actual = JsonConvert.DeserializeObject<Message>(json);
 
-                this.actual.BuildUp(container);
+                this.actual.BuildUp(this.GenerateUnityContainer());
+                this.IsolatedStorage.UserId = 10;
             }
 
             [TestCase]
@@ -119,26 +103,18 @@ namespace Capibara.Test.Models.MessageTest
         }
 
         [TestFixture]
-        public class WhenSuccessSenderEmpty
+        public class WhenSuccessSenderEmpty : TestFixtureBase
         {
             private Message actual;
 
             [SetUp]
             public void Setup()
             {
-                // ISecureIsolatedStorage のセットアップ
-                var isolatedStorage = new Mock<IIsolatedStorage>();
-                isolatedStorage.SetupAllProperties();
-                isolatedStorage.SetupGet(x => x.UserId).Returns(10);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IIsolatedStorage>(isolatedStorage.Object);
-
                 var json = "{ \"sender\": null, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.actual = JsonConvert.DeserializeObject<Message>(json);
 
-                this.actual.BuildUp(container);
+                this.actual.BuildUp(this.GenerateUnityContainer());
+                this.IsolatedStorage.UserId = 10;
             }
 
             [TestCase]

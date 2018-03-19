@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Capibara.Net.Channels;
-using Capibara.Net.Rooms;
 
 using Newtonsoft.Json;
 
@@ -81,7 +80,7 @@ namespace Capibara.Models
 
         public async Task<bool> Refresh()
         {
-            var request = new ShowRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.RoomsShowRequest(this).BuildUp(this.Container);
             try
             {
                 var result = await request.Execute();

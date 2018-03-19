@@ -51,6 +51,7 @@ namespace Capibara
             containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
             containerRegistry.RegisterInstance<ITwitterOAuthService>(new TwitterOAuthService(this.Environment));
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
+            containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());

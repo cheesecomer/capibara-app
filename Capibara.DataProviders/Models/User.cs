@@ -3,15 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Capibara.Net.OAuth;
-using Capibara.Net.Users;
 
 using Newtonsoft.Json;
 
 using Unity;
 using Unity.Attributes;
-
-using BlockRequest = Capibara.Net.Blocks.CreateRequest;
-using ReportRequest = Capibara.Net.Reports.CreateRequest;
 
 namespace Capibara.Models
 {
@@ -117,7 +113,7 @@ namespace Capibara.Models
         /// <returns>The login.</returns>
         public async Task<bool> Refresh()
         {
-            var request = new ShowRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.UsersShowRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -150,7 +146,7 @@ namespace Capibara.Models
         /// <returns>The login.</returns>
         public async Task<bool> SignUp()
         {
-            var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
+            var request = this.RequestFactory.UsersCreateRequest(Nickname = this.Nickname).BuildUp(this.Container);
             try
             {
                 var response = await request.Execute();
@@ -219,12 +215,7 @@ namespace Capibara.Models
                     this.IsolatedStorage.OAuthRequestTokenPair,
                     query["oauth_verifier"]);
 
-                var request = new Net.Sessions.CreateRequest()
-                {
-                    Provider = provider.ToLower(),
-                    AccessToken = tokens.Token,
-                    AccessTokenSecret = tokens.TokenSecret
-                }.BuildUp(this.Container);
+                var request = this.RequestFactory.SessionsCreateRequest(provider.ToLower(), tokens).BuildUp(this.Container);
 
                 var response = await request.Execute();
 
@@ -261,7 +252,7 @@ namespace Capibara.Models
         /// <returns>The commit.</returns>
         public async Task<bool> Commit()
         {
-            var request = new UpdateRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.UsersUpdateRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -298,7 +289,7 @@ namespace Capibara.Models
         /// <returns>The commit.</returns>
         public async Task<bool> Block()
         {
-            var request = new BlockRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -323,7 +314,7 @@ namespace Capibara.Models
         /// <returns>The commit.</returns>
         public virtual async Task<bool> Destroy()
         {
-            var request = new DestroyRequest().BuildUp(this.Container);
+            var request = this.RequestFactory.UsersDestroyRequest().BuildUp(this.Container);
 
             try
             {
@@ -355,7 +346,7 @@ namespace Capibara.Models
         /// <param name="message">Message.</param>
         public virtual async Task<bool> Report(ReportReason reason, string message)
         {
-            var request = new ReportRequest(this, reason, message).BuildUp(this.Container);
+            var request = this.RequestFactory.ReportsCreateRequest(this, reason, message).BuildUp(this.Container);
             try
             {
                 await request.Execute();

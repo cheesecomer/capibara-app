@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 
 using Capibara.Models;
 
@@ -10,7 +9,7 @@ namespace Capibara.Net.Users
     public class UpdateRequest: RequestBase<User>
     {
         private User user;
-        
+
         public UpdateRequest(User user)
         {
             this.user = user;

@@ -15,10 +15,8 @@ using Capibara.Net.Channels;
 using Capibara.Net.OAuth;
 
 using Moq;
-using Moq.Language.Flow;
 using Unity;
 using NUnit.Framework;
-using Newtonsoft.Json;
 
 namespace Capibara.Test
 {
@@ -222,6 +220,7 @@ namespace Capibara.Test
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
             container.RegisterInstance<ITwitterOAuthService>(this.TwitterOAuthService.Object);
+            container.RegisterInstance<IRequestFactory>(new RequestFactory());
 
             return container;
         }

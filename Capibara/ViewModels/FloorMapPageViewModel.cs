@@ -42,7 +42,7 @@ namespace Capibara.ViewModels
 
         private async Task Refresh()
         {
-            var request = new Net.Rooms.IndexRequest().BuildUp(this.Container);
+            var request = this.RequestFactory.RoomsIndexRequest().BuildUp(this.Container);
             try
             {
                 var response = await request.Execute();

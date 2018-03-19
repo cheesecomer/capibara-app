@@ -68,6 +68,7 @@
     <Compile Include="Net\Users\DestroyRequest.cs" />
     <Compile Include="Models\ReportReason.cs" />
     <Compile Include="Net\Reports\CreateRequest.cs" />
+    <Compile Include="Net\RequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

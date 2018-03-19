@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Capibara.Net;
-using Capibara.Net.Sessions;
 
 using Unity;
 
@@ -45,11 +41,7 @@ namespace Capibara.Models
         /// <returns>The login.</returns>
         public async Task<bool> SignIn()
         {
-            var request = new CreateRequest()
-                {
-                    Email = this.Email,
-                    Password = this.Password
-                }.BuildUp(this.Container);
+            var request = this.RequestFactory.SessionsCreateRequest(this.Email, this.Password).BuildUp(this.Container);
 
             try
             {
