@@ -37,5 +37,15 @@ namespace Capibara.Models
             get => this.publishedAt;
             set => this.SetProperty(ref this.publishedAt, value);
         }
+
+        public override void Restore(Information model)
+        {
+            base.Restore(model);
+
+            this.Id = model.Id;
+            this.Title = model.Title;
+            this.Message = model.Message;
+            this.PublishedAt = model.PublishedAt;
+        }
     }
 }

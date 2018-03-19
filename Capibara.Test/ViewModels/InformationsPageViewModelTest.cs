@@ -100,6 +100,27 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
         }
 
         [TestFixture]
+        public class WhenSuccessWithDuplicated : WhenSuccessBase
+        {
+            protected override string HttpStabResponse
+            => "{\"informations\": [" +
+                    "{ \"id\": 1, \"title\": \"Title0001a\", \"message\": \"Message0001a\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\"}," +
+                    "{ \"id\": 1, \"title\": \"Title0001b\", \"message\": \"Message0001b\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\"}" +
+                "] }";
+
+            [TestCase]
+            public void ItShouldInformationsWithExpected()
+            {
+                var comparer = new InformationComparer();
+                var expect = new List<Information>
+                {
+                    new Information { Id = 1, Title = "Title0001b", Message = "Message0001b", PublishedAt = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)) }
+                };
+                Assert.That(this.ViewModel.Informations, Is.EqualTo(expect).Using(comparer));
+            }
+        }
+
+        [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
