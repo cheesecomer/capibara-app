@@ -174,19 +174,19 @@ namespace Capibara.Test.Models.UserTest
             => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
 
             [TestCase]
-            public void IsShouldNicknameWithExpect()
+            public void ItShouldNicknameWithExpect()
             {
                 Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
-            public void IsShouldBiographyWithExpect()
+            public void ItShouldBiographyWithExpect()
             {
                 Assert.That(this.Actual.Biography, Is.EqualTo("..."));
             }
 
             [TestCase]
-            public void IsShouldUserIdWithExpect()
+            public void ItShouldUserIdWithExpect()
             {
                 Assert.That(this.Actual.Id, Is.EqualTo(1));
             }
@@ -217,13 +217,13 @@ namespace Capibara.Test.Models.UserTest
             protected override bool IsOWn => true;
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
-            public void IsShouldRegisterUserInDIContainer()
+            public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
             }
@@ -260,19 +260,19 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldNicknameWithExpect()
+            public void ItShouldNicknameWithExpect()
             {
                 Assert.That(this.Actual.Nickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldBiographyWithExpect()
+            public void ItShouldBiographyWithExpect()
             {
                 Assert.That(this.Actual.Biography, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldUserIdWithExpect()
+            public void ItShouldUserIdWithExpect()
             {
                 Assert.That(this.Actual.Id, Is.EqualTo(1));
             }
@@ -307,6 +307,8 @@ namespace Capibara.Test.Models.UserTest
     {
         public abstract class TestBase : TestFixtureBase
         {
+            protected bool Result { get; private set; }
+
             protected bool IsSucceed { get; private set; }
 
             protected bool IsFailed { get; private set; }
@@ -314,8 +316,6 @@ namespace Capibara.Test.Models.UserTest
             protected User Actual { get; private set; }
 
             protected abstract bool NeedEventHandler { get; }
-
-            protected abstract bool NeedExecute { get; }
 
             [SetUp]
             public void Setup()
@@ -330,41 +330,38 @@ namespace Capibara.Test.Models.UserTest
                     this.Actual.SignUpSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                if (this.NeedExecute)
-                    this.Actual.SignUp().Wait();
+                this.Result = this.Actual.SignUp().Result;
             }
         }
 
         [TestFixture]
         public class WhenSuccess : TestBase
         {
-            protected override bool NeedExecute => true;
-
             protected override bool NeedEventHandler => true;
 
             protected override string HttpStabResponse
             => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999}";
 
             [TestCase]
-            public void IsShouldSaveTokenInStorage()
+            public void ItShouldSaveTokenInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
             }
 
             [TestCase]
-            public void IsShouldSaveUserIdInStorage()
+            public void ItShouldSaveUserIdInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
-            public void IsShouldRegisterUserInDIContainer()
+            public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
             }
@@ -385,8 +382,6 @@ namespace Capibara.Test.Models.UserTest
         [TestFixture]
         public class WhenFail : TestBase
         {
-            protected override bool NeedExecute => true;
-
             protected override bool NeedEventHandler => true;
 
             protected override string HttpStabResponse
@@ -395,19 +390,19 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldDontSaveTokenInStorage()
+            public void ItShouldDontSaveTokenInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontRegisterUserInDIContainer()
+            public void ItShouldDontRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
@@ -428,25 +423,33 @@ namespace Capibara.Test.Models.UserTest
         [TestFixture]
         public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
-
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
             => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999}";
 
             [TestCase]
-            public void IsShouldNotException()
+            public void ItShouldSuccess()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignUp);
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenFailWithoutEventHandler : TestBase
         {
-            protected override bool NeedExecute => false;
-
             protected override bool NeedEventHandler => false;
 
             protected override string HttpStabResponse
@@ -455,9 +458,21 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldNotException()
+            public void ItShouldFail()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignUp);
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
@@ -568,7 +583,7 @@ namespace Capibara.Test.Models.UserTest
 
 
             [TestCase]
-            public void IsShouldRegisterUserInDIContainer()
+            public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.CurrentUser));
             }
@@ -606,7 +621,7 @@ namespace Capibara.Test.Models.UserTest
 
 
             [TestCase]
-            public void IsShouldRegisterUserInDIContainer()
+            public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
             }
@@ -627,19 +642,19 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldDontSaveTokenInStorage()
+            public void ItShouldDontSaveTokenInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontRegisterUserInDIContainer()
+            public void ItShouldDontRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
@@ -671,7 +686,7 @@ namespace Capibara.Test.Models.UserTest
 
 
             [TestCase]
-            public void IsShouldSuccess()
+            public void ItShouldSuccess()
             {
                 Assert.That(this.Result, Is.EqualTo(true));
             }
@@ -704,7 +719,7 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldFail()
+            public void ItShouldFail()
             {
                 Assert.That(this.Result, Is.EqualTo(false));
             }
@@ -830,7 +845,7 @@ namespace Capibara.Test.Models.UserTest
                 => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
 
             [TestCase]
-            public void IsShouldSuccess()
+            public void ItShouldSuccess()
             {
                 Assert.That(this.Result, Is.EqualTo(true));
             }
@@ -861,7 +876,7 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldFail()
+            public void ItShouldFail()
             {
                 Assert.That(this.Result, Is.EqualTo(false));
             }
@@ -1177,25 +1192,25 @@ namespace Capibara.Test.Models.UserTest
             => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"id\": 999, \"nickname\": \"xxxxx\"}";
 
             [TestCase]
-            public void IsShouldSaveTokenInStorage()
+            public void ItShouldSaveTokenInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
             }
 
             [TestCase]
-            public void IsShouldSaveUserIdInStorage()
+            public void ItShouldSaveUserIdInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
-            public void IsShouldRegisterUserInDIContainer()
+            public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.Resolve<User>("CurrentUser").Id, Is.EqualTo(this.Actual.Id));
             }
@@ -1217,19 +1232,19 @@ namespace Capibara.Test.Models.UserTest
             => new TokenPair();
 
             [TestCase]
-            public void IsShouldDontSaveTokenInStorage()
+            public void ItShouldDontSaveTokenInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontRegisterUserInDIContainer()
+            public void ItShouldDontRegisterUserInDIContainer()
             {
                 Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
@@ -1366,25 +1381,25 @@ namespace Capibara.Test.Models.UserTest
             }
 
             [TestCase]
-            public void IsShouldUserNicknameNull()
+            public void ItShouldUserNicknameNull()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null);
             }
 
             [TestCase]
-            public void IsShouldOAuthCallbackUrlNull()
+            public void ItShouldOAuthCallbackUrlNull()
             {
                 Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl, Is.Null);
             }
 
             [TestCase]
-            public void IsShouldOAuthRequestTokenPairNull()
+            public void ItShouldOAuthRequestTokenPairNull()
             {
                 Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair, Is.Null);
             }
 
             [TestCase]
-            public void IsShouldUserIdIsZero()
+            public void ItShouldUserIdIsZero()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserId, Is.Null.Or.EqualTo(0));
             }
@@ -1406,31 +1421,31 @@ namespace Capibara.Test.Models.UserTest
             }
 
             [TestCase]
-            public void IsShouldUserNicknamePresent()
+            public void ItShouldUserNicknamePresent()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("UserName"));
             }
 
             [TestCase]
-            public void IsShouldOAuthCallbackUrlPresent()
+            public void ItShouldOAuthCallbackUrlPresent()
             {
                 Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl?.ToString(), Is.EqualTo("foobar://example.com/"));
             }
 
             [TestCase]
-            public void IsShouldOAuthRequestTokenPairTokenPresent()
+            public void ItShouldOAuthRequestTokenPairTokenPresent()
             {
                 Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.Token, Is.EqualTo("Token"));
             }
 
             [TestCase]
-            public void IsShouldOAuthRequestTokenPairTokenSecretPresent()
+            public void ItShouldOAuthRequestTokenPairTokenSecretPresent()
             {
                 Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.TokenSecret, Is.EqualTo("TokenSecret"));
             }
 
             [TestCase]
-            public void IsShouldUserIdPresent()
+            public void ItShouldUserIdPresent()
             {
                 Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(1000));
             }
@@ -1444,7 +1459,7 @@ namespace Capibara.Test.Models.UserTest
             protected override bool NeedEventHandler => false;
 
             [TestCase]
-            public void IsShouldSuccess()
+            public void ItShouldSuccess()
             {
                 Assert.That(this.Result, Is.EqualTo(true));
             }
@@ -1472,7 +1487,153 @@ namespace Capibara.Test.Models.UserTest
             protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
 
             [TestCase]
-            public void IsShouldFail()
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception RestException => new WebException();
+        }
+    }
+
+    namespace ReportTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool Result { get; private set; }
+
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Actual { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Actual.ReportFail += (sender, e) => this.IsFailed = true;
+                    this.Actual.ReportSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                this.Result = this.Actual.Report(ReportReason.Other, "FooBar").Result;
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+                => "{ \"id\": 1, \"nickname\": \"xxxxx!\", \"biography\":\"...\", icon_url : \"http://xxxxxx.com/xxxx.png\" }";
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override string HttpStabResponse
+            => "{ \"message\": \"booo...\"}";
+
+            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+
+            [TestCase]
+            public void ItShouldFail()
             {
                 Assert.That(this.Result, Is.EqualTo(false));
             }

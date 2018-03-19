@@ -2,14 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using BlockRequest = Capibara.Net.Blocks.CreateRequest;
 using Capibara.Net.OAuth;
 using Capibara.Net.Users;
+
+using Newtonsoft.Json;
 
 using Unity;
 using Unity.Attributes;
 
-using Newtonsoft.Json;
+using BlockRequest = Capibara.Net.Blocks.CreateRequest;
+using ReportRequest = Capibara.Net.Reports.CreateRequest;
 
 namespace Capibara.Models
 {
@@ -50,6 +52,10 @@ namespace Capibara.Models
         public virtual event EventHandler DestroySuccess;
 
         public virtual event EventHandler<Exception> DestroyFail;
+
+        public virtual event EventHandler ReportSuccess;
+
+        public virtual event EventHandler<Exception> ReportFail;
 
         public int Id
         {
@@ -142,7 +148,7 @@ namespace Capibara.Models
         /// ユーザ登録を行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignUp()
+        public async Task<bool> SignUp()
         {
             var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
             try
@@ -157,14 +163,16 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
 
                 this.SignUpSuccess?.Invoke(this, null);
+                return true;
             }
             catch (Exception e)
             {
                 this.SignUpFail?.Invoke(this, e);
+                return false;
             }
         }
 
-        public virtual async Task OAuthAuthorize(OAuthProvider provider)
+        public virtual async Task<bool> OAuthAuthorize(OAuthProvider provider)
         {
             try
             {
@@ -182,18 +190,20 @@ namespace Capibara.Models
                 else
                 {
                     this.OAuthAuthorizeFail?.Invoke(this, new ArgumentException("Invalid OAuthProvider. Can use Twitter only"));
-                    return;
+                    return false;
                 }
 
                 this.OAuthAuthorizeSuccess?.Invoke(this, authorizeUri);
+                return true;
             }
             catch (Exception e)
             {
                 this.OAuthAuthorizeFail?.Invoke(this, e);
+                return false;
             }
         }
 
-        public virtual async Task SignUpWithOAuth()
+        public virtual async Task<bool> SignUpWithOAuth()
         {
             var path = this.IsolatedStorage.OAuthCallbackUrl.LocalPath;
             var provider = path.Split('/').Skip(1).ElementAtOrDefault(1);
@@ -230,6 +240,8 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignUpSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
@@ -238,6 +250,8 @@ namespace Capibara.Models
                 this.IsolatedStorage.Save();
 
                 this.SignUpFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
@@ -329,6 +343,31 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.DestroyFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Report the specified reason and message.
+        /// </summary>
+        /// <returns>The report.</returns>
+        /// <param name="reason">Reason.</param>
+        /// <param name="message">Message.</param>
+        public virtual async Task<bool> Report(ReportReason reason, string message)
+        {
+            var request = new ReportRequest(this, reason, message).BuildUp(this.Container);
+            try
+            {
+                await request.Execute();
+
+                this.ReportSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ReportFail?.Invoke(this, e);
+
                 return false;
             }
         }
