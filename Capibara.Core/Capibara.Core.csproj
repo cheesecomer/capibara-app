@@ -36,7 +36,6 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="ICapibaraApplication.cs" />
     <Compile Include="UnityInstanceNames.cs" />
-    <Compile Include="StreamExtensions.cs" />
     <Compile Include="Net.OAuth\OAuthService.cs" />
     <Compile Include="Net.OAuth\Session.cs" />
     <Compile Include="Net.OAuth\TokenPair.cs" />
