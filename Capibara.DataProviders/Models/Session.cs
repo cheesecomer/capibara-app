@@ -11,9 +11,9 @@ namespace Capibara.Models
 
         private string password;
 
-        public event EventHandler SignInSuccess;
+        public virtual event EventHandler SignInSuccess;
 
-        public event EventHandler<Exception> SignInFail;
+        public virtual event EventHandler<FailEventArgs> SignInFail;
 
         /// <summary>
         /// メールアドレスを取得または設定します
@@ -39,7 +39,7 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task<bool> SignIn()
+        public virtual async Task<bool> SignIn()
         {
             var request = this.RequestFactory.SessionsCreateRequest(this.Email, this.Password).BuildUp(this.Container);
 

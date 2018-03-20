@@ -27,31 +27,31 @@ namespace Capibara.Models
 
         public virtual event EventHandler SignUpSuccess;
 
-        public virtual event EventHandler<Exception> SignUpFail;
+        public virtual event EventHandler<FailEventArgs> SignUpFail;
 
         public virtual event EventHandler RefreshSuccess;
 
-        public virtual event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<FailEventArgs> RefreshFail;
 
         public virtual event EventHandler CommitSuccess;
 
-        public virtual event EventHandler<Exception> CommitFail;
+        public virtual event EventHandler<FailEventArgs> CommitFail;
 
         public virtual event EventHandler BlockSuccess;
 
-        public virtual event EventHandler<Exception> BlockFail;
+        public virtual event EventHandler<FailEventArgs> BlockFail;
 
-        public virtual event EventHandler<Uri> OAuthAuthorizeSuccess;
+        public virtual event EventHandler<EventArgs<Uri>> OAuthAuthorizeSuccess;
 
-        public virtual event EventHandler<Exception> OAuthAuthorizeFail;
+        public virtual event EventHandler<FailEventArgs> OAuthAuthorizeFail;
 
         public virtual event EventHandler DestroySuccess;
 
-        public virtual event EventHandler<Exception> DestroyFail;
+        public virtual event EventHandler<FailEventArgs> DestroyFail;
 
         public virtual event EventHandler ReportSuccess;
 
-        public virtual event EventHandler<Exception> ReportFail;
+        public virtual event EventHandler<FailEventArgs> ReportFail;
 
         public int Id
         {
@@ -111,7 +111,7 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task<bool> Refresh()
+        public virtual async Task<bool> Refresh()
         {
             var request = this.RequestFactory.UsersShowRequest(this).BuildUp(this.Container);
 
@@ -144,7 +144,7 @@ namespace Capibara.Models
         /// ユーザ登録を行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task<bool> SignUp()
+        public virtual async Task<bool> SignUp()
         {
             var request = this.RequestFactory.UsersCreateRequest(Nickname = this.Nickname).BuildUp(this.Container);
             try
@@ -250,7 +250,7 @@ namespace Capibara.Models
         /// ユーザー情報を更新します。
         /// </summary>
         /// <returns>The commit.</returns>
-        public async Task<bool> Commit()
+        public virtual async Task<bool> Commit()
         {
             var request = this.RequestFactory.UsersUpdateRequest(this).BuildUp(this.Container);
 
@@ -287,7 +287,7 @@ namespace Capibara.Models
         /// ユーザーをブロックします。
         /// </summary>
         /// <returns>The commit.</returns>
-        public async Task<bool> Block()
+        public virtual async Task<bool> Block()
         {
             var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
 

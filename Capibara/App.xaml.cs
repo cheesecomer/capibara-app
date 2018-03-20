@@ -74,9 +74,9 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<BlockUsersPage>();
             containerRegistry.RegisterForNavigation<InformationsPage>();
             containerRegistry.RegisterForNavigation<UnsubscribePage>();
-            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserProfilePageViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage

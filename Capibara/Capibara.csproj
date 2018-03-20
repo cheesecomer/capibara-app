@@ -72,7 +72,7 @@
     </Compile>
     <Compile Include="Converters\DoubleMultiplierConverter.cs" />
     <Compile Include="Converters\FloatMultiplierConverter.cs" />
-    <Compile Include="ViewModels\UserProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
     <Compile Include="Views\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>

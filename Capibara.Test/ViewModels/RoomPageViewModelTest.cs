@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 using Capibara.Models;
 using Capibara.ViewModels;
+using Capibara.Net;
+using Capibara.Net.Rooms;
 
 using Moq;
 using NUnit.Framework;
-
-using Prism.Navigation;
 
 namespace Capibara.Test.ViewModels.RoomPageViewModelTest
 {
@@ -46,7 +46,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
     namespace SpeakCommandCanExecuteTest
     {
         [TestFixture]
-        public class WhenConnectAfterSetMessage : ViewModelTestBase
+        public class WhenConnected : ViewModelTestBase
         {
             [TestCase("", false)]
             [TestCase(null, false)]
@@ -60,11 +60,10 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             {
                 var viewModel = new RoomPageViewModel();
                 var container = this.GenerateUnityContainer();
+                var model = new Mock<Room>();
+                model.SetupGet(x => x.IsConnected).Returns(true);
 
-                viewModel = new RoomPageViewModel().BuildUp(container);
-
-                viewModel.ConnectCommand.Execute();
-                while (!viewModel.ConnectCommand.CanExecute()) { }
+                viewModel = new RoomPageViewModel(model: model.Object).BuildUp(container);
 
                 viewModel.Message.Value = message;
 
@@ -73,27 +72,26 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         }
 
         [TestFixture]
-        public class WhenConnectBeforeSetMessage : ViewModelTestBase
+        public class WhenNotConnected : ViewModelTestBase
         {
             [TestCase("", false)]
             [TestCase(null, false)]
             [TestCase("    ", false)]
             [TestCase("\r\n", false)]
             [TestCase("  \r\n  ", false)]
-            [TestCase("1", true)]
-            [TestCase("1  ", true)]
-            [TestCase("1 \r\n ", true)]
+            [TestCase("1", false)]
+            [TestCase("1  ", false)]
+            [TestCase("1 \r\n ", false)]
             public void ItShouldResultWithExpect(string message, bool expect)
             {
                 var viewModel = new RoomPageViewModel();
                 var container = this.GenerateUnityContainer();
+                var model = new Mock<Room>();
+                model.SetupGet(x => x.IsConnected).Returns(false);
 
-                viewModel = new RoomPageViewModel().BuildUp(container);
+                viewModel = new RoomPageViewModel(model: model.Object).BuildUp(container);
 
                 viewModel.Message.Value = message;
-
-                viewModel.ConnectCommand.Execute();
-                while (!viewModel.ConnectCommand.CanExecute()) { }
 
                 Assert.That(viewModel.SpeakCommand.CanExecute(), Is.EqualTo(expect));
             }
@@ -107,27 +105,27 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         {
             protected RoomPageViewModel viewModel;
 
+            protected bool IsSpeakCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
+                var model = new Mock<Room>();
+                model.SetupGet(x => x.IsConnected).Returns(true);
+                model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true).Callback(() =>
+                {
+                    this.IsSpeakCalled = true;
+                    model.Raise(x => x.SpeakSuccess += null, System.EventArgs.Empty);
+                });
 
-                viewModel = new RoomPageViewModel().BuildUp(container);
-                viewModel.Model.Restore(new Room() { Id = 1 });
-
-                var speakTaskSource = new TaskCompletionSource<bool>();
-                viewModel.Model.SpeakSuccess += (sender, e) => speakTaskSource.SetResult(true);
-                viewModel.Model.SpeakFail += (sender, e) => speakTaskSource.SetResult(false);
+                viewModel = new RoomPageViewModel(model: model.Object).BuildUp(container);
 
                 viewModel.ConnectCommand.Execute();
                 while (!viewModel.ConnectCommand.CanExecute()) { }
 
-                this.ResetSendAsync();
-
                 viewModel.Message.Value = "Foo.Bar!";
                 viewModel.SpeakCommand.Execute();
-
-                speakTaskSource.Task.Wait();
             }
 
             [TearDown]
@@ -141,6 +139,12 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             {
                 Assert.That(this.viewModel.Message.Value, Is.EqualTo(string.Empty));
             }
+
+            [TestCase]
+            public void ItShouldIsSpeakCalled()
+            {
+                Assert.That(this.IsSpeakCalled, Is.EqualTo(true));
+            }
         }
     }
 
@@ -151,21 +155,25 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
+            protected bool IsRefreshCalled;
+
+            protected bool IsConnectCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
 
-                ViewModel = new RoomPageViewModel();
-                ViewModel.Model.Restore(new Room() { Id = 1 });
+                var model = new Mock<Room>();
+                model.Setup(x => x.Connect()).ReturnsAsync(true).Callback(() => this.IsConnectCalled = true);
+                model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
+
+                ViewModel = new RoomPageViewModel(this.NavigationService, model: model.Object);
 
                 ViewModel.BuildUp(container);
 
                 ViewModel.ConnectCommand.Execute();
                 while (!ViewModel.ConnectCommand.CanExecute()) { }
-
-                // 受信完了を待機
-                Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
             }
 
             [TearDown]
@@ -175,9 +183,15 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             }
 
             [TestCase]
-            public void ItShouldIsConnected()
+            public void ItShouldIsRefreshCalled()
             {
-                Assert.That(this.ViewModel.Model.IsConnected, Is.EqualTo(true));
+                Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsConnectCalled()
+            {
+                Assert.That(this.IsConnectCalled, Is.EqualTo(true));
             }
         }
     }
@@ -189,13 +203,19 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
+            protected bool IsCloseCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
 
-                ViewModel = new RoomPageViewModel();
-                ViewModel.Model.Restore(new Room() { Id = 1 });
+                var model = new Mock<Room>();
+                model.Setup(x => x.Connect()).ReturnsAsync(true);
+                model.Setup(x => x.Refresh()).ReturnsAsync(true);
+                model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
+
+                ViewModel = new RoomPageViewModel(this.NavigationService, model: model.Object);
 
                 ViewModel.BuildUp(container);
 
@@ -207,9 +227,9 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             }
 
             [TestCase]
-            public void ItShouldIsNotConnected()
+            public void ItShouldCloseCalled()
             {
-                Assert.That(this.ViewModel.Model.IsConnected, Is.EqualTo(false));
+                Assert.That(this.IsCloseCalled, Is.EqualTo(true));
             }
 
             [TearDown]
@@ -224,13 +244,19 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
         {
             protected RoomPageViewModel ViewModel { get; private set; }
 
+            protected bool IsCloseCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
 
-                ViewModel = new RoomPageViewModel(this.NavigationService);
-                ViewModel.Model.Restore(new Room() { Id = 1 });
+                var model = new Mock<Room>();
+                model.Setup(x => x.Connect()).ReturnsAsync(true);
+                model.Setup(x => x.Refresh()).ReturnsAsync(true);
+                model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
+
+                ViewModel = new RoomPageViewModel(this.NavigationService, model: model.Object);
 
                 ViewModel.BuildUp(container);
 
@@ -245,9 +271,9 @@ namespace Capibara.Test.ViewModels.RoomPageViewModelTest
             }
 
             [TestCase]
-            public void ItShouldIsNotConnected()
+            public void ItShouldIsCloseNotCalled()
             {
-                Assert.That(this.ViewModel.Model.IsConnected, Is.EqualTo(true));
+                Assert.That(this.IsCloseCalled, Is.EqualTo(false));
             }
 
             [TearDown]

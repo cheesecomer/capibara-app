@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 
+using Capibara.Net;
 using Capibara.Models;
 using Capibara.ViewModels;
 
@@ -33,6 +34,84 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         }
     }
 
+    [TestFixture]
+    public class OnSignInSuccessTest : ViewModelTestBase
+    {
+        protected SignInPageViewModel ViewModel { get; private set; }
+
+        [SetUp]
+        public void SetUp()
+        {
+            var container = this.GenerateUnityContainer();
+            var model = new Mock<Session>();
+            this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+
+            model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
+        }
+
+        [TestCase]
+        public void ItShouldNavigateToFloorMap()
+        {
+            Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+        }
+    }
+
+    namespace OnSignInFailTest
+    {
+        public abstract class TestBase : ViewModelTestBase
+        {
+            protected SignInPageViewModel ViewModel { get; private set; }
+
+            protected abstract Exception Exception { get; }
+
+            [SetUp]
+            public void SetUp()
+            {
+                var container = this.GenerateUnityContainer();
+                var model = new Mock<Session>();
+                this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+
+                model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
+            }
+        }
+
+        [TestFixture]
+        public class WhenHttpUnauthorizedException : TestBase
+        {
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}");
+
+            [TestCase]
+            public void ItShouldNotNavigate()
+            {
+                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldErrorWithExpect()
+            {
+                Assert.That(this.ViewModel.Error.Value, Is.EqualTo("m9(^Д^)"));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWebException : TestBase
+        {
+            protected override Exception Exception => new WebException();
+
+            [TestCase]
+            public void ItShouldNotNavigate()
+            {
+                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldErrorIsEmpty()
+            {
+                Assert.That(this.ViewModel.Error.Value, Is.EqualTo(string.Empty).Or.Null);
+            }
+        }
+    }
+
     namespace SignInCommandExecuteTest
     {
         public abstract class ExecuteTestBase : ViewModelTestBase
@@ -41,21 +120,31 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
 
             protected SignInPageViewModel ViewModel { get; private set; }
 
+            protected bool IsSignInCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
-
-                this.ViewModel = new SignInPageViewModel(this.NavigationService).BuildUp(container);
+                var model = new Mock<Session>();
+                model.SetupAllProperties();
+                model.Setup(x => x.SignIn()).ReturnsAsync(true).Callback(() => this.IsSignInCalled = true);
+                this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
                 this.ViewModel.Email.Value = "user@email.com";
                 this.ViewModel.Password.Value = "password";
 
-                this.ViewModel.SignInCommand.Execute();
-
-                if (this.NeedSignInWait)
+                if (!this.NeedSignInWait)
                 {
-                    while(!this.ViewModel.SignInCommand.CanExecute()) { }
+                    this.ViewModel.SignInCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
                 }
+
+                this.ViewModel.SignInCommand.Execute();
+            }
+
+            [TestCase]
+            public void ItShouldIsSignInCalled()
+            {
+                Assert.That(this.IsSignInCalled, Is.EqualTo(true));
             }
         }
 
@@ -76,68 +165,10 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         [TestFixture]
         public class WhenSuccess : ExecuteTestBase
         {
-            protected override string HttpStabResponse => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\"}";
-
-            [TestCase]
-            public void ItShouldNavigateToFloorMap()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
-            }
-
             [TestCase]
             public void ItShouldNotBusy()
             {
                 Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
-            }
-        }
-
-        [TestFixture]
-        public class WhenFailWebException : ExecuteTestBase
-        {
-            protected override Exception RestException => new WebException();
-
-            [TestCase]
-            public void ItShouldNotNavigate()
-            {
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldNotBusy()
-            {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldErrorIsEmpty()
-            {
-                Assert.That(this.ViewModel.Error.Value, Is.EqualTo(string.Empty).Or.Null);
-            }
-        }
-
-        [TestFixture]
-        public class WhenFailUnauthorized : ExecuteTestBase
-        {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            protected override string HttpStabResponse => "{ \"message\": \"m9(^Д^)\"}";
-
-            [TestCase]
-            public void ItShouldNotNavigate()
-            {
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldNotBusy()
-            {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldErrorWithExpect()
-            {
-                Assert.That(this.ViewModel.Error.Value, Is.EqualTo("m9(^Д^)"));
             }
         }
     }

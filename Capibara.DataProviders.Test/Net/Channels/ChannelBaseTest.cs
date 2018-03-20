@@ -97,7 +97,7 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
         [TestCase]
         public void ItShouldCallConnect()
         {
-            Assert.That(this.IsConnectCalled, Is.EqualTo(true));
+            Assert.That(this.IsWebSocketConnectCalled, Is.EqualTo(true));
         }
     }
 

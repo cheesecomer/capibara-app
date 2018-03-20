@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Prism.Navigation;
 using Prism.Services;
 
-namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
+namespace Capibara.Test.ViewModels.UserViewModelTest
 {
     namespace NicknamePropertyTest
     {
@@ -22,7 +22,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         {
             protected User Model;
 
-            protected UserProfilePageViewModel Actual;
+            protected UserViewModel Actual;
 
             [SetUp]
             public void SetUp()
@@ -31,7 +31,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
                 this.Model = new User() { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
                 this.IsolatedStorage.UserId = this.Model.Id;
 
-                this.Actual = new UserProfilePageViewModel(model: this.Model).BuildUp(container);
+                this.Actual = new UserViewModel(model: this.Model).BuildUp(container);
             }
 
             [TestCase]
@@ -55,7 +55,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         {
             protected User Model;
 
-            protected UserProfilePageViewModel Actual;
+            protected UserViewModel Actual;
 
             [SetUp]
             public void SetUp()
@@ -64,7 +64,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
                 this.Model = new User() { Biography = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
                 this.IsolatedStorage.UserId = this.Model.Id;
 
-                this.Actual = new UserProfilePageViewModel(model: this.Model).BuildUp(container);
+                this.Actual = new UserViewModel(model: this.Model).BuildUp(container);
             }
 
             [TestCase]
@@ -87,16 +87,18 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
         {
+            private bool IsRefreshCalled;
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
 
-                var viewModel = new UserProfilePageViewModel();
+                var model = new Mock<User>();
+                model.SetupAllProperties();
+                model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
 
-                viewModel.Model.Id = 1;
-
-                viewModel.BuildUp(container);
+                var viewModel = new UserViewModel(model: model.Object).BuildUp(this.GenerateUnityContainer());
 
                 viewModel.RefreshCommand.Execute();
 
@@ -107,6 +109,12 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             public void ItShouldShowDialog()
             {
                 Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldRefreshCalled()
+            {
+                Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
             }
         }
     }
@@ -132,7 +140,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
 
                 var container = this.GenerateUnityContainer();
 
-                var viewModel = new UserProfilePageViewModel(pageDialogService: pageDialogService.Object);
+                var viewModel = new UserViewModel(pageDialogService: pageDialogService.Object);
 
                 viewModel.Model.Id = 1;
 
@@ -192,7 +200,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
 
                 var container = this.GenerateUnityContainer();
 
-                var viewModel = new UserProfilePageViewModel(pageDialogService: pageDialogService.Object);
+                var viewModel = new UserViewModel(pageDialogService: pageDialogService.Object);
 
                 viewModel.Model.Id = 1;
 
@@ -219,7 +227,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var viewModel = new UserProfilePageViewModel(this.NavigationService);
+            var viewModel = new UserViewModel(this.NavigationService);
 
             viewModel.EditCommand.Execute();
 
@@ -245,20 +253,40 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         }
     }
 
+    [TestFixture]
+    public class CommitCommandCanExecuteTest : ViewModelTestBase
+    {
+        [TestCase("", false)]
+        [TestCase(" ", false)]
+        [TestCase("a", true)]
+        [TestCase(" a ", true)]
+        public void ItShouldExpected(string nickname, bool canExecute)
+        {
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            viewModel.Nickname.Value = nickname;
+
+            Assert.That(viewModel.CommitCommand.CanExecute(), Is.EqualTo(canExecute));
+        }
+    }
+
     namespace CommitCommandTest
     {
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
         {
+            private bool IsCommitCalled;
+
             [SetUp]
             public void SetUp()
             {
-                var container = this.GenerateUnityContainer();
-                var viewModel = new UserProfilePageViewModel(this.NavigationService);
+                var model = new Mock<User>();
+                model.SetupAllProperties();
+                model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
 
-                viewModel.Model.Id = 1;
-
-                viewModel.BuildUp(container);
+                var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+                viewModel.Nickname.Value = "FooBar";
 
                 viewModel.CommitCommand.Execute();
 
@@ -270,6 +298,29 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             {
                 Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
             }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                Assert.That(this.IsCommitCalled, Is.EqualTo(true));
+            }
+        }
+    }
+
+    [TestFixture]
+    public class BlockCommandCanExecuteTest : ViewModelTestBase
+    {
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public void ItShouldExpected(bool isBlock, bool canExecute)
+        {
+            var taskSource = new TaskCompletionSource<bool>();
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            viewModel.IsBlock.Value = isBlock;
+
+            Assert.That(viewModel.BlockCommand.CanExecute(), Is.EqualTo(canExecute));
         }
     }
 
@@ -278,26 +329,27 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
         {
-            private UserProfilePageViewModel ViewModel;
+            private UserViewModel ViewModel;
+
+            protected bool IsBlockCalled;
 
             [SetUp]
             public void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                var taskSource = new TaskCompletionSource<bool>();
+                var model = new Mock<User>();
+                model.SetupAllProperties();
+                model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
 
-                this.ViewModel = new UserProfilePageViewModel(this.NavigationService);
-
-                this.ViewModel.Model.Id = 1;
-
-                this.ViewModel.BuildUp(container);
-
-                var blockTaskSource = new TaskCompletionSource<bool>();
-                this.ViewModel.Model.BlockSuccess += (sender, e) => blockTaskSource.SetResult(true);
-                this.ViewModel.Model.BlockFail += (sender, e) => blockTaskSource.SetResult(false);
-
+                this.ViewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+                this.ViewModel.IsBlock.Value = false;
                 this.ViewModel.BlockCommand.Execute();
+            }
 
-                blockTaskSource.Task.Wait();
+            [TestCase]
+            public void ItShouldIsBlockCalled()
+            {
+                Assert.That(this.IsBlockCalled, Is.EqualTo(true));
             }
 
             [TestCase]
@@ -305,18 +357,41 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModelTest
             {
                 Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
             }
+        }
+    }
 
-            [TestCase]
-            public void ItShouldCanNotExecute()
-            {
-                Assert.That(this.ViewModel.BlockCommand.CanExecute(), Is.EqualTo(false));
-            }
 
-            [TestCase]
-            public void ItShouldIsBlocked()
-            {
-                Assert.That(this.ViewModel.IsBlock.Value, Is.EqualTo(true));
-            }
+    [TestFixture]
+    public class ReportCommandTest : ViewModelTestBase
+    {
+        private UserViewModel ViewModel;
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.ViewModel = new UserViewModel(this.NavigationService);
+
+            this.ViewModel.ReportCommand.Execute();
+
+            while (!this.ViewModel.ReportCommand.CanExecute()) { }
+        }
+
+        [TestCase]
+        public void ItShouldNavigateToParticipantsPage()
+        {
+            Assert.That(this.NavigatePageName, Is.EqualTo("ReportPage"));
+        }
+
+        [TestCase]
+        public void ItShouldNavigationParametersHsaModel()
+        {
+            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
+        }
+
+        [TestCase]
+        public void ItShouldNavigationParameterModelIsExpect()
+        {
+            Assert.That(this.NavigationParameters[ParameterNames.Model], Is.EqualTo(this.ViewModel.Model));
         }
     }
 }

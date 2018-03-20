@@ -174,7 +174,7 @@
     <Compile Include="ViewModels\SettingPageViewModelTest.cs" />
     <Compile Include="Converters\DoubleMultiplierConverterTest.cs" />
     <Compile Include="Converters\FloatMultiplierConverterTest.cs" />
-    <Compile Include="ViewModels\UserProfilePageViewModelTest.cs" />
+    <Compile Include="ViewModels\UserViewModelTest.cs" />
     <Compile Include="ViewModels\BlockUsersPageViewModelTest.cs" />
     <Compile Include="ViewModels\MessageViewModelTest.cs" />
     <Compile Include="ViewModels\InformationsPageViewModelTest.cs" />

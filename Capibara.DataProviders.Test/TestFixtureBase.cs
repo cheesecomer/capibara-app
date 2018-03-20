@@ -54,7 +54,7 @@ namespace Capibara.Test
 
     public abstract class TestFixtureBase
     {
-        protected bool IsConnectCalled { get; private set; }
+        protected bool IsWebSocketConnectCalled { get; private set; }
 
         protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
 
@@ -172,7 +172,7 @@ namespace Capibara.Test
                 {
                     this.WebSocketRequestUrl = uri.AbsoluteUri;
                     ConnectTaskSource.TrySetResult(true);
-                    this.IsConnectCalled = true;
+                    this.IsWebSocketConnectCalled = true;
                 });
 
             this.ReceiveMessages = new List<ReceiveMessage>() {

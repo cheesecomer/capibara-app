@@ -3,7 +3,10 @@
 using System.Net;
 using System.Threading.Tasks;
 
+using Capibara.Models;
 using Capibara.ViewModels;
+using Capibara.Net;
+using Capibara.Net.Users;
 
 using Moq;
 using NUnit.Framework;
@@ -81,10 +84,23 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
 
             protected SplashPageViewModel Actual { get; private set; }
 
+            protected virtual User Response { get; }
+
+            protected virtual Exception Exception { get; }
+
             [SetUp]
             public void SetUp()
             {
+                
                 this.Actual = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+
+                var request = new Mock<RequestBase<User>>();
+                if (this.Response.IsPresent())
+                    request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
+                else if (this.Exception.IsPresent())
+                    request.Setup(x => x.Execute()).ThrowsAsync(this.Exception);
+
+                this.RequestFactory.Setup(x => x.UsersShowRequest(It.IsAny<User>())).Returns(request.Object);
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = this.AccessToken;
@@ -127,6 +143,8 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
+            protected override User Response => new User();
+
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
             {
@@ -154,27 +172,9 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
 
         public class WhenHasInvalidAccessToken : WhenHasNotAccessToken
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 
             protected override string AccessToken => Guid.NewGuid().ToString();
-
-            [TestCase]
-            public void IsShouldDontSaveUserIdInStorage()
-            {
-                Assert.That(this.IsolatedStorage.UserId, Is.EqualTo(0));
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveTokenInStorage()
-            {
-                Assert.That(this.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveUserNicknameInStorage()
-            {
-                Assert.That(this.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
-            }
         }
     }
 }

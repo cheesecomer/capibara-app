@@ -27,21 +27,21 @@ namespace Capibara.Models
 
         private ChatChannel channel;
 
-        public event EventHandler RefreshSuccess;
+        public virtual event EventHandler RefreshSuccess;
 
-        public event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<FailEventArgs> RefreshFail;
 
-        public event EventHandler SpeakSuccess;
+        public virtual event EventHandler SpeakSuccess;
 
-        public event EventHandler<Exception> SpeakFail;
+        public virtual event EventHandler<FailEventArgs> SpeakFail;
 
-        public event EventHandler Disconnected;
+        public virtual event EventHandler Disconnected;
 
-        public event EventHandler<User> JoinUser;
+        public virtual event EventHandler<User> JoinUser;
 
-        public event EventHandler<User> LeaveUser;
+        public virtual event EventHandler<User> LeaveUser;
 
-        public bool IsConnected
+        public virtual bool IsConnected
         {
             get => this.isConnected;
             set => this.SetProperty(ref this.isConnected, value);
@@ -78,7 +78,7 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.numberOfParticipants, value);
         }
 
-        public async Task<bool> Refresh()
+        public virtual async Task<bool> Refresh()
         {
             var request = this.RequestFactory.RoomsShowRequest(this).BuildUp(this.Container);
             try
@@ -101,7 +101,7 @@ namespace Capibara.Models
             }
         }
 
-        public async Task<bool> Connect()
+        public virtual async Task<bool> Connect()
         {
             if (this.channel != null)
             {
@@ -118,7 +118,7 @@ namespace Capibara.Models
             return await this.channel.Connect();
         }
 
-        public async Task Close()
+        public virtual async Task<bool> Close()
         {
             this.IsConnected = false;
             if (this.channel != null)
@@ -128,6 +128,7 @@ namespace Capibara.Models
             }
 
             this.channel = null;
+            return true;
         }
 
         public override void Restore(Room model)
@@ -140,7 +141,7 @@ namespace Capibara.Models
             model.Participants?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
         }
 
-        public async Task<bool> Speak(string message)
+        public virtual async Task<bool> Speak(string message)
         {
             try
             {

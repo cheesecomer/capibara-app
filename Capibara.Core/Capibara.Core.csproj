@@ -39,6 +39,8 @@
     <Compile Include="Net.OAuth\OAuthService.cs" />
     <Compile Include="Net.OAuth\Session.cs" />
     <Compile Include="Net.OAuth\TokenPair.cs" />
+    <Compile Include="FailEventArgs.cs" />
+    <Compile Include="EventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
