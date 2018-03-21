@@ -181,6 +181,8 @@
     <Compile Include="NavigationService.cs" />
     <Compile Include="ViewModels\UnsubscribePageViewModelTest.cs" />
     <Compile Include="ViewModels\ReportPageViewModelTest.cs" />
+    <Compile Include="ViewModels\WebViewPageViewModelTest.cs" />
+    <Compile Include="ViewModels\AcceptPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

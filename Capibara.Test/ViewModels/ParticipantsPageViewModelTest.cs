@@ -1,16 +1,9 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-
-using Capibara.Models;
+﻿using Capibara.Models;
 using Capibara.ViewModels;
-
-using Moq;
 using NUnit.Framework;
+using SubjectViewModel = Capibara.ViewModels.ParticipantsPageViewModel;
 
-using Prism.Navigation;
-using Prism.Services;
-
-namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
+namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
 {
     namespace ItemTappedCommand
     {
@@ -20,7 +13,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
             [SetUp]
             public void SetUp()
             {
-                var viewModel = new ParticipantsPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 viewModel.ItemTappedCommand.Execute(new User { Id = 1 });
 
@@ -52,7 +45,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
             [SetUp]
             public void SetUp()
             {
-                var viewModel = new ParticipantsPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 this.IsolatedStorage.UserId = 1;
 
@@ -87,19 +80,19 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
         [TestFixture]
         public class WhenUpdate : ViewModelTestBase
         {
-            protected ParticipantsPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             [SetUp]
             public void SetUp()
             {
-                this.ViewModel = new ParticipantsPageViewModel().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
             }
 
             [TestCase]
             public void ItShouldValueToExpect()
             {
-                this.ViewModel.Model.Participants.Add(new User());
-                Assert.That(this.ViewModel.Participants.Count, Is.EqualTo(1));
+                this.Subject.Model.Participants.Add(new User());
+                Assert.That(this.Subject.Participants.Count, Is.EqualTo(1));
             }
         }
     }

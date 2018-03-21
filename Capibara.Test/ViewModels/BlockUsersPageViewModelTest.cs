@@ -12,15 +12,19 @@ using NUnit.Framework;
 
 using Prism.Services;
 
-namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
+using SubjectViewModel = Capibara.ViewModels.BlockUsersPageViewModel;
+
+namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
 {
     namespace RefreshCommandTest
     {
         public abstract class WhenSuccessBase : ViewModelTestBase
         {
-            protected BlockUsersPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected virtual IndexResponse Response { get; } = new IndexResponse();
+
+            private bool IsBlocksIndexExecute;
 
             [SetUp]
             public void SetUp()
@@ -30,21 +34,30 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
                 var request = new Mock<RequestBase<IndexResponse>>();
                 request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
 
-                this.RequestFactory.Setup(x => x.BlocksIndexRequest()).Returns(request.Object);
+                this.RequestFactory
+                    .Setup(x => x.BlocksIndexRequest())
+                    .Callback(() => this.IsBlocksIndexExecute = true)
+                    .Returns(request.Object);
 
-                this.ViewModel = new BlockUsersPageViewModel();
+                this.Subject = new SubjectViewModel();
 
-                this.ViewModel.BuildUp(container);
+                this.Subject.BuildUp(container);
 
-                this.ViewModel.RefreshCommand.Execute();
+                this.Subject.RefreshCommand.Execute();
 
-                while (!this.ViewModel.RefreshCommand.CanExecute()) { };
+                while (!this.Subject.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]
             public void ItShouldShowDialog()
             {
                 Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldBlocksIndexExecute()
+            {
+                Assert.That(this.IsBlocksIndexExecute, Is.EqualTo(true));
             }
         }
 
@@ -85,7 +98,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
                     new Block { Id = 9, Target = new User { Id = 19, Nickname = "ABC9"} },
                     new Block { Id = 10, Target = new User { Id = 20, Nickname = "ABC0"} },
                 };
-                Assert.That(this.ViewModel.Blocks, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Blocks, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -102,7 +115,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
             {
                 var comparer = new BlockComparer();
                 var expect = new List<Block> { new Block { Id = 10, Target = new User { Id = 10, Nickname = "ABC"} } };
-                Assert.That(this.ViewModel.Blocks, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Blocks, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -127,7 +140,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
                     .Returns(Task.Run(() => true))
                     .Callback(() => this.IsShowDialog = true);
 
-                var viewModel = new BlockUsersPageViewModel(
+                var viewModel = new SubjectViewModel(
                     this.NavigationService,
                     pageDialogService.Object);
 

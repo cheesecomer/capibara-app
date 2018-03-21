@@ -82,7 +82,15 @@ namespace Capibara.ViewModels
 
         private void OnSignUpSuccess(object sender, EventArgs args)
         {
-            this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
+            var pageName =
+                this.Model.IsAccepted
+                    ? "/MainPage/NavigationPage/FloorMapPage"
+                    : "/AcceptPage";
+            var parameters =
+                this.Model.IsAccepted 
+                    ? null 
+                    : new NavigationParameters { { ParameterNames.Model, this.Model } };
+            this.NavigationService.NavigateAsync(pageName, parameters);
         }
 
         private void OpenOAuthUri(OAuthProvider provider)
@@ -96,7 +104,15 @@ namespace Capibara.ViewModels
             var user = new User { Id = this.IsolatedStorage.UserId }.BuildUp(this.Container);
             if (await user.Refresh())
             {
-                await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+                var pageName = 
+                    user.IsAccepted 
+                        ? "/MainPage/NavigationPage/FloorMapPage" 
+                        : "/AcceptPage";
+                var parameters =
+                    this.Model.IsAccepted
+                        ? null
+                        : new NavigationParameters { { ParameterNames.Model, user } };
+                await this.NavigationService.NavigateAsync(pageName, parameters);
             }
         }
     }

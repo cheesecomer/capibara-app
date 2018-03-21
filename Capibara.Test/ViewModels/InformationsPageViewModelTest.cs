@@ -11,16 +11,17 @@ using Capibara.Net.Informations;
 using Moq;
 using NUnit.Framework;
 
-using Prism.Navigation;
 using Prism.Services;
 
-namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
+using SubjectViewModel = Capibara.ViewModels.InformationsPageViewModel;
+
+namespace Capibara.Test.ViewModels.InformationsPageViewModel
 {
     namespace RefreshCommandTest
     {
         public abstract class WhenSuccessBase : ViewModelTestBase
         {
-            protected InformationsPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected virtual IndexResponse Response { get; } = new IndexResponse();
 
@@ -34,13 +35,13 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
 
                 this.RequestFactory.Setup(x => x.InformationsIndexRequest()).Returns(request.Object);
 
-                this.ViewModel = new InformationsPageViewModel();
+                this.Subject = new SubjectViewModel();
 
-                this.ViewModel.BuildUp(container);
+                this.Subject.BuildUp(container);
 
-                this.ViewModel.RefreshCommand.Execute();
+                this.Subject.RefreshCommand.Execute();
 
-                while (!this.ViewModel.RefreshCommand.CanExecute()) { };
+                while (!this.Subject.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]
@@ -87,7 +88,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
                     new Information { Id = 09, Title = "Title0009", Message = "Message0009", PublishedAt = new DateTimeOffset(2017, 09, 28, 20, 25, 20, TimeSpan.FromHours(9)) },
                     new Information { Id = 10, Title = "Title0010", Message = "Message0010", PublishedAt = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)) }
                 };
-                Assert.That(this.ViewModel.Informations, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Informations, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -107,7 +108,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
                 {
                     new Information { Id = 1, Title = "Title0001", Message = "Message0001", PublishedAt = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)) }
                 };
-                Assert.That(this.ViewModel.Informations, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Informations, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -131,7 +132,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
                 {
                     new Information { Id = 1, Title = "Title0001b", Message = "Message0001b", PublishedAt = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)) }
                 };
-                Assert.That(this.ViewModel.Informations, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Informations, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -156,7 +157,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModelTest
                     .Returns(Task.Run(() => true))
                     .Callback(() => this.IsShowDialog = true);
 
-                var viewModel = new InformationsPageViewModel(
+                var viewModel = new SubjectViewModel(
                     this.NavigationService,
                     pageDialogService.Object);
 

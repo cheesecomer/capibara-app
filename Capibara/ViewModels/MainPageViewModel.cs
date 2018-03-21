@@ -14,7 +14,13 @@ namespace Capibara.ViewModels
     public class MainPageViewModel : ViewModelBase
     {
         public ReactiveCollection<MenuItem> MenuItems { get; } =
-            new ReactiveCollection<MenuItem>();
+            new ReactiveCollection<MenuItem>
+        {
+            new MenuItem { Name = "ホーム", PagePath = "NavigationPage/FloorMapPage" },
+            new MenuItem { Name = "プロフィール", PagePath = "NavigationPage/MyProfilePage" },
+            new MenuItem { Name = "お知らせ", PagePath = "NavigationPage/InformationsPage" },
+            new MenuItem { Name = "設定", PagePath = "NavigationPage/SettingPage" }
+        };
 
         public AsyncReactiveCommand<MenuItem> ItemTappedCommand { get; }
 
@@ -27,11 +33,6 @@ namespace Capibara.ViewModels
             IPageDialogService pageDialogService = null)
             : base(navigationService, pageDialogService)
         {
-            this.MenuItems.Add(new MenuItem { Name = "ホーム", PagePath = "NavigationPage/FloorMapPage" });
-            this.MenuItems.Add(new MenuItem { Name = "プロフィール", PagePath = "NavigationPage/MyProfilePage" });
-            this.MenuItems.Add(new MenuItem { Name = "お知らせ", PagePath = "NavigationPage/InformationsPage" });
-            this.MenuItems.Add(new MenuItem { Name = "設定", PagePath = "NavigationPage/SettingPage" });
-
             this.Icon = new ReactiveProperty<ImageSource>()
                 .AddTo(this.Disposable);
 

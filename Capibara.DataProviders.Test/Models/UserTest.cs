@@ -28,7 +28,7 @@ namespace Capibara.Test.Models.UserTest
             [SetUp]
             public void Setup()
             {
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -55,6 +55,12 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIsBlockWithExpected()
             {
                 Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsAcceptedWithExpected()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
             }
         }
 
@@ -92,7 +98,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Subject = new User { Id = 99999 };
-            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true });
+            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true, IsAccepted = true });
         }
 
         [TestCase]
@@ -123,6 +129,12 @@ namespace Capibara.Test.Models.UserTest
         public void ItShouldIsBlockWithExpected()
         {
             Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+        }
+
+        [TestCase]
+        public void ItShouldIsAcceptedWithExpected()
+        {
+            Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
         }
     }
 
@@ -191,7 +203,8 @@ namespace Capibara.Test.Models.UserTest
                 Nickname = "xxxxx!",
                 Biography = "...",
                 IconUrl = "http://xxxxxx.com/xxxx.png",
-                IsBlock = true
+                IsBlock = true,
+                IsAccepted = true
             };
 
             [TestCase]
@@ -228,6 +241,12 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIsBlockWithExpected()
             {
                 Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsAcceptedWithExpected()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
             }
         }
 
@@ -383,7 +402,8 @@ namespace Capibara.Test.Models.UserTest
             {
                 AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
                 Id = 999,
-                Nickname = "Foo.Bar"
+                Nickname = "Foo.Bar",
+                IsAccepted = true
             };
 
             [TestCase]
@@ -401,7 +421,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("Foo.Bar"));
             }
 
             [TestCase]
@@ -420,6 +440,12 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldSignInSuccessEventToOccur()
             {
                 Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsAcceptedWithExpected()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
             }
 
             [TestCase]

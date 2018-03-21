@@ -1,20 +1,13 @@
-﻿using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Capibara.Models;
-using Capibara.ViewModels;
-
-using Microsoft.Practices.Unity;
-
-using Moq;
+﻿using System.Linq;
 using NUnit.Framework;
 
 using Prism.Navigation;
 
+using ParameterNames = Capibara.ViewModels.ParameterNames;
+using SubjectViewModel = Capibara.ViewModels.SettingPageViewModel;
 using SettingItem = Capibara.ViewModels.SettingPageViewModel.SettingItem;
 
-namespace Capibara.Test.ViewModels.SettingPageViewModelTest
+namespace Capibara.Test.ViewModels.SettingPageViewModel
 {
     [TestFixture("FloorMapPage")]
     [TestFixture("MyProfilePage")]
@@ -33,7 +26,7 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
         {
             var container = this.GenerateUnityContainer();
 
-            var viewModel = new SettingPageViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new SettingItem { PagePath = this.pagePath });
 
@@ -49,26 +42,34 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
 
     public class SettingItemsPropertyTest : ViewModelTestBase
     {
-        protected SettingPageViewModel Subject;
+        protected SubjectViewModel Subject;
 
         [SetUp]
         public void SetUp()
         {
-            this.Subject = new SettingPageViewModel();
+            this.Subject = new SubjectViewModel();
         }
 
         [TestCase]
         public void ItShouldCountWithExpected()
         {
-            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(2));
+            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(3));
         }
     }
 
-    [TestFixture(0, "ブロック中のユーザー", "BlockUsersPage")]
-    [TestFixture(1, "退会する", "UnsubscribePage")]
+    [TestFixtureSource("FixtureArgs")]
     public class SettingItemsPropertyItemTest : ViewModelTestBase
     {
-        protected SettingPageViewModel Subject;
+        static object[] FixtureArgs = {
+            new object[] { 0, "ブロック中のユーザー", "BlockUsersPage", null },
+            new object[] { 1, "プライバシーポリシー", "WebViewPage", new NavigationParameters {
+                    { ParameterNames.Url, "http://localhost:9999/privacy_policy" },
+                    { ParameterNames.Title, "プライバシーポリシー" }
+                } },
+            new object[] { 2, "退会する", "UnsubscribePage", null }
+        };
+
+        protected SubjectViewModel Subject;
 
         private int index;
 
@@ -76,29 +77,38 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
 
         private string pagePath;
 
-        public SettingItemsPropertyItemTest(int index, string name, string pagePath)
+        private NavigationParameters parameters;
+
+        public SettingItemsPropertyItemTest(int index, string name, string pagePath, NavigationParameters parameters)
         {
             this.index = index;
             this.name = name;
             this.pagePath = pagePath;
+            this.parameters = parameters;
         }
 
         [SetUp]
         public void SetUp()
         {
-            this.Subject = new SettingPageViewModel();
+            this.Subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
         }
 
         [TestCase]
-        public void ItShouldFirstItemNameWithExpect()
+        public void ItShouldItemNameWithExpect()
         {
             Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
         }
 
         [TestCase]
-        public void ItShouldFirstItemPagePathWithExpect()
+        public void ItShouldItemPagePathWithExpect()
         {
             Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+        }
+
+        [TestCase]
+        public void ItShouldItemParametersWithExpect()
+        {
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.Parameters, Is.EqualTo(parameters));
         }
     }
 }

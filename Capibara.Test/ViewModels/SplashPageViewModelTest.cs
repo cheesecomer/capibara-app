@@ -1,30 +1,26 @@
 ﻿using System;
-
 using System.Net;
-using System.Threading.Tasks;
 
 using Capibara.Models;
-using Capibara.ViewModels;
 using Capibara.Net;
-using Capibara.Net.Users;
 
 using Moq;
 using NUnit.Framework;
 
-using Prism.Navigation;
+using SubjectViewModel = Capibara.ViewModels.SplashPageViewModel;
 
-namespace Capibara.Test.ViewModels.SplashPageViewModelTest
+namespace Capibara.Test.ViewModels.SplashPageViewModel
 {
     namespace LogoTopMarginPropertyTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -39,12 +35,12 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -59,12 +55,12 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -82,7 +78,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
         {
             protected abstract string AccessToken { get; }
 
-            protected SplashPageViewModel Subject { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected virtual User Response { get; }
 
@@ -92,7 +88,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             public void SetUp()
             {
                 
-                this.Subject = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 var request = new Mock<RequestBase<User>>();
                 if (this.Response.IsPresent())
@@ -139,11 +135,43 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             }
         }
 
-        public class WhenHasValidAccessToken : TestBase
+        public class WhenHasValidAccessTokenAndNotAccepted : TestBase
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
             protected override User Response => new User();
+
+            [TestCase]
+            public void ItShouldLogoScaleWithExpect()
+            {
+                Assert.That(this.Subject.LogoScale.Value, Is.EqualTo(3));
+            }
+
+            [TestCase]
+            public void ItShouldLogoOpacityWithExpect()
+            {
+                Assert.That(this.Subject.LogoOpacity.Value, Is.EqualTo(0));
+            }
+
+            [TestCase]
+            public void ItShouldLogoTopMarginWithExpect()
+            {
+                Assert.That(this.Subject.LogoTopMargin.Value, Is.EqualTo(180));
+            }
+
+            [TestCase]
+            public void ItShouldNavigateToFloorMapPage()
+            {
+                Assert.That(this.NavigatePageName, Is.EqualTo("/AcceptPage"));
+            }
+        }
+
+
+        public class WhenHasValidAccessTokenAndAccepted : TestBase
+        {
+            protected override string AccessToken => Guid.NewGuid().ToString();
+
+            protected override User Response => new User { IsAccepted = true };
 
             [TestCase]
             public void ItShouldLogoScaleWithExpect()

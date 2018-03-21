@@ -11,6 +11,8 @@ namespace Capibara.Models
 
         private string password;
 
+        private bool isAccepted;
+
         public virtual event EventHandler SignInSuccess;
 
         public virtual event EventHandler<FailEventArgs> SignInFail;
@@ -35,6 +37,12 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.password, value);
         }
 
+        public virtual bool IsAccepted
+        {
+            get => this.isAccepted;
+            set => this.SetProperty(ref this.isAccepted, value);
+        }
+
         /// <summary>
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
@@ -46,6 +54,8 @@ namespace Capibara.Models
             try
             {
                 var response = await request.Execute();
+
+                this.isAccepted = response.IsAccepted;
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
