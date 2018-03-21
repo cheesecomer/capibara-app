@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -36,7 +37,6 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService, model)
         {
             this.Model.SignUpSuccess += this.OnSignUpSuccess;
-            this.Model.OAuthAuthorizeSuccess += this.OnOAuthAuthorizeSuccess;
 
             // Nickname Property
             this.Nickname = this.Model
@@ -66,15 +66,15 @@ namespace Capibara.ViewModels
             this.SignUpWithSnsCommand = this.IsBusy.Select(x => !x).ToAsyncReactiveCommand();
             this.SignUpWithSnsCommand.Subscribe(async () => {
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
-                var twitterButton = ActionSheetButton.CreateButton("Twitter", () => this.ProgressDialogService.DisplayProgressAsync(this.Model.OAuthAuthorize(OAuthProvider.Twitter)));
+                var twitterButton = ActionSheetButton.CreateButton("Twitter", () => this.OpenOAuthUri(OAuthProvider.Twitter));
                 await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", cancelButton, twitterButton);
             });
         }
 
         public void OnResume()
         {
-            if (this.IsolatedStorage.OAuthCallbackUrl.IsPresent())
-                this.ProgressDialogService.DisplayProgressAsync(this.Model.SignUpWithOAuth());
+            if (this.IsolatedStorage.AccessToken.IsPresent())
+                this.ProgressDialogService.DisplayProgressAsync(this.SignIn());
         }
 
         void IApplicationLifecycleAware.OnSleep() { }
@@ -84,9 +84,19 @@ namespace Capibara.ViewModels
             this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }
 
-        private void OnOAuthAuthorizeSuccess(object sender, EventArgs<Uri> args)
+        private void OpenOAuthUri(OAuthProvider provider)
         {
-            this.DeviceService.OpenUri(args.Value);
+            var uri = new Uri(Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower()));
+            this.DeviceService.OpenUri(uri);
+        }
+
+        private async Task SignIn()
+        {
+            var user = new User { Id = this.IsolatedStorage.UserId }.BuildUp(this.Container);
+            if (await user.Refresh())
+            {
+                await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+            }
         }
     }
 }

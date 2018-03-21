@@ -12,7 +12,6 @@ using System.Linq;
 
 using Capibara.Net;
 using Capibara.Net.Channels;
-using Capibara.Net.OAuth;
 
 using Moq;
 using Unity;
@@ -92,8 +91,6 @@ namespace Capibara.Test
 
         private Mock<IWebSocketClient> webSocketClient;
 
-        protected Mock<ITwitterOAuthService> TwitterOAuthService { get; private set; }
-
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
         public virtual IUnityContainer GenerateUnityContainer()
@@ -104,6 +101,7 @@ namespace Capibara.Test
             var environment = new Mock<IEnvironment>();
             environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/api");
             environment.SetupGet(x => x.WebSocketUrl).Returns("http://localhost:9999/cable/");
+            environment.SetupGet(x => x.OAuthBaseUrl).Returns("http://localhost:9999/api/oauth");
             environment.SetupGet(x => x.WebSocketReceiveBufferSize).Returns(1024);
             environment.SetupGet(x => x.WebSocketSendBufferSize).Returns(1024);
 
@@ -210,9 +208,7 @@ namespace Capibara.Test
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
 
-            // ITwitterOAuthService のセットアップ
-            this.TwitterOAuthService = new Mock<ITwitterOAuthService>();
-            this.TwitterOAuthService.SetupAllProperties();
+            this.RequestFactory = new Mock<IRequestFactory>();
 
             this.RequestFactory = new Mock<IRequestFactory>();
 
@@ -223,7 +219,6 @@ namespace Capibara.Test
             container.RegisterInstance<IIsolatedStorage>(this.IsolatedStorage = isolatedStorage.Object);
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
-            container.RegisterInstance<ITwitterOAuthService>(this.TwitterOAuthService.Object);
             container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
 
             return container;

@@ -35,12 +35,5 @@ namespace Capibara.Net.Sessions
             this.Email = email;
             this.Password = password;
         }
-
-        public CreateRequest(string provider, OAuth.TokenPair tokenPair)
-        {
-            this.Provider = provider;
-            this.AccessToken = tokenPair.Token;
-            this.AccessTokenSecret = tokenPair.TokenSecret;
-        }
     }
 }

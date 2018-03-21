@@ -9,10 +9,6 @@ namespace Capibara
 
         string AccessToken { get; set; }
 
-        Net.OAuth.TokenPair OAuthRequestTokenPair { get; set; }
-
-        Uri OAuthCallbackUrl { get; set; }
-
         void Save();
     }
 }

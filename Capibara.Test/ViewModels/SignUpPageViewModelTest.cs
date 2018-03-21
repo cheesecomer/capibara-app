@@ -3,7 +3,6 @@ using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 
-using OAuthSession = Capibara.Net.OAuth.Session;
 using Capibara.Models;
 using Capibara.ViewModels;
 using Capibara.Net;
@@ -32,7 +31,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
     }
 
     [TestFixture]
-    public class OnSignInSuccessTest : ViewModelTestBase
+    public class OnSignUpSuccessTest : ViewModelTestBase
     {
         protected SignUpPageViewModel ViewModel { get; private set; }
 
@@ -53,30 +52,27 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         }
     }
 
-    namespace OnSignInFailTest
+    public class OnSignUpFailTest : ViewModelTestBase
     {
-        public class OnSignInFailTest : ViewModelTestBase
+        public static object[][] TestCaseSource()
         {
-            public static object[][] TestCaseSource()
+            return new object[][]
             {
-                return new object[][]
-                {
                     new [] { new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}") },
                     new [] { new WebException() }
-                };
-            }
+            };
+        }
 
-            [TestCaseSource("TestCaseSource")]
-            public void ItShouldNotNavigate(Exception exception)
-            {
-                var container = this.GenerateUnityContainer();
-                var model = new Mock<User>();
-                var viewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+        [TestCaseSource("TestCaseSource")]
+        public void ItShouldNotNavigate(Exception exception)
+        {
+            var container = this.GenerateUnityContainer();
+            var model = new Mock<User>();
+            var viewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
-                model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
+            model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
+            Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
         }
     }
 
@@ -162,42 +158,44 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
     namespace OnResume
     {
         [TestFixture]
-        public class WhenOAuthCallbackUrlIsPresent : ViewModelTestBase
+        public class WhenAccessTokenIsPresent : ViewModelTestBase
         {
-            private bool IsSignUpWithOAuthCalled;
-
             [SetUp]
             public void SetUp()
             {
-                var model = new Mock<User>();
-                model.Setup(x => x.SignUpWithOAuth()).Callback(() => this.IsSignUpWithOAuthCalled = true);
-
-                var viewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object);
+                var viewModel = new SignUpPageViewModel(this.NavigationService);
                 viewModel.BuildUp(this.GenerateUnityContainer());
 
-                this.IsolatedStorage.OAuthCallbackUrl = new Uri("foobar://example.com");
+                this.IsolatedStorage.UserId = 1;
+                this.IsolatedStorage.AccessToken = Guid.NewGuid().ToString();
+
+                var request = new Mock<RequestBase<User>>();
+                request.Setup(x => x.Execute()).ReturnsAsync(new User());
+
+                this.RequestFactory.Setup(x => x.UsersShowRequest(It.IsAny<User>())).Returns(request.Object);
 
                 viewModel.OnResume();
             }
-            
+
             [TestCase]
-            public void ItShouldNavigateToSignUpPage()
+            public void ItShouldNavigateToFloorMap()
             {
-                Assert.That(this.IsSignUpWithOAuthCalled, Is.EqualTo(true));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+            }
+
+            [TestCase]
+            public void ItShouldShowDialog()
+            {
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
-        public class WhenOAuthCallbackUrlIsNotPresent : ViewModelTestBase
+        public class WhenAccessTokenIsEmpty : ViewModelTestBase
         {
-            private bool IsSignUpWithOAuthCalled;
-
             [SetUp]
             public void SetUp()
             {
-                var model = new Mock<User>();
-                model.Setup(x => x.SignUpWithOAuth()).Callback(() => this.IsSignUpWithOAuthCalled = true);
-
                 var viewModel = new SignUpPageViewModel(this.NavigationService);
                 viewModel.BuildUp(this.GenerateUnityContainer());
 
@@ -205,9 +203,15 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             }
 
             [TestCase]
-            public void ItShouldNavigateToSignUpPage()
+            public void ItShouldNotNavigate()
             {
-                Assert.That(this.IsSignUpWithOAuthCalled, Is.EqualTo(false));
+                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(false));
             }
         }
     }
@@ -263,11 +267,14 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         {
             private ActionSheetButton[] buttons;
 
-            private bool IsOAuthAuthorizeCalled = false;
+            private bool IsOpenUrlCalled = false;
 
-            [SetUp]
-            public void SetUp()
+            [TestCase]
+            public void ItShouldOpenUrl()
             {
+                var container = this.GenerateUnityContainer();
+                this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "http://localhost:9999/api/oauth/twitter"))).Callback((Uri x) => this.IsOpenUrlCalled = true);
+
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService
                     .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
@@ -277,12 +284,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
                         return Task.Run(() => { });
                     });
 
-                var model = new Mock<User>();
-                model.Setup(x => x.OAuthAuthorize(OAuthProvider.Twitter)).Callback((OAuthProvider x) => this.IsOAuthAuthorizeCalled = true);
-
-                var container = this.GenerateUnityContainer();
-
-                var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object, model: model.Object);
+                var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object);
 
                 viewModel.BuildUp(container);
 
@@ -291,39 +293,8 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
                 while (!viewModel.SignUpWithSnsCommand.CanExecute()) { };
 
                 this.buttons.ElementAtOrDefault(1)?.Action?.Invoke();
+                Assert.That(this.IsOpenUrlCalled, Is.EqualTo(true));
             }
-
-            [TestCase]
-            public void ItShouldShowPhotoPicker()
-            {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldOAuthAuthorize()
-            {
-                Assert.That(this.IsOAuthAuthorizeCalled, Is.EqualTo(true));
-            }
-        }
-    }
-
-    public class OAuthAuthorizeSuccessTest : ViewModelTestBase
-    {
-        private bool IsOpenUrlCalled = false;
-
-        [TestCase]
-        public void ItShouldOpenUrl()
-        {
-            var container = this.GenerateUnityContainer();
-
-            this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "foobar://example.com/"))).Callback((Uri x) => this.IsOpenUrlCalled = true);
-
-            var model = new Mock<User>();
-            var viewModel = new SignUpPageViewModel(model: model.Object).BuildUp(container);
-
-            model.Raise(x => x.OAuthAuthorizeSuccess += null, new EventArgs<Uri>(new Uri("foobar://example.com/")));
-
-            Assert.That(this.IsOpenUrlCalled, Is.EqualTo(true));
         }
     }
 }
