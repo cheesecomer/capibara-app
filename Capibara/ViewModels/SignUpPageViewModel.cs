@@ -67,7 +67,8 @@ namespace Capibara.ViewModels
             this.SignUpWithSnsCommand.Subscribe(async () => {
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
                 var twitterButton = ActionSheetButton.CreateButton("Twitter", () => this.OpenOAuthUri(OAuthProvider.Twitter));
-                await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", cancelButton, twitterButton);
+                var lineButton = ActionSheetButton.CreateButton("LINE", () => this.OpenOAuthUri(OAuthProvider.Line));
+                await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", cancelButton, twitterButton, lineButton);
             });
         }
 
