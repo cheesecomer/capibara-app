@@ -281,7 +281,6 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase(true, false)]
         public void ItShouldExpected(bool isBlock, bool canExecute)
         {
-            var taskSource = new TaskCompletionSource<bool>();
             var model = new Mock<User>();
             model.SetupAllProperties();
             var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
@@ -302,7 +301,6 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var taskSource = new TaskCompletionSource<bool>();
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);

@@ -51,6 +51,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public Net.IRequestFactory RequestFactory { get; set; }
 
+        [Dependency]
+        public ITaskService TaskService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

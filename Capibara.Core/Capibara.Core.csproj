@@ -38,9 +38,13 @@
     <Compile Include="UnityInstanceNames.cs" />
     <Compile Include="FailEventArgs.cs" />
     <Compile Include="EventArgs.cs" />
+    <Compile Include="Services\ITaskService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

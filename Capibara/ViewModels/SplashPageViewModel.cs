@@ -49,7 +49,7 @@ namespace Capibara.ViewModels
             var millisecondPerFrame = 10;
             while (this.LogoTopMargin.Value > 20)
             {
-                await Task.Delay(millisecondPerFrame);
+                await this.TaskService.Delay(millisecondPerFrame);
                 this.LogoTopMargin.Value -= (180d - 20d) / (500d / (double)millisecondPerFrame);
             }
 
@@ -77,7 +77,7 @@ namespace Capibara.ViewModels
             var millisecondPerFrame = 10;
             while (this.LogoScale.Value < 3)
             {
-                await Task.Delay(millisecondPerFrame);
+                await this.TaskService.Delay(millisecondPerFrame);
                 this.LogoScale.Value += 2 / (500d / (double)millisecondPerFrame);
             }
 
@@ -89,7 +89,7 @@ namespace Capibara.ViewModels
             var millisecondPerFrame = 10;
             while (this.LogoOpacity.Value > 0)
             {
-                await Task.Delay(millisecondPerFrame);
+                await this.TaskService.Delay(millisecondPerFrame);
                 this.LogoOpacity.Value -= 1 / (500d / (double)millisecondPerFrame);
             }
 
