@@ -19,6 +19,9 @@ namespace Capibara.Models
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
+        [Dependency]
+        public Net.IRequestFactory RequestFactory { get; set; }
+
         public virtual void Restore(TModel model) { }
     }
 }

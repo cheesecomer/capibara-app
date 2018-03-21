@@ -16,9 +16,6 @@ namespace Capibara.Net.Blocks
 
         public override bool NeedAuthentication { get; } = true;
 
-        public override string StringContent
-            => JsonConvert.SerializeObject(this);
-
         public override string ContentType { get; } = "application/json";
 
         public DestroyRequest(Block block)

@@ -77,11 +77,11 @@ namespace Capibara.ViewModels
             this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }
 
-        private void OnSignInFail(object sender, Exception args)
+        private void OnSignInFail(object sender, FailEventArgs args)
         {
-            if (args is Net.HttpUnauthorizedException)
+            if (args.Error is Net.HttpUnauthorizedException)
             {
-                this.Error.Value = ((Net.HttpUnauthorizedException)args).Detail.Message;
+                this.Error.Value = ((Net.HttpUnauthorizedException)args.Error).Detail.Message;
             }
         }
     }

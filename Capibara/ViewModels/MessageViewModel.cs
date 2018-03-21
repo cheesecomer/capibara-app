@@ -22,7 +22,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<DateTimeOffset> At { get; }
 
-        public ReactiveProperty<UserProfilePageViewModel> Sender { get; }
+        public ReactiveProperty<UserViewModel> Sender { get; }
 
         public AsyncReactiveCommand ShowProfileCommand { get; }
 
@@ -49,7 +49,7 @@ namespace Capibara.ViewModels
 
             this.Sender = this.Model
                 .ObserveProperty(x => x.Sender)
-                .Select(x => new UserProfilePageViewModel(navigationService, pageDialogService, x))
+                .Select(x => new UserViewModel(navigationService, pageDialogService, x))
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 

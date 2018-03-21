@@ -51,6 +51,7 @@ namespace Capibara
             containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
             containerRegistry.RegisterInstance<ITwitterOAuthService>(new TwitterOAuthService(this.Environment));
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
+            containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
@@ -73,9 +74,10 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<BlockUsersPage>();
             containerRegistry.RegisterForNavigation<InformationsPage>();
             containerRegistry.RegisterForNavigation<UnsubscribePage>();
-            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserProfilePageViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserProfilePageViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserProfilePageViewModel>();
+            containerRegistry.RegisterForNavigation<ReportPage>();
+            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage

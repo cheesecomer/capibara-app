@@ -21,7 +21,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModelTest
     {
         private bool IsDestroyCalled { get; set; }
 
-        private UnsubscribePageViewModel Actual { get; set; }
+        private UnsubscribePageViewModel Subject { get; set; }
 
         [SetUp]
         public void SetUp()
@@ -35,11 +35,11 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModelTest
             // カレントユーザーの登録
             container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
 
-            this.Actual = new UnsubscribePageViewModel().BuildUp(container);
+            this.Subject = new UnsubscribePageViewModel().BuildUp(container);
 
-            this.Actual.UnsubscribeCommand.Execute();
+            this.Subject.UnsubscribeCommand.Execute();
 
-            while(!this.Actual.UnsubscribeCommand.CanExecute()) {}
+            while(!this.Subject.UnsubscribeCommand.CanExecute()) {}
         }
 
         [TestCase]
@@ -53,7 +53,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModelTest
     {
         private bool IsDestroyCalled { get; set; }
 
-        private UnsubscribePageViewModel Actual { get; set; }
+        private UnsubscribePageViewModel Subject { get; set; }
 
         [SetUp]
         public void SetUp()
@@ -65,7 +65,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModelTest
             // カレントユーザーの登録
             container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
 
-            this.Actual = new UnsubscribePageViewModel(this.NavigationService).BuildUp(container);
+            this.Subject = new UnsubscribePageViewModel(this.NavigationService).BuildUp(container);
 
             currentUser.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
         }

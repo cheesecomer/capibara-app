@@ -15,10 +15,8 @@ using Capibara.Net.Channels;
 using Capibara.Net.OAuth;
 
 using Moq;
-using Moq.Language.Flow;
 using Unity;
 using NUnit.Framework;
-using Newtonsoft.Json;
 
 namespace Capibara.Test
 {
@@ -56,7 +54,7 @@ namespace Capibara.Test
 
     public abstract class TestFixtureBase
     {
-        protected bool IsConnectCalled { get; private set; }
+        protected bool IsWebSocketConnectCalled { get; private set; }
 
         protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
 
@@ -95,6 +93,8 @@ namespace Capibara.Test
         private Mock<IWebSocketClient> webSocketClient;
 
         protected Mock<ITwitterOAuthService> TwitterOAuthService { get; private set; }
+
+        protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
         public virtual IUnityContainer GenerateUnityContainer()
         {
@@ -172,7 +172,7 @@ namespace Capibara.Test
                 {
                     this.WebSocketRequestUrl = uri.AbsoluteUri;
                     ConnectTaskSource.TrySetResult(true);
-                    this.IsConnectCalled = true;
+                    this.IsWebSocketConnectCalled = true;
                 });
 
             this.ReceiveMessages = new List<ReceiveMessage>() {
@@ -214,6 +214,8 @@ namespace Capibara.Test
             this.TwitterOAuthService = new Mock<ITwitterOAuthService>();
             this.TwitterOAuthService.SetupAllProperties();
 
+            this.RequestFactory = new Mock<IRequestFactory>();
+
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance<IEnvironment>(this.Environment = environment.Object);
@@ -222,6 +224,7 @@ namespace Capibara.Test
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
             container.RegisterInstance<ITwitterOAuthService>(this.TwitterOAuthService.Object);
+            container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
 
             return container;
         }

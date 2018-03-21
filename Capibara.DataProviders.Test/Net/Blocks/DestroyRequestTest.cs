@@ -10,24 +10,30 @@ namespace Capibara.Test.Net.Blocks.DestroyRequestTest
     [TestFixture]
     public class ExecuteTest
     {
-        private DestroyRequest Actual { get; set; }
+        private DestroyRequest Subject { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            this.Actual = new DestroyRequest(new Block { Id = 1 });
+            this.Subject = new DestroyRequest(new Block { Id = 1 });
         }
 
         [TestCase]
         public void ItShouldRequestWithHttpMethodPost()
         {
-            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Delete));
+            Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Delete));
         }
 
         [TestCase]
         public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "blocks", "1" }));
+            Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "blocks", "1" }));
+        }
+
+        [TestCase]
+        public void ItShouldNeedAuthentication()
+        {
+            Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
         }
     }
 }

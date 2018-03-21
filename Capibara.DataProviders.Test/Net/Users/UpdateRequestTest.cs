@@ -7,34 +7,87 @@ using Capibara.Net.Users;
 
 using NUnit.Framework;
 
-namespace Capibara.Test.Net.Users
+namespace Capibara.Test.Net.Users.UpdateRequestTest
 {
-    public class UpdateRequestTest
+    public class MethodTest
     {
-        private UpdateRequest request;
-
-        [SetUp]
-        public void SetUp()
+        [TestCase]
+        public void ItShouldExpect()
         {
-            this.request = new UpdateRequest(new User { Id = 1000 });
+            Assert.That(new UpdateRequest(new User()).Method, Is.EqualTo(HttpMethod.Put));
+        }
+    }
+
+    public class PathsTest
+    {
+        [TestCase]
+        public void ItShouldExpect()
+        {
+            Assert.That(new UpdateRequest(new User()).Paths, Is.EqualTo(new[] { "users" }));
+        }
+    }
+
+    public class NeedAuthenticationTest
+    {
+        [TestCase]
+        public void ItShouldExpect()
+        {
+            Assert.That(new UpdateRequest(new User()).NeedAuthentication, Is.EqualTo(true));
+        }
+    }
+
+    public class NicknameTest
+    {
+        [TestCase]
+        public void ItShouldExpect()
+        {
+            Assert.That(new UpdateRequest(new User { Nickname = "FooBar" }).Nickname, Is.EqualTo("FooBar"));
+        }
+    }
+
+    public class BiographyTest
+    {
+        [TestCase]
+        public void ItShouldExpect()
+        {
+            Assert.That(new UpdateRequest(new User { Biography = "FooBar" }).Biography, Is.EqualTo("FooBar"));
+        }
+    }
+
+    public class BIconBase64Test
+    {
+        [TestCase("", null)]
+        [TestCase(null, null)]
+        [TestCase("1234567890", "data:image/png;base64,1234567890")]
+        public void ItShouldExpect(string iconBase64, string expect)
+        {
+            var Subject = new UpdateRequest(new User { IconBase64 = iconBase64 });
+            Assert.That(new UpdateRequest(new User { IconBase64 = iconBase64 }).IconBase64, Is.EqualTo(expect));
+        }
+    }
+
+    namespace StringContentTest
+    {
+        public class WhenIconBase64IsEmpty
+        {
+            [TestCase]
+            public void ItShouldExpect()
+            {
+                var request = new UpdateRequest(new User { Nickname = "FooBar", Biography = "Hi!" });
+                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\"}".ToSlim();
+                Assert.That(request.StringContent.ToSlim(), Is.EqualTo(expect));
+            }
         }
 
-        [TestCase]
-        public void ItShouldHttMethodToGet()
+        public class WhenIconBase64IsPresent
         {
-            Assert.That(this.request.Method, Is.EqualTo(HttpMethod.Put));
-        }
-
-        [TestCase]
-        public void ItShouldPathsWithExpect()
-        {
-            Assert.That(this.request.Paths, Is.EqualTo(new[] { "users" }));
-        }
-
-        [TestCase]
-        public void ItShouldNeedAuthentication()
-        {
-            Assert.That(this.request.NeedAuthentication, Is.EqualTo(true));
+            [TestCase]
+            public void ItShouldExpect()
+            {
+                var request = new UpdateRequest(new User { Nickname = "FooBar", Biography = "Hi!", IconBase64 = "1234567890" });
+                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\", \"icon\": \"data:image/png;base64,1234567890\"}".ToSlim();
+                Assert.That(request.StringContent.ToSlim(), Is.EqualTo(expect));
+            }
         }
     }
 }

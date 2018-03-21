@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 
 using Capibara.Models;
 using Capibara.ViewModels;
+using Capibara.Net;
+using Capibara.Net.Blocks;
 
 using Moq;
 using NUnit.Framework;
 
-using Prism.Navigation;
 using Prism.Services;
 
 namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
@@ -19,10 +20,17 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
         {
             protected BlockUsersPageViewModel ViewModel { get; private set; }
 
+            protected virtual IndexResponse Response { get; } = new IndexResponse();
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
+
+                this.RequestFactory.Setup(x => x.BlocksIndexRequest()).Returns(request.Object);
 
                 this.ViewModel = new BlockUsersPageViewModel();
 
@@ -43,19 +51,22 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
         [TestFixture]
         public class WhenSuccess10 : WhenSuccessBase
         {
-            protected override string HttpStabResponse
-                => "{\"blocks\": [" +
-                    "{ \"id\": 1, \"target\":  { \"id\": 11, \"nickname\": \"ABC1\" } }," +
-                    "{ \"id\": 2, \"target\":  { \"id\": 12, \"nickname\": \"ABC2\" } }," +
-                    "{ \"id\": 3, \"target\":  { \"id\": 13, \"nickname\": \"ABC3\" } }," +
-                    "{ \"id\": 4, \"target\":  { \"id\": 14, \"nickname\": \"ABC4\" } }," +
-                    "{ \"id\": 5, \"target\":  { \"id\": 15, \"nickname\": \"ABC5\" } }," +
-                    "{ \"id\": 6, \"target\":  { \"id\": 16, \"nickname\": \"ABC6\" } }," +
-                    "{ \"id\": 7, \"target\":  { \"id\": 17, \"nickname\": \"ABC7\" } }," +
-                    "{ \"id\": 8, \"target\":  { \"id\": 18, \"nickname\": \"ABC8\" } }," +
-                    "{ \"id\": 9, \"target\":  { \"id\": 19, \"nickname\": \"ABC9\" } }," +
-                    "{ \"id\": 10, \"target\": { \"id\": 20, \"nickname\": \"ABC0\" } }" +
-                "] }";
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Blocks =
+                {
+                    new Block { Id = 1, Target = new User { Id = 11, Nickname = "ABC1"} },
+                    new Block { Id = 2, Target = new User { Id = 12, Nickname = "ABC2"} },
+                    new Block { Id = 3, Target = new User { Id = 13, Nickname = "ABC3"} },
+                    new Block { Id = 4, Target = new User { Id = 14, Nickname = "ABC4"} },
+                    new Block { Id = 5, Target = new User { Id = 15, Nickname = "ABC5"} },
+                    new Block { Id = 6, Target = new User { Id = 16, Nickname = "ABC6"} },
+                    new Block { Id = 7, Target = new User { Id = 17, Nickname = "ABC7"} },
+                    new Block { Id = 8, Target = new User { Id = 18, Nickname = "ABC8"} },
+                    new Block { Id = 9, Target = new User { Id = 19, Nickname = "ABC9"} },
+                    new Block { Id = 10, Target = new User { Id = 20, Nickname = "ABC0"} }
+                }
+            };
 
             [TestCase]
             public void ItShouldRoomsWithExpected()
@@ -81,8 +92,10 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
         [TestFixture]
         public class WhenSuccess1 : WhenSuccessBase
         {
-            protected override string HttpStabResponse
-            => "{\"blocks\": [{ \"id\": 10, \"target\": { \"id\": 10, \"nickname\": \"ABC\" } }] }";
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Blocks = { new Block { Id = 10, Target = new User { Id = 10, Nickname = "ABC"} } }
+            };
 
             [TestCase]
             public void ItShouldRoomsWithExpected()
@@ -96,14 +109,17 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModelTest
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
             protected bool IsShowDialog { get; private set; }
 
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
+
+                this.RequestFactory.Setup(x => x.BlocksIndexRequest()).Returns(request.Object);
 
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService

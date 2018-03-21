@@ -132,7 +132,7 @@ namespace Capibara.Net
         /// Execute this instance.
         /// </summary>
         /// <returns>The execute.</returns>
-        public async Task Execute()
+        public virtual async Task Execute()
         {
             (await this.ExecuteInternal())?.Dispose();
         }
@@ -144,7 +144,7 @@ namespace Capibara.Net
         /// Execute this instance.
         /// </summary>
         /// <returns>The execute.</returns>
-        public async Task<TResponse> Execute()
+        public virtual async Task<TResponse> Execute()
         {
             var responseMessage = await this.ExecuteInternal();
             if (responseMessage == null)

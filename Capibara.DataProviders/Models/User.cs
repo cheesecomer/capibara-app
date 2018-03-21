@@ -2,14 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using BlockRequest = Capibara.Net.Blocks.CreateRequest;
 using Capibara.Net.OAuth;
-using Capibara.Net.Users;
+
+using Newtonsoft.Json;
 
 using Unity;
 using Unity.Attributes;
-
-using Newtonsoft.Json;
 
 namespace Capibara.Models
 {
@@ -29,27 +27,31 @@ namespace Capibara.Models
 
         public virtual event EventHandler SignUpSuccess;
 
-        public virtual event EventHandler<Exception> SignUpFail;
+        public virtual event EventHandler<FailEventArgs> SignUpFail;
 
         public virtual event EventHandler RefreshSuccess;
 
-        public virtual event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<FailEventArgs> RefreshFail;
 
         public virtual event EventHandler CommitSuccess;
 
-        public virtual event EventHandler<Exception> CommitFail;
+        public virtual event EventHandler<FailEventArgs> CommitFail;
 
         public virtual event EventHandler BlockSuccess;
 
-        public virtual event EventHandler<Exception> BlockFail;
+        public virtual event EventHandler<FailEventArgs> BlockFail;
 
-        public virtual event EventHandler<Uri> OAuthAuthorizeSuccess;
+        public virtual event EventHandler<EventArgs<Uri>> OAuthAuthorizeSuccess;
 
-        public virtual event EventHandler<Exception> OAuthAuthorizeFail;
+        public virtual event EventHandler<FailEventArgs> OAuthAuthorizeFail;
 
         public virtual event EventHandler DestroySuccess;
 
-        public virtual event EventHandler<Exception> DestroyFail;
+        public virtual event EventHandler<FailEventArgs> DestroyFail;
+
+        public virtual event EventHandler ReportSuccess;
+
+        public virtual event EventHandler<FailEventArgs> ReportFail;
 
         public int Id
         {
@@ -109,9 +111,9 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task<bool> Refresh()
+        public virtual async Task<bool> Refresh()
         {
-            var request = new ShowRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.UsersShowRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -142,9 +144,9 @@ namespace Capibara.Models
         /// ユーザ登録を行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignUp()
+        public virtual async Task<bool> SignUp()
         {
-            var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
+            var request = this.RequestFactory.UsersCreateRequest(Nickname = this.Nickname).BuildUp(this.Container);
             try
             {
                 var response = await request.Execute();
@@ -157,14 +159,16 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
 
                 this.SignUpSuccess?.Invoke(this, null);
+                return true;
             }
             catch (Exception e)
             {
                 this.SignUpFail?.Invoke(this, e);
+                return false;
             }
         }
 
-        public virtual async Task OAuthAuthorize(OAuthProvider provider)
+        public virtual async Task<bool> OAuthAuthorize(OAuthProvider provider)
         {
             try
             {
@@ -182,18 +186,20 @@ namespace Capibara.Models
                 else
                 {
                     this.OAuthAuthorizeFail?.Invoke(this, new ArgumentException("Invalid OAuthProvider. Can use Twitter only"));
-                    return;
+                    return false;
                 }
 
                 this.OAuthAuthorizeSuccess?.Invoke(this, authorizeUri);
+                return true;
             }
             catch (Exception e)
             {
                 this.OAuthAuthorizeFail?.Invoke(this, e);
+                return false;
             }
         }
 
-        public virtual async Task SignUpWithOAuth()
+        public virtual async Task<bool> SignUpWithOAuth()
         {
             var path = this.IsolatedStorage.OAuthCallbackUrl.LocalPath;
             var provider = path.Split('/').Skip(1).ElementAtOrDefault(1);
@@ -209,12 +215,7 @@ namespace Capibara.Models
                     this.IsolatedStorage.OAuthRequestTokenPair,
                     query["oauth_verifier"]);
 
-                var request = new Net.Sessions.CreateRequest()
-                {
-                    Provider = provider.ToLower(),
-                    AccessToken = tokens.Token,
-                    AccessTokenSecret = tokens.TokenSecret
-                }.BuildUp(this.Container);
+                var request = this.RequestFactory.SessionsCreateRequest(provider.ToLower(), tokens).BuildUp(this.Container);
 
                 var response = await request.Execute();
 
@@ -230,6 +231,8 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignUpSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
@@ -238,6 +241,8 @@ namespace Capibara.Models
                 this.IsolatedStorage.Save();
 
                 this.SignUpFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
@@ -245,9 +250,9 @@ namespace Capibara.Models
         /// ユーザー情報を更新します。
         /// </summary>
         /// <returns>The commit.</returns>
-        public async Task<bool> Commit()
+        public virtual async Task<bool> Commit()
         {
-            var request = new UpdateRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.UsersUpdateRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -282,9 +287,9 @@ namespace Capibara.Models
         /// ユーザーをブロックします。
         /// </summary>
         /// <returns>The commit.</returns>
-        public async Task<bool> Block()
+        public virtual async Task<bool> Block()
         {
-            var request = new BlockRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
 
             try
             {
@@ -309,7 +314,7 @@ namespace Capibara.Models
         /// <returns>The commit.</returns>
         public virtual async Task<bool> Destroy()
         {
-            var request = new DestroyRequest().BuildUp(this.Container);
+            var request = this.RequestFactory.UsersDestroyRequest().BuildUp(this.Container);
 
             try
             {
@@ -329,6 +334,31 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.DestroyFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Report the specified reason and message.
+        /// </summary>
+        /// <returns>The report.</returns>
+        /// <param name="reason">Reason.</param>
+        /// <param name="message">Message.</param>
+        public virtual async Task<bool> Report(ReportReason reason, string message)
+        {
+            var request = this.RequestFactory.ReportsCreateRequest(this, reason, message).BuildUp(this.Container);
+            try
+            {
+                await request.Execute();
+
+                this.ReportSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ReportFail?.Invoke(this, e);
+
                 return false;
             }
         }

@@ -45,8 +45,7 @@ namespace Capibara.ViewModels
             this.Nickname.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Nickname)));
 
             // SignUp Command
-            this.SignUpCommand = this.PropertyChangedAsObservable()
-                .Select(_ => this.Nickname.Value.ToSlim().IsPresent())
+            this.SignUpCommand = this.Nickname.Select(x => x.ToSlim().IsPresent())
                 .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
             this.SignUpCommand.Subscribe(this.Model.SignUp);
@@ -64,7 +63,7 @@ namespace Capibara.ViewModels
             this.SignInCommand.Subscribe(() => this.NavigationService.NavigateAsync("SignInPage", animated: false));
 
             // SignUpWithSnsCommand
-            this.SignUpWithSnsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.SignUpWithSnsCommand = this.IsBusy.Select(x => !x).ToAsyncReactiveCommand();
             this.SignUpWithSnsCommand.Subscribe(async () => {
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
                 var twitterButton = ActionSheetButton.CreateButton("Twitter", () => this.ProgressDialogService.DisplayProgressAsync(this.Model.OAuthAuthorize(OAuthProvider.Twitter)));
@@ -85,9 +84,9 @@ namespace Capibara.ViewModels
             this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }
 
-        private void OnOAuthAuthorizeSuccess(object sender, Uri args)
+        private void OnOAuthAuthorizeSuccess(object sender, EventArgs<Uri> args)
         {
-            this.DeviceService.OpenUri(args);
+            this.DeviceService.OpenUri(args.Value);
         }
     }
 }

@@ -18,7 +18,7 @@ using UnityDependency = Unity.Attributes.DependencyAttribute;
 
 namespace Capibara.ViewModels
 {
-    public class UserProfilePageViewModel : ViewModelBase<User>
+    public class UserViewModel : ViewModelBase<User>
     {
         public ReactiveProperty<string> Nickname { get; }
 
@@ -38,10 +38,12 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ChangePhotoCommand { get; }
 
+        public AsyncReactiveCommand ReportCommand { get; }
+
         [UnityDependency]
         public IPickupPhotoService PickupPhotoService { get; set; }
 
-        public UserProfilePageViewModel(
+        public UserViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
             User model = null)
@@ -66,7 +68,12 @@ namespace Capibara.ViewModels
             this.IsBlock = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsBlock)
                 .AddTo(this.Disposable);
-            
+
+            this.Nickname.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Nickname)));
+            this.Biography.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Biography)));
+            this.Icon.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Icon)));
+            this.IsBlock.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsBlock)));
+
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
@@ -79,7 +86,7 @@ namespace Capibara.ViewModels
             });
 
             // CommitCommand
-            this.CommitCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.CommitCommand = this.Nickname.Select(x => x.ToSlim().IsPresent()).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
 
             // ChangePhotoCommand
@@ -104,17 +111,17 @@ namespace Capibara.ViewModels
             };
 
             // BlockCommand
-            this.BlockCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.BlockCommand = this.Model.PropertyChangedAsObservable()
-                .Select(x => !this.Model.IsBlock)
-                .ToAsyncReactiveCommand()
-                .AddTo(this.Disposable);
+            this.BlockCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
-        }
 
-        protected override void OnContainerChanged()
-        {
-            base.OnContainerChanged();
+            // ReportCommand
+            this.ReportCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.ReportCommand.Subscribe(() =>
+            {
+                var parameters = new NavigationParameters();
+                parameters.Add(ParameterNames.Model, this.Model);
+                return this.NavigationService.NavigateAsync("ReportPage", parameters);
+            });
         }
     }
 }

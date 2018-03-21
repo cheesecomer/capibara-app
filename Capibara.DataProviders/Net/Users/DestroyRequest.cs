@@ -1,9 +1,5 @@
 ﻿using System.Net.Http;
 
-using Capibara.Models;
-
-using Newtonsoft.Json;
-
 namespace Capibara.Net.Users
 {
     public class DestroyRequest : RequestBase

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 using Capibara.Models;
 using Capibara.ViewModels;
+using Capibara.Net;
+using Capibara.Net.Rooms;
 
 using Moq;
 using NUnit.Framework;
@@ -51,10 +53,17 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         {
             protected FloorMapPageViewModel ViewModel { get; private set; }
 
+            protected virtual IndexResponse Response { get; } = new IndexResponse();
+
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
+
+                this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
                 this.ViewModel = new FloorMapPageViewModel();
 
@@ -75,20 +84,22 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [TestFixture]
         public class WhenSuccess10 : WhenSuccessBase
         {
-            protected override string HttpStabResponse
-                => "{\"rooms\": [" +
-                    "{ \"id\": 1, \"name\": \"AAA01\", \"capacity\": 11 }," +
-                    "{ \"id\": 2, \"name\": \"AAA02\", \"capacity\": 12 }," +
-                    "{ \"id\": 3, \"name\": \"AAA03\", \"capacity\": 13 }," +
-                    "{ \"id\": 4, \"name\": \"AAA04\", \"capacity\": 14 }," +
-                    "{ \"id\": 5, \"name\": \"AAA05\", \"capacity\": 15 }," +
-                    "{ \"id\": 6, \"name\": \"AAA06\", \"capacity\": 16 }," +
-                    "{ \"id\": 7, \"name\": \"AAA07\", \"capacity\": 17 }," +
-                    "{ \"id\": 8, \"name\": \"AAA08\", \"capacity\": 18 }," +
-                    "{ \"id\": 9, \"name\": \"AAA09\", \"capacity\": 19 }," +
-                    "{ \"id\": 10, \"name\": \"AAA10\", \"capacity\": 0 }," +
-                    "{ \"id\": 10, \"name\": \"AAA10\", \"capacity\": 20 }" +
-                "] }";
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms = new List<Room>
+                {
+                    new Room { Id = 1, Name ="AAA01", Capacity = 11 },
+                    new Room { Id = 2, Name ="AAA02", Capacity = 12 },
+                    new Room { Id = 3, Name ="AAA03", Capacity = 13 },
+                    new Room { Id = 4, Name ="AAA04", Capacity = 14 },
+                    new Room { Id = 5, Name ="AAA05", Capacity = 15 },
+                    new Room { Id = 6, Name ="AAA06", Capacity = 16 },
+                    new Room { Id = 7, Name ="AAA07", Capacity = 17 },
+                    new Room { Id = 8, Name ="AAA08", Capacity = 18 },
+                    new Room { Id = 9, Name ="AAA09", Capacity = 19 },
+                    new Room { Id = 10, Name ="AAA10", Capacity = 20 },
+                }
+            };
 
             [TestCase]
             public void ItShouldRoomsWithExpected()
@@ -117,6 +128,11 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
             protected override string HttpStabResponse
                 => "{\"rooms\": [{ \"name\": \"AAA\", \"capacity\": 10 }] }";
 
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms = { new Room { Name = "AAA", Capacity = 10 } }
+            };
+
             [TestCase]
             public void ItShouldRoomsWithExpected()
             {
@@ -129,14 +145,17 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
             protected bool IsShowDialog { get; private set; }
 
             [SetUp]
             public void SetUp()
             {
                 var container = this.GenerateUnityContainer();
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
+
+                this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService

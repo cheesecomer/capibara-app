@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Capibara.Net;
-using Capibara.Net.Sessions;
 
 using Unity;
 
@@ -15,9 +11,9 @@ namespace Capibara.Models
 
         private string password;
 
-        public event EventHandler SignInSuccess;
+        public virtual event EventHandler SignInSuccess;
 
-        public event EventHandler<Exception> SignInFail;
+        public virtual event EventHandler<FailEventArgs> SignInFail;
 
         /// <summary>
         /// メールアドレスを取得または設定します
@@ -43,13 +39,9 @@ namespace Capibara.Models
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignIn()
+        public virtual async Task<bool> SignIn()
         {
-            var request = new CreateRequest()
-                {
-                    Email = this.Email,
-                    Password = this.Password
-                }.BuildUp(this.Container);
+            var request = this.RequestFactory.SessionsCreateRequest(this.Email, this.Password).BuildUp(this.Container);
 
             try
             {
@@ -63,10 +55,14 @@ namespace Capibara.Models
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignInSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.SignInFail?.Invoke(this, e);
+
+                return false;
             }
         }
     }

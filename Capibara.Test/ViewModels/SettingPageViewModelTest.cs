@@ -49,18 +49,18 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
 
     public class SettingItemsPropertyTest : ViewModelTestBase
     {
-        protected SettingPageViewModel Actual;
+        protected SettingPageViewModel Subject;
 
         [SetUp]
         public void SetUp()
         {
-            this.Actual = new SettingPageViewModel();
+            this.Subject = new SettingPageViewModel();
         }
 
         [TestCase]
         public void ItShouldCountWithExpected()
         {
-            Assert.That(this.Actual.SettingItems.Count, Is.EqualTo(2));
+            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(2));
         }
     }
 
@@ -68,7 +68,7 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
     [TestFixture(1, "退会する", "UnsubscribePage")]
     public class SettingItemsPropertyItemTest : ViewModelTestBase
     {
-        protected SettingPageViewModel Actual;
+        protected SettingPageViewModel Subject;
 
         private int index;
 
@@ -86,19 +86,19 @@ namespace Capibara.Test.ViewModels.SettingPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            this.Actual = new SettingPageViewModel();
+            this.Subject = new SettingPageViewModel();
         }
 
         [TestCase]
         public void ItShouldFirstItemNameWithExpect()
         {
-            Assert.That(this.Actual.SettingItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
         }
 
         [TestCase]
         public void ItShouldFirstItemPagePathWithExpect()
         {
-            Assert.That(this.Actual.SettingItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
         }
     }
 }

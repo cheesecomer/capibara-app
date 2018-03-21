@@ -21,32 +21,32 @@ namespace Capibara.Test.Net.Channels
     {
         public class SerializeTest
         {
-            private Dictionary<string, object> actual;
+            private Dictionary<string, object> Subject;
 
             [SetUp]
             public void Setup()
             {
                 var identifier = new ChatChannelIdentifier(10);
                 var json = JsonConvert.SerializeObject(identifier);
-                this.actual = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                this.Subject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             }
 
             [TestCase]
             public void ItShouldChannelWithExpected()
             {
-                Assert.That(this.actual.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
+                Assert.That(this.Subject.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
             }
 
             [TestCase]
             public void ItShouldRoomIdWithExpected()
             {
-                Assert.That(this.actual.ValueOrDefault("room_id"), Is.EqualTo(10));
+                Assert.That(this.Subject.ValueOrDefault("room_id"), Is.EqualTo(10));
             }
 
             [TestCase]
             public void ItShouldKeysWithExpected()
             {
-                Assert.That(this.actual.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
+                Assert.That(this.Subject.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
             }
         }
     }

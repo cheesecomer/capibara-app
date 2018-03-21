@@ -66,6 +66,9 @@
     <Compile Include="Net\Informations\IndexResponse.cs" />
     <Compile Include="Models\OAuthProvider.cs" />
     <Compile Include="Net\Users\DestroyRequest.cs" />
+    <Compile Include="Models\ReportReason.cs" />
+    <Compile Include="Net\Reports\CreateRequest.cs" />
+    <Compile Include="Net\RequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -79,6 +82,7 @@
     <Folder Include="Net\Users\" />
     <Folder Include="Net\Blocks\" />
     <Folder Include="Net\Informations\" />
+    <Folder Include="Net\Reports\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">

@@ -6,7 +6,7 @@ namespace Capibara
     public static class StringExtensions
     {
         public static string ToSlim(this string origin) =>
-            new [] { " ", "\r", "\n" }
+            new [] { " ", "\r", "\n", "　" }
                 .Aggregate(
                     origin,
                     (x, v) => x.IsNullOrEmpty()

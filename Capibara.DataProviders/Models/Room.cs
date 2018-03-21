@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Capibara.Net.Channels;
-using Capibara.Net.Rooms;
 
 using Newtonsoft.Json;
 
@@ -28,21 +27,21 @@ namespace Capibara.Models
 
         private ChatChannel channel;
 
-        public event EventHandler RefreshSuccess;
+        public virtual event EventHandler RefreshSuccess;
 
-        public event EventHandler<Exception> RefreshFail;
+        public virtual event EventHandler<FailEventArgs> RefreshFail;
 
-        public event EventHandler SpeakSuccess;
+        public virtual event EventHandler SpeakSuccess;
 
-        public event EventHandler<Exception> SpeakFail;
+        public virtual event EventHandler<FailEventArgs> SpeakFail;
 
-        public event EventHandler Disconnected;
+        public virtual event EventHandler Disconnected;
 
-        public event EventHandler<User> JoinUser;
+        public virtual event EventHandler<User> JoinUser;
 
-        public event EventHandler<User> LeaveUser;
+        public virtual event EventHandler<User> LeaveUser;
 
-        public bool IsConnected
+        public virtual bool IsConnected
         {
             get => this.isConnected;
             set => this.SetProperty(ref this.isConnected, value);
@@ -79,9 +78,9 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.numberOfParticipants, value);
         }
 
-        public async Task Refresh()
+        public virtual async Task<bool> Refresh()
         {
-            var request = new ShowRequest(this).BuildUp(this.Container);
+            var request = this.RequestFactory.RoomsShowRequest(this).BuildUp(this.Container);
             try
             {
                 var result = await request.Execute();
@@ -91,14 +90,18 @@ namespace Capibara.Models
                 result.Messages?.Where(x => this.Messages.All(y => y.Id != x.Id))?.ForEach(x => this.Messages.Insert(0, x.BuildUp(this.Container)));
 
                 this.RefreshSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.RefreshFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
-        public async Task<bool> Connect()
+        public virtual async Task<bool> Connect()
         {
             if (this.channel != null)
             {
@@ -115,7 +118,7 @@ namespace Capibara.Models
             return await this.channel.Connect();
         }
 
-        public async Task Close()
+        public virtual async Task<bool> Close()
         {
             this.IsConnected = false;
             if (this.channel != null)
@@ -125,6 +128,7 @@ namespace Capibara.Models
             }
 
             this.channel = null;
+            return true;
         }
 
         public override void Restore(Room model)
@@ -137,17 +141,21 @@ namespace Capibara.Models
             model.Participants?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
         }
 
-        public async Task Speak(string message)
+        public virtual async Task<bool> Speak(string message)
         {
             try
             {
                 await this.channel.Speak(message);
 
                 this.SpeakSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
                 this.SpeakFail?.Invoke(this, e);
+
+                return false;
             }
         }
 
