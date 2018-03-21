@@ -21,6 +21,8 @@ namespace Capibara.Models
 
         private bool isBlock;
 
+        private bool isAccepted;
+
         public virtual event EventHandler SignUpSuccess;
 
         public virtual event EventHandler<FailEventArgs> SignUpFail;
@@ -83,6 +85,13 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.isBlock, value);
         }
 
+        [JsonProperty("accepted")]
+        public bool IsAccepted
+        {
+            get => this.isAccepted;
+            set => this.SetProperty(ref this.isAccepted, value);
+        }
+
         public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
         public override void Restore(User model)
@@ -94,6 +103,7 @@ namespace Capibara.Models
             this.Biography = model.Biography;
             this.IconUrl = model.IconUrl;
             this.IsBlock = model.IsBlock;
+            this.IsAccepted = model.IsAccepted;
         }
 
         /// <summary>
@@ -139,6 +149,8 @@ namespace Capibara.Models
             try
             {
                 var response = await request.Execute();
+
+                this.Restore(response as User);
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserId = response.Id;
