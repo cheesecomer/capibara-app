@@ -102,6 +102,7 @@ namespace Capibara.Test
             environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/api");
             environment.SetupGet(x => x.WebSocketUrl).Returns("http://localhost:9999/cable/");
             environment.SetupGet(x => x.OAuthBaseUrl).Returns("http://localhost:9999/api/oauth");
+            environment.SetupGet(x => x.PrivacyPolicyUrl).Returns("http://localhost:9999/privacy_policy");
             environment.SetupGet(x => x.WebSocketReceiveBufferSize).Returns(1024);
             environment.SetupGet(x => x.WebSocketSendBufferSize).Returns(1024);
 
