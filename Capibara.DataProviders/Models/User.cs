@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-
-using Capibara.Net.OAuth;
 
 using Newtonsoft.Json;
 
 using Unity;
-using Unity.Attributes;
 
 namespace Capibara.Models
 {
@@ -40,10 +36,6 @@ namespace Capibara.Models
         public virtual event EventHandler BlockSuccess;
 
         public virtual event EventHandler<FailEventArgs> BlockFail;
-
-        public virtual event EventHandler<EventArgs<Uri>> OAuthAuthorizeSuccess;
-
-        public virtual event EventHandler<FailEventArgs> OAuthAuthorizeFail;
 
         public virtual event EventHandler DestroySuccess;
 
@@ -90,9 +82,6 @@ namespace Capibara.Models
             get => this.isBlock;
             set => this.SetProperty(ref this.isBlock, value);
         }
-
-        [Dependency]
-        public ITwitterOAuthService TwitterOAuthService { get; set; }
 
         public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
@@ -164,84 +153,6 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.SignUpFail?.Invoke(this, e);
-                return false;
-            }
-        }
-
-        public virtual async Task<bool> OAuthAuthorize(OAuthProvider provider)
-        {
-            try
-            {
-                Uri authorizeUri = null;
-                if (provider == OAuthProvider.Twitter)
-                {
-                    var session =
-                        await this.TwitterOAuthService.AuthorizeAsync();
-
-                    this.IsolatedStorage.OAuthRequestTokenPair = session.RequestToken;
-                    this.IsolatedStorage.Save();
-
-                    authorizeUri = session.AuthorizeUri;
-                }
-                else
-                {
-                    this.OAuthAuthorizeFail?.Invoke(this, new ArgumentException("Invalid OAuthProvider. Can use Twitter only"));
-                    return false;
-                }
-
-                this.OAuthAuthorizeSuccess?.Invoke(this, authorizeUri);
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.OAuthAuthorizeFail?.Invoke(this, e);
-                return false;
-            }
-        }
-
-        public virtual async Task<bool> SignUpWithOAuth()
-        {
-            var path = this.IsolatedStorage.OAuthCallbackUrl.LocalPath;
-            var provider = path.Split('/').Skip(1).ElementAtOrDefault(1);
-            try
-            {
-                var query = this.IsolatedStorage.OAuthCallbackUrl.Query
-                   .Replace("?", string.Empty).Split('&')
-                   .Select(x => x.Split('='))
-                   .Where(x => x.Length == 2)
-                   .ToDictionary(x => x.First(), x => x.Last());
-
-                var tokens = await this.TwitterOAuthService.GetAccessTokenAsync(
-                    this.IsolatedStorage.OAuthRequestTokenPair,
-                    query["oauth_verifier"]);
-
-                var request = this.RequestFactory.SessionsCreateRequest(provider.ToLower(), tokens).BuildUp(this.Container);
-
-                var response = await request.Execute();
-
-                this.IsolatedStorage.AccessToken = response.AccessToken;
-                this.IsolatedStorage.UserNickname = response.Nickname;
-                this.IsolatedStorage.UserId = response.Id;
-                this.IsolatedStorage.OAuthCallbackUrl = null;
-                this.IsolatedStorage.OAuthRequestTokenPair = null;
-                this.IsolatedStorage.Save();
-
-                this.Restore(response);
-
-                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
-
-                this.SignUpSuccess?.Invoke(this, null);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.IsolatedStorage.OAuthCallbackUrl = null;
-                this.IsolatedStorage.OAuthRequestTokenPair = null;
-                this.IsolatedStorage.Save();
-
-                this.SignUpFail?.Invoke(this, e);
-
                 return false;
             }
         }
@@ -321,8 +232,6 @@ namespace Capibara.Models
                 await request.Execute();
 
                 this.IsolatedStorage.AccessToken = null;
-                this.IsolatedStorage.OAuthCallbackUrl = null;
-                this.IsolatedStorage.OAuthRequestTokenPair = null;
                 this.IsolatedStorage.UserId = 0;
                 this.IsolatedStorage.UserNickname = null;
                 this.IsolatedStorage.Save();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Capibara.Net.OAuth;
 using Capibara.Services;
 
 using Unity;

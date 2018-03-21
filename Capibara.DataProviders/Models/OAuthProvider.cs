@@ -3,7 +3,10 @@ namespace Capibara.Models
 {
     public enum OAuthProvider
     {
-        None = -1,
-        Twitter = 0
+        Twitter,
+        Line,
+        Instagram,
+        Facebook,
+        GitHub
     }
 }

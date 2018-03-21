@@ -58,10 +58,15 @@ namespace Capibara.iOS
         {
             if (url == null) return false;
             var uri = new Uri(url.AbsoluteString);
-            if (uri.Scheme == "capibara" && uri.PathAndQuery.StartsWith("/oauth", StringComparison.Ordinal))
+            if (uri.Scheme == "com.cheesecomer.capibara" && uri.Host.StartsWith("oauth", StringComparison.Ordinal))
             {
-                this.IsolatedStorage.OAuthCallbackUrl = uri;
-                
+                var query = uri.Query
+                   .Replace("?", string.Empty).Split('&')
+                   .Select(x => x.Split('='))
+                   .Where(x => x.Length == 2)
+                   .ToDictionary(x => x.First(), x => x.Last());
+                this.IsolatedStorage.AccessToken = query["access_token"];
+                this.IsolatedStorage.UserId = query["id"].ToInt();
             }
 
             return false;

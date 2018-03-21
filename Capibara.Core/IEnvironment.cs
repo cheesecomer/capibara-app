@@ -20,6 +20,12 @@ namespace Capibara
         string WebSocketUrl { get; }
 
         /// <summary>
+        /// OAuth の基底URLを取得します
+        /// </summary>
+        /// <value>The base URL.</value>
+        string OAuthBaseUrl { get; }
+
+        /// <summary>
         /// Webソケット受信バッファサイズを取得します
         /// </summary>
         int WebSocketReceiveBufferSize { get; }
@@ -28,15 +34,5 @@ namespace Capibara
         /// Webソケット送信バッファサイズを取得します
         /// </summary>
         int WebSocketSendBufferSize { get; }
-
-        /// <summary>
-        /// Twitter API の API KEY を取得します
-        /// </summary>
-        string TwitterConsumerKey { get; }
-
-        /// <summary>
-        /// Twitter API の API SECRET KEY を取得します
-        /// </summary>
-        string TwitterConsumerSecretKey { get; }
     }
 }

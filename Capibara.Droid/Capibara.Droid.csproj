@@ -171,9 +171,6 @@
     <Reference Include="Prism.Unity.Forms">
       <HintPath>..\packages\Prism.Unity.Forms.7.0.0.396\lib\netstandard2.0\Prism.Unity.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="CoreTweet">
-      <HintPath>..\packages\CoreTweet.0.8.2.404\lib\monoandroid10\CoreTweet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">

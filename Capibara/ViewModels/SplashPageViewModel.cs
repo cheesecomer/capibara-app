@@ -34,10 +34,6 @@ namespace Capibara.ViewModels
 
         protected Task RefreshAsync()
         {
-            this.IsolatedStorage.OAuthCallbackUrl = null;
-            this.IsolatedStorage.OAuthRequestTokenPair = null;
-            this.IsolatedStorage.Save();
-
             if (this.IsolatedStorage.AccessToken.IsNullOrEmpty())
             {
                 return this.ToSignUpPage();

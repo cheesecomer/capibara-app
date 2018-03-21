@@ -25,8 +25,6 @@ namespace Capibara.Net
 
         RequestBase<Sessions.CreateResponse> SessionsCreateRequest(string email, string password);
 
-        RequestBase<Sessions.CreateResponse> SessionsCreateRequest(string provider, OAuth.TokenPair tokenPair);
-
         RequestBase<Sessions.CreateResponse> UsersCreateRequest(string nickname);
 
         RequestBase UsersDestroyRequest();
@@ -61,9 +59,6 @@ namespace Capibara.Net
 
         RequestBase<Sessions.CreateResponse> IRequestFactory.SessionsCreateRequest(string email, string password)
                 => new Sessions.CreateRequest(email, password);
-        
-        RequestBase<Sessions.CreateResponse> IRequestFactory.SessionsCreateRequest(string provider, OAuth.TokenPair tokenPair)
-                => new Sessions.CreateRequest(provider, tokenPair);
 
         RequestBase<Sessions.CreateResponse> IRequestFactory.UsersCreateRequest(string nickname)
              => new Users.CreateRequest(nickname);
