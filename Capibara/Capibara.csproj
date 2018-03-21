@@ -111,6 +111,7 @@
     <Compile Include="Views\AcceptPage.xaml.cs">
       <DependentUpon>AcceptPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AdMobBanner.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
