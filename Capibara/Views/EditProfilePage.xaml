@@ -9,6 +9,7 @@
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.EditProfilePage"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
     BackgroundColor="#FEFEFE">
     <ContentPage.Resources>
         <ResourceDictionary>

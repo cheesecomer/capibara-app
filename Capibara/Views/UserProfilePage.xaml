@@ -9,6 +9,7 @@
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.UserProfilePage"
     Title="プロフィール"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
     BackgroundColor="#FEFEFE">
     <ContentPage.Resources>
         <ResourceDictionary>

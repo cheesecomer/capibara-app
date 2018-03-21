@@ -1,3 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:prism="clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms" x:Class="Capibara.App">
+<?xml version="1.0" encoding="utf-8"?>
+<prism:PrismApplication 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:prism="clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms" 
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    x:Class="Capibara.App">
+    <Application.Resources> 
+        <ResourceDictionary> 
+            <ControlTemplate x:Key="WithAdBannerControlTemplate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Content  -->
+                    <StackLayout VerticalOptions="CenterAndExpand">
+                        <ContentPresenter   />
+                    </StackLayout>
+
+                    <forms:AdMobBanner Grid.Row="1" />
+                </Grid> 
+            </ControlTemplate>
+
+        </ResourceDictionary>
+    </Application.Resources>
 </prism:PrismApplication>

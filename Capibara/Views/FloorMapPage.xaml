@@ -5,6 +5,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
     x:Class="Capibara.Views.FloorMapPage"
     Title="チャットルーム">
     <ContentView.Behaviors>

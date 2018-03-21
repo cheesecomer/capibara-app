@@ -9,7 +9,8 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MyProfilePage"
     Title="プロフィール"
-    BackgroundColor="#FEFEFE">
+    BackgroundColor="#FEFEFE"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
