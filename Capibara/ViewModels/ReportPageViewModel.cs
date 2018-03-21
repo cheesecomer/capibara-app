@@ -18,9 +18,17 @@ namespace Capibara.ViewModels
 {
     public class ReportPageViewModel : ViewModelBase<User>
     {
-        public ReactiveCollection<ReportReason> ReportReasons { get; } = new ReactiveCollection<ReportReason>();
+        public ReactiveCollection<ReportReason> ReportReasons { get; } = new ReactiveCollection<ReportReason>()
+        {
+            ReportReason.Spam,
+            ReportReason.AbusiveOrHatefulSpeech,
+            ReportReason.AbusiveOrHatefulImage,
+            ReportReason.ObsceneSpeech,
+            ReportReason.ObsceneImage,
+            ReportReason.Other
+        };
 
-        public ReactiveProperty<ReportReason> SelectedItem { get; } = new ReactiveProperty<ReportReason>();
+        public ReactiveProperty<ReportReason> SelectedItem { get; } = new ReactiveProperty<ReportReason>(ReportReason.Spam);
 
         public ReactiveProperty<string> Message { get; } = new ReactiveProperty<string>();
 
@@ -32,13 +40,6 @@ namespace Capibara.ViewModels
             User model = null)
             : base(navigationService, pageDialogService, model)
         {
-            this.ReportReasons.Add(ReportReason.Spam);
-            this.ReportReasons.Add(ReportReason.AbusiveOrHatefulSpeech);
-            this.ReportReasons.Add(ReportReason.AbusiveOrHatefulImage);
-            this.ReportReasons.Add(ReportReason.ObsceneSpeech);
-            this.ReportReasons.Add(ReportReason.ObsceneImage);
-            this.ReportReasons.Add(ReportReason.Other);
-
             this.ReportCommand = 
                 this.PropertyChangedAsObservable()
                 .Select(_ => this.SelectedItem.Value != ReportReason.Other || this.Message.Value.ToSlim().IsPresent())
@@ -47,8 +48,6 @@ namespace Capibara.ViewModels
             this.ReportCommand.Subscribe(
                 () => this.ProgressDialogService.DisplayProgressAsync(
                     this.Model.Report(this.SelectedItem.Value, this.Message.Value)));
-
-            this.SelectedItem.Value = ReportReason.Spam;
 
             this.SelectedItem.Subscribe(_ => this.RaisePropertyChanged(nameof(SelectedItem)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(Message)));
