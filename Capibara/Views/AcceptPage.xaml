@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    ios:Page.UseSafeArea="true"
+    x:Class="Capibara.Views.AcceptPage"
+    Title="プライバシーポリシーへの同意">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <OnPlatform.iOS>0, 20, 0, 0</OnPlatform.iOS>
+            <OnPlatform.Android>0, 0, 0, 0</OnPlatform.Android>
+        </OnPlatform>
+    </ContentPage.Padding>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <WebView
+            x:Name="WebView"
+            Source="{Binding Source.Value, Mode=OneWay}"
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand">
+            <WebView.Behaviors>
+                <behaviors:EventToCommandBehavior EventName="Navigated" Command="{Binding LoadedCommand}" />
+            </WebView.Behaviors>
+        </WebView>
+        <ProgressBar x:Name="ProgressBar" />
+        <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Text="キャンセル" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Text="同意する" BackgroundColor="#58CE91" TextColor="White" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding AgreeCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

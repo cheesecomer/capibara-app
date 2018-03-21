@@ -108,6 +108,9 @@
     </Compile>
     <Compile Include="NavigationParametersExtensions.cs" />
     <Compile Include="ViewModels\AcceptPageViewModal.cs" />
+    <Compile Include="Views\AcceptPage.xaml.cs">
+      <DependentUpon>AcceptPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -163,6 +166,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\WebViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AcceptPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
