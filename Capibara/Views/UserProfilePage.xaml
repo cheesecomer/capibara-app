@@ -44,6 +44,14 @@
             BorderRadius="{Binding Height, Source={x:Reference block_button}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
             Command="{Binding BlockCommand}"
             />
+        <Button 
+            x:Name="report_button"
+            Text="通報"
+            BackgroundColor="#d9534f"
+            TextColor="White"
+            BorderRadius="{Binding Height, Source={x:Reference report_button}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+            Command="{Binding ReportCommand}"
+            />
       </StackLayout>
     </ScrollView>
 </ContentPage>

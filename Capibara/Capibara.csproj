@@ -98,6 +98,10 @@
       <DependentUpon>UnsubscribePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\UnsubscribePageViewModel.cs" />
+    <Compile Include="ViewModels\ReportPageViewModel.cs" />
+    <Compile Include="Views\ReportPage.xaml.cs">
+      <DependentUpon>ReportPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -147,6 +151,10 @@
     <EmbeddedResource Include="Views\UnsubscribePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

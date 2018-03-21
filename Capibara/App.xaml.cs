@@ -74,6 +74,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<BlockUsersPage>();
             containerRegistry.RegisterForNavigation<InformationsPage>();
             containerRegistry.RegisterForNavigation<UnsubscribePage>();
+            containerRegistry.RegisterForNavigation<ReportPage>();
             containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();

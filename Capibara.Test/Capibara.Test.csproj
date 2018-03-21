@@ -180,6 +180,7 @@
     <Compile Include="ViewModels\InformationsPageViewModelTest.cs" />
     <Compile Include="NavigationService.cs" />
     <Compile Include="ViewModels\UnsubscribePageViewModelTest.cs" />
+    <Compile Include="ViewModels\ReportPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

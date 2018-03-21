@@ -27,6 +27,8 @@ namespace Capibara.Test.ViewModels
 
         protected bool IsDisplayedPhotoPicker { get; private set; }
 
+        protected bool IsGoBackCalled { get; private set; }
+
         [SetUp]
         public void Initialize()
         {
@@ -41,6 +43,11 @@ namespace Capibara.Test.ViewModels
                     this.NavigationParameters = parameters;
                     navigateTaskSource.SetResult(true);
                 });
+
+            navigationServiceMock
+                .Setup(x => x.GoBackAsync())
+                .Callback(() => this.IsGoBackCalled = true)
+                .ReturnsAsync(true);
 
             this.NavigationService = navigationServiceMock.Object;
         }
