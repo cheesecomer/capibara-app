@@ -50,6 +50,7 @@ namespace Capibara
             containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
+            containerRegistry.RegisterInstance<ITaskService>(new TaskService());
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
@@ -101,6 +102,11 @@ namespace Capibara
         {
             public Task<byte[]> DisplayAlbumAsync()
                 => throw new NotImplementedException();
+        }
+
+        private class TaskService : ITaskService
+        {
+            Task ITaskService.Delay(int millisecondsDelay) => Task.Delay(millisecondsDelay);
         }
     }
 }

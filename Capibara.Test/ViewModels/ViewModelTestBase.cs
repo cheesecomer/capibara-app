@@ -31,16 +31,14 @@ namespace Capibara.Test.ViewModels
         [SetUp]
         public void Initialize()
         {
-            var navigateTaskSource = new TaskCompletionSource<bool>();
             var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
             navigationServiceMock
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
+                .Returns(Task.FromResult(true))
                 .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
                 {
                     this.NavigatePageName = name;
                     this.NavigationParameters = parameters;
-                    navigateTaskSource.SetResult(true);
                 });
 
             navigationServiceMock
@@ -58,10 +56,8 @@ namespace Capibara.Test.ViewModels
             var progressDialogService = new Mock<IProgressDialogService>();
             progressDialogService
                 .Setup(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()))
-                .Returns<Task, string>((task, message) => {
-                    this.IsDisplayedProgressDialog = true;
-                    return task;
-                });
+                .Callback<Task, string>((task, message) => this.IsDisplayedProgressDialog = true)
+                .Returns<Task, string>((task, message) => task);
 
             container.RegisterInstance(progressDialogService.Object);
 
@@ -70,17 +66,18 @@ namespace Capibara.Test.ViewModels
             pickupPhotoService.SetupAllProperties();
             pickupPhotoService
                 .Setup(x => x.DisplayAlbumAsync())
-                .Returns(() => {
-                    var taskSource = new TaskCompletionSource<byte[]>();
-                    taskSource.SetResult(new byte[0]);
-                    this.IsDisplayedPhotoPicker = true;
-                    return taskSource.Task;
-                });
+                .Callback(() => this.IsDisplayedPhotoPicker = true)
+                .Returns(Task.FromResult(new byte[0]));
 
             container.RegisterInstance(pickupPhotoService.Object);
 
             this.DeviceService = new Mock<IDeviceService>();
             container.RegisterInstance(this.DeviceService.Object);
+
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
+
+            container.RegisterInstance(taskService.Object);
 
             return container;
         }

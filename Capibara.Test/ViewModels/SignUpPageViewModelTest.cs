@@ -216,85 +216,60 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         }
     }
 
-    namespace SignUpWithSnsCommandTest
+    [TestFixture]
+    public class SignUpWithSnsCommandTest : ViewModelTestBase
     {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
+        private ActionSheetButton[] buttons;
+
+        private bool IsOpenUrlCalled = false;
+
+        [SetUp]
+        public void SetUp()
         {
-            private ActionSheetButton[] buttons;
+            var pageDialogService = new Mock<IPageDialogService>();
+            pageDialogService
+                .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
+                .Returns((string name, IActionSheetButton[] buttons) =>
+                {
+                    this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
+                    return Task.Run(() => { });
+                });
 
-            [SetUp]
-            public void SetUp()
-            {
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
-                    .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
-                    .Returns((string name, IActionSheetButton[] buttons) =>
-                    {
-                        this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
-                        return Task.Run(() => { });
-                    });
+            var container = this.GenerateUnityContainer();
 
-                var container = this.GenerateUnityContainer();
+            var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object);
 
-                var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object);
+            viewModel.Model.Id = 1;
 
-                viewModel.Model.Id = 1;
+            viewModel.BuildUp(container);
 
-                viewModel.BuildUp(container);
+            viewModel.SignUpWithSnsCommand.Execute();
 
-                viewModel.SignUpWithSnsCommand.Execute();
-
-                while (!viewModel.SignUpWithSnsCommand.CanExecute()) { };
-            }
-
-            [TestCase]
-            public void ItShouldHasFourButtons()
-            {
-                Assert.That(this.buttons?.Length, Is.EqualTo(2));
-            }
-
-            [TestCase(0, "キャンセル")]
-            [TestCase(1, "Twitter")]
-            public void ItShouldButtontTextExpected(int index, string expect)
-            {
-                Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
-            }
+            while (!viewModel.SignUpWithSnsCommand.CanExecute()) { };
         }
 
-        [TestFixture]
-        public class WhenPressTwitter : ViewModelTestBase
+        [TestCase]
+        public void ItShouldHasFourButtons()
         {
-            private ActionSheetButton[] buttons;
+            Assert.That(this.buttons?.Length, Is.EqualTo(3));
+        }
 
-            private bool IsOpenUrlCalled = false;
+        [TestCase(0, "キャンセル")]
+        [TestCase(1, "Twitter")]
+        [TestCase(2, "LINE")]
+        public void ItShouldButtontTextExpected(int index, string expect)
+        {
+            Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
+        }
 
-            [TestCase]
-            public void ItShouldOpenUrl()
-            {
-                var container = this.GenerateUnityContainer();
-                this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "http://localhost:9999/api/oauth/twitter"))).Callback((Uri x) => this.IsOpenUrlCalled = true);
+        [TestCase(1, "http://localhost:9999/api/oauth/twitter")]
+        [TestCase(1, "http://localhost:9999/api/oauth/line")]
+        public void ItShouldOpenUrl(int index, string url)
+        {
+            this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == url))).Callback((Uri x) => this.IsOpenUrlCalled = true);
 
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
-                    .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
-                    .Returns((string name, IActionSheetButton[] buttons) =>
-                    {
-                        this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
-                        return Task.Run(() => { });
-                    });
-
-                var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object);
-
-                viewModel.BuildUp(container);
-
-                viewModel.SignUpWithSnsCommand.Execute();
-
-                while (!viewModel.SignUpWithSnsCommand.CanExecute()) { };
-
-                this.buttons.ElementAtOrDefault(1)?.Action?.Invoke();
-                Assert.That(this.IsOpenUrlCalled, Is.EqualTo(true));
-            }
+            this.buttons.ElementAtOrDefault(index)?.Action?.Invoke();
+            Assert.That(this.IsOpenUrlCalled, Is.EqualTo(true));
         }
     }
 }
