@@ -107,6 +107,7 @@
       <DependentUpon>WebViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="NavigationParametersExtensions.cs" />
+    <Compile Include="ViewModels\AcceptPageViewModal.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
