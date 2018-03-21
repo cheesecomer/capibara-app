@@ -86,7 +86,7 @@ namespace Capibara.Models
         }
 
         [JsonProperty("accepted")]
-        public bool IsAccepted
+        public virtual bool IsAccepted
         {
             get => this.isAccepted;
             set => this.SetProperty(ref this.isAccepted, value);

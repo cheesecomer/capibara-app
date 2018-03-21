@@ -9,6 +9,8 @@ using Prism.Services;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
+using Unity;
+
 namespace Capibara.ViewModels
 {
     public class SignInPageViewModel : ViewModelBase<Session>
@@ -74,7 +76,15 @@ namespace Capibara.ViewModels
 
         private void OnSignInSuccess(object sender, EventArgs args)
         {
-            this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
+            var pageName =
+                this.Model.IsAccepted
+                    ? "/MainPage/NavigationPage/FloorMapPage"
+                    : "/AcceptPage";
+            var parameters =
+                this.Model.IsAccepted
+                    ? null
+                    : new NavigationParameters { { ParameterNames.Model, this.Container.Resolve<User>(UnityInstanceNames.CurrentUser) } };
+            this.NavigationService.NavigateAsync(pageName, parameters);
         }
 
         private void OnSignInFail(object sender, FailEventArgs args)

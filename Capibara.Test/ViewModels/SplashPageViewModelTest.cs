@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 using SubjectViewModel = Capibara.ViewModels.SplashPageViewModel;
 
-namespace Capibara.Test.ViewModels.SubjectViewModelTest
+namespace Capibara.Test.ViewModels.SplashPageViewModel
 {
     namespace LogoTopMarginPropertyTest
     {
@@ -135,11 +135,43 @@ namespace Capibara.Test.ViewModels.SubjectViewModelTest
             }
         }
 
-        public class WhenHasValidAccessToken : TestBase
+        public class WhenHasValidAccessTokenAndNotAccepted : TestBase
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
             protected override User Response => new User();
+
+            [TestCase]
+            public void ItShouldLogoScaleWithExpect()
+            {
+                Assert.That(this.Subject.LogoScale.Value, Is.EqualTo(3));
+            }
+
+            [TestCase]
+            public void ItShouldLogoOpacityWithExpect()
+            {
+                Assert.That(this.Subject.LogoOpacity.Value, Is.EqualTo(0));
+            }
+
+            [TestCase]
+            public void ItShouldLogoTopMarginWithExpect()
+            {
+                Assert.That(this.Subject.LogoTopMargin.Value, Is.EqualTo(180));
+            }
+
+            [TestCase]
+            public void ItShouldNavigateToFloorMapPage()
+            {
+                Assert.That(this.NavigatePageName, Is.EqualTo("/AcceptPage"));
+            }
+        }
+
+
+        public class WhenHasValidAccessTokenAndAccepted : TestBase
+        {
+            protected override string AccessToken => Guid.NewGuid().ToString();
+
+            protected override User Response => new User { IsAccepted = true };
 
             [TestCase]
             public void ItShouldLogoScaleWithExpect()

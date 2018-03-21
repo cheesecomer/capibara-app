@@ -74,7 +74,7 @@ namespace Capibara.Test.Net.Users.UpdateRequestTest
             public void ItShouldExpect()
             {
                 var request = new UpdateRequest(new User { Nickname = "FooBar", Biography = "Hi!" });
-                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\"}".ToSlim();
+                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\", \"accepted\": false}".ToSlim();
                 Assert.That(request.StringContent.ToSlim(), Is.EqualTo(expect));
             }
         }
@@ -85,7 +85,7 @@ namespace Capibara.Test.Net.Users.UpdateRequestTest
             public void ItShouldExpect()
             {
                 var request = new UpdateRequest(new User { Nickname = "FooBar", Biography = "Hi!", IconBase64 = "1234567890" });
-                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\", \"icon\": \"data:image/png;base64,1234567890\"}".ToSlim();
+                var expect = "{\"nickname\": \"FooBar\", \"biography\": \"Hi!\", \"accepted\": false, \"icon\": \"data:image/png;base64,1234567890\"}".ToSlim();
                 Assert.That(request.StringContent.ToSlim(), Is.EqualTo(expect));
             }
         }

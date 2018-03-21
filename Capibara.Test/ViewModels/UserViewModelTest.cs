@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Capibara.Models;
 using Capibara.ViewModels;
 
-using Microsoft.Practices.Unity;
-
 using Moq;
 using NUnit.Framework;
-
-using Prism.Navigation;
 using Prism.Services;
 
 using SubjectViewModel = Capibara.ViewModels.UserViewModel;
@@ -89,7 +84,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
 
             viewModel.RefreshCommand.Execute();
 
-            while (!viewModel.RefreshCommand.CanExecute()) { };
+            while (!viewModel.RefreshCommand.CanExecute()) { }
         }
 
         [TestCase]
@@ -134,7 +129,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
 
                 viewModel.ChangePhotoCommand.Execute();
 
-                while (!viewModel.RefreshCommand.CanExecute()) { };
+                while (!viewModel.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]
@@ -180,7 +175,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
 
                 viewModel.ChangePhotoCommand.Execute();
 
-                while (!viewModel.RefreshCommand.CanExecute()) { };
+                while (!viewModel.RefreshCommand.CanExecute()) { }
 
                 this.buttons.ElementAtOrDefault(2)?.Action?.Invoke();
             }
@@ -260,7 +255,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
 
             viewModel.CommitCommand.Execute();
 
-            while (!viewModel.CommitCommand.CanExecute()) { };
+            while (!viewModel.CommitCommand.CanExecute()) { }
         }
 
         [TestCase]

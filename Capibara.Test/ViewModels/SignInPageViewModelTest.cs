@@ -33,25 +33,22 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         }
     }
 
-    [TestFixture]
     public class OnSignInSuccessTest : ViewModelTestBase
     {
         protected SubjectViewModel Subjet { get; private set; }
 
-        [SetUp]
-        public void SetUp()
+        [TestCase(false, "/AcceptPage")]
+        [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
+        public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {
             var container = this.GenerateUnityContainer();
             var model = new Mock<Session>();
+            model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
             this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToFloorMap()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+            Assert.That(this.NavigatePageName, Is.EqualTo(expected));
         }
     }
 

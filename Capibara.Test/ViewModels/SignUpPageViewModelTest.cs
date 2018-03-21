@@ -13,7 +13,9 @@ using NUnit.Framework;
 using Prism.Navigation;
 using Prism.Services;
 
-namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
+using SubjectViewModel = Capibara.ViewModels.SignUpPageViewModel;
+
+namespace Capibara.Test.ViewModels.SignUpPageViewModel
 {
     [TestFixture]
     public class SignUpCommandCanExecuteTest : ViewModelTestBase
@@ -24,7 +26,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         [TestCase(" a ", true)]
         public void ItShouldCanExecuteWithExpected(string nickname, bool canExecute)
         {
-            var viewModel = new SignUpPageViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
             viewModel.Nickname.Value = nickname;
             Assert.That(viewModel.SignUpCommand.CanExecute(), Is.EqualTo(canExecute));
         }
@@ -33,22 +35,20 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
     [TestFixture]
     public class OnSignUpSuccessTest : ViewModelTestBase
     {
-        protected SignUpPageViewModel ViewModel { get; private set; }
+        protected SubjectViewModel Subjet { get; private set; }
 
-        [SetUp]
-        public void SetUp()
+        [TestCase(false, "/AcceptPage")]
+        [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
+        public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {
             var container = this.GenerateUnityContainer();
             var model = new Mock<User>();
-            this.ViewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
+            this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignUpSuccess += null, EventArgs.Empty);
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToFloorMap()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+            Assert.That(this.NavigatePageName, Is.EqualTo(expected));
         }
     }
 
@@ -58,8 +58,8 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         {
             return new object[][]
             {
-                    new [] { new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}") },
-                    new [] { new WebException() }
+                new [] { new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}") },
+                new [] { new WebException() }
             };
         }
 
@@ -68,7 +68,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         {
             var container = this.GenerateUnityContainer();
             var model = new Mock<User>();
-            var viewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
@@ -82,7 +82,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         {
             protected virtual bool NeedSignUpWait { get; } = true;
 
-            protected SignUpPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected bool IsSignUpCalled;
 
@@ -94,15 +94,15 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
                 model.SetupAllProperties();
                 model.Setup(x => x.SignUp()).ReturnsAsync(true).Callback(() => this.IsSignUpCalled = true);
 
-                this.ViewModel = new SignUpPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
-                this.ViewModel.Nickname.Value = "Foo.Bar";
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject.Nickname.Value = "Foo.Bar";
 
                 if (!this.NeedSignUpWait)
                 {
-                    this.ViewModel.SignUpCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
+                    this.Subject.SignUpCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
                 }
 
-                this.ViewModel.SignUpCommand.Execute();
+                this.Subject.SignUpCommand.Execute();
             }
 
             [TestCase]
@@ -120,7 +120,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             [TestCase]
             public void ItShouldBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(true));
             }
         }
 
@@ -130,7 +130,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             [TestCase]
             public void ItShouldNotBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(false));
             }
         }
     }
@@ -141,7 +141,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var viewModel = new SignUpPageViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.SignInCommand.Execute();
 
@@ -157,20 +157,31 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
 
     namespace OnResume
     {
-        [TestFixture]
+        [TestFixture(false, "/AcceptPage")]
+        [TestFixture(true, "/MainPage/NavigationPage/FloorMapPage")]
         public class WhenAccessTokenIsPresent : ViewModelTestBase
         {
+            private bool IsAccepted;
+
+            private string ExpectedNavigatePageName;
+
+            public WhenAccessTokenIsPresent(bool isAccepted, string expectedNavigatePageName)
+            {
+                this.IsAccepted = isAccepted;
+                this.ExpectedNavigatePageName = expectedNavigatePageName;
+            }
+
             [SetUp]
             public void SetUp()
             {
-                var viewModel = new SignUpPageViewModel(this.NavigationService);
+                var viewModel = new SubjectViewModel(this.NavigationService);
                 viewModel.BuildUp(this.GenerateUnityContainer());
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = Guid.NewGuid().ToString();
 
                 var request = new Mock<RequestBase<User>>();
-                request.Setup(x => x.Execute()).ReturnsAsync(new User());
+                request.Setup(x => x.Execute()).ReturnsAsync(new User { IsAccepted = this.IsAccepted });
 
                 this.RequestFactory.Setup(x => x.UsersShowRequest(It.IsAny<User>())).Returns(request.Object);
 
@@ -178,9 +189,9 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             }
 
             [TestCase]
-            public void ItShouldNavigateToFloorMap()
+            public void ItShouldNavigatePagePathIsExpect()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo(this.ExpectedNavigatePageName));
             }
 
             [TestCase]
@@ -196,7 +207,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
             [SetUp]
             public void SetUp()
             {
-                var viewModel = new SignUpPageViewModel(this.NavigationService);
+                var viewModel = new SubjectViewModel(this.NavigationService);
                 viewModel.BuildUp(this.GenerateUnityContainer());
 
                 viewModel.OnResume();
@@ -237,7 +248,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
 
             var container = this.GenerateUnityContainer();
 
-            var viewModel = new SignUpPageViewModel(pageDialogService: pageDialogService.Object);
+            var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
 
             viewModel.Model.Id = 1;
 

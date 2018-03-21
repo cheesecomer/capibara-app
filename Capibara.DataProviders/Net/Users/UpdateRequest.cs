@@ -33,6 +33,9 @@ namespace Capibara.Net.Users
         [JsonProperty("biography")]
         public string Biography => this.user.Biography;
 
+        [JsonProperty("accepted")]
+        public bool IsAccepted => this.user.IsAccepted;
+
         [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
         public string IconBase64 => this.user.IconBase64.IsPresent() ? $"data:image/png;base64,{this.user.IconBase64}" : null;
     }

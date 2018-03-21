@@ -68,7 +68,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         [TestCase]
         public void IsShouldNavigated()
         {
-            Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+            Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
         }
     }
 }
