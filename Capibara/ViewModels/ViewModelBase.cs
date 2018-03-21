@@ -15,6 +15,10 @@ namespace Capibara.ViewModels
     public static class ParameterNames
     {
         public const string Model = "ParameterNames.Model";
+
+        public const string Title = "ParameterNames.Title";
+
+        public const string Url = "ParameterNames.Url";
     }
 
     public class ViewModelBase : BindableBase, INavigationAware
@@ -101,10 +105,7 @@ namespace Capibara.ViewModels
         {
             base.OnNavigatingTo(parameters);
 
-            if (parameters?.ContainsKey(ParameterNames.Model) ?? false)
-            {
-                this.Model.Restore(parameters[ParameterNames.Model] as TModel);
-            }
+            this.Model.Restore(parameters?.TryGetValue<TModel>(ParameterNames.Model) ?? this.Model); 
         }
     }
 }

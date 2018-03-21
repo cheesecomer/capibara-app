@@ -102,6 +102,11 @@
     <Compile Include="Views\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\WebViewPageViewModel.cs" />
+    <Compile Include="Views\WebViewPage.xaml.cs">
+      <DependentUpon>WebViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NavigationParametersExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -155,6 +160,10 @@
     <EmbeddedResource Include="Views\ReportPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\WebViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

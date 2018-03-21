@@ -18,5 +18,8 @@ namespace Capibara
 
         public static bool IsPresent(this string origin)
             => !origin.IsNullOrEmpty();
+
+        public static string Presence(this string origin)
+            => !origin.IsNullOrEmpty() ? origin : null;
     }
 }
