@@ -10,37 +10,37 @@ namespace Capibara.Test.Net.Blocks.CreateRequestTest
     [TestFixture]
     public class ExecuteTest
     {
-        private CreateRequest Actual { get; set; }
+        private CreateRequest Subject { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            this.Actual = new CreateRequest(new User { Id = 1 });
+            this.Subject = new CreateRequest(new User { Id = 1 });
         }
 
         [TestCase]
         public void ItShouldRequestWithHttpMethodPost()
         {
-            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
+            Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Post));
         }
 
         [TestCase]
         public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "blocks" }));
+            Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "blocks" }));
         }
 
         [TestCase]
         public void ItShouldNeedAuthentication()
         {
-            Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
+            Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
         }
 
         [TestCase]
         public void ItShouldStringContentWithExpected()
         {
             var expected = "{\"target_id\":1}".ToSlim();
-            Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+            Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
         }
     }
 }

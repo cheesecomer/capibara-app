@@ -183,6 +183,19 @@ namespace Capibara.Test.Net
             
             public override bool NeedAuthentication { get; } = true;
         }
+
+        public class PostWithAuthenticationRequest : RequestBase<object>
+        {
+            public override HttpMethod Method { get; } = HttpMethod.Post;
+
+            public override string[] Paths { get; } = new string[] { "sessions" };
+
+            public override bool NeedAuthentication { get; } = true;
+
+            public override string StringContent => "{ \"email\": \"example@email.com\" }";
+
+            public override string ContentType => "application/json";
+        }
         
         [TestFixture]
         public class WhenGetSuccess : TestFixtureBase
@@ -227,6 +240,38 @@ namespace Capibara.Test.Net
                 Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
             }
             
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedValue()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Parameter, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            }
+        }
+
+        [TestFixture]
+        public class WhenPostWithAuthenticationSuccess : TestFixtureBase
+        {
+            [SetUp]
+            public void Setup()
+            {
+                var container = this.GenerateUnityContainer();
+
+                this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
+
+                new PostWithAuthenticationRequest().BuildUp(container).Execute().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/sessions"));
+            }
+
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedScheme()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
+            }
+
             [TestCase]
             public void ItShouldAuthenticationHeaderWithExpectedValue()
             {

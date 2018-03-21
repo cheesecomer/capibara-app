@@ -18,7 +18,7 @@ namespace Capibara.Test.Models.SessionTest
 
             protected bool IsFailed { get; private set; }
 
-            protected Session Actual { get; private set; }
+            protected Session Subject { get; private set; }
 
             protected virtual bool WithEventHandler { get; } = true;
 
@@ -31,7 +31,7 @@ namespace Capibara.Test.Models.SessionTest
             [SetUp]
             public void Setup()
             {
-                this.Actual = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.GenerateUnityContainer());
 
                 var request = new Mock<RequestBase<CreateResponse>>();
 
@@ -48,11 +48,11 @@ namespace Capibara.Test.Models.SessionTest
 
                 if (this.WithEventHandler)
                 {
-                    this.Actual.SignInFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.SignInSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.SignInFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.SignInSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.SignIn().Result;
+                this.Result = this.Subject.SignIn().Result;
             }
         }
 
@@ -75,25 +75,25 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
             public void IsShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("Foo.Bar"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("Foo.Bar"));
             }
 
             [TestCase]
             public void IsShouldSaveUserIdInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
             public void IsShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(true));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(true));
             }
 
             [TestCase]
@@ -123,19 +123,19 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void IsShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void IsShouldNotRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]
@@ -172,7 +172,7 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignIn);
+                Assert.DoesNotThrowAsync(this.Subject.SignIn);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Capibara.Test.Models.SessionTest
             [TestCase]
             public void IsShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.Actual.SignIn);
+                Assert.DoesNotThrowAsync(this.Subject.SignIn);
             }
         }
     }

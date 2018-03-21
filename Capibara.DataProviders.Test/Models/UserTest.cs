@@ -23,7 +23,7 @@ namespace Capibara.Test.Models.UserTest
     {
         public abstract class TestBase : TestFixtureBase
         {
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected abstract int LoginUserId { get; }
 
@@ -31,32 +31,32 @@ namespace Capibara.Test.Models.UserTest
             public void Setup()
             {
                 var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\" }";
-                this.Actual = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
+                this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.Actual.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+                Assert.That(this.Subject.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.Actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Subject.Id, Is.EqualTo(99999));
             }
 
             [TestCase]
             public void ItShouldIconUrlWithExpected()
             {
-                Assert.That(this.Actual.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
             }
 
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
             }
         }
 
@@ -68,7 +68,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsOwn()
             {
-                Assert.That(this.Actual.IsOwn, Is.EqualTo(true));
+                Assert.That(this.Subject.IsOwn, Is.EqualTo(true));
             }
         }
 
@@ -80,7 +80,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsNotOwn()
             {
-                Assert.That(this.Actual.IsOwn, Is.EqualTo(false));
+                Assert.That(this.Subject.IsOwn, Is.EqualTo(false));
             }
         }
     }
@@ -88,43 +88,43 @@ namespace Capibara.Test.Models.UserTest
     [TestFixture]
     public class RestoreTest
     {
-        private User Actual;
+        private User Subject;
 
         [SetUp]
         public void Setup()
         {
-            this.Actual = new User { Id = 99999 };
-            this.Actual.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true });
+            this.Subject = new User { Id = 99999 };
+            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true });
         }
 
         [TestCase]
         public void ItShouldNameWithExpected()
         {
-            Assert.That(this.Actual.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+            Assert.That(this.Subject.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
         }
 
         [TestCase]
         public void ItShouldIdWithExpected()
         {
-            Assert.That(this.Actual.Id, Is.EqualTo(99999));
+            Assert.That(this.Subject.Id, Is.EqualTo(99999));
         }
 
         [TestCase]
         public void ItShouldBiographyWithExpected()
         {
-            Assert.That(this.Actual.Biography, Is.EqualTo("..."));
+            Assert.That(this.Subject.Biography, Is.EqualTo("..."));
         }
 
         [TestCase]
         public void ItShouldIconUrlWithExpected()
         {
-            Assert.That(this.Actual.IconUrl, Is.EqualTo("...!!!"));
+            Assert.That(this.Subject.IconUrl, Is.EqualTo("...!!!"));
         }
 
         [TestCase]
         public void ItShouldIsBlockWithExpected()
         {
-            Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+            Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
         }
     }
 
@@ -136,7 +136,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected abstract bool NeedEventHandler { get; }
 
@@ -153,7 +153,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Id = 1 }.BuildUp(container);
+                this.Subject = new User { Id = 1 }.BuildUp(container);
 
                 var request = new Mock<RequestBase<User>>();
                 var methodMock = request.Setup(x => x.Execute());
@@ -165,20 +165,20 @@ namespace Capibara.Test.Models.UserTest
                 else
                     throw new ArgumentException();
 
-                this.RequestFactory.Setup(x => x.UsersShowRequest(this.Actual)).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.UsersShowRequest(this.Subject)).Returns(request.Object);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.RefreshFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.RefreshSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.RefreshFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.RefreshSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
                 if (this.IsOWn)
                 {
-                    this.IsolatedStorage.UserId = this.Actual.Id;
+                    this.IsolatedStorage.UserId = this.Subject.Id;
                 }
 
-                this.Result = this.Actual.Refresh().Result;
+                this.Result = this.Subject.Refresh().Result;
             }
         }
 
@@ -205,31 +205,31 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldNicknameWithExpect()
             {
-                Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx!"));
+                Assert.That(this.Subject.Nickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
             public void ItShouldBiographyWithExpect()
             {
-                Assert.That(this.Actual.Biography, Is.EqualTo("..."));
+                Assert.That(this.Subject.Biography, Is.EqualTo("..."));
             }
 
             [TestCase]
             public void ItShouldUserIdWithExpect()
             {
-                Assert.That(this.Actual.Id, Is.EqualTo(1));
+                Assert.That(this.Subject.Id, Is.EqualTo(1));
             }
 
             [TestCase]
             public void ItShouldIconUrlWithExpected()
             {
-                Assert.That(this.Actual.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
             }
 
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
             }
         }
 
@@ -243,13 +243,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx!"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
             public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Subject));
             }
         }
 
@@ -287,19 +287,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldNicknameWithExpect()
             {
-                Assert.That(this.Actual.Nickname, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.Nickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldBiographyWithExpect()
             {
-                Assert.That(this.Actual.Biography, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.Biography, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldUserIdWithExpect()
             {
-                Assert.That(this.Actual.Id, Is.EqualTo(1));
+                Assert.That(this.Subject.Id, Is.EqualTo(1));
             }
         }
 
@@ -338,7 +338,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected abstract bool NeedEventHandler { get; }
 
@@ -351,7 +351,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Nickname = "xxxxx" }.BuildUp(container);
 
                 var request = new Mock<RequestBase<SessionCreateResponse>>();
 
@@ -364,15 +364,15 @@ namespace Capibara.Test.Models.UserTest
                 else
                     throw new ArgumentException();
 
-                this.RequestFactory.Setup(x => x.UsersCreateRequest(this.Actual.Nickname)).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.UsersCreateRequest(this.Subject.Nickname)).Returns(request.Object);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.SignUpFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.SignUpSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.SignUpFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.SignUpSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.SignUp().Result;
+                this.Result = this.Subject.SignUp().Result;
             }
         }
 
@@ -397,25 +397,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
             }
 
             [TestCase]
             public void ItShouldSaveUserIdInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
             public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Subject));
             }
 
             [TestCase]
@@ -447,19 +447,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]
@@ -549,7 +549,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -566,7 +566,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
 
                 var request = new Mock<RequestBase<User>>();
 
@@ -579,12 +579,12 @@ namespace Capibara.Test.Models.UserTest
                 else
                     throw new ArgumentException();
 
-                this.RequestFactory.Setup(x => x.UsersUpdateRequest(this.Actual)).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.UsersUpdateRequest(this.Subject)).Returns(request.Object);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.CommitFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.CommitSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.CommitFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.CommitSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
                 if (this.NeedCurrentUserRegistration)
@@ -592,7 +592,7 @@ namespace Capibara.Test.Models.UserTest
                     container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.CurrentUser = new User());
                 }
 
-                this.Result = this.Actual.Commit().Result;
+                this.Result = this.Subject.Commit().Result;
             }
         }
 
@@ -620,25 +620,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.Actual.Nickname, Is.EqualTo("xxxxx!"));
+                Assert.That(this.Subject.Nickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.Actual.Id, Is.EqualTo(1));
+                Assert.That(this.Subject.Id, Is.EqualTo(1));
             }
 
             [TestCase]
             public void ItShouldBiographyWithExpected()
             {
-                Assert.That(this.Actual.Biography, Is.EqualTo("..."));
+                Assert.That(this.Subject.Biography, Is.EqualTo("..."));
             }
 
             [TestCase]
             public void ItShouldIconUrlWithExpected()
             {
-                Assert.That(this.Actual.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
             }
 
             [TestCase]
@@ -663,7 +663,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.CurrentUser));
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.CurrentUser));
             }
 
             [TestCase]
@@ -700,7 +700,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Actual));
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Subject));
             }
         }
 
@@ -722,19 +722,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]
@@ -829,7 +829,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -844,7 +844,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
 
                 var request = new Mock<RequestBase<BlockIndexResponse>>();
 
@@ -857,15 +857,15 @@ namespace Capibara.Test.Models.UserTest
                 else
                     throw new ArgumentException();
 
-                this.RequestFactory.Setup(x => x.BlocksCreateRequest(this.Actual)).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.BlocksCreateRequest(this.Subject)).Returns(request.Object);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.BlockFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.BlockSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.BlockFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.BlockSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.Block().Result;
+                this.Result = this.Subject.Block().Result;
             }
         }
 
@@ -885,7 +885,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
             }
 
             [TestCase]
@@ -912,7 +912,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(false));
             }
 
             [TestCase]
@@ -950,7 +950,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
             }
 
             [TestCase]
@@ -983,7 +983,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Actual.IsBlock, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(false));
             }
 
             [TestCase]
@@ -1014,7 +1014,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -1033,16 +1033,16 @@ namespace Capibara.Test.Models.UserTest
                     .Setup(x => x.AuthorizeAsync())
                     .ReturnsAsync(this.Authorize);
 
-                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.OAuthAuthorizeFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.OAuthAuthorizeSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.OAuthAuthorizeFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.OAuthAuthorizeSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
                 if (this.NeedExecute)
-                    this.Actual.OAuthAuthorize(this.OAuthProvider).Wait();
+                    this.Subject.OAuthAuthorize(this.OAuthProvider).Wait();
             }
 
             public abstract OAuthSession Authorize();
@@ -1206,7 +1206,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -1227,7 +1227,7 @@ namespace Capibara.Test.Models.UserTest
                     .Setup(x => x.GetAccessTokenAsync(It.IsAny<TokenPair>(), "AbcdeFgh"))
                     .ReturnsAsync(this.GetAccessToken);
 
-                this.Actual = new User().BuildUp(container);
+                this.Subject = new User().BuildUp(container);
 
                 var request = new Mock<RequestBase<SessionCreateResponse>>();
 
@@ -1244,11 +1244,11 @@ namespace Capibara.Test.Models.UserTest
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.SignUpFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.SignUpSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.SignUpFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.SignUpSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.SignUpWithOAuth().Result;
+                this.Result = this.Subject.SignUpWithOAuth().Result;
             }
 
             public abstract TokenPair GetAccessToken();
@@ -1324,25 +1324,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("xxxxx"));
             }
 
             [TestCase]
             public void ItShouldSaveUserIdInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(999));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
             public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.Resolve<User>("CurrentUser").Id, Is.EqualTo(this.Actual.Id));
+                Assert.That(this.Subject.Container.Resolve<User>("CurrentUser").Id, Is.EqualTo(this.Subject.Id));
             }
         }
 
@@ -1365,19 +1365,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Actual.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]
@@ -1468,7 +1468,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool Result { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -1483,7 +1483,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
 
                 this.IsolatedStorage.AccessToken = "AccessToken";
                 this.IsolatedStorage.OAuthCallbackUrl = new Uri("foobar://example.com/");
@@ -1509,11 +1509,11 @@ namespace Capibara.Test.Models.UserTest
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.DestroyFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.DestroySuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.DestroyFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.DestroySuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.Destroy().Result;
+                this.Result = this.Subject.Destroy().Result;
             }
         }
 
@@ -1531,31 +1531,31 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldAccessTokenNull()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.Null);
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null);
             }
 
             [TestCase]
             public void ItShouldUserNicknameNull()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.Null);
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null);
             }
 
             [TestCase]
             public void ItShouldOAuthCallbackUrlNull()
             {
-                Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl, Is.Null);
+                Assert.That(this.Subject.IsolatedStorage.OAuthCallbackUrl, Is.Null);
             }
 
             [TestCase]
             public void ItShouldOAuthRequestTokenPairNull()
             {
-                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair, Is.Null);
+                Assert.That(this.Subject.IsolatedStorage.OAuthRequestTokenPair, Is.Null);
             }
 
             [TestCase]
             public void ItShouldUserIdIsZero()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserId, Is.Null.Or.EqualTo(0));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.Null.Or.EqualTo(0));
             }
         }
 
@@ -1575,37 +1575,37 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldAccessTokenPresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.AccessToken, Is.EqualTo("AccessToken"));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.EqualTo("AccessToken"));
             }
 
             [TestCase]
             public void ItShouldUserNicknamePresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserNickname, Is.EqualTo("UserName"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("UserName"));
             }
 
             [TestCase]
             public void ItShouldOAuthCallbackUrlPresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.OAuthCallbackUrl?.ToString(), Is.EqualTo("foobar://example.com/"));
+                Assert.That(this.Subject.IsolatedStorage.OAuthCallbackUrl?.ToString(), Is.EqualTo("foobar://example.com/"));
             }
 
             [TestCase]
             public void ItShouldOAuthRequestTokenPairTokenPresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.Token, Is.EqualTo("Token"));
+                Assert.That(this.Subject.IsolatedStorage.OAuthRequestTokenPair?.Token, Is.EqualTo("Token"));
             }
 
             [TestCase]
             public void ItShouldOAuthRequestTokenPairTokenSecretPresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.OAuthRequestTokenPair?.TokenSecret, Is.EqualTo("TokenSecret"));
+                Assert.That(this.Subject.IsolatedStorage.OAuthRequestTokenPair?.TokenSecret, Is.EqualTo("TokenSecret"));
             }
 
             [TestCase]
             public void ItShouldUserIdPresent()
             {
-                Assert.That(this.Actual.IsolatedStorage.UserId, Is.EqualTo(1000));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.EqualTo(1000));
             }
         }
 
@@ -1676,7 +1676,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected bool IsFailed { get; private set; }
 
-            protected User Actual { get; private set; }
+            protected User Subject { get; private set; }
 
             protected User CurrentUser { get; private set; }
 
@@ -1689,7 +1689,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.Actual = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
 
                 var request = new Mock<RequestBase>();
 
@@ -1700,15 +1700,15 @@ namespace Capibara.Test.Models.UserTest
                 else
                     methodMock.Returns(Task.CompletedTask);
 
-                this.RequestFactory.Setup(x => x.ReportsCreateRequest(this.Actual, ReportReason.Other, "FooBar")).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.ReportsCreateRequest(this.Subject, ReportReason.Other, "FooBar")).Returns(request.Object);
 
                 if (this.NeedEventHandler)
                 {
-                    this.Actual.ReportFail += (sender, e) => this.IsFailed = true;
-                    this.Actual.ReportSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.ReportFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.ReportSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Actual.Report(ReportReason.Other, "FooBar").Result;
+                this.Result = this.Subject.Report(ReportReason.Other, "FooBar").Result;
             }
         }
 

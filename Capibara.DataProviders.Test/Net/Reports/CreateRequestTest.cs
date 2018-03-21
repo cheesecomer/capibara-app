@@ -11,24 +11,24 @@ namespace Capibara.Test.Net.Reports
     {
         public abstract class TestBase
         {
-            protected CreateRequest Actual { get; set; }
+            protected CreateRequest Subject { get; set; }
 
             [TestCase]
             public void ItShouldRequestWithHttpMethodPost()
             {
-                Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Post));
+                Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Post));
             }
 
             [TestCase]
             public void ItShouldPathsWithExpect()
             {
-                Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "reports" }));
+                Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "reports" }));
             }
 
             [TestCase]
             public void ItShouldNeedAuthentication()
             {
-                Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
+                Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
             }
         }
 
@@ -38,14 +38,14 @@ namespace Capibara.Test.Net.Reports
             [SetUp]
             public void SetUp()
             {
-                this.Actual = new CreateRequest(new User { Id = 100 }, ReportReason.Spam);
+                this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Spam);
             }
             
             [TestCase]
             public void ItShouldStringContentWithExpected()
             {
                 var expected = "{\"target_id\":100,\"reason\":1}".ToSlim();
-                Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+                Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
             }
         }
 
@@ -55,14 +55,14 @@ namespace Capibara.Test.Net.Reports
             [SetUp]
             public void SetUp()
             {
-                this.Actual = new CreateRequest(new User { Id = 100 }, ReportReason.Other, "FooBar");
+                this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Other, "FooBar");
             }
 
             [TestCase]
             public void ItShouldStringContentWithExpected()
             {
                 var expected = "{\"target_id\":100,\"reason\":0,\"message\":\"FooBar\"}".ToSlim();
-                Assert.That(Actual.StringContent.ToSlim(), Is.EqualTo(expected));
+                Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
             }
         }
     }

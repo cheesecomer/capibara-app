@@ -19,18 +19,18 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel actual;
+            SplashPageViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.actual = new SplashPageViewModel();
+                this.Subject = new SplashPageViewModel();
             }
 
             [TestCase]
             public void ItShouldValueWithExpect()
             {
-                Assert.That(this.actual.LogoTopMargin.Value, Is.EqualTo(180));
+                Assert.That(this.Subject.LogoTopMargin.Value, Is.EqualTo(180));
             }
         }
     }
@@ -39,18 +39,18 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel actual;
+            SplashPageViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.actual = new SplashPageViewModel();
+                this.Subject = new SplashPageViewModel();
             }
 
             [TestCase]
             public void ItShouldValueWithExpect()
             {
-                Assert.That(this.actual.LogoOpacity.Value, Is.EqualTo(1));
+                Assert.That(this.Subject.LogoOpacity.Value, Is.EqualTo(1));
             }
         }
     }
@@ -59,18 +59,18 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel actual;
+            SplashPageViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.actual = new SplashPageViewModel();
+                this.Subject = new SplashPageViewModel();
             }
 
             [TestCase]
             public void ItShouldValueWithExpect()
             {
-                Assert.That(this.actual.LogoScale.Value, Is.EqualTo(1));
+                Assert.That(this.Subject.LogoScale.Value, Is.EqualTo(1));
             }
         }
     }
@@ -82,7 +82,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
         {
             protected abstract string AccessToken { get; }
 
-            protected SplashPageViewModel Actual { get; private set; }
+            protected SplashPageViewModel Subject { get; private set; }
 
             protected virtual User Response { get; }
 
@@ -92,7 +92,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             public void SetUp()
             {
                 
-                this.Actual = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                this.Subject = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 var request = new Mock<RequestBase<User>>();
                 if (this.Response.IsPresent())
@@ -105,8 +105,8 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = this.AccessToken;
 
-                this.Actual.RefreshCommand.Execute();
-                while (!this.Actual.RefreshCommand.CanExecute()) { }
+                this.Subject.RefreshCommand.Execute();
+                while (!this.Subject.RefreshCommand.CanExecute()) { }
             }
         }
 
@@ -117,19 +117,19 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
             {
-                Assert.That(this.Actual.LogoScale.Value, Is.EqualTo(1));
+                Assert.That(this.Subject.LogoScale.Value, Is.EqualTo(1));
             }
 
             [TestCase]
             public void ItShouldLogoOpacityWithExpect()
             {
-                Assert.That(this.Actual.LogoOpacity.Value, Is.EqualTo(1));
+                Assert.That(this.Subject.LogoOpacity.Value, Is.EqualTo(1));
             }
 
             [TestCase]
             public void ItShouldLogoTopMarginWithExpect()
             {
-                Assert.That(this.Actual.LogoTopMargin.Value, Is.EqualTo(20));
+                Assert.That(this.Subject.LogoTopMargin.Value, Is.EqualTo(20));
             }
 
             [TestCase]
@@ -148,19 +148,19 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
             {
-                Assert.That(this.Actual.LogoScale.Value, Is.EqualTo(3));
+                Assert.That(this.Subject.LogoScale.Value, Is.EqualTo(3));
             }
 
             [TestCase]
             public void ItShouldLogoOpacityWithExpect()
             {
-                Assert.That(this.Actual.LogoOpacity.Value, Is.EqualTo(0));
+                Assert.That(this.Subject.LogoOpacity.Value, Is.EqualTo(0));
             }
 
             [TestCase]
             public void ItShouldLogoTopMarginWithExpect()
             {
-                Assert.That(this.Actual.LogoTopMargin.Value, Is.EqualTo(180));
+                Assert.That(this.Subject.LogoTopMargin.Value, Is.EqualTo(180));
             }
 
             [TestCase]

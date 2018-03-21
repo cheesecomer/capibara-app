@@ -16,106 +16,90 @@ using Prism.Services;
 
 namespace Capibara.Test.ViewModels.UserViewModelTest
 {
-    namespace NicknamePropertyTest
+    public class NicknamePropertyTest : ViewModelTestBase
     {
-        public class WhenOwn : ViewModelTestBase
+        protected UserViewModel Subject;
+
+        [SetUp]
+        public void SetUp()
         {
-            protected User Model;
+            var container = this.GenerateUnityContainer();
+            var model = new User() { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
 
-            protected UserViewModel Actual;
+            this.Subject = new UserViewModel(model: model).BuildUp(container);
+        }
 
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
-                this.Model = new User() { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
-                this.IsolatedStorage.UserId = this.Model.Id;
+        [TestCase]
+        public void ItShouldValueWithExpect()
+        {
+            Assert.That(this.Subject.Nickname.Value, Is.EqualTo("xxxx"));
+        }
 
-                this.Actual = new UserViewModel(model: this.Model).BuildUp(container);
-            }
-
-            [TestCase]
-            public void ItShouldValueWithExpect()
-            {
-                Assert.That(this.Actual.Nickname.Value, Is.EqualTo("xxxx"));
-            }
-
-            [TestCase]
-            public void ItShouldUpdate()
-            {
-                this.Actual.Model.Nickname = "xxxx!!!";
-                Assert.That(this.Actual.Nickname.Value, Is.EqualTo("xxxx!!!"));
-            }
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            this.Subject.Model.Nickname = "xxxx!!!";
+            Assert.That(this.Subject.Nickname.Value, Is.EqualTo("xxxx!!!"));
         }
     }
 
-    namespace BiographyPropertyTest
+    public class BiographyPropertyTest : ViewModelTestBase
     {
-        public class WhenOwn : ViewModelTestBase
+        protected UserViewModel Subject;
+
+        [SetUp]
+        public void SetUp()
         {
-            protected User Model;
+            var container = this.GenerateUnityContainer();
+            var model = new User() { Biography = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
+            this.Subject = new UserViewModel(model: model).BuildUp(container);
+        }
 
-            protected UserViewModel Actual;
+        [TestCase]
+        public void ItShouldValueWithExpect()
+        {
+            Assert.That(this.Subject.Biography.Value, Is.EqualTo("xxxx"));
+        }
 
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
-                this.Model = new User() { Biography = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
-                this.IsolatedStorage.UserId = this.Model.Id;
-
-                this.Actual = new UserViewModel(model: this.Model).BuildUp(container);
-            }
-
-            [TestCase]
-            public void ItShouldValueWithExpect()
-            {
-                Assert.That(this.Actual.Biography.Value, Is.EqualTo("xxxx"));
-            }
-
-            [TestCase]
-            public void ItShouldUpdate()
-            {
-                this.Actual.Model.Biography = "xxxx!!!";
-                Assert.That(this.Actual.Biography.Value, Is.EqualTo("xxxx!!!"));
-            }
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            this.Subject.Model.Biography = "xxxx!!!";
+            Assert.That(this.Subject.Biography.Value, Is.EqualTo("xxxx!!!"));
         }
     }
 
-    namespace RefreshCommandTest
+    [TestFixture]
+    public class RefreshCommandTest : ViewModelTestBase
     {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
+        private bool IsRefreshCalled;
+
+        [SetUp]
+        public void SetUp()
         {
-            private bool IsRefreshCalled;
+            var container = this.GenerateUnityContainer();
 
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
 
-                var model = new Mock<User>();
-                model.SetupAllProperties();
-                model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
+            var viewModel = new UserViewModel(model: model.Object).BuildUp(this.GenerateUnityContainer());
 
-                var viewModel = new UserViewModel(model: model.Object).BuildUp(this.GenerateUnityContainer());
+            viewModel.RefreshCommand.Execute();
 
-                viewModel.RefreshCommand.Execute();
+            while (!viewModel.RefreshCommand.CanExecute()) { };
+        }
 
-                while (!viewModel.RefreshCommand.CanExecute()) { };
-            }
+        [TestCase]
+        public void ItShouldShowDialog()
+        {
+            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+        }
 
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldRefreshCalled()
-            {
-                Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
-            }
+        [TestCase]
+        public void ItShouldRefreshCalled()
+        {
+            Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
         }
     }
 
@@ -157,30 +141,16 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
                 Assert.That(this.buttons?.Length, Is.EqualTo(4));
             }
 
-            [TestCase]
-            public void ItShouldCancelIsFirstButton()
+            [TestCase(0, "キャンセル")]
+            [TestCase(1, "削除")]
+            [TestCase(2, "アルバムから選択")]
+            [TestCase(3, "カメラで撮影")]
+            public void ItShouldButtontTextExpected(int index, string expect)
             {
-                Assert.That(this.buttons.ElementAtOrDefault(0).Text, Is.EqualTo("キャンセル"));
-            }
-
-            [TestCase]
-            public void ItShouldDeleteIsSecondButton()
-            {
-                Assert.That(this.buttons.ElementAtOrDefault(1).Text, Is.EqualTo("削除"));
-            }
-
-            [TestCase]
-            public void ItShouldPickupIsThaadButton()
-            {
-                Assert.That(this.buttons.ElementAtOrDefault(2).Text, Is.EqualTo("アルバムから選択"));
-            }
-
-            [TestCase]
-            public void ItShouldTakeIsForthButton()
-            {
-                Assert.That(this.buttons.ElementAtOrDefault(3).Text, Is.EqualTo("カメラで撮影"));
+                Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
             }
         }
+
         [TestFixture]
         public class WhenPickupSuccess : ViewModelTestBase
         {
@@ -271,39 +241,36 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         }
     }
 
-    namespace CommitCommandTest
+    [TestFixture]
+    public class CommitCommandTest : ViewModelTestBase
     {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
+        private bool IsCommitCalled;
+
+        [SetUp]
+        public void SetUp()
         {
-            private bool IsCommitCalled;
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
 
-            [SetUp]
-            public void SetUp()
-            {
-                var model = new Mock<User>();
-                model.SetupAllProperties();
-                model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
+            var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            viewModel.Nickname.Value = "FooBar";
 
-                var viewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
-                viewModel.Nickname.Value = "FooBar";
+            viewModel.CommitCommand.Execute();
 
-                viewModel.CommitCommand.Execute();
+            while (!viewModel.CommitCommand.CanExecute()) { };
+        }
 
-                while (!viewModel.CommitCommand.CanExecute()) { };
-            }
+        [TestCase]
+        public void ItShouldShowDialog()
+        {
+            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+        }
 
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldCommitCalled()
-            {
-                Assert.That(this.IsCommitCalled, Is.EqualTo(true));
-            }
+        [TestCase]
+        public void ItShouldCommitCalled()
+        {
+            Assert.That(this.IsCommitCalled, Is.EqualTo(true));
         }
     }
 
@@ -324,39 +291,37 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         }
     }
 
-    namespace BlockCommandTest
+
+    [TestFixture]
+    public class BlockCommandTest : ViewModelTestBase
     {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
+        private UserViewModel ViewModel;
+
+        protected bool IsBlockCalled;
+
+        [SetUp]
+        public void SetUp()
         {
-            private UserViewModel ViewModel;
+            var taskSource = new TaskCompletionSource<bool>();
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
 
-            protected bool IsBlockCalled;
+            this.ViewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            this.ViewModel.IsBlock.Value = false;
+            this.ViewModel.BlockCommand.Execute();
+        }
 
-            [SetUp]
-            public void SetUp()
-            {
-                var taskSource = new TaskCompletionSource<bool>();
-                var model = new Mock<User>();
-                model.SetupAllProperties();
-                model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
+        [TestCase]
+        public void ItShouldIsBlockCalled()
+        {
+            Assert.That(this.IsBlockCalled, Is.EqualTo(true));
+        }
 
-                this.ViewModel = new UserViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
-                this.ViewModel.IsBlock.Value = false;
-                this.ViewModel.BlockCommand.Execute();
-            }
-
-            [TestCase]
-            public void ItShouldIsBlockCalled()
-            {
-                Assert.That(this.IsBlockCalled, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
-            }
+        [TestCase]
+        public void ItShouldShowDialog()
+        {
+            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
         }
     }
 

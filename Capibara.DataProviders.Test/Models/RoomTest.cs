@@ -27,37 +27,37 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
                 var json = "{ \"name\": \"AAA\", \"capacity\": 10, \"id\": 99999, \"number_of_participants\": 5 }";
-                this.actual = JsonConvert.DeserializeObject<Room>(json);
+                this.Subject = JsonConvert.DeserializeObject<Room>(json);
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Name, Is.EqualTo("AAA"));
+                Assert.That(this.Subject.Name, Is.EqualTo("AAA"));
             }
 
             [TestCase]
             public void ItShouldCapacityWithExpected()
             {
-                Assert.That(this.actual.Capacity, Is.EqualTo(10));
+                Assert.That(this.Subject.Capacity, Is.EqualTo(10));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Subject.Id, Is.EqualTo(99999));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(5));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(5));
             }
         }
     }
@@ -67,7 +67,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess
         {
-            private Room actual;
+            private Room Subject;
 
             private Room expect;
 
@@ -75,32 +75,32 @@ namespace Capibara.Test.Models.RoomTest
             public void Setup()
             {
                 this.expect = new Room { Capacity = 10, Id = 999, Name = "AAA", NumberOfParticipants = 5 };
-                this.actual = new Room();
-                this.actual.Restore(this.expect);
+                this.Subject = new Room();
+                this.Subject.Restore(this.expect);
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Name, Is.EqualTo(this.expect.Name));
+                Assert.That(this.Subject.Name, Is.EqualTo(this.expect.Name));
             }
 
             [TestCase]
             public void ItShouldCapacityWithExpected()
             {
-                Assert.That(this.actual.Capacity, Is.EqualTo(this.expect.Capacity));
+                Assert.That(this.Subject.Capacity, Is.EqualTo(this.expect.Capacity));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(this.expect.Id));
+                Assert.That(this.Subject.Id, Is.EqualTo(this.expect.Id));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(this.expect.NumberOfParticipants));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(this.expect.NumberOfParticipants));
             }
         }
     }
@@ -110,50 +110,50 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.DoesNotThrowAsync(this.actual.Connect);
+                Assert.DoesNotThrowAsync(this.Subject.Connect);
             }
         }
 
         [TestFixture]
         public class WhenTwiceCall : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Connect().Wait();
-                this.actual.BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject.Connect().Wait();
+                this.Subject.BuildUp(this.GenerateUnityContainer());
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.DoesNotThrowAsync(this.actual.Connect);
+                Assert.DoesNotThrowAsync(this.Subject.Connect);
             }
         }
     }
@@ -163,37 +163,37 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Connect().Wait();
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject.Connect().Wait();
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.DoesNotThrowAsync(this.actual.Close);
+                Assert.DoesNotThrowAsync(this.Subject.Close);
             }
         }
 
         [TestFixture]
         public class WhenNotConnected : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.DoesNotThrowAsync(this.actual.Close);
+                Assert.DoesNotThrowAsync(this.Subject.Close);
             }
         }
     }
@@ -203,7 +203,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenInvalidSystemMessage : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected override List<ReceiveMessage> OptionalReceiveMessages
                 => new List<ReceiveMessage>()
@@ -214,34 +214,34 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAny(
                     Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
                 );
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldIsConnected()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
         public class WhenUnknownTypeSystemMessage : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected override List<ReceiveMessage> OptionalReceiveMessages
                 => new List<ReceiveMessage>()
@@ -252,34 +252,34 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAny(
                     Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
                 );
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldIsConnected()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
         public class WhenSystemMessageTypeIsEmpty : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected override List<ReceiveMessage> OptionalReceiveMessages
                 => new List<ReceiveMessage>()
@@ -290,34 +290,34 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAny(
                     Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
                 );
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldIsConnected()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
         public class WhenSuccess : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected override List<ReceiveMessage> OptionalReceiveMessages
                 => new List<ReceiveMessage>()
@@ -328,9 +328,9 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
@@ -339,20 +339,20 @@ namespace Capibara.Test.Models.RoomTest
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldMessagesCountWithExpected()
             {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(1));
+                Assert.That(this.Subject.Messages.Count, Is.EqualTo(1));
             }
         }
 
         [TestFixture]
         public class WhenLeaveUser : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected bool NeedEventHandler { get; set; }
 
@@ -371,52 +371,52 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Participants.Add(new User() { Id = 10 });
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject.Participants.Add(new User() { Id = 10 });
 
                 if (NeedEventHandler)
                 {
-                    this.actual.JoinUser += (sender, e) => this.IsFireJoinUser = true;
-                    this.actual.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
+                    this.Subject.JoinUser += (sender, e) => this.IsFireJoinUser = true;
+                    this.Subject.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
                 }
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAny(
                     Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
                 );
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldIsConnected()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
             }
 
             [TestCase]
             public void ItShouldMessagesCountWithExpected()
             {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(0));
+                Assert.That(this.Subject.Messages.Count, Is.EqualTo(0));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(1));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(1));
             }
 
             [TestCase]
             public void ItShouldParticipantsCountWithExpected()
             {
-                Assert.That(this.actual.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
+                Assert.That(this.Subject.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
             }
         }
 
@@ -458,7 +458,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenJoinUser : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             protected virtual bool NeedEventHandler { get; set; }
 
@@ -477,52 +477,52 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Participants.Add(new User() { Id = 11 });
+                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject.Participants.Add(new User() { Id = 11 });
 
                 if (NeedEventHandler)
                 {
-                    this.actual.JoinUser += (sender, e) => this.IsFireJoinUser = true;
-                    this.actual.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
+                    this.Subject.JoinUser += (sender, e) => this.IsFireJoinUser = true;
+                    this.Subject.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
                 }
 
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 受信完了を待機
                 Task.WaitAny(
                     Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
                 );
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
             public void ItShouldIsConnected()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
             }
 
             [TestCase]
             public void ItShouldMessagesCountWithExpected()
             {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(0));
+                Assert.That(this.Subject.Messages.Count, Is.EqualTo(0));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(10));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(10));
             }
 
             [TestCase]
             public void ItShouldParticipantsCountWithExpected()
             {
-                Assert.That(this.actual.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
+                Assert.That(this.Subject.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
             }
         }
 
@@ -567,7 +567,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public abstract class SpeakTestBase : TestFixtureBase
         {
-            protected Room actual;
+            protected Room Subject;
 
             protected bool IsSuccess { get; private set; }
 
@@ -582,16 +582,16 @@ namespace Capibara.Test.Models.RoomTest
             {
                 var container = this.GenerateUnityContainer();
 
-                this.actual = new Room() { Id = 1 }.BuildUp(container);
+                this.Subject = new Room() { Id = 1 }.BuildUp(container);
 
                 if (this.NeedEventHandler)
                 {
-                    this.actual.SpeakSuccess += (sender, e) => this.IsSuccess = true;
-                    this.actual.SpeakFail+= (sender, e) => this.IsFail = true;
+                    this.Subject.SpeakSuccess += (sender, e) => this.IsSuccess = true;
+                    this.Subject.SpeakFail+= (sender, e) => this.IsFail = true;
                 }
 
                 // 接続の完了を待機
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
                 // 接続処理終了を待機
                 ConnectTaskSource.Task.Wait();
@@ -605,13 +605,13 @@ namespace Capibara.Test.Models.RoomTest
                 if (this.NeedResetSendAsync)
                     ResetSendAsync();
 
-                this.actual.Speak("Foo. Bar!").Wait();
+                this.Subject.Speak("Foo. Bar!").Wait();
             }
 
             [TearDown]
             public void TearDown()
             {
-                this.actual.Close().Wait();
+                this.Subject.Close().Wait();
             }
         }
 

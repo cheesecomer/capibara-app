@@ -47,7 +47,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
 
     public class NicknamePropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel actual;
+        protected MainPageViewModel Subject;
 
         [SetUp]
         public void SetUp()
@@ -55,37 +55,37 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
             var container = this.GenerateUnityContainer();
             container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
 
-            this.actual = new MainPageViewModel().BuildUp(container);
+            this.Subject = new MainPageViewModel().BuildUp(container);
         }
 
         [TestCase]
         public void ItShouldValueWithExpect()
         {
-            Assert.That(this.actual.Nickname.Value, Is.EqualTo("xxxx"));
+            Assert.That(this.Subject.Nickname.Value, Is.EqualTo("xxxx"));
         }
 
         [TestCase]
         public void ItShouldUpdate()
         {
-            this.actual.CurrentUser.Nickname = "xxxx!!!";
-            Assert.That(this.actual.Nickname.Value, Is.EqualTo("xxxx!!!"));
+            this.Subject.CurrentUser.Nickname = "xxxx!!!";
+            Assert.That(this.Subject.Nickname.Value, Is.EqualTo("xxxx!!!"));
         }
     }
 
     public class MenuItemsPropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel actual;
+        protected MainPageViewModel Subject;
 
         [SetUp]
         public void SetUp()
         {
-            this.actual = new MainPageViewModel();
+            this.Subject = new MainPageViewModel();
         }
 
         [TestCase]
         public void ItShouldCountExpected()
         {
-            Assert.That(this.actual.MenuItems.Count, Is.EqualTo(4));
+            Assert.That(this.Subject.MenuItems.Count, Is.EqualTo(4));
         }
     }
 
@@ -95,7 +95,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
     [TestFixture(3, "設定", "NavigationPage/SettingPage")]
     public class MenuItemsItemPropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel actual;
+        protected MainPageViewModel Subject;
 
         private int index;
 
@@ -113,19 +113,19 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            this.actual = new MainPageViewModel();
+            this.Subject = new MainPageViewModel();
         }
 
         [TestCase]
         public void ItShouldFirstItemNameWithExpect()
         {
-            Assert.That(this.actual.MenuItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
         }
 
         [TestCase]
         public void ItShouldFirstItemPagePathWithExpect()
         {
-            Assert.That(this.actual.MenuItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
         }
     }
 }

@@ -250,16 +250,11 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModelTest
                 Assert.That(this.buttons?.Length, Is.EqualTo(2));
             }
 
-            [TestCase]
-            public void ItShouldCancelIsFirstButton()
+            [TestCase(0, "キャンセル")]
+            [TestCase(1, "Twitter")]
+            public void ItShouldButtontTextExpected(int index, string expect)
             {
-                Assert.That(this.buttons.ElementAtOrDefault(0).Text, Is.EqualTo("キャンセル"));
-            }
-
-            [TestCase]
-            public void ItShouldTwitterIsSecondButton()
-            {
-                Assert.That(this.buttons.ElementAtOrDefault(1).Text, Is.EqualTo("Twitter"));
+                Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
             }
         }
 

@@ -10,29 +10,29 @@ namespace Capibara.Test.Net.Users
 {
     public class DestroyRequestTest
     {
-        private DestroyRequest Actual;
+        private DestroyRequest Subject;
 
         public DestroyRequestTest()
         {
-            this.Actual = new DestroyRequest();
+            this.Subject = new DestroyRequest();
         }
 
         [TestCase]
         public void ItShouldHttMethodToGet()
         {
-            Assert.That(this.Actual.Method, Is.EqualTo(HttpMethod.Delete));
+            Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Delete));
         }
 
         [TestCase]
         public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.Actual.Paths, Is.EqualTo(new[] { "users" }));
+            Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "users" }));
         }
 
         [TestCase]
         public void ItShouldNeedAuthentication()
         {
-            Assert.That(this.Actual.NeedAuthentication, Is.EqualTo(true));
+            Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
         }
     }
 }
