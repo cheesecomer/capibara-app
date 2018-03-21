@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.props" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.props')" />
   <Import Project="..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -170,6 +171,9 @@
     <Reference Include="Prism.Unity.Forms">
       <HintPath>..\packages\Prism.Unity.Forms.7.0.0.396\lib\netstandard2.0\Prism.Unity.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="Google.MobileAds">
+      <HintPath>..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\lib\Xamarin.iOS10\Google.MobileAds.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
@@ -219,6 +223,8 @@
     <Compile Include="Services\PickupPhotoService.cs" />
     <Compile Include="Renderers\RoundImageRenderer.cs" />
     <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
+    <Compile Include="Renderers\AdMobBannerRenderer.cs" />
+    <Compile Include="PlatformVariable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
@@ -237,4 +243,22 @@
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.targets')" />
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets')" />
+  <Import Project="..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.targets')" />
+  <Import Project="..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\build\Xamarin.Google.iOS.MobileAds.targets" Condition="Exists('..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\build\Xamarin.Google.iOS.MobileAds.targets')" />
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PreBuildEvent>
+      copy /Y $(ProjectDir)PlatformVariable.cs $(ProjectDir)PlatformVariable.cs.bak
+      git diff $(ProjectDir)PlatformVariable.cs
+    </PreBuildEvent>
+    <PostBuildEvent>move /Y $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <PreBuildEvent>
+      source ~/.bash_profile
+      cp $(ProjectDir)\PlatformVariable.cs $(ProjectDir)\PlatformVariable.cs.bak
+      sed -i '' 's/${IOS_ADMOB_UNIT_ID_FOR_BANNER}/'$IOS_ADMOB_UNIT_ID_FOR_BANNER'/g' $(ProjectDir)\PlatformVariable.cs
+      git diff $(ProjectDir)PlatformVariable.cs
+    </PreBuildEvent>
+    <PostBuildEvent>mv $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -8,7 +8,8 @@
     xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.ReportPage">
+    x:Class="Capibara.Views.ReportPage"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />

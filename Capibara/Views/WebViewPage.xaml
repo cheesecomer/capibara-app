@@ -8,7 +8,8 @@
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.WebViewPage"
-    Title="{Binding Title.Value}">
+    Title="{Binding Title.Value}"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <WebView
         Source="{Binding Source.Value, Mode=OneWay}"
         VerticalOptions="FillAndExpand"

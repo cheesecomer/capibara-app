@@ -6,7 +6,8 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.SettingPage"
-    Title="設定">
+    Title="設定"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ListView
         BackgroundColor="#EEE"
         ItemsSource="{Binding SettingItems}"

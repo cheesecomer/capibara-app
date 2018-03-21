@@ -6,7 +6,8 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.ParticipantsPage"
-    Title="参加者">
+    Title="参加者"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ListView
         Grid.Row="0"
         HasUnevenRows="true"

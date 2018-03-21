@@ -48,6 +48,13 @@ namespace Capibara.ViewModels
             this.Source.Value = new UrlWebViewSource { Url = this.Environment.PrivacyPolicyUrl };
         }
 
+        public override void OnNavigatedTo(NavigationParameters parameters)
+        {
+            base.OnNavigatedTo(parameters);
+
+            this.Model.IsAccepted = true;
+        }
+
         private async void OnCommitSuccess(object sender, EventArgs args)
         {
             await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");

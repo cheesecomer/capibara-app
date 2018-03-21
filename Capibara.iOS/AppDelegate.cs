@@ -33,9 +33,10 @@ namespace Capibara.iOS
         /// Finisheds the launching.
         /// </summary>
         /// <returns><c>true</c>, if launching was finisheded, <c>false</c> otherwise.</returns>
-        /// <param name="app">App.</param>
-        /// <param name="options">Options.</param>
-        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+        /// <param name="uiApplication">App.</param>
+        /// <param name="launchOptions">Options.</param>
+        [Export("application:didFinishLaunchingWithOptions:")]
+        public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             global::Xamarin.Forms.Forms.Init();
 
@@ -51,7 +52,7 @@ namespace Capibara.iOS
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
 
-            return base.FinishedLaunching(app, options);
+            return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
@@ -71,6 +72,9 @@ namespace Capibara.iOS
 
             return false;
         }
+
+        [Export("window")]
+        public UIWindow GetWindow() => UIApplication.SharedApplication.KeyWindow;
     }
 
     public class iOSInitializer : IPlatformInitializer

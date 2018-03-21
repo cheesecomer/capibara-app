@@ -9,7 +9,8 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.RoomPage"
     Title="{Binding Name.Value}"
-    BackgroundColor="#FEFEFE">
+    BackgroundColor="#FEFEFE"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectCommand}" />
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
