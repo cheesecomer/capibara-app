@@ -1,20 +1,11 @@
-﻿using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿using System.Linq;
 using Capibara.Models;
-using Capibara.ViewModels;
-
-using Unity;
-
-using Moq;
 using NUnit.Framework;
-
-using Prism.Navigation;
-
+using Unity;
 using MenuItem = Capibara.ViewModels.MainPageViewModel.MenuItem;
+using SubjectViewModel = Capibara.ViewModels.MainPageViewModel;
 
-namespace Capibara.Test.ViewModels.MainPageViewModelTest
+namespace Capibara.Test.ViewModels.MainPageViewModel
 {
     [TestFixture("FloorMapPage")]
     [TestFixture("MyProfilePage")]
@@ -31,7 +22,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var viewModel = new MainPageViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
 
@@ -47,7 +38,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
 
     public class NicknamePropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel Subject;
+        protected SubjectViewModel Subject;
 
         [SetUp]
         public void SetUp()
@@ -55,7 +46,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
             var container = this.GenerateUnityContainer();
             container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
 
-            this.Subject = new MainPageViewModel().BuildUp(container);
+            this.Subject = new SubjectViewModel().BuildUp(container);
         }
 
         [TestCase]
@@ -74,12 +65,12 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
 
     public class MenuItemsPropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel Subject;
+        protected SubjectViewModel Subject;
 
         [SetUp]
         public void SetUp()
         {
-            this.Subject = new MainPageViewModel();
+            this.Subject = new SubjectViewModel();
         }
 
         [TestCase]
@@ -95,7 +86,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
     [TestFixture(3, "設定", "NavigationPage/SettingPage")]
     public class MenuItemsItemPropertyTest : ViewModelTestBase
     {
-        protected MainPageViewModel Subject;
+        protected SubjectViewModel Subject;
 
         private int index;
 
@@ -113,7 +104,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            this.Subject = new MainPageViewModel();
+            this.Subject = new SubjectViewModel();
         }
 
         [TestCase]

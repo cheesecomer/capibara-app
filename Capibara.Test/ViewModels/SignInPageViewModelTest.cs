@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 
 using Capibara.Net;
 using Capibara.Models;
-using Capibara.ViewModels;
 
 using Moq;
 using NUnit.Framework;
 
-using Prism.Navigation;
+using SubjectViewModel = Capibara.ViewModels.SignInPageViewModel;
 
-namespace Capibara.Test.ViewModels.SignInPageViewModelTest
+namespace Capibara.Test.ViewModels.SignInPageViewModel
 {
     [TestFixture]
     public class SignInCommandCanExecuteTest : ViewModelTestBase
@@ -27,7 +26,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         [TestCase("email@email.com", "password", true)]
         public void ItShouldCanExecuteWithExpected(string email, string password, bool canExecute)
         {
-            var viewModel = new SignInPageViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
             viewModel.Email.Value = email;
             viewModel.Password.Value = password;
             Assert.That(viewModel.SignInCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -37,14 +36,14 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
     [TestFixture]
     public class OnSignInSuccessTest : ViewModelTestBase
     {
-        protected SignInPageViewModel ViewModel { get; private set; }
+        protected SubjectViewModel Subjet { get; private set; }
 
         [SetUp]
         public void SetUp()
         {
             var container = this.GenerateUnityContainer();
             var model = new Mock<Session>();
-            this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
         }
@@ -60,7 +59,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
     {
         public abstract class TestBase : ViewModelTestBase
         {
-            protected SignInPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected abstract Exception Exception { get; }
 
@@ -69,7 +68,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             {
                 var container = this.GenerateUnityContainer();
                 var model = new Mock<Session>();
-                this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
                 model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
             }
@@ -89,7 +88,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             [TestCase]
             public void ItShouldErrorWithExpect()
             {
-                Assert.That(this.ViewModel.Error.Value, Is.EqualTo("m9(^Д^)"));
+                Assert.That(this.Subject.Error.Value, Is.EqualTo("m9(^Д^)"));
             }
         }
 
@@ -107,7 +106,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             [TestCase]
             public void ItShouldErrorIsEmpty()
             {
-                Assert.That(this.ViewModel.Error.Value, Is.EqualTo(string.Empty).Or.Null);
+                Assert.That(this.Subject.Error.Value, Is.EqualTo(string.Empty).Or.Null);
             }
         }
     }
@@ -118,7 +117,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         {
             protected virtual bool NeedSignInWait { get; } = true;
 
-            protected SignInPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected bool IsSignInCalled;
 
@@ -129,16 +128,16 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
                 var model = new Mock<Session>();
                 model.SetupAllProperties();
                 model.Setup(x => x.SignIn()).ReturnsAsync(true).Callback(() => this.IsSignInCalled = true);
-                this.ViewModel = new SignInPageViewModel(this.NavigationService, model: model.Object).BuildUp(container);
-                this.ViewModel.Email.Value = "user@email.com";
-                this.ViewModel.Password.Value = "password";
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject.Email.Value = "user@email.com";
+                this.Subject.Password.Value = "password";
 
                 if (!this.NeedSignInWait)
                 {
-                    this.ViewModel.SignInCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
+                    this.Subject.SignInCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
                 }
 
-                this.ViewModel.SignInCommand.Execute();
+                this.Subject.SignInCommand.Execute();
             }
 
             [TestCase]
@@ -158,7 +157,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             [TestCase]
             public void ItShouldBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(true));
             }
         }
 
@@ -168,7 +167,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
             [TestCase]
             public void ItShouldNotBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(false));
             }
         }
     }
@@ -179,7 +178,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var viewModel = new SignInPageViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.SignUpCommand.Execute();
 

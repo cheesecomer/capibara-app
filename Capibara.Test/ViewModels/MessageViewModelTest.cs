@@ -1,20 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿
 using Capibara.Models;
 using Capibara.ViewModels;
-
-using Microsoft.Practices.Unity;
-
-using Moq;
 using NUnit.Framework;
+using SubjectViewModel = Capibara.ViewModels.MessageViewModel;
 
-using Prism.Navigation;
-using Prism.Services;
-
-namespace Capibara.Test.ViewModels.MessageViewModelTest
+namespace Capibara.Test.ViewModels.MessageViewModel
 {
 
     [TestFixture]
@@ -29,7 +19,7 @@ namespace Capibara.Test.ViewModels.MessageViewModelTest
 
             this.model = new Message { Sender = new User().BuildUp(container) }.BuildUp(container);
 
-            var viewModel = new MessageViewModel(this.NavigationService, model: this.model);
+            var viewModel = new SubjectViewModel(this.NavigationService, model: this.model);
             viewModel.BuildUp(container);
 
             viewModel.ShowProfileCommand.Execute();

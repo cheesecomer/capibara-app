@@ -1,30 +1,26 @@
 ﻿using System;
-
 using System.Net;
-using System.Threading.Tasks;
 
 using Capibara.Models;
-using Capibara.ViewModels;
 using Capibara.Net;
-using Capibara.Net.Users;
 
 using Moq;
 using NUnit.Framework;
 
-using Prism.Navigation;
+using SubjectViewModel = Capibara.ViewModels.SplashPageViewModel;
 
-namespace Capibara.Test.ViewModels.SplashPageViewModelTest
+namespace Capibara.Test.ViewModels.SubjectViewModelTest
 {
     namespace LogoTopMarginPropertyTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -39,12 +35,12 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -59,12 +55,12 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
     {
         public class WhenDefault
         {
-            SplashPageViewModel Subject;
+            SubjectViewModel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                this.Subject = new SplashPageViewModel();
+                this.Subject = new SubjectViewModel();
             }
 
             [TestCase]
@@ -82,7 +78,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
         {
             protected abstract string AccessToken { get; }
 
-            protected SplashPageViewModel Subject { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected virtual User Response { get; }
 
@@ -92,7 +88,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModelTest
             public void SetUp()
             {
                 
-                this.Subject = new SplashPageViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
 
                 var request = new Mock<RequestBase<User>>();
                 if (this.Response.IsPresent())

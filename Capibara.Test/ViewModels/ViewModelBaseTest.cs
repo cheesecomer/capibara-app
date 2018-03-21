@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using Prism.Navigation;
 
-namespace Capibara.Test.ViewModels.ViewModelBaseTest
+namespace Capibara.Test.ViewModels.ViewModelBase
 {
 
     public class StabModel : ModelBase<StabModel>

@@ -1,33 +1,26 @@
 ﻿using System;
-using System.Net;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Capibara.Models;
-using Capibara.ViewModels;
-
-using Microsoft.Practices.Unity;
 
 using Moq;
 using NUnit.Framework;
+using SubjectViewModel = Capibara.ViewModels.ReportPageViewModel;
 
-using Prism.Navigation;
-using Prism.Services;
-
-namespace Capibara.Test.ViewModels.ReportPageViewModelTest
+namespace Capibara.Test.ViewModels.ReportPageViewModel
 {
     public class ReportReasonsPropertyTest : ViewModelTestBase
     {
         protected User Model;
 
-        protected ReportPageViewModel Subject;
+        protected SubjectViewModel Subject;
 
         [SetUp]
         public void SetUp()
         {
             var container = this.GenerateUnityContainer();
 
-            this.Subject = new ReportPageViewModel().BuildUp(container);
+            this.Subject = new SubjectViewModel().BuildUp(container);
         }
 
         [TestCase]
@@ -53,7 +46,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModelTest
         [TestCase]
         public void ItShouldDefaultSpam()
         {
-            var viewModel = new ReportPageViewModel();
+            var viewModel = new SubjectViewModel();
             Assert.That(viewModel.SelectedItem.Value, Is.EqualTo(ReportReason.Spam));
         }
     }
@@ -86,7 +79,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModelTest
         [TestCase(ReportReason.Other, "　", false)]
         public void ItShouldExpected(ReportReason reportReason, string message, bool expect)
         {
-            var viewModel = new ReportPageViewModel();
+            var viewModel = new SubjectViewModel();
             viewModel.SelectedItem.Value = reportReason;
             viewModel.Message.Value = message;
             Assert.That(viewModel.ReportCommand.CanExecute(), Is.EqualTo(expect));
@@ -104,7 +97,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModelTest
             model.SetupAllProperties();
             model.Setup(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>())).ReturnsAsync(true).Callback(() => this.IsReportCalled = true);
 
-            var viewModel = new ReportPageViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
 
             viewModel.ReportCommand.Execute();
 
@@ -131,7 +124,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModelTest
         {
             var model = new Mock<User>();
 
-            new ReportPageViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
 
             model.Raise(x => x.ReportSuccess += null, EventArgs.Empty);
 

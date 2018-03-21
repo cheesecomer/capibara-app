@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-
 using Capibara.Models;
-using Capibara.ViewModels;
 using Capibara.Net;
 using Capibara.Net.Rooms;
-
+using Capibara.ViewModels;
 using Moq;
 using NUnit.Framework;
-
-using Prism.Navigation;
 using Prism.Services;
+using SubjectViewModel = Capibara.ViewModels.FloorMapPageViewModel;
 
-namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
+namespace Capibara.Test.ViewModels.FloorMapPageViewModel
 {
     [TestFixture]
     public class ItemTappedCommandTest : ViewModelTestBase
@@ -21,7 +18,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
         [SetUp]
         public void SetUp()
         {
-            var viewModel = new FloorMapPageViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new Room());
 
@@ -51,7 +48,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
     {
         public abstract class WhenSuccessBase : ViewModelTestBase
         {
-            protected FloorMapPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             protected virtual IndexResponse Response { get; } = new IndexResponse();
 
@@ -65,13 +62,13 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
 
                 this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
-                this.ViewModel = new FloorMapPageViewModel();
+                this.Subject = new SubjectViewModel();
 
-                this.ViewModel.BuildUp(container);
+                this.Subject.BuildUp(container);
 
-                this.ViewModel.RefreshCommand.Execute();
+                this.Subject.RefreshCommand.Execute();
 
-                while(!this.ViewModel.RefreshCommand.CanExecute()) { };
+                while(!this.Subject.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]
@@ -118,7 +115,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
                     new Room { Id = 9, Name ="AAA09", Capacity = 19 },
                     new Room { Id = 10, Name ="AAA10", Capacity = 20 },
                 };
-                Assert.That(this.ViewModel.Rooms, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -138,7 +135,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
             {
                 var comparer = new RoomComparer();
                 var expect = new List<Room> { new Room { Name = "AAA", Capacity = 10 } };
-                Assert.That(this.ViewModel.Rooms, Is.EqualTo(expect).Using(comparer));
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
             }
         }
 
@@ -163,7 +160,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
                     .Returns(Task.Run(() => true))
                     .Callback(() => this.IsShowDialog = true);
 
-                var viewModel = new FloorMapPageViewModel(
+                var viewModel = new SubjectViewModel(
                     this.NavigationService,
                     pageDialogService.Object);
 
