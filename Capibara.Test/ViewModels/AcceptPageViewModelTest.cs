@@ -2,11 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Capibara.Models;
 using Capibara.ViewModels;
+using Capibara.Models;
+using Capibara.Services;
 
 using Moq;
 using NUnit.Framework;
+using Unity;
+
+using Prism.Services;
 
 using Xamarin.Forms;
 
@@ -14,13 +18,32 @@ using SubjectViewModel = Capibara.ViewModels.AcceptPageViewModel;
 
 namespace Capibara.Test.ViewModels.AcceptPageViewModel
 {
+    public class ViewModelTestBase : ViewModels.ViewModelTestBase
+    {
+        public bool IsOverrideUrlCalled;
+
+        public override IUnityContainer GenerateUnityContainer()
+        {
+            var container = base.GenerateUnityContainer();
+
+            var overrideUrlService = new Mock<IOverrideUrlService>();
+            overrideUrlService
+                .Setup(x => x.OverrideUrl(It.IsAny<IDeviceService>(), It.IsAny<string[]>()))
+                .Returns<IDeviceService, string[]>((x, y) => (IOverrideUrlCommandParameters v) => this.IsOverrideUrlCalled = true);
+
+            container.RegisterInstance(overrideUrlService.Object);
+
+            return container;
+        }
+    }
+
     public class SourcePropertyTest : ViewModelTestBase
     {
         [TestCase]
         public void ItShouldIsPrivacyPolicyUrl()
         {
             var subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
-            Assert.That((subject.Source.Value as UrlWebViewSource).Url, Is.EqualTo(this.Environment.PrivacyPolicyUrl));
+            Assert.That(subject.Source.Value.Url, Is.EqualTo(this.Environment.PrivacyPolicyUrl));
         }
     }
 
@@ -140,6 +163,18 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             viewModel.LoadedCommand.Execute();
 
             Assert.That(viewModel.IsLoaded.Value, Is.EqualTo(true));
+        }
+    }
+
+    public class OverrideUrlCommandTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShoulLoadedPropertyUpdate()
+        {
+            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            viewModel.OverrideUrlCommand.Execute(new Mock<IOverrideUrlCommandParameters>().Object);
+
+            Assert.That(this.IsOverrideUrlCalled, Is.EqualTo(true));
         }
     }
 }

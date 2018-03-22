@@ -3,10 +3,10 @@ using Foundation;
 using UIKit;
 using Xamarin.Forms;
 
-using Capibara.iOS;
+using Capibara.iOS.Renderers;
 
 [assembly: ExportRenderer(typeof(Page), typeof(KeyboardOverlapRenderer))]
-namespace Capibara.iOS
+namespace Capibara.iOS.Renderers
 {
     [Preserve(AllMembers = true)]
     public class KeyboardOverlapRenderer : PageRenderer

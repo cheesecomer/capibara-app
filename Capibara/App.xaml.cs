@@ -61,6 +61,9 @@ namespace Capibara
             if (this.Container.TryResolve<IPickupPhotoService>() == null)
                 containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoServiceStub());
 
+            if (this.Container.TryResolve<IScreenService>() == null)
+                containerRegistry.RegisterInstance<IScreenService>(new ScreenServiceStub());
+
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<SplashPage>();
@@ -104,6 +107,11 @@ namespace Capibara
         {
             public Task<byte[]> DisplayAlbumAsync()
                 => throw new NotImplementedException();
+        }
+
+        private class ScreenServiceStub : IScreenService
+        {
+            public Size Size => new Size();
         }
 
         private class TaskService : ITaskService

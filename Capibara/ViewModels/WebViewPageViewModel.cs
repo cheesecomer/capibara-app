@@ -1,4 +1,8 @@
-﻿using Prism.Navigation;
+﻿using System;
+
+using Capibara.Services;
+
+using Prism.Navigation;
 using Prism.Services;
 
 using Reactive.Bindings;
@@ -9,16 +13,20 @@ namespace Capibara.ViewModels
 {
     public class WebViewPageViewModel : ViewModelBase
     {
+        [Unity.Attributes.Dependency]
+        public IOverrideUrlService OverrideUrlService { get; set; }
+
         public ReactiveProperty<string> Title { get; } = new ReactiveProperty<string>();
 
-        public ReactiveProperty<WebViewSource> Source { get; } = new ReactiveProperty<WebViewSource>();
+        public ReactiveProperty<UrlWebViewSource> Source { get; } = new ReactiveProperty<UrlWebViewSource>();
+
+        public ReactiveCommand<IOverrideUrlCommandParameters> OverrideUrlCommand { get; } = 
+            new ReactiveCommand<IOverrideUrlCommandParameters>();
 
         public WebViewPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)
-            : base(navigationService, pageDialogService)
-        {
-        }
+            : base(navigationService, pageDialogService) { }
 
         public override void OnNavigatedTo(NavigationParameters parameters)
         {
@@ -31,6 +39,11 @@ namespace Capibara.ViewModels
             {
                 this.Source.Value = new UrlWebViewSource { Url = url };
                 this.Title.Value = this.Title.Value.Presence() ?? url;
+
+                this.OverrideUrlCommand.Subscribe(
+                    this.OverrideUrlService.OverrideUrl(
+                        this.DeviceService,
+                        this.Environment.PrivacyPolicyUrl));
             }
         }
     }

@@ -217,7 +217,6 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="SecureIsolatedStorage.cs" />
     <Compile Include="ViewExtensions.cs" />
-    <Compile Include="KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
@@ -225,6 +224,8 @@
     <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
     <Compile Include="PlatformVariable.cs" />
+    <Compile Include="Services\ScreenService.cs" />
+    <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

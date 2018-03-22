@@ -7,15 +7,19 @@ using Reactive.Bindings.Extensions;
 
 using Xamarin.Forms;
 
+using Capibara.Services;
 using Capibara.Models;
 
 namespace Capibara.ViewModels
 {
     public class AcceptPageViewModel : ViewModelBase<User>
     {
+        [Unity.Attributes.Dependency]
+        public IOverrideUrlService OverrideUrlService { get; set; }
+
         public ReactiveProperty<bool> IsLoaded { get; } = new ReactiveProperty<bool>(false);
 
-        public ReactiveProperty<WebViewSource> Source { get; } = new ReactiveProperty<WebViewSource>();
+        public ReactiveProperty<UrlWebViewSource> Source { get; } = new ReactiveProperty<UrlWebViewSource>();
 
         public AsyncReactiveCommand AgreeCommand { get; }
 
@@ -23,6 +27,9 @@ namespace Capibara.ViewModels
 
         public ReactiveCommand LoadedCommand { get; } = new ReactiveCommand();
 
+        public ReactiveCommand<IOverrideUrlCommandParameters> OverrideUrlCommand { get; } =
+            new ReactiveCommand<IOverrideUrlCommandParameters>();
+        
         public AcceptPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -46,6 +53,11 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
 
             this.Source.Value = new UrlWebViewSource { Url = this.Environment.PrivacyPolicyUrl };
+
+            this.OverrideUrlCommand.Subscribe(
+                this.OverrideUrlService.OverrideUrl(
+                    this.DeviceService,
+                    this.Environment.PrivacyPolicyUrl));
         }
 
         public override void OnNavigatedTo(NavigationParameters parameters)

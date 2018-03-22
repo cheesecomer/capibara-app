@@ -9,18 +9,11 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.UnsubscribePage"
     Title="退会する"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
-    BackgroundColor="#FEFEFE">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
-            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <Grid Padding="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackLayout
@@ -35,7 +28,7 @@
             <Label
                 Margin="0, 0, 0, 20"
                 FontSize="Small"
-                TextColor="#d9534f"
+                TextColor="{StaticResource DangerColor}"
                 Text="この操作は取り消せません"
                 HorizontalTextAlignment="Center"
                 />
@@ -43,11 +36,10 @@
         <Button 
             Grid.Row="1"
             x:Name="UnsubscribeButton"
-            HeightRequest="50"
             Text="退会する"
-            BackgroundColor="#d9534f"
+            BackgroundColor="{StaticResource DangerColor}"
+            BorderWidth="0"
             TextColor="White"
-            BorderRadius="{Binding Height, Source={x:Reference UnsubscribeButton}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
             Command="{Binding UnsubscribeCommand}"
             />
     </Grid>

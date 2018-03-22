@@ -37,7 +37,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
     {
         protected SubjectViewModel Subjet { get; private set; }
 
-        [TestCase(false, "/AcceptPage")]
+        [TestCase(false, "/NavigationPage/AcceptPage")]
         [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
         public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {

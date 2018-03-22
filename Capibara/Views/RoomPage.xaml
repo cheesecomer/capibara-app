@@ -8,9 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.RoomPage"
-    Title="{Binding Name.Value}"
-    BackgroundColor="#FEFEFE"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
+    Title="{Binding Name.Value}">
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectCommand}" />
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
@@ -48,13 +46,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <forms:RoundImage
-                            Source="{Binding Sender.Value.Icon.Value}"
-                            HasShadow="true"
-                            BorderColor="#58CE91"
-                            BorderWidth="2"
-                            BackgroundColor="White"
-                            Aspect="AspectFill"
                             Grid.RowSpan="3"
+                            Source="{Binding Sender.Value.Icon.Value}"
+                            BorderWidth="2"
                             HeightRequest="60"
                             VerticalOptions="Start"
                             CornerRadius="30"
@@ -64,6 +58,8 @@
                             HeightRequest="60"
                             VerticalOptions="Start"
                             WidthRequest="60"
+                            BorderWidth="0"
+                            BorderRadius="30"
                             Command="{Binding ShowProfileCommand}"
                             />
                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
@@ -83,6 +79,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
         </Grid.RowDefinitions>
         <forms:ExtendedListView
             x:Name="ListView"
@@ -105,7 +103,10 @@
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <Editor Grid.Column="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" Text="Send" BackgroundColor="#58CE91" TextColor="White" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
+            <Button Grid.Column="1" Text="Send" BackgroundColor="#58CE91" TextColor="White" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
         </Grid>
+        <forms:AdMobBanner Grid.Row="2" />
+
+        <BoxView Grid.Row="3" BackgroundColor="#EEE" />
     </Grid>
 </ContentPage>

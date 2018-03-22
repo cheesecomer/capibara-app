@@ -84,6 +84,7 @@ namespace Capibara.iOS
             containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
+            containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
         }
     }
 }
