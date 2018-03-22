@@ -8,19 +8,14 @@
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     prism:ViewModelLocator.AutowireViewModel="True"
-    ios:Page.UseSafeArea="true"
     x:Class="Capibara.Views.AcceptPage"
     Title="プライバシーポリシーへの同意">
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness">
-            <OnPlatform.iOS>0, 20, 0, 0</OnPlatform.iOS>
-            <OnPlatform.Android>0, 0, 0, 0</OnPlatform.Android>
-        </OnPlatform>
-    </ContentPage.Padding>
-    <Grid>
+    <Grid BackgroundColor="#EEE">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="70" />
             <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
         </Grid.RowDefinitions>
         <WebView
             x:Name="WebView"
@@ -32,13 +27,22 @@
             </WebView.Behaviors>
         </WebView>
         <ProgressBar x:Name="ProgressBar" />
-        <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Text="キャンセル" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding CancelCommand}" />
-            <Button Grid.Column="1" Text="同意する" BackgroundColor="#58CE91" TextColor="White" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding AgreeCommand}" />
-        </Grid>
+        <Button
+            Grid.Row="1" 
+            Margin="20, 10" 
+            Text="同意する" 
+            Command="{Binding AgreeCommand}"
+            TextColor="#58CE91"
+            BorderColor="#58CE91"
+            BorderWidth="2"
+            BorderRadius="25"
+            FontSize="Medium"
+            BackgroundColor="#FFFFFF" />
+        <Button 
+            Grid.Row="2" 
+            Text="アプリの使用を取りやめる" 
+            FontSize="Small"
+            BorderRadius="0" 
+            Command="{Binding CancelCommand}" />
     </Grid>
 </ContentPage>
