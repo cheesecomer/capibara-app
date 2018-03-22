@@ -5,38 +5,36 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
-    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MyProfilePage"
-    Title="プロフィール"
-    BackgroundColor="#FEFEFE"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
-            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    Title="プロフィール">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="編集" Priority="1" Command="{Binding EditCommand}" />
     </ContentPage.ToolbarItems>
-    <ScrollView>
-      <StackLayout Padding="20">
-        <fomrs:RoundImage
-            x:Name="image"
-            Source="{Binding Icon.Value, Mode=TwoWay}"
-            HasShadow="true"
-            Margin="50, 20, 50, 20"
-            BorderColor="#58CE91"
-            BorderWidth="5"
-            Aspect="AspectFill"
-            BackgroundColor="White"
-            CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-            HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
-            />
-        <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
-        <Label Text="自己紹介" />
-        <Label Text="{Binding Biography.Value}" Margin="10, 10, 0,0"  />
-      </StackLayout>
-    </ScrollView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <ScrollView>
+          <StackLayout Padding="20">
+            <forms:RoundImage
+                x:Name="image"
+                Source="{Binding Icon.Value, Mode=TwoWay}"
+                Margin="50, 20, 50, 20"
+                CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
+                />
+            <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
+            <Label Text="自己紹介" />
+            <Label Text="{Binding Biography.Value}" Margin="10, 10, 0,0"  />
+          </StackLayout>
+        </ScrollView>
+
+        <forms:AdMobBanner Grid.Row="1" />
+
+        <BoxView Grid.Row="2" BackgroundColor="#EEE" />
+    </Grid> 
 </ContentPage>

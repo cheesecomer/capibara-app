@@ -8,6 +8,9 @@
     x:Class="Capibara.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="WarningColor">#F0AD4E</Color>
+            <Color x:Key="DangerColor">#D9534F</Color>
+            <Color x:Key="PrimaryColor">#58CE91</Color>
             <Style TargetType="ContentPage">
                 <Setter Property="BackgroundColor" Value="#FEFEFE" />
             </Style>
@@ -21,9 +24,13 @@
                 <Setter Property="BorderRadius" Value="25" />
                 <Setter Property="HeightRequest" Value="50" />
             </Style>
-            <Color x:Key="WarningColor">#F0AD4E</Color>
-            <Color x:Key="DangerColor">#D9534F</Color>
-            <Color x:Key="PrimaryColor">#58CE91</Color>
+            <Style TargetType="forms:RoundImage">
+                <Setter Property="HasShadow" Value="true" />
+                <Setter Property="BorderColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="BorderWidth" Value="5" />
+                <Setter Property="Aspect" Value="AspectFill" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
             <converters:BottomMarginConverter x:Key="bottomMargin" />
             <converters:TopMarginConverter x:Key="topMargin" />
             <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
