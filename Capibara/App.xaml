@@ -14,6 +14,7 @@
             </Style>
             <Color x:Key="PrimaryColor">#58CE91</Color>
             <converters:BottomMarginConverter x:Key="bottomMargin" />
+            <converters:TopMarginConverter x:Key="topMargin" />
             <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
             <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
             <ControlTemplate x:Key="WithAdBannerControlTemplate">

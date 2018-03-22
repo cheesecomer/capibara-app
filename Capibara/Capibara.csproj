@@ -114,6 +114,7 @@
     <Compile Include="Forms\AdMobBanner.cs" />
     <Compile Include="Converters\BottomMarginConverter.cs" />
     <Compile Include="IScreen.cs" />
+    <Compile Include="Converters\TopMarginConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

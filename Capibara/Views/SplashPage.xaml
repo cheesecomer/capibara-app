@@ -13,25 +13,20 @@
     </ContentView.Behaviors>
     <Grid RowSpacing="0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
             <RowDefinition Height="{Binding LogoTopMargin.Value}" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Image 
-            Grid.RowSpan="3"
+            Grid.RowSpan="4"
             Source="bg_launch"
             Aspect="Fill" />
         <Image
-            Grid.Row="1"
+            Grid.Row="2"
             Opacity="{Binding LogoOpacity.Value}"
             Scale="{Binding LogoScale.Value}"
             Source="logo">
-            <Image.Margin>
-                <OnPlatform x:TypeArguments="Thickness">
-                    <OnPlatform.iOS>0, 20, 0, 0</OnPlatform.iOS>
-                    <OnPlatform.Android>0, 0, 0, 0</OnPlatform.Android>
-                </OnPlatform>
-            </Image.Margin>
         </Image>
     </Grid>
 </ContentPage>
