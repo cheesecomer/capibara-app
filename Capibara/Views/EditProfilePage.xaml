@@ -6,60 +6,60 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
-    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.EditProfilePage"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
-    BackgroundColor="#FEFEFE">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
-            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    x:Class="Capibara.Views.EditProfilePage">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="保存" Priority="1" Command="{Binding CommitCommand}" />
     </ContentPage.ToolbarItems>
-    <ScrollView>
-      <StackLayout Padding="20">
-        <Grid
-            x:Name="container"
-            Margin="50, 20, 50, 20"
-            HeightRequest="{Binding Width, Source={x:Reference container}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
-            <fomrs:RoundImage
-                x:Name="image"
-                HasShadow="true"
-                Source="{Binding Icon.Value, Mode=TwoWay}"
-                BorderColor="#58CE91"
-                BorderWidth="5"
-                BackgroundColor="White"
-                Aspect="AspectFill"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand"
-                CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-                />
-            <Button
-                x:Name="button"
-                Margin="5"
-                BackgroundColor="#330D1015"
-                TextColor="White"
-                Text="Change your profile photo"
-                Command="{Binding ChangePhotoCommand}"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand"
-                BorderRadius="{Binding Width, Source={x:Reference button}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-                />
-        </Grid>
-        <Entry Text="{Binding Nickname.Value, Mode=TwoWay}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
-        <Label Text="自己紹介" />
-        <Editor
-            Text="{Binding Biography.Value, Mode=TwoWay}"
-            Margin="10, 10, 0, 10"
-            HeightRequest="150">
-            <Editor.Effects>
-                <effects:BorderEffect />
-            </Editor.Effects>
-        </Editor>
-      </StackLayout>
-    </ScrollView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+
+        <ScrollView>
+          <StackLayout Padding="20">
+            <Grid
+                x:Name="container"
+                Margin="50, 20, 50, 20"
+                HeightRequest="{Binding Width, Source={x:Reference container}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}">
+                <forms:RoundImage
+                    x:Name="image"
+                    Source="{Binding Icon.Value, Mode=TwoWay}"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                    />
+                <Button
+                    x:Name="button"
+                    Margin="5"
+                    BorderWidth="0"
+                    BackgroundColor="#330D1015"
+                    TextColor="White"
+                    Text="Change your profile photo"
+                    Command="{Binding ChangePhotoCommand}"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    BorderRadius="{Binding Width, Source={x:Reference button}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
+                    />
+            </Grid>
+            <Entry Text="{Binding Nickname.Value, Mode=TwoWay}" Placeholder="ニックネーム" Margin="10, 0, 10, 20" />
+            <Label Text="自己紹介" />
+            <Editor
+                Text="{Binding Biography.Value, Mode=TwoWay}"
+                Margin="10, 10, 0, 10"
+                HeightRequest="150">
+                <Editor.Effects>
+                    <effects:BorderEffect />
+                </Editor.Effects>
+            </Editor>
+          </StackLayout>
+        </ScrollView>
+
+        <forms:AdMobBanner Grid.Row="1" />
+
+        <BoxView Grid.Row="2" BackgroundColor="#EEE" />
+    </Grid> 
 </ContentPage>
