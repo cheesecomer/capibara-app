@@ -186,6 +186,8 @@
     <Compile Include="ViewModels\OverrideUrlCommandParametersTest.cs" />
     <Compile Include="Service\OverrideUrlServiceTest.cs" />
     <Compile Include="Converters\WebNavigatingEventArgsConverterTest.cs" />
+    <Compile Include="Converters\BottomMarginConverterTest.cs" />
+    <Compile Include="Converters\TopMarginConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

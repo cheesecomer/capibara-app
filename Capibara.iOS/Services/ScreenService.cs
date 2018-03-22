@@ -1,16 +1,15 @@
 ﻿using System;
-using Capibara.iOS;
+using Capibara.Services;
 
 using UIKit;
 
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(Screen))]
-namespace Capibara.iOS
+namespace Capibara.iOS.Services
 {
-    public class Screen : IScreen
+    public class ScreenService : IScreenService
     {
-        Size IScreen.Size { get; } = 
+        Size IScreenService.Size { get; } = 
             new Size(UIScreen.MainScreen.NativeBounds.Width, UIScreen.MainScreen.NativeBounds.Height); 
     }
 }

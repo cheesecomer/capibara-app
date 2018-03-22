@@ -10,9 +10,9 @@ namespace Capibara.Test.Converters.WebNavigatingEventArgsConverter
     [TestFixture]
     public class Convert
     {
-        public void ItShouldResultIsExpect(object value, object parameter, double expect)
+        public void ItShouldResultIsExpect()
         {
-            Assert.That(new SubjectClass().Convert(value, null, parameter, null), Is.TypeOf<IOverrideUrlCommandParameters>());
+            Assert.That(new SubjectClass().Convert(new object(), null, null, null), Is.TypeOf<IOverrideUrlCommandParameters>());
         }
     }
 

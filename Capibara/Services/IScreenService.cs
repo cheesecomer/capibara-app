@@ -2,9 +2,9 @@
 
 using Xamarin.Forms;
 
-namespace Capibara
+namespace Capibara.Services
 {
-    public interface IScreen
+    public interface IScreenService
     {
         Size Size { get; }
     }

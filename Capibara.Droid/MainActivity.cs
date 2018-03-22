@@ -8,6 +8,9 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 
+using Capibara.Services;
+using Capibara.Droid.Services;
+
 using Unity;
 
 using Prism;
@@ -36,7 +39,7 @@ namespace Capibara.Droid
     {
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
         }
     }
 }

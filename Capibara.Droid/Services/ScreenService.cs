@@ -2,13 +2,14 @@
 using Capibara.Droid;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(Screen))]
-namespace Capibara.Droid
+using Capibara.Services;
+
+namespace Capibara.Droid.Services
 {
-    public class Screen : IScreen
+    public class ScreenService : IScreenService
     {
         private Size? size;
-        Size IScreen.Size
+        Size IScreenService.Size
         {
             get
             {
