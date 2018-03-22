@@ -24,6 +24,7 @@
             HorizontalOptions="FillAndExpand">
             <WebView.Behaviors>
                 <behaviors:EventToCommandBehavior EventName="Navigated" Command="{Binding LoadedCommand}" />
+                <behaviors:EventToCommandBehavior EventName="Navigating" Command="{Binding OverrideUrlCommand}" EventArgsConverter="{StaticResource webNavigatingEventArgs}" />
             </WebView.Behaviors>
         </WebView>
         <ProgressBar x:Name="ProgressBar" />

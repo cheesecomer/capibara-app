@@ -115,6 +115,9 @@
     <Compile Include="Converters\BottomMarginConverter.cs" />
     <Compile Include="IScreen.cs" />
     <Compile Include="Converters\TopMarginConverter.cs" />
+    <Compile Include="Converters\WebNavigatingEventArgsConverter.cs" />
+    <Compile Include="ViewModels\OverrideUrlCommandParameters.cs" />
+    <Compile Include="Services\IOverrideUrlService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
