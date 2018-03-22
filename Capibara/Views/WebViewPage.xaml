@@ -8,15 +8,14 @@
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.WebViewPage"
-    Title="{Binding Title.Value}"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
-    <WebView
-        Source="{Binding Source.Value, Mode=OneWay}"
-        VerticalOptions="FillAndExpand"
-        HorizontalOptions="FillAndExpand">
-        <!--<WebView.Behaviors>
-            <behaviors:EventToCommandBehavior EventName="Navigated" Command="{Binding ConnectCommand}" />
-            <behaviors:EventToCommandBehavior EventName="Navigating" Command="{Binding CloseCommand}" />
-        </WebView.Behaviors>-->
-    </WebView>
+    Title="{Binding Title.Value}">
+    <Grid BackgroundColor="#EEE">
+        <WebView
+            x:Name="WebView"
+            Source="{Binding Source.Value, Mode=OneWay}"
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand">
+        </WebView>
+        <ProgressBar x:Name="ProgressBar" />
+    </Grid>
 </ContentPage>

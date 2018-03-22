@@ -31,7 +31,7 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService)
         {
             this.ItemTappedCommand = new AsyncReactiveCommand<SettingItem>();
-            this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath));
+            this.ItemTappedCommand.Subscribe(async x => await this.NavigationService.NavigateAsync(x.PagePath, x.Parameters));
         }
 
         protected override void OnContainerChanged()
