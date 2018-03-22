@@ -32,17 +32,14 @@
             Margin="20, 10" 
             Text="同意する" 
             Command="{Binding AgreeCommand}"
-            TextColor="#58CE91"
-            BorderColor="#58CE91"
-            BorderWidth="2"
-            BorderRadius="25"
-            FontSize="Medium"
-            BackgroundColor="#FFFFFF" />
+            TextColor="{StaticResource PrimaryColor}"
+            BorderColor="{StaticResource PrimaryColor}"
+            BackgroundColor="White" />
         <Button 
             Grid.Row="2" 
             Text="アプリの使用を取りやめる" 
             FontSize="Small"
-            BorderRadius="0" 
+            BorderColor="Transparent"
             Command="{Binding CancelCommand}" />
     </Grid>
 </ContentPage>
