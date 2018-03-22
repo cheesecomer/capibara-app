@@ -225,6 +225,7 @@
     <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
     <Compile Include="PlatformVariable.cs" />
+    <Compile Include="Screen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
