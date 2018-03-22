@@ -8,8 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.RoomPage"
-    Title="{Binding Name.Value}"
-    BackgroundColor="#FEFEFE">
+    Title="{Binding Name.Value}">
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectCommand}" />
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
@@ -47,13 +46,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <forms:RoundImage
-                            Source="{Binding Sender.Value.Icon.Value}"
-                            HasShadow="true"
-                            BorderColor="#58CE91"
-                            BorderWidth="2"
-                            BackgroundColor="White"
-                            Aspect="AspectFill"
                             Grid.RowSpan="3"
+                            Source="{Binding Sender.Value.Icon.Value}"
+                            BorderWidth="2"
                             HeightRequest="60"
                             VerticalOptions="Start"
                             CornerRadius="30"
