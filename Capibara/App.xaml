@@ -4,22 +4,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     xmlns:prism="clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms" 
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     x:Class="Capibara.App">
-    <Application.Resources> 
-        <ResourceDictionary> 
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Grid">
+                <Setter Property="RowSpacing" Value="0" />
+                <Setter Property="ColumnSpacing" Value="0" />
+            </Style>
+            <Color x:Key="PrimaryColor">#58CE91</Color>
+            <converters:BottomMarginConverter x:Key="bottomMargin" />
+            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
             <ControlTemplate x:Key="WithAdBannerControlTemplate">
-                <Grid>
+                <Grid BackgroundColor="#FEFEFE">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="50" />
+                        <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
                     </Grid.RowDefinitions>
 
-                    <!-- Content  -->
-                    <StackLayout VerticalOptions="CenterAndExpand">
-                        <ContentPresenter   />
-                    </StackLayout>
+                    <ContentPresenter   />
 
                     <forms:AdMobBanner Grid.Row="1" />
+
+                    <BoxView Grid.Row="2" BackgroundColor="#EEE" />
                 </Grid> 
             </ControlTemplate>
 

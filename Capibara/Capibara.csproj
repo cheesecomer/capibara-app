@@ -112,6 +112,7 @@
       <DependentUpon>AcceptPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\AdMobBanner.cs" />
+    <Compile Include="Converters\BottomMarginConverter.cs" />
     <Compile Include="IScreen.cs" />
   </ItemGroup>
   <ItemGroup>
