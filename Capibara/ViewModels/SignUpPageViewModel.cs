@@ -85,7 +85,7 @@ namespace Capibara.ViewModels
             var pageName =
                 this.Model.IsAccepted
                     ? "/MainPage/NavigationPage/FloorMapPage"
-                    : "/AcceptPage";
+                    : "/NavigationPage/AcceptPage";
             var parameters =
                 this.Model.IsAccepted 
                     ? null 
@@ -107,7 +107,7 @@ namespace Capibara.ViewModels
                 var pageName = 
                     user.IsAccepted 
                         ? "/MainPage/NavigationPage/FloorMapPage" 
-                        : "/AcceptPage";
+                        : "/NavigationPage/AcceptPage";
                 var parameters =
                     this.Model.IsAccepted
                         ? null

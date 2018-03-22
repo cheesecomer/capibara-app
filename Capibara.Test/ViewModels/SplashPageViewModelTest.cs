@@ -160,9 +160,9 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             }
 
             [TestCase]
-            public void ItShouldNavigateToFloorMapPage()
+            public void ItShouldNavigateToAcceptPage()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/AcceptPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/NavigationPage/AcceptPage"));
             }
         }
 

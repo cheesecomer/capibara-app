@@ -75,7 +75,7 @@ namespace Capibara.ViewModels
             {
                 await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
-                await this.NavigationService.NavigateAsync("/AcceptPage", new NavigationParameters { { ParameterNames.Model, user } }, animated: false);
+                await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, user } }, animated: false);
             }
         }
 

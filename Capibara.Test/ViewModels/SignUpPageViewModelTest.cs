@@ -37,7 +37,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
     {
         protected SubjectViewModel Subjet { get; private set; }
 
-        [TestCase(false, "/AcceptPage")]
+        [TestCase(false, "/NavigationPage/AcceptPage")]
         [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
         public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {
@@ -157,7 +157,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
 
     namespace OnResume
     {
-        [TestFixture(false, "/AcceptPage")]
+        [TestFixture(false, "/NavigationPage/AcceptPage")]
         [TestFixture(true, "/MainPage/NavigationPage/FloorMapPage")]
         public class WhenAccessTokenIsPresent : ViewModelTestBase
         {
