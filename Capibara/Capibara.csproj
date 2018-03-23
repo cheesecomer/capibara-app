@@ -119,6 +119,7 @@
     <Compile Include="Services\IOverrideUrlService.cs" />
     <Compile Include="Ioc\ContainerProvider.cs" />
     <Compile Include="Services\IScreenService.cs" />
+    <Compile Include="Converters\EnumToStringConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
