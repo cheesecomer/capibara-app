@@ -6,6 +6,8 @@ using Capibara.Services;
 
 using UIKit;
 
+using RSKImageCropper;
+
 namespace Capibara.iOS.Services
 {
     public class PickupPhotoService : IPickupPhotoService
@@ -30,12 +32,26 @@ namespace Capibara.iOS.Services
         private EventHandler<UIImagePickerMediaPickedEventArgs> OnFinishedPickingMedia(TaskCompletionSource<byte[]> taskSource)
         {
             return async (sender, args) => {
-                //Console.WriteLine(args.Info[UIImagePickerController.ImageUrl]);
-                var image = args.Info[UIImagePickerController.OriginalImage] as UIImage;
                 await (sender as UIImagePickerController).DismissViewControllerAsync(true);
+
+                var cropViewController = new RSKImageCropViewController(args.Info[UIImagePickerController.OriginalImage] as UIImage);
+                cropViewController.Canceled += this.OnCancel(taskSource);
+                cropViewController.Cropped += this.OnCropped(taskSource);
+
+                var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+                await viewController.PresentViewControllerAsync(cropViewController, true);
+            };
+        }
+
+        private EventHandler<ImageCropViewControllerCroppedEventArgs> OnCropped(TaskCompletionSource<byte[]> taskSource)
+        {
+            return async (sender, args) => {
+                //Console.WriteLine(args.Info[UIImagePickerController.ImageUrl]);
+                var image = args.CroppedImage;
+                await (sender as RSKImageCropViewController).DismissViewControllerAsync(true);
                 using (var memoryStream = new MemoryStream())
                 {
-                    (args.Info[UIImagePickerController.OriginalImage] as UIImage).AsPNG().AsStream().CopyTo(memoryStream);
+                    image.AsPNG().AsStream().CopyTo(memoryStream);
                     taskSource.SetResult(memoryStream.ToArray());
                 }
                 image.Dispose();
