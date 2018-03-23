@@ -10,7 +10,12 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.ReportPage"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
-    <Grid  Padding="20, 50, 20, 100">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:EnumToStringConverter x:Key="enumToString" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid Padding="20, 50, 20, 100">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
@@ -18,9 +23,9 @@
         <StackLayout>
             <Label Text="通報理由" />
             <Picker 
-                ItemsSource="{Binding ReportReasons}"
-                SelectedItem="{Binding SelectedItem.Value}"
-                Margin="10, 10, 0, 10"/>
+                ItemsSource="{Binding ReportReasons, Converter={StaticResource enumToString}}"
+                SelectedIndex="{Binding SelectedIndex.Value}"
+                Margin="10, 10, 0, 10" />
             <Label Text="コメント" />
             <Editor
                 Text="{Binding Message.Value, Mode=TwoWay}"

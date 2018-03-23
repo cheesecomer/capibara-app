@@ -49,6 +49,24 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
             var viewModel = new SubjectViewModel();
             Assert.That(viewModel.SelectedItem.Value, Is.EqualTo(ReportReason.Spam));
         }
+
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            var viewModel = new SubjectViewModel();
+            viewModel.SelectedIndex.Value = 1;
+            Assert.That(viewModel.SelectedItem.Value, Is.EqualTo(ReportReason.AbusiveOrHatefulSpeech));
+        }
+    }
+
+    public class SelectedIndexTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldDefaultSpam()
+        {
+            var viewModel = new SubjectViewModel();
+            Assert.That(viewModel.SelectedIndex.Value, Is.EqualTo(0));
+        }
     }
 
     public class ReportCommandCanExecuteTest
