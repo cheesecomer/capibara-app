@@ -166,6 +166,24 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         }
     }
 
+    public class OnNavigatedToTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldAccepted()
+        {
+            bool isSetAcceptedTrue = false;
+
+            var model = new Mock<User>();
+            model.SetupAllProperties();
+            model.SetupSet(x => x.IsAccepted = true).Callback(() => isSetAcceptedTrue = true);
+
+            var subject = new SubjectViewModel(model: model.Object);
+            subject.BuildUp(this.GenerateUnityContainer());
+            subject.OnNavigatedTo(null);
+            Assert.That(isSetAcceptedTrue, Is.EqualTo(true));
+        }
+    }
+
     public class OverrideUrlCommandTest : ViewModelTestBase
     {
         [TestCase]

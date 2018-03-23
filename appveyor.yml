@@ -20,7 +20,7 @@ test_script:
       -targetargs:"Capibara.Core.Test/bin/Debug/Capibara.Core.Test.dll" `
       -target:"nunit3-console.exe" `
       -register:user `
-      -filter:"+[Capibara.Core]*" `
+      -filter:"+[Capibara.Core]* -[Capibara.Core]Capibara.Attributes.DisplayNameAttribute " `
       -output:"coverage.xml"
 
 - ps: >-

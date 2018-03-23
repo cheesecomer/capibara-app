@@ -13,6 +13,8 @@ namespace Capibara.Models
 
         private DateTimeOffset publishedAt;
 
+        private string url;
+
         public int Id
         {
             get => this.id;
@@ -38,6 +40,12 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.publishedAt, value);
         }
 
+        public string Url
+        {
+            get => this.url;
+            set => this.SetProperty(ref this.url, value);
+        }
+
         public override void Restore(Information model)
         {
             base.Restore(model);
@@ -46,6 +54,7 @@ namespace Capibara.Models
             this.Title = model.Title;
             this.Message = model.Message;
             this.PublishedAt = model.PublishedAt;
+            this.Url = model.Url;
         }
     }
 }

@@ -24,13 +24,15 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
     {
         public bool IsOverrideUrlCalled;
 
+        protected string url;
+
         public override IUnityContainer GenerateUnityContainer()
         {
             var container = base.GenerateUnityContainer();
 
             var overrideUrlService = new Mock<IOverrideUrlService>();
             overrideUrlService
-                .Setup(x => x.OverrideUrl(It.IsAny<IDeviceService>(), It.IsAny<string[]>()))
+                .Setup(x => x.OverrideUrl(It.IsAny<IDeviceService>(), It.Is<string[]>(v => v[0] == url)))
                 .Returns<IDeviceService, string[]>((x, y) => (IOverrideUrlCommandParameters v) => this.IsOverrideUrlCalled = true);
 
             container.RegisterInstance(overrideUrlService.Object);
@@ -46,7 +48,6 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
     {
         SubjectViewModel Subject;
         string title;
-        string url;
         string expectTitle;
         string expectUrl;
 
@@ -89,10 +90,11 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
         [TestCase]
         public void ItShoulLoadedPropertyUpdate()
         {
+            this.url = "http://foobar.com/";
             var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
             viewModel.OnNavigatedTo(new NavigationParameters
             {
-                { ParameterNames.Url, "http://foobar.com/" }
+                { ParameterNames.Url, this.url }
             });
 
             viewModel.OverrideUrlCommand.Execute(new Mock<IOverrideUrlCommandParameters>().Object);

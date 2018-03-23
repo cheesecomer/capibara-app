@@ -43,7 +43,7 @@ namespace Capibara.ViewModels
                 this.OverrideUrlCommand.Subscribe(
                     this.OverrideUrlService.OverrideUrl(
                         this.DeviceService,
-                        this.Environment.PrivacyPolicyUrl));
+                        url));
             }
         }
     }

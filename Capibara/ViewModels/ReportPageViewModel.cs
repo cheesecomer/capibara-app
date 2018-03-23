@@ -28,7 +28,9 @@ namespace Capibara.ViewModels
             ReportReason.Other
         };
 
-        public ReactiveProperty<ReportReason> SelectedItem { get; } = new ReactiveProperty<ReportReason>(ReportReason.Spam);
+        public ReactiveProperty<int> SelectedIndex { get; } = new ReactiveProperty<int>();
+
+        public ReactiveProperty<ReportReason> SelectedItem { get; } = new ReactiveProperty<ReportReason>();
 
         public ReactiveProperty<string> Message { get; } = new ReactiveProperty<string>();
 
@@ -49,8 +51,12 @@ namespace Capibara.ViewModels
                 () => this.ProgressDialogService.DisplayProgressAsync(
                     this.Model.Report(this.SelectedItem.Value, this.Message.Value)));
 
+            this.SelectedIndex.Subscribe(x => this.SelectedItem.Value = this.ReportReasons[x]);
+            this.SelectedIndex.Subscribe(_ => this.RaisePropertyChanged(nameof(SelectedIndex)));
             this.SelectedItem.Subscribe(_ => this.RaisePropertyChanged(nameof(SelectedItem)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(Message)));
+
+            this.SelectedIndex.Value = 0;
 
             this.Model.ReportSuccess += this.OnReportSuccess;
         }

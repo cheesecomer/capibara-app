@@ -20,6 +20,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
+        public AsyncReactiveCommand<Information> ItemTappedCommand { get; }
+
         public InformationsPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)
@@ -28,6 +30,16 @@ namespace Capibara.ViewModels
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Refresh()));
+
+            this.ItemTappedCommand = new AsyncReactiveCommand<Information>();
+            this.ItemTappedCommand.Subscribe(async x =>
+            {
+                var parameters = new NavigationParameters { 
+                    { ParameterNames.Url, x.Url } ,
+                    { ParameterNames.Title, "お知らせ" }
+                };
+                await this.NavigationService.NavigateAsync("WebViewPage", parameters);
+            });
         }
 
         private async Task Refresh()

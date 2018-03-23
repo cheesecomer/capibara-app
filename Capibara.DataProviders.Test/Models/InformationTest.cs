@@ -17,7 +17,7 @@ namespace Capibara.Test.Models.InformationTest
         public void Setup()
         {
             this.Subject = new Information { Id = 99999 };
-            this.Subject.Restore(new Information { Id = 99999, Message = "FooBar. Yes!Yes!Yeeeeees!", Title = "...", PublishedAt = new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9)) });
+            this.Subject.Restore(new Information { Id = 99999, Message = "FooBar. Yes!Yes!Yeeeeees!", Title = "...", PublishedAt = new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9)), Url = "http://example.com/informations/1" });
         }
 
         [TestCase]
@@ -43,6 +43,12 @@ namespace Capibara.Test.Models.InformationTest
         {
             Assert.That(this.Subject.PublishedAt, Is.EqualTo(new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9))));
         }
+
+        [TestCase]
+        public void ItShouldUrlWithExpected()
+        {
+            Assert.That(this.Subject.Url, Is.EqualTo("http://example.com/informations/1"));
+        }
     }
 
     namespace DeserializeTest
@@ -55,7 +61,7 @@ namespace Capibara.Test.Models.InformationTest
             [SetUp]
             public void Setup()
             {
-                var json = "{ \"id\": 99999, \"title\": \"Title!!!\", \"message\": \"Message!!!!\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\"}";
+                var json = "{ \"id\": 99999, \"title\": \"Title!!!\", \"message\": \"Message!!!!\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\", \"url\": \"http://example.com/informations/1\"}";
                 this.Subject = JsonConvert.DeserializeObject<Information>(json);
             }
 
@@ -81,6 +87,12 @@ namespace Capibara.Test.Models.InformationTest
             public void ItShouldPublishedAtWithExpected()
             {
                 Assert.That(this.Subject.PublishedAt, Is.EqualTo(new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9))));
+            }
+
+            [TestCase]
+            public void ItShouldUrlWithExpected()
+            {
+                Assert.That(this.Subject.Url, Is.EqualTo("http://example.com/informations/1"));
             }
         }
     }
