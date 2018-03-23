@@ -30,17 +30,5 @@ namespace Capibara.ViewModels
         {
             this.origin = origin;
         }
-
-        public static Action<IOverrideUrlCommandParameters> OverrideUrl(IDeviceService deviceService, params string[] urls)
-        {
-            return (x) =>
-            {
-                if (urls.Any(v => new Uri(x.Url).ToString() == new Uri(v).ToString())) return;
-
-                x.Cancel = true;
-
-                deviceService.OpenUri(new Uri(x.Url));
-            };
-        }
     }
 }
