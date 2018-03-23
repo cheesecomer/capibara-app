@@ -51,6 +51,7 @@ namespace Capibara
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
+            containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
