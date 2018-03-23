@@ -188,6 +188,10 @@
       <Project>{6BD9633D-6376-4208-B7DE-DE00159154BF}</Project>
       <Name>Capibara.DataProviders</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RSKImageCropper\RSKImageCropper.csproj">
+      <Project>{8E17A920-62A9-4D18-9D2D-C591EBE2963F}</Project>
+      <Name>RSKImageCropper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
