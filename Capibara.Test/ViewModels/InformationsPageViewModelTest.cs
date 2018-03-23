@@ -203,4 +203,30 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
             }
         }
     }
+
+    [TestFixture]
+    public class ItemTappedCommandTest : ViewModelTestBase
+    {
+        [SetUp]
+        public void SetUp()
+        {
+            var viewModel = new SubjectViewModel(this.NavigationService);
+
+            viewModel.ItemTappedCommand.Execute(new Information { Url = "http://example.com/informations/1" });
+
+            while (!viewModel.ItemTappedCommand.CanExecute()) { }
+        }
+
+        [TestCase]
+        public void ItShouldNavigateToParticipantsPage()
+        {
+            Assert.That(this.NavigatePageName, Is.EqualTo("WebViewPage"));
+        }
+
+        [TestCase]
+        public void ItShouldNavigationParameterUrlIsExpect()
+        {
+            Assert.That(this.NavigationParameters.TryGetValue<string>(ParameterNames.Url), Is.EqualTo("http://example.com/informations/1"));
+        }
+    }
 }
