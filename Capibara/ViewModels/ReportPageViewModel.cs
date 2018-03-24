@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Capibara.Models;
 using Capibara.Services;
@@ -42,6 +43,10 @@ namespace Capibara.ViewModels
             User model = null)
             : base(navigationService, pageDialogService, model)
         {
+            this.ReportReasons.AddTo(this.Disposable);
+            this.SelectedItem.AddTo(this.Disposable);
+            this.Message.AddTo(this.Disposable);
+
             this.SubmitCommand = 
                 this.PropertyChangedAsObservable()
                 .Select(_ => this.SelectedItem.Value != ReportReason.Other || this.Message.Value.ToSlim().IsPresent())
@@ -51,7 +56,7 @@ namespace Capibara.ViewModels
                 () => this.ProgressDialogService.DisplayProgressAsync(
                     this.Model.Report(this.SelectedItem.Value, this.Message.Value)));
 
-            this.SelectedIndex.Subscribe(x => this.SelectedItem.Value = this.ReportReasons[x]);
+            this.SelectedIndex.Subscribe(x => this.SelectedItem.Value = this.ReportReasons.ElementAtOrDefault(x));
             this.SelectedIndex.Subscribe(_ => this.RaisePropertyChanged(nameof(SelectedIndex)));
             this.SelectedItem.Subscribe(_ => this.RaisePropertyChanged(nameof(SelectedItem)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(Message)));
