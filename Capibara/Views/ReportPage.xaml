@@ -46,7 +46,7 @@
             BorderColor="#d9534f"
             BorderWidth="3"
             BorderRadius="{Binding Height, Source={x:Reference UnsubscribeButton}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-            Command="{Binding ReportCommand}"
+            Command="{Binding SubmitCommand}"
             />
     </Grid>
 </ContentPage>

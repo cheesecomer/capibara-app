@@ -34,7 +34,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<string> Message { get; } = new ReactiveProperty<string>();
 
-        public AsyncReactiveCommand ReportCommand { get; }
+        public AsyncReactiveCommand SubmitCommand { get; }
 
         public ReportPageViewModel(
             INavigationService navigationService = null,
@@ -42,12 +42,12 @@ namespace Capibara.ViewModels
             User model = null)
             : base(navigationService, pageDialogService, model)
         {
-            this.ReportCommand = 
+            this.SubmitCommand = 
                 this.PropertyChangedAsObservable()
                 .Select(_ => this.SelectedItem.Value != ReportReason.Other || this.Message.Value.ToSlim().IsPresent())
                 .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
-            this.ReportCommand.Subscribe(
+            this.SubmitCommand.Subscribe(
                 () => this.ProgressDialogService.DisplayProgressAsync(
                     this.Model.Report(this.SelectedItem.Value, this.Message.Value)));
 

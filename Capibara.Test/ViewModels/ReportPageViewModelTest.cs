@@ -69,7 +69,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         }
     }
 
-    public class ReportCommandCanExecuteTest
+    public class SubmitCommandCanExecuteTest
     {
         [TestCase(ReportReason.Spam, "", true)]
         [TestCase(ReportReason.AbusiveOrHatefulSpeech, "", true)]
@@ -100,11 +100,11 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
             var viewModel = new SubjectViewModel();
             viewModel.SelectedItem.Value = reportReason;
             viewModel.Message.Value = message;
-            Assert.That(viewModel.ReportCommand.CanExecute(), Is.EqualTo(expect));
+            Assert.That(viewModel.SubmitCommand.CanExecute(), Is.EqualTo(expect));
         }
     }
 
-    public class ReportCommandTest : ViewModelTestBase
+    public class SubmitCommandTest : ViewModelTestBase
     {
         private bool IsReportCalled;
 
@@ -117,9 +117,9 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
 
             var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
 
-            viewModel.ReportCommand.Execute();
+            viewModel.SubmitCommand.Execute();
 
-            while (!viewModel.ReportCommand.CanExecute()) { };
+            while (!viewModel.SubmitCommand.CanExecute()) { }
         }
 
         [TestCase]

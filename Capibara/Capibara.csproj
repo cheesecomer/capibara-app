@@ -120,6 +120,7 @@
     <Compile Include="Ioc\ContainerProvider.cs" />
     <Compile Include="Services\IScreenService.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
+    <Compile Include="ViewModels\InquiryPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
