@@ -9,6 +9,8 @@ using Moq;
 using NUnit.Framework;
 using Prism.Services;
 
+using Xamarin.Forms;
+
 using SubjectViewModel = Capibara.ViewModels.UserViewModel;
 
 namespace Capibara.Test.ViewModels.UserViewModelTest

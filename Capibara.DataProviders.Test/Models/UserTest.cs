@@ -28,7 +28,7 @@ namespace Capibara.Test.Models.UserTest
             [SetUp]
             public void Setup()
             {
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -49,6 +49,12 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIconUrlWithExpected()
             {
                 Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIconThumbnaiUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
             }
 
             [TestCase]
@@ -98,7 +104,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Subject = new User { Id = 99999 };
-            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IsBlock = true, IsAccepted = true });
+            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png", IsBlock = true, IsAccepted = true });
         }
 
         [TestCase]
@@ -123,6 +129,12 @@ namespace Capibara.Test.Models.UserTest
         public void ItShouldIconUrlWithExpected()
         {
             Assert.That(this.Subject.IconUrl, Is.EqualTo("...!!!"));
+        }
+
+        [TestCase]
+        public void ItShouldIconThumbnailUrlWithExpected()
+        {
+            Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
         }
 
         [TestCase]
@@ -203,9 +215,16 @@ namespace Capibara.Test.Models.UserTest
                 Nickname = "xxxxx!",
                 Biography = "...",
                 IconUrl = "http://xxxxxx.com/xxxx.png",
+                IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png",
                 IsBlock = true,
                 IsAccepted = true
             };
+
+            [TestCase]
+            public void ItShouldIconThumbnailUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
 
             [TestCase]
             public void ItShouldSuccess()
@@ -403,8 +422,15 @@ namespace Capibara.Test.Models.UserTest
                 AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
                 Id = 999,
                 Nickname = "Foo.Bar",
-                IsAccepted = true
+                IsAccepted = true,
+                IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png"
             };
+
+            [TestCase]
+            public void ItShouldIconThumbnailUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
 
             [TestCase]
             public void ItShouldSuccess()
@@ -632,8 +658,15 @@ namespace Capibara.Test.Models.UserTest
                 Id = 1,
                 Nickname = "xxxxx!",
                 Biography = "...",
-                IconUrl = "http://xxxxxx.com/xxxx.png"
+                IconUrl = "http://xxxxxx.com/xxxx.png",
+                IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png"
             };
+
+            [TestCase]
+            public void ItShouldIconThumbnailUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
 
             [TestCase]
             public void ItShouldSuccess()

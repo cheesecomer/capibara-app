@@ -9,7 +9,10 @@ using Moq;
 using Prism.Services;
 using Prism.Navigation;
 
+using Xamarin.Forms;
+
 using NUnit.Framework;
+
 namespace Capibara.Test.ViewModels
 {
     public abstract class ViewModelTestBase : TestFixtureBase
