@@ -26,6 +26,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> Icon { get; }
 
+        public ReactiveProperty<ImageSource> IconThumbnail { get; }
+
         public ReactiveProperty<bool> IsBlock { get; }
 
         public AsyncReactiveCommand RefreshCommand { get; }
@@ -57,14 +59,19 @@ namespace Capibara.ViewModels
                 .ToReactivePropertyAsSynchronized(x => x.Biography)
                 .AddTo(this.Disposable);
 
-            this.Icon = new ReactiveProperty<ImageSource>()
-                .AddTo(this.Disposable);
-
-            this.Icon.Value = this.Model.IconUrl.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(this.Model.IconUrl));
-            this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x =>
-                this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)));
+            this.Icon =
+                this.Model.ToReactivePropertyAsSynchronized(
+                    x => x.IconUrl,
+                    x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)),
+                    x => (x as UriImageSource)?.Uri.AbsoluteUri);
             this.Icon.Subscribe(x => this.Model.IconBase64 = Convert.ToBase64String(x.ToByteArray()));
 
+            this.IconThumbnail = 
+                this.Model.ToReactivePropertyAsSynchronized(
+                    x => x.IconThumbnailUrl, 
+                    x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)),
+                    x => (x as UriImageSource)?.Uri.AbsoluteUri);
+            
             this.IsBlock = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsBlock)
                 .AddTo(this.Disposable);
