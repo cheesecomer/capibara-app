@@ -80,6 +80,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<ReportPage>();
             containerRegistry.RegisterForNavigation<WebViewPage>();
             containerRegistry.RegisterForNavigation<AcceptPage>();
+            containerRegistry.RegisterForNavigation<InquiryPage>();
             containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();

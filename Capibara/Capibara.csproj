@@ -121,6 +121,9 @@
     <Compile Include="Services\IScreenService.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="ViewModels\InquiryPageViewModel.cs" />
+    <Compile Include="Views\InquiryPage.xaml.cs">
+      <DependentUpon>InquiryPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -180,6 +183,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\AcceptPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\InquiryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
