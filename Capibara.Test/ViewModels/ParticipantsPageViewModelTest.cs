@@ -17,7 +17,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
 
                 var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
 
-                viewModel.ItemTappedCommand.Execute(new User { Id = 1 });
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: new User { Id = 1 }));
 
                 while (!viewModel.ItemTappedCommand.CanExecute()) { }
             }
@@ -53,7 +53,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
 
                 this.IsolatedStorage.UserId = 1;
 
-                viewModel.ItemTappedCommand.Execute(new User { Id = 1 });
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: new User { Id = 1 }));
 
                 while (!viewModel.ItemTappedCommand.CanExecute()) { }
             }

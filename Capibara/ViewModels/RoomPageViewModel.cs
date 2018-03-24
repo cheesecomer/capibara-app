@@ -42,8 +42,21 @@ namespace Capibara.ViewModels
             Room model = null)
             : base(navigationService, pageDialogService, model)
         {
-            this.Messages =
-                    this.Model.Messages.ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x));
+            this.Messages = this.Model
+                .Messages
+                .ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x));
+
+            // プロフィールページ表示時にコネクションをクローズしないようにイベント登録
+            this.Messages
+                .CollectionChangedAsObservable()
+                .Subscribe(
+                    (x) => x.NewItems
+                    .Cast<MessageViewModel>()
+                    .ForEach(
+                        v => v.ShowProfileCommand
+                        .Subscribe(_ => Task.Run(() => this.needClose = false))
+                        .AddTo(this.Disposable)))
+                .AddTo(this.Disposable);
 
             // Name Property
             this.Name = this.Model
@@ -84,10 +97,8 @@ namespace Capibara.ViewModels
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.CloseCommand.Subscribe(async () =>
             {
-                if (this.needClose)
-                {
-                    await this.Model.Close();
-                }
+                if (!this.needClose) return;
+                await this.Model.Close();
             });
 
             // SpeakCommand
@@ -102,8 +113,7 @@ namespace Capibara.ViewModels
             this.ShowParticipantsCommand.Subscribe(() =>
             {
                 this.needClose = false;
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, this.Model);
+                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 return this.NavigationService.NavigateAsync("ParticipantsPage", parameters);
             });
 
