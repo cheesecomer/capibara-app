@@ -20,12 +20,13 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-            var model = new User { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
+            base.SetUp();
 
-            this.Subject = new SubjectViewModel(model: model).BuildUp(container);
+            var model = new User { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(this.Container);
+
+            this.Subject = new SubjectViewModel(model: model).BuildUp(this.Container);
         }
 
         [TestCase]
@@ -47,11 +48,13 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-            var model = new User() { Biography = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(container);
-            this.Subject = new SubjectViewModel(model: model).BuildUp(container);
+            base.SetUp();
+
+            var container = this.Container;
+            var model = new User() { Biography = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(this.Container);
+            this.Subject = new SubjectViewModel(model: model).BuildUp(this.Container);
         }
 
         [TestCase]
@@ -74,15 +77,15 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         private bool IsRefreshCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
 
-            var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
 
             viewModel.RefreshCommand.Execute();
 
@@ -110,8 +113,10 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             private ActionSheetButton[] buttons;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService
                     .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
@@ -121,13 +126,8 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
                         return Task.Run(() => { });
                     });
 
-                var container = this.GenerateUnityContainer();
-
-                var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
-
+                var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object).BuildUp(this.Container);
                 viewModel.Model.Id = 1;
-
-                viewModel.BuildUp(container);
 
                 viewModel.ChangePhotoCommand.Execute();
 
@@ -156,8 +156,10 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             private ActionSheetButton[] buttons;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var pageDialogService = new Mock<IPageDialogService>();
                 pageDialogService
                     .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
@@ -167,13 +169,11 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
                         return Task.Run(() => { });
                     });
 
-                var container = this.GenerateUnityContainer();
-
                 var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
 
                 viewModel.Model.Id = 1;
 
-                viewModel.BuildUp(container);
+                viewModel.BuildUp(this.Container);
 
                 viewModel.ChangePhotoCommand.Execute();
 
@@ -194,8 +194,10 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     public class EditCommandTest : ViewModelTestBase
     {
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.EditCommand.Execute();
@@ -233,7 +235,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = nickname;
 
             Assert.That(viewModel.CommitCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -246,13 +248,15 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         private bool IsCommitCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = "FooBar";
 
             viewModel.CommitCommand.Execute();
@@ -282,7 +286,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             viewModel.IsBlock.Value = isBlock;
 
             Assert.That(viewModel.BlockCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -298,13 +302,15 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         protected bool IsBlockCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            this.ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             this.ViewModel.IsBlock.Value = false;
             this.ViewModel.BlockCommand.Execute();
         }
@@ -329,8 +335,10 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         private SubjectViewModel ViewModel;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.ViewModel = new SubjectViewModel(this.NavigationService);
 
             this.ViewModel.ReportCommand.Execute();

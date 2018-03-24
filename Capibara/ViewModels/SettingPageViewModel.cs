@@ -20,6 +20,7 @@ namespace Capibara.ViewModels
             {
             new SettingItem { Name = "ブロック中のユーザー", PagePath = "BlockUsersPage" },
             new SettingItem { Name = "プライバシーポリシー", PagePath = "WebViewPage" },
+            new SettingItem { Name = "お問い合わせ", PagePath = "InquiryPage" },
             new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" },
             };
 

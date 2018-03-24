@@ -45,9 +45,11 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
         protected virtual int WebSocketSendBufferSize { get; } = 50;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            using (this.cable = new ChannelCable().BuildUp(this.GenerateUnityContainer()))
+            base.SetUp();
+
+            using (this.cable = new ChannelCable().BuildUp(this.Container))
             {
                 if (this.NeedEventHandler)
                 {

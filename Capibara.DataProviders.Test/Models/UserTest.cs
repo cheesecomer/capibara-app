@@ -26,10 +26,12 @@ namespace Capibara.Test.Models.UserTest
             protected abstract int LoginUserId { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
-                this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.GenerateUnityContainer());
+                this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
 
@@ -171,11 +173,11 @@ namespace Capibara.Test.Models.UserTest
             protected bool Result { get; private set; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Id = 1 }.BuildUp(container);
+                this.Subject = new User { Id = 1 }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<User>>();
                 var methodMock = request.Setup(x => x.Execute());
@@ -383,11 +385,11 @@ namespace Capibara.Test.Models.UserTest
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Nickname = "xxxxx" }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<SessionCreateResponse>>();
 
@@ -612,11 +614,11 @@ namespace Capibara.Test.Models.UserTest
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<User>>();
 
@@ -639,7 +641,7 @@ namespace Capibara.Test.Models.UserTest
 
                 if (this.NeedCurrentUserRegistration)
                 {
-                    container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.CurrentUser = new User());
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.CurrentUser = new User());
                 }
 
                 this.Result = this.Subject.Commit().Result;
@@ -897,11 +899,11 @@ namespace Capibara.Test.Models.UserTest
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<BlockIndexResponse>>();
 
@@ -1084,11 +1086,11 @@ namespace Capibara.Test.Models.UserTest
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
                 this.IsolatedStorage.AccessToken = "AccessToken";
                 this.IsolatedStorage.UserId = 1000;
@@ -1254,11 +1256,11 @@ namespace Capibara.Test.Models.UserTest
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(container);
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase>();
 

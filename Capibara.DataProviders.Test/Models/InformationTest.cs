@@ -14,8 +14,10 @@ namespace Capibara.Test.Models.InformationTest
         private Information Subject;
 
         [SetUp]
-        public void Setup()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new Information { Id = 99999 };
             this.Subject.Restore(new Information { Id = 99999, Message = "FooBar. Yes!Yes!Yeeeeees!", Title = "...", PublishedAt = new DateTimeOffset(2018, 3, 10, 11, 0, 0, TimeSpan.FromHours(9)), Url = "http://example.com/informations/1" });
         }
@@ -59,8 +61,10 @@ namespace Capibara.Test.Models.InformationTest
             private Information Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"id\": 99999, \"title\": \"Title!!!\", \"message\": \"Message!!!!\", \"published_at\": \"2017-10-28T20:25:20.000+09:00\", \"url\": \"http://example.com/informations/1\"}";
                 this.Subject = JsonConvert.DeserializeObject<Information>(json);
             }

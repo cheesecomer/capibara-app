@@ -27,9 +27,9 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
             private bool IsBlocksIndexExecute;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 var request = new Mock<RequestBase<IndexResponse>>();
                 request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
@@ -41,7 +41,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
 
                 this.Subject = new SubjectViewModel();
 
-                this.Subject.BuildUp(container);
+                this.Subject.BuildUp(this.Container);
 
                 this.Subject.RefreshCommand.Execute();
 
@@ -125,9 +125,9 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
             protected bool IsShowDialog { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 var request = new Mock<RequestBase<IndexResponse>>();
                 request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
@@ -144,7 +144,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
                     this.NavigationService,
                     pageDialogService.Object);
 
-                viewModel.BuildUp(container);
+                viewModel.BuildUp(this.Container);
 
                 viewModel.RefreshCommand.Execute();
 

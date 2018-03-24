@@ -11,9 +11,11 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
         public class WhenOther : ViewModelTestBase
         {
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
 
                 viewModel.ItemTappedCommand.Execute(new User { Id = 1 });
 
@@ -43,9 +45,11 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
         public class WhenOwn : ViewModelTestBase
         {
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
 
                 this.IsolatedStorage.UserId = 1;
 
@@ -83,9 +87,11 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
             protected SubjectViewModel Subject { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                this.Subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new SubjectViewModel().BuildUp(this.Container);
             }
 
             [TestCase]

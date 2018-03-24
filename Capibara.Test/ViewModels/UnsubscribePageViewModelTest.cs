@@ -19,18 +19,18 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         private SubjectViewModel Subject { get; set; }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
             var currentUser = new Mock<User>();
 
             currentUser.Setup(x => x.Destroy()).ReturnsAsync(() => true).Callback(() => this.IsDestroyCalled = true);
 
             // カレントユーザーの登録
-            container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
 
-            this.Subject = new SubjectViewModel().BuildUp(container);
+            this.Subject = new SubjectViewModel().BuildUp(this.Container);
 
             this.Subject.UnsubscribeCommand.Execute();
 
@@ -51,16 +51,16 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         private SubjectViewModel Subject { get; set; }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
             var currentUser = new Mock<User>();
 
             // カレントユーザーの登録
-            container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
 
-            this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(container);
+            this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
 
             currentUser.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
         }

@@ -22,9 +22,9 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
             var viewModel = new SubjectViewModel(this.NavigationService);
 
@@ -45,15 +45,17 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new SubjectViewModel();
         }
 
         [TestCase]
         public void ItShouldCountWithExpected()
         {
-            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(3));
+            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(4));
         }
     }
 
@@ -66,7 +68,8 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
                     { ParameterNames.Url, "http://localhost:9999/privacy_policy" },
                     { ParameterNames.Title, "プライバシーポリシー" }
                 } },
-            new object[] { 2, "退会する", "UnsubscribePage", null }
+            new object[] { 2, "お問い合わせ", "InquiryPage", null },
+            new object[] { 3, "退会する", "UnsubscribePage", null }
         };
 
         protected SubjectViewModel Subject;
@@ -88,9 +91,11 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            this.Subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            base.SetUp();
+
+            this.Subject = new SubjectViewModel().BuildUp(this.Container);
         }
 
         [TestCase]

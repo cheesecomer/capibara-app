@@ -11,8 +11,10 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
     public class ShowParticipantsCommandTest : ViewModelTestBase
     {
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.ShowParticipantsCommand.Execute();
@@ -55,7 +57,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             public void ItShouldResultWithExpect(string message, bool expect)
             {
                 var viewModel = new SubjectViewModel();
-                var container = this.GenerateUnityContainer();
+                var container = this.Container;
                 var model = new Mock<Room>();
                 model.SetupGet(x => x.IsConnected).Returns(true);
 
@@ -81,7 +83,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             public void ItShouldResultWithExpect(string message, bool expect)
             {
                 var viewModel = new SubjectViewModel();
-                var container = this.GenerateUnityContainer();
+                var container = this.Container;
                 var model = new Mock<Room>();
                 model.SetupGet(x => x.IsConnected).Returns(false);
 
@@ -104,9 +106,10 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected bool IsSpeakCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
+
                 var model = new Mock<Room>();
                 model.SetupGet(x => x.IsConnected).Returns(true);
                 model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true).Callback(() =>
@@ -115,7 +118,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
                     model.Raise(x => x.SpeakSuccess += null, System.EventArgs.Empty);
                 });
 
-                viewModel = new SubjectViewModel(model: model.Object).BuildUp(container);
+                viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
 
                 viewModel.ConnectCommand.Execute();
                 while (!viewModel.ConnectCommand.CanExecute()) { }
@@ -156,9 +159,9 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected bool IsConnectCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 var model = new Mock<Room>();
                 model.Setup(x => x.Connect()).ReturnsAsync(true).Callback(() => this.IsConnectCalled = true);
@@ -166,7 +169,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
 
-                ViewModel.BuildUp(container);
+                ViewModel.BuildUp(this.Container);
 
                 ViewModel.ConnectCommand.Execute();
                 while (!ViewModel.ConnectCommand.CanExecute()) { }
@@ -202,9 +205,9 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected bool IsCloseCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 var model = new Mock<Room>();
                 model.Setup(x => x.Connect()).ReturnsAsync(true);
@@ -213,7 +216,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
 
-                ViewModel.BuildUp(container);
+                ViewModel.BuildUp(this.Container);
 
                 ViewModel.ConnectCommand.Execute();
                 while (!ViewModel.ConnectCommand.CanExecute()) { }
@@ -243,9 +246,9 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected bool IsCloseCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 var model = new Mock<Room>();
                 model.Setup(x => x.Connect()).ReturnsAsync(true);
@@ -254,7 +257,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
 
-                ViewModel.BuildUp(container);
+                ViewModel.BuildUp(this.Container);
 
                 ViewModel.ConnectCommand.Execute();
                 while (!ViewModel.ConnectCommand.CanExecute()) { }
@@ -288,9 +291,11 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected SubjectViewModel ViewModel { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                this.ViewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.ViewModel = new SubjectViewModel().BuildUp(this.Container);
             }
 
             [TestCase]
@@ -316,9 +321,11 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected SubjectViewModel ViewModel { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                this.ViewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.ViewModel = new SubjectViewModel().BuildUp(this.Container);
             }
 
             [TestCase]
@@ -344,9 +351,11 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             protected SubjectViewModel ViewModel { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                this.ViewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.ViewModel = new SubjectViewModel().BuildUp(this.Container);
             }
 
             [TestCase]

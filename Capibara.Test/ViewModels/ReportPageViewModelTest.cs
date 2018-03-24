@@ -16,9 +16,11 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
+
+            var container = this.Container;
 
             this.Subject = new SubjectViewModel().BuildUp(container);
         }
@@ -69,7 +71,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         }
     }
 
-    public class ReportCommandCanExecuteTest
+    public class SubmitCommandCanExecuteTest
     {
         [TestCase(ReportReason.Spam, "", true)]
         [TestCase(ReportReason.AbusiveOrHatefulSpeech, "", true)]
@@ -100,26 +102,28 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
             var viewModel = new SubjectViewModel();
             viewModel.SelectedItem.Value = reportReason;
             viewModel.Message.Value = message;
-            Assert.That(viewModel.ReportCommand.CanExecute(), Is.EqualTo(expect));
+            Assert.That(viewModel.SubmitCommand.CanExecute(), Is.EqualTo(expect));
         }
     }
 
-    public class ReportCommandTest : ViewModelTestBase
+    public class SubmitCommandTest : ViewModelTestBase
     {
         private bool IsReportCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>())).ReturnsAsync(true).Callback(() => this.IsReportCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
-            viewModel.ReportCommand.Execute();
+            viewModel.SubmitCommand.Execute();
 
-            while (!viewModel.ReportCommand.CanExecute()) { };
+            while (!viewModel.SubmitCommand.CanExecute()) { }
         }
 
         [TestCase]
@@ -142,7 +146,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.ReportSuccess += null, EventArgs.Empty);
 

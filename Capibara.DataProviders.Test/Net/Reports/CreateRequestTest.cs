@@ -5,65 +5,62 @@ using Capibara.Models;
 
 using NUnit.Framework;
 
-namespace Capibara.Test.Net.Reports
+namespace Capibara.Test.Net.Reports.CreateRequestTest
 {
-    namespace ExecuteTest
+    public abstract class TestBase
     {
-        public abstract class TestBase
+        protected CreateRequest Subject { get; set; }
+
+        [TestCase]
+        public void ItShouldRequestWithHttpMethodPost()
         {
-            protected CreateRequest Subject { get; set; }
-
-            [TestCase]
-            public void ItShouldRequestWithHttpMethodPost()
-            {
-                Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Post));
-            }
-
-            [TestCase]
-            public void ItShouldPathsWithExpect()
-            {
-                Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "reports" }));
-            }
-
-            [TestCase]
-            public void ItShouldNeedAuthentication()
-            {
-                Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
-            }
+            Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Post));
         }
 
-        [TestFixture]
-        public class WhenMessageEmpty : TestBase
+        [TestCase]
+        public void ItShouldPathsWithExpect()
         {
-            [SetUp]
-            public void SetUp()
-            {
-                this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Spam);
-            }
-            
-            [TestCase]
-            public void ItShouldStringContentWithExpected()
-            {
-                var expected = "{\"target_id\":100,\"reason\":1}".ToSlim();
-                Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
-            }
+            Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "reports" }));
         }
 
-        [TestFixture]
-        public class WhenMessagePresent : TestBase
+        [TestCase]
+        public void ItShouldNeedAuthentication()
         {
-            [SetUp]
-            public void SetUp()
-            {
-                this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Other, "FooBar");
-            }
+            Assert.That(this.Subject.NeedAuthentication, Is.EqualTo(true));
+        }
+    }
 
-            [TestCase]
-            public void ItShouldStringContentWithExpected()
-            {
-                var expected = "{\"target_id\":100,\"reason\":0,\"message\":\"FooBar\"}".ToSlim();
-                Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
-            }
+    [TestFixture]
+    public class WhenMessageEmpty : TestBase
+    {
+        [SetUp]
+        public void SetUp()
+        {
+            this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Spam);
+        }
+
+        [TestCase]
+        public void ItShouldStringContentWithExpected()
+        {
+            var expected = "{\"target_id\":100,\"reason\":1}".ToSlim();
+            Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class WhenMessagePresent : TestBase
+    {
+        [SetUp]
+        public void SetUp()
+        {
+            this.Subject = new CreateRequest(new User { Id = 100 }, ReportReason.Other, "FooBar");
+        }
+
+        [TestCase]
+        public void ItShouldStringContentWithExpected()
+        {
+            var expected = "{\"target_id\":100,\"reason\":0,\"message\":\"FooBar\"}".ToSlim();
+            Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
         }
     }
 }

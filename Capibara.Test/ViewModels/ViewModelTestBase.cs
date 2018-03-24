@@ -32,8 +32,10 @@ namespace Capibara.Test.ViewModels
         protected bool IsGoBackCalled { get; private set; }
 
         [SetUp]
-        public void Initialize()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
             navigationServiceMock
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
@@ -50,19 +52,12 @@ namespace Capibara.Test.ViewModels
                 .ReturnsAsync(true);
 
             this.NavigationService = navigationServiceMock.Object;
-        }
-
-        public override IUnityContainer GenerateUnityContainer()
-        {
-            var container = base.GenerateUnityContainer();
 
             var progressDialogService = new Mock<IProgressDialogService>();
             progressDialogService
                 .Setup(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()))
                 .Callback<Task, string>((task, message) => this.IsDisplayedProgressDialog = true)
                 .Returns<Task, string>((task, message) => task);
-
-            container.RegisterInstance(progressDialogService.Object);
 
             // IPickupPhotoService のセットアップ
             var pickupPhotoService = new Mock<IPickupPhotoService>();
@@ -72,17 +67,15 @@ namespace Capibara.Test.ViewModels
                 .Callback(() => this.IsDisplayedPhotoPicker = true)
                 .Returns(Task.FromResult(new byte[0]));
 
-            container.RegisterInstance(pickupPhotoService.Object);
-
             this.DeviceService = new Mock<IDeviceService>();
-            container.RegisterInstance(this.DeviceService.Object);
+            this.Container.RegisterInstance(this.DeviceService.Object);
 
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
-            container.RegisterInstance(taskService.Object);
-
-            return container;
+            this.Container.RegisterInstance(progressDialogService.Object);
+            this.Container.RegisterInstance(pickupPhotoService.Object);
+            this.Container.RegisterInstance(taskService.Object);
         }
     }
 }

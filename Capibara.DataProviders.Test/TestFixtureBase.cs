@@ -93,7 +93,10 @@ namespace Capibara.Test
 
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
-        public virtual IUnityContainer GenerateUnityContainer()
+        protected IUnityContainer Container { get; private set; }
+
+        [SetUp]
+        public virtual void SetUp()
         {
             this.Dispose();
 
@@ -222,7 +225,7 @@ namespace Capibara.Test
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
             container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
 
-            return container;
+            this.Container = container;
         }
 
         [TearDown]
@@ -315,9 +318,11 @@ namespace Capibara.Test
         protected string SendMessage { get; private set; }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            this.Channel.BuildUp(this.GenerateUnityContainer());
+            base.SetUp();
+
+            this.Channel.BuildUp(this.Container);
 
             if (this.HasEventHandler)
             {

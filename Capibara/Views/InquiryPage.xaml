@@ -4,17 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
-    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.ReportPage"
-    Title="通報">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:EnumToStringConverter x:Key="enumToString" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    x:Class="Capibara.Views.InquiryPage"
+    Title="お問い合わせ">
     <Grid Padding="0, 50, 0, 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -24,12 +18,14 @@
         </Grid.RowDefinitions>
         <ScrollView Padding="20, 0">
             <StackLayout>
-                <Label Text="通報理由" />
-                <Picker 
-                    ItemsSource="{Binding ReportReasons, Converter={StaticResource enumToString}}"
-                    SelectedIndex="{Binding SelectedIndex.Value}"
-                    Margin="10, 10, 0, 10" />
-                <Label Text="コメント" />
+                <Entry
+                    HorizontalOptions="FillAndExpand"
+                    Placeholder="連絡先メールアドレス"
+                    HeightRequest="40"
+                    Text="{Binding Email.Value, Mode=TwoWay}"
+                    Margin="0, 0, 0, 20"
+                    />
+                <Label Text="お問い合わせ内容" />
                 <Editor
                     Text="{Binding Message.Value, Mode=TwoWay}"
                     Margin="10, 10, 0, 0"
@@ -43,12 +39,10 @@
         <Button 
             Grid.Row="1"
             HeightRequest="50"
-            Text="通報する"
+            Text="送信する"
+            TextColor="{StaticResource PrimaryColor}"
+            BorderColor="{StaticResource PrimaryColor}"
             BackgroundColor="White"
-            TextColor="#d9534f"
-            BorderColor="#d9534f"
-            BorderWidth="3"
-            BorderRadius="25"
             Command="{Binding SubmitCommand}"
             Margin="20"
             />

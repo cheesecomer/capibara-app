@@ -37,11 +37,11 @@ namespace Capibara.Test.Net
         public class WhenGetSuccess : TestFixtureBase
         {
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                new GetRequest().BuildUp(container).Execute().Wait();
+                new GetRequest().BuildUp(this.Container).Execute().Wait();
             }
 
             [TestCase]
@@ -55,13 +55,13 @@ namespace Capibara.Test.Net
         public class WhenGetWithAuthenticationSuccess : TestFixtureBase
         {
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
 
-                new GetWithAuthenticationRequest().BuildUp(container).Execute().Wait();
+                new GetWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
             }
 
             [TestCase]
@@ -88,12 +88,14 @@ namespace Capibara.Test.Net
             private bool result;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
 
-                var container = this.GenerateUnityContainer();
+                var container = this.Container;
                 container.RegisterInstance<ICapibaraApplication>(application.Object);
 
                 // RequestBase のセットアップ
@@ -136,10 +138,12 @@ namespace Capibara.Test.Net
             }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 // RequestBase のセットアップ
-                this.request = new GetRequest().BuildUp(this.GenerateUnityContainer());
+                this.request = new GetRequest().BuildUp(this.Container);
             }
 
             [TestCase]
@@ -201,11 +205,11 @@ namespace Capibara.Test.Net
         public class WhenGetSuccess : TestFixtureBase
         {
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
-                
-                new GetRequest().BuildUp(container).Execute().Wait();
+                base.SetUp();
+
+                new GetRequest().BuildUp(this.Container).Execute().Wait();
             }
             
             [TestCase]
@@ -219,13 +223,13 @@ namespace Capibara.Test.Net
         public class WhenGetWithAuthenticationSuccess : TestFixtureBase
         {
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
-                
+                base.SetUp();
+
                 this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
                 
-                new GetWithAuthenticationRequest().BuildUp(container).Execute().Wait();
+                new GetWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
             }
             
             [TestCase]
@@ -251,13 +255,13 @@ namespace Capibara.Test.Net
         public class WhenPostWithAuthenticationSuccess : TestFixtureBase
         {
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
                 this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
 
-                new PostWithAuthenticationRequest().BuildUp(container).Execute().Wait();
+                new PostWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
             }
 
             [TestCase]
@@ -284,16 +288,16 @@ namespace Capibara.Test.Net
             private object result;
             
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var application = new Mock<ICapibaraApplication>();
                 application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
-                
-                var container = this.GenerateUnityContainer();
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
+                this.Container.RegisterInstance<ICapibaraApplication>(application.Object);
                 
                 // RequestBase のセットアップ
-                var task = new GetRequest().BuildUp(container).Execute();
+                var task = new GetRequest().BuildUp(this.Container).Execute();
                 task.Wait();
                 this.result = task.Result;
             }
@@ -332,10 +336,12 @@ namespace Capibara.Test.Net
             }
             
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 // RequestBase のセットアップ
-                this.request = new GetRequest().BuildUp(this.GenerateUnityContainer());
+                this.request = new GetRequest().BuildUp(this.Container);
             }
             
             [TestCase]
