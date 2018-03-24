@@ -5,10 +5,10 @@ using Capibara.Net.Blocks;
 
 using NUnit.Framework;
 
-namespace Capibara.Test.Net.Blocks.CreateRequestTest
+namespace Capibara.Test.Net.Blocks
 {
     [TestFixture]
-    public class ExecuteTest
+    public class CreateRequestTest
     {
         private CreateRequest Subject { get; set; }
 

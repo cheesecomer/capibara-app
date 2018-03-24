@@ -69,6 +69,7 @@
     <Compile Include="Models\ReportReason.cs" />
     <Compile Include="Net\Reports\CreateRequest.cs" />
     <Compile Include="Net\RequestFactory.cs" />
+    <Compile Include="Net\Inquiries\CreateRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -83,6 +84,7 @@
     <Folder Include="Net\Blocks\" />
     <Folder Include="Net\Informations\" />
     <Folder Include="Net\Reports\" />
+    <Folder Include="Net\Inquiries\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">

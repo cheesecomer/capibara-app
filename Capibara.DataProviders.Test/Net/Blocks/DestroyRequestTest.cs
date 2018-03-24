@@ -5,10 +5,10 @@ using Capibara.Net.Blocks;
 
 using NUnit.Framework;
 
-namespace Capibara.Test.Net.Blocks.DestroyRequestTest
+namespace Capibara.Test.Net.Blocks
 {
     [TestFixture]
-    public class ExecuteTest
+    public class DestroyRequestTest
     {
         private DestroyRequest Subject { get; set; }
 

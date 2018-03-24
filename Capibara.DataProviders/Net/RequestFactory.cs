@@ -32,44 +32,50 @@ namespace Capibara.Net
         RequestBase<User> UsersShowRequest(User target);
 
         RequestBase<User> UsersUpdateRequest(User target);
+
+        RequestBase InquiriesCreateRequest(string email, string content);
     }
 
     public class RequestFactory : IRequestFactory
     {
         RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksCreateRequest(User target)
-              => new Blocks.CreateRequest(target);
+            => new Blocks.CreateRequest(target);
 
         RequestBase IRequestFactory.BlocksDestroyRequest(Block target)
-              => new Blocks.DestroyRequest(target);
+            => new Blocks.DestroyRequest(target);
 
         RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksIndexRequest()
-              => new Blocks.IndexRequest();
+            => new Blocks.IndexRequest();
 
         RequestBase<Informations.IndexResponse> IRequestFactory.InformationsIndexRequest()
-                    => new Informations.IndexRequest();
+            => new Informations.IndexRequest();
 
         RequestBase IRequestFactory.ReportsCreateRequest(User target, ReportReason reason, string message)
-               => new Reports.CreateRequest(target, reason, message);
+            => new Reports.CreateRequest(target, reason, message);
 
         RequestBase<Rooms.IndexResponse> IRequestFactory.RoomsIndexRequest()
-             => new Rooms.IndexRequest();
+            => new Rooms.IndexRequest();
 
         RequestBase<Room> IRequestFactory.RoomsShowRequest(Room target)
-             => new Rooms.ShowRequest(target);
+            => new Rooms.ShowRequest(target);
 
         RequestBase<Sessions.CreateResponse> IRequestFactory.SessionsCreateRequest(string email, string password)
-                => new Sessions.CreateRequest(email, password);
+            => new Sessions.CreateRequest(email, password);
 
         RequestBase<Sessions.CreateResponse> IRequestFactory.UsersCreateRequest(string nickname)
-             => new Users.CreateRequest(nickname);
+            => new Users.CreateRequest(nickname);
 
         RequestBase IRequestFactory.UsersDestroyRequest()
-             => new Users.DestroyRequest();
+            => new Users.DestroyRequest();
 
         RequestBase<User> IRequestFactory.UsersShowRequest(User target)
-             => new Users.ShowRequest(target);
+            => new Users.ShowRequest(target);
 
         RequestBase<User> IRequestFactory.UsersUpdateRequest(User target)
-             => new Users.UpdateRequest(target);
+            => new Users.UpdateRequest(target);
+
+        RequestBase IRequestFactory.InquiriesCreateRequest(string email, string content)
+            => new Inquiries.CreateRequest(email, content);
+
     }
 }
