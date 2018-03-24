@@ -85,10 +85,11 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             protected virtual Exception Exception { get; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                
-                this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<User>>();
                 if (this.Response.IsPresent())

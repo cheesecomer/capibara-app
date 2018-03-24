@@ -20,8 +20,10 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
@@ -41,12 +43,13 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
-            container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
+            base.SetUp();
 
-            this.Subject = new SubjectViewModel().BuildUp(container);
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
+
+            this.Subject = new SubjectViewModel().BuildUp(this.Container);
         }
 
         [TestCase]
@@ -68,8 +71,10 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new SubjectViewModel();
         }
 
@@ -102,8 +107,10 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new SubjectViewModel();
         }
 

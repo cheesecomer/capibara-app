@@ -29,9 +29,11 @@ namespace Capibara.Test.Models.SessionTest
             protected bool Result { get; private set; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<CreateResponse>>();
 

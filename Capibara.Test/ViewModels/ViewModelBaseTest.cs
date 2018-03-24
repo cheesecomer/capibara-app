@@ -65,7 +65,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulNotThrowException()
             {   
-                Assert.DoesNotThrow(() => new StabViewModel().Container = this.GenerateUnityContainer());
+                Assert.DoesNotThrow(() => new StabViewModel().Container = this.Container);
             }
         }
     }

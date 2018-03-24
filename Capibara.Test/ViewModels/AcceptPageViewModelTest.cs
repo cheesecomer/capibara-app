@@ -22,18 +22,16 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
     {
         public bool IsOverrideUrlCalled;
 
-        public override IUnityContainer GenerateUnityContainer()
+        public override void SetUp()
         {
-            var container = base.GenerateUnityContainer();
+            base.SetUp();
 
             var overrideUrlService = new Mock<IOverrideUrlService>();
             overrideUrlService
                 .Setup(x => x.OverrideUrl(It.IsAny<IDeviceService>(), It.IsAny<string[]>()))
                 .Returns<IDeviceService, string[]>((x, y) => (IOverrideUrlCommandParameters v) => this.IsOverrideUrlCalled = true);
 
-            container.RegisterInstance(overrideUrlService.Object);
-
-            return container;
+            this.Container.RegisterInstance(overrideUrlService.Object);
         }
     }
 
@@ -42,7 +40,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldIsPrivacyPolicyUrl()
         {
-            var subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            var subject = new SubjectViewModel().BuildUp(this.Container);
             Assert.That(subject.Source.Value.Url, Is.EqualTo(this.Environment.PrivacyPolicyUrl));
         }
     }
@@ -64,13 +62,15 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         private bool IsCommitCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             viewModel.IsLoaded.Value = true;
 
             viewModel.AgreeCommand.Execute();
@@ -96,13 +96,15 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         private bool IsDestroyCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var model = new Mock<User>();
             model.SetupAllProperties();
             model.Setup(x => x.Destroy()).ReturnsAsync(true).Callback(() => this.IsDestroyCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
             viewModel.CancelCommand.Execute();
 
@@ -129,7 +131,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.CommitSuccess += null, EventArgs.Empty);
 
@@ -144,7 +146,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.GenerateUnityContainer());
+            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
 
@@ -178,7 +180,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             model.SetupSet(x => x.IsAccepted = true).Callback(() => isSetAcceptedTrue = true);
 
             var subject = new SubjectViewModel(model: model.Object);
-            subject.BuildUp(this.GenerateUnityContainer());
+            subject.BuildUp(this.Container);
             subject.OnNavigatedTo(null);
             Assert.That(isSetAcceptedTrue, Is.EqualTo(true));
         }
@@ -189,7 +191,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShoulLoadedPropertyUpdate()
         {
-            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.Container);
             viewModel.OverrideUrlCommand.Execute(new Mock<IOverrideUrlCommandParameters>().Object);
 
             Assert.That(this.IsOverrideUrlCalled, Is.EqualTo(true));

@@ -26,7 +26,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         [TestCase("email@email.com", "password", true)]
         public void ItShouldCanExecuteWithExpected(string email, string password, bool canExecute)
         {
-            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.Container);
             viewModel.Email.Value = email;
             viewModel.Password.Value = password;
             Assert.That(viewModel.SignInCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -41,7 +41,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
         public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {
-            var container = this.GenerateUnityContainer();
+            var container = this.Container;
             var model = new Mock<Session>();
             model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
             this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
@@ -61,11 +61,12 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             protected abstract Exception Exception { get; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
+
                 var model = new Mock<Session>();
-                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
                 model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
             }
@@ -119,13 +120,14 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             protected bool IsSignInCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
+
                 var model = new Mock<Session>();
                 model.SetupAllProperties();
                 model.Setup(x => x.SignIn()).ReturnsAsync(true).Callback(() => this.IsSignInCalled = true);
-                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
                 this.Subject.Email.Value = "user@email.com";
                 this.Subject.Password.Value = "password";
 
@@ -173,8 +175,10 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
     public class SignUpCommandTest : ViewModelTestBase
     {
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.SignUpCommand.Execute();

@@ -26,18 +26,16 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
 
         protected string url;
 
-        public override IUnityContainer GenerateUnityContainer()
+        public override void SetUp()
         {
-            var container = base.GenerateUnityContainer();
+            base.SetUp();
 
             var overrideUrlService = new Mock<IOverrideUrlService>();
             overrideUrlService
                 .Setup(x => x.OverrideUrl(It.IsAny<IDeviceService>(), It.Is<string[]>(v => v[0] == url)))
                 .Returns<IDeviceService, string[]>((x, y) => (IOverrideUrlCommandParameters v) => this.IsOverrideUrlCalled = true);
 
-            container.RegisterInstance(overrideUrlService.Object);
-
-            return container;
+            this.Container.RegisterInstance(overrideUrlService.Object);
         }
     }
 
@@ -60,10 +58,12 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new SubjectViewModel();
-            this.Subject.BuildUp(this.GenerateUnityContainer());
+            this.Subject.BuildUp(this.Container);
 
             this.Subject.OnNavigatedTo(new NavigationParameters
             {
@@ -91,7 +91,7 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
         public void ItShoulLoadedPropertyUpdate()
         {
             this.url = "http://foobar.com/";
-            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.Container);
             viewModel.OnNavigatedTo(new NavigationParameters
             {
                 { ParameterNames.Url, this.url }

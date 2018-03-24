@@ -26,7 +26,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         [TestCase(" a ", true)]
         public void ItShouldCanExecuteWithExpected(string nickname, bool canExecute)
         {
-            var viewModel = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.Container);
             viewModel.Nickname.Value = nickname;
             Assert.That(viewModel.SignUpCommand.CanExecute(), Is.EqualTo(canExecute));
         }
@@ -41,7 +41,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
         public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
         {
-            var container = this.GenerateUnityContainer();
+            var container = this.Container;
             var model = new Mock<User>();
             model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
             this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
@@ -66,7 +66,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         [TestCaseSource("TestCaseSource")]
         public void ItShouldNotNavigate(Exception exception)
         {
-            var container = this.GenerateUnityContainer();
+            var container = this.Container;
             var model = new Mock<User>();
             var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
 
@@ -87,14 +87,15 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             protected bool IsSignUpCalled;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
+
                 var model = new Mock<User>();
                 model.SetupAllProperties();
                 model.Setup(x => x.SignUp()).ReturnsAsync(true).Callback(() => this.IsSignUpCalled = true);
 
-                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
                 this.Subject.Nickname.Value = "Foo.Bar";
 
                 if (!this.NeedSignUpWait)
@@ -139,8 +140,10 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
     public class SignInCommandTest : ViewModelTestBase
     {
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var viewModel = new SubjectViewModel(this.NavigationService);
 
             viewModel.SignInCommand.Execute();
@@ -172,10 +175,12 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var viewModel = new SubjectViewModel(this.NavigationService);
-                viewModel.BuildUp(this.GenerateUnityContainer());
+                viewModel.BuildUp(this.Container);
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = Guid.NewGuid().ToString();
@@ -205,10 +210,12 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         public class WhenAccessTokenIsEmpty : ViewModelTestBase
         {
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var viewModel = new SubjectViewModel(this.NavigationService);
-                viewModel.BuildUp(this.GenerateUnityContainer());
+                viewModel.BuildUp(this.Container);
 
                 viewModel.OnResume();
             }
@@ -235,8 +242,10 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         private bool IsOpenUrlCalled = false;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var pageDialogService = new Mock<IPageDialogService>();
             pageDialogService
                 .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
@@ -246,13 +255,11 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
                     return Task.Run(() => { });
                 });
 
-            var container = this.GenerateUnityContainer();
-
             var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
 
             viewModel.Model.Id = 1;
 
-            viewModel.BuildUp(container);
+            viewModel.BuildUp(this.Container);
 
             viewModel.SignUpWithSnsCommand.Execute();
 

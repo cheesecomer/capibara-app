@@ -64,11 +64,11 @@ namespace Capibara.Test.Net.Channels
             protected Dictionary<string, object> context;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(container).Connect();
+                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(this.Container).Connect();
 
                 // 接続処理終了を待機
                 ConnectTaskSource.Task.Wait();
@@ -144,11 +144,11 @@ namespace Capibara.Test.Net.Channels
             protected Dictionary<string, object> identifier;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(container).Connect();
+                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(this.Container).Connect();
 
                 // 接続処理終了を待機
                 ConnectTaskSource.Task.Wait();

@@ -40,12 +40,14 @@ namespace Capibara.Test.ViewModels.InquiryPageViewModelTest
         private bool IsInquiriesCreateRequestCalled;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             var request = new Mock<RequestBase>();
             request.Setup(x => x.Execute()).Returns(Task.CompletedTask);
 
-            var container = this.GenerateUnityContainer();
+            var container = this.Container;
             this.RequestFactory.Setup(x => x.InquiriesCreateRequest("example@email.com", "Message!"))
                 .Returns(request.Object)
                 .Callback<string, string>((a, b) => this.IsInquiriesCreateRequestCalled = true);

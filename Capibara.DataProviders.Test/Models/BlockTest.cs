@@ -16,11 +16,13 @@ namespace Capibara.Test.Models.BlockTest
             private Block Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"target\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999 }";
                 this.Subject = JsonConvert.DeserializeObject<Block>(json);
-                this.Subject.BuildUp(this.GenerateUnityContainer());
+                this.Subject.BuildUp(this.Container);
                 this.IsolatedStorage.UserId = 10;
             }
 

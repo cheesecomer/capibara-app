@@ -16,12 +16,14 @@ namespace Capibara.Test.Models.MessageTest
             private Message Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.Subject = JsonConvert.DeserializeObject<Message>(json);
 
-                this.Subject.BuildUp(this.GenerateUnityContainer());
+                this.Subject.BuildUp(this.Container);
                 this.IsolatedStorage.UserId = 10;
             }
 
@@ -62,12 +64,14 @@ namespace Capibara.Test.Models.MessageTest
             private Message Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"sender\": { \"id\": 11, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.Subject = JsonConvert.DeserializeObject<Message>(json);
 
-                this.Subject.BuildUp(this.GenerateUnityContainer());
+                this.Subject.BuildUp(this.Container);
                 this.IsolatedStorage.UserId = 10;
             }
 
@@ -108,12 +112,14 @@ namespace Capibara.Test.Models.MessageTest
             private Message Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
+                base.SetUp();
+
                 var json = "{ \"sender\": null, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }";
                 this.Subject = JsonConvert.DeserializeObject<Message>(json);
 
-                this.Subject.BuildUp(this.GenerateUnityContainer());
+                this.Subject.BuildUp(this.Container);
                 this.IsolatedStorage.UserId = 10;
             }
 

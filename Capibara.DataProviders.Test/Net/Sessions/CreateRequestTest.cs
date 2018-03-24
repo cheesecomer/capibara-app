@@ -19,8 +19,10 @@ namespace Capibara.Test.Net.Sessions
         private CreateRequest Subject { get; set; }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new CreateRequest("user@email.com", "p@ssword");
         }
 

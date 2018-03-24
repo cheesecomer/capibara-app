@@ -22,9 +22,9 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
             var viewModel = new SubjectViewModel(this.NavigationService);
 
@@ -45,8 +45,10 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         protected SubjectViewModel Subject;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
+            base.SetUp();
+
             this.Subject = new SubjectViewModel();
         }
 
@@ -88,9 +90,11 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         }
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            this.Subject = new SubjectViewModel().BuildUp(this.GenerateUnityContainer());
+            base.SetUp();
+
+            this.Subject = new SubjectViewModel().BuildUp(this.Container);
         }
 
         [TestCase]

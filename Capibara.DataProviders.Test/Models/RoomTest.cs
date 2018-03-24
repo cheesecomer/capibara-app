@@ -113,9 +113,11 @@ namespace Capibara.Test.Models.RoomTest
             private Room Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
             }
 
             [TearDown]
@@ -137,11 +139,13 @@ namespace Capibara.Test.Models.RoomTest
             private Room Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
                 this.Subject.Connect().Wait();
-                this.Subject.BuildUp(this.GenerateUnityContainer());
+                this.Subject.BuildUp(this.Container);
             }
 
             [TearDown]
@@ -168,7 +172,7 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.Container);
                 this.Subject.Connect().Wait();
             }
 
@@ -185,9 +189,11 @@ namespace Capibara.Test.Models.RoomTest
             private Room Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
             }
 
             [TestCase]
@@ -212,9 +218,11 @@ namespace Capibara.Test.Models.RoomTest
                 };
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
 
                 this.Subject.Connect().Wait();
 
@@ -252,7 +260,7 @@ namespace Capibara.Test.Models.RoomTest
             [SetUp]
             public void Setup()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                this.Subject = new Room().BuildUp(this.Container);
 
                 this.Subject.Connect().Wait();
 
@@ -288,9 +296,11 @@ namespace Capibara.Test.Models.RoomTest
                 };
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
 
                 this.Subject.Connect().Wait();
 
@@ -326,9 +336,11 @@ namespace Capibara.Test.Models.RoomTest
                 };
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
 
                 this.Subject.Connect().Wait();
 
@@ -369,9 +381,11 @@ namespace Capibara.Test.Models.RoomTest
                 };
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
                 this.Subject.Participants.Add(new User() { Id = 10 });
 
                 if (NeedEventHandler)
@@ -475,9 +489,11 @@ namespace Capibara.Test.Models.RoomTest
                 };
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.Subject = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
                 this.Subject.Participants.Add(new User() { Id = 11 });
 
                 if (NeedEventHandler)
@@ -578,11 +594,11 @@ namespace Capibara.Test.Models.RoomTest
             protected virtual bool NeedResetSendAsync { get; } = true;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.Subject = new Room() { Id = 1 }.BuildUp(container);
+                this.Subject = new Room() { Id = 1 }.BuildUp(this.Container);
 
                 if (this.NeedEventHandler)
                 {
@@ -708,11 +724,11 @@ namespace Capibara.Test.Models.RoomTest
             protected bool Result { get; private set; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.model = new Room { Id = 1 }.BuildUp(container);
+                this.model = new Room { Id = 1 }.BuildUp(this.Container);
 
                 if (this.NeedEventHandler)
                 {

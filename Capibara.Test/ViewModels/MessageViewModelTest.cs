@@ -13,14 +13,14 @@ namespace Capibara.Test.ViewModels.MessageViewModel
         private Message model;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var container = this.GenerateUnityContainer();
+            base.SetUp();
 
-            this.model = new Message { Sender = new User().BuildUp(container) }.BuildUp(container);
+            this.model = new Message { Sender = new User().BuildUp(this.Container) }.BuildUp(this.Container);
 
             var viewModel = new SubjectViewModel(this.NavigationService, model: this.model);
-            viewModel.BuildUp(container);
+            viewModel.BuildUp(this.Container);
 
             viewModel.ShowProfileCommand.Execute();
 
