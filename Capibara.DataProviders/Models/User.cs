@@ -17,6 +17,8 @@ namespace Capibara.Models
 
         private string iconUrl;
 
+        private string iconThumbnailUrl;
+
         private string iconBase64;
 
         private bool isBlock;
@@ -72,6 +74,13 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.iconUrl, value);
         }
 
+        [JsonProperty("icon_thumb_url")]
+        public string IconThumbnailUrl
+        {
+            get => this.iconThumbnailUrl;
+            set => this.SetProperty(ref this.iconThumbnailUrl, value);
+        }
+
         public string IconBase64
         {
             get => this.iconBase64;
@@ -102,6 +111,7 @@ namespace Capibara.Models
             this.Nickname = model.Nickname;
             this.Biography = model.Biography;
             this.IconUrl = model.IconUrl;
+            this.IconThumbnailUrl = model.IconThumbnailUrl;
             this.IsBlock = model.IsBlock;
             this.IsAccepted = model.IsAccepted;
         }
