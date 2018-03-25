@@ -96,6 +96,8 @@ namespace Capibara.Test
 
         protected IUnityContainer Container { get; private set; }
 
+        protected bool IsExitCalled { get; private set; }
+
         [SetUp]
         public virtual void SetUp()
         {
@@ -215,7 +217,11 @@ namespace Capibara.Test
 
             this.RequestFactory = new Mock<IRequestFactory>();
 
-            this.RequestFactory = new Mock<IRequestFactory>();
+            var applicationService = new Mock<IApplicationService>();
+            applicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
+            applicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
+            applicationService.SetupGet(x => x.AppVersion).Returns("1.0.0");
+            applicationService.SetupGet(x => x.Platform).Returns("iOS");
 
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
@@ -225,6 +231,7 @@ namespace Capibara.Test
             container.RegisterInstance<ICapibaraApplication>(application.Object);
             container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
             container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
+            container.RegisterInstance(applicationService.Object);
 
             this.Container = container;
         }
