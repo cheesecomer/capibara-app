@@ -105,18 +105,29 @@ namespace Capibara.ViewModels
 
         private async Task SignIn()
         {
-            var user = new User { Id = this.IsolatedStorage.UserId }.BuildUp(this.Container);
-            if (await user.Refresh())
+            var request = this.RequestFactory.SessionsRefreshRequest();
+            try
             {
-                var pageName = 
-                    user.IsAccepted 
-                        ? "/MainPage/NavigationPage/FloorMapPage" 
+                var response = await request.Execute();
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.Save();
+
+                var pageName =
+                    response.IsAccepted
+                        ? "/MainPage/NavigationPage/FloorMapPage"
                         : "/NavigationPage/AcceptPage";
                 var parameters =
                     this.Model.IsAccepted
                         ? null
-                        : new NavigationParameters { { ParameterNames.Model, user } };
+                        : new NavigationParameters { { ParameterNames.Model, response as User } };
                 await this.NavigationService.NavigateAsync(pageName, parameters);
+            }
+            catch (Exception e)
+            {
+                await this.PageDialogService.DisplayAlertAsync("ログインに失敗しました", "再度はじめからやり直してください", "閉じる");
             }
         }
     }
