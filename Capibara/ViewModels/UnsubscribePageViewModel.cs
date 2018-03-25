@@ -17,7 +17,8 @@ namespace Capibara.ViewModels
             : base (navigationService, pageDialogService)
         {
             this.UnsubscribeCommand = new AsyncReactiveCommand();
-            this.UnsubscribeCommand.Subscribe(async x => await this.ProgressDialogService.DisplayProgressAsync(this.CurrentUser.Destroy()));
+            this.UnsubscribeCommand.Subscribe(
+                () => this.ProgressDialogService.DisplayProgressAsync(this.CurrentUser.Destroy()));
         }
 
         protected override void OnContainerChanged()
@@ -25,6 +26,8 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
 
             this.CurrentUser.DestroySuccess += this.OnDestroySuccess;
+            this.CurrentUser.DestroyFail += this.OnFail(
+                () => this.ProgressDialogService.DisplayProgressAsync(this.CurrentUser.Destroy()));
         }
 
         public async void OnDestroySuccess(object sender, EventArgs args)

@@ -61,22 +61,25 @@ namespace Capibara.ViewModels
         private async Task ToFloorMapPage()
         {
             var user = new User { Id = this.IsolatedStorage.UserId }.BuildUp(this.Container);
-            if (!await user.Refresh())
+            user.RefreshSuccess += async (s, e) =>
             {
-                await this.ToSignUpPage();
-            }
-            else if (user.IsAccepted)
-            {
-                await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
+                if (user.IsAccepted)
+                {
+                    await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
-                await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
-            }
-            else
-            {
-                await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
+                    await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
+                }
+                else
+                {
+                    await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
-                await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, user } }, animated: false);
-            }
+                    await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, user } }, animated: false);
+                }
+            };
+
+            user.RefreshFail += this.OnFail(() => user.Refresh());
+
+            await user.Refresh();
         }
 
         private async Task LogoScaleChangeAsync()

@@ -87,11 +87,15 @@ namespace Capibara.ViewModels
             this.NavigationService.NavigateAsync(pageName, parameters);
         }
 
-        private void OnSignInFail(object sender, FailEventArgs args)
+        private async void OnSignInFail(object sender, FailEventArgs args)
         {
             if (args.Error is Net.HttpUnauthorizedException)
             {
                 this.Error.Value = ((Net.HttpUnauthorizedException)args.Error).Detail.Message;
+            }
+            else
+            {
+                await this.DisplayErrorAlertAsync(args.Error, () => this.ProgressDialogService.DisplayProgressAsync(this.Model.SignIn()));
             }
         }
     }

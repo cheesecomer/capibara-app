@@ -230,6 +230,7 @@
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Services\ScreenService.cs" />
     <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

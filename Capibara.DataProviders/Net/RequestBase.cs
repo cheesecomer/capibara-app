@@ -121,6 +121,18 @@ namespace Capibara.Net
 
                 throw new HttpUnauthorizedException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
             }
+            else if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new HttpForbiddenException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+            else if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                throw new HttpServiceUnavailableException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+            else if (responseMessage.StatusCode == HttpStatusCode.UpgradeRequired)
+            {
+                throw new HttpUpgradeRequiredException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
 
             return responseMessage;
         }

@@ -1,8 +1,15 @@
-﻿using Capibara.Models;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+
+using Capibara.Net;
+using Capibara.Models;
 using Capibara.ViewModels;
 
+using Moq;
 using NUnit.Framework;
 
+using Prism.Services;
 using Prism.Navigation;
 
 namespace Capibara.Test.ViewModels.ViewModelBase
@@ -20,8 +27,12 @@ namespace Capibara.Test.ViewModels.ViewModelBase
 
     public class StabViewModel : ViewModelBase<StabModel>
     {
-        public StabViewModel(INavigationService navigationService = null, StabModel model = null) 
-            : base(navigationService, null, model) { }
+        public StabViewModel(INavigationService navigationService = null, IPageDialogService pageDialogService = null, StabModel model = null) 
+            : base(navigationService, pageDialogService, model) { }
+
+        public void Fail(Exception exception) {
+            this.OnFail(() => Task.Run(() => {})).Invoke(null, new FailEventArgs(exception));
+        }
     }
 
     namespace ModelTest
@@ -152,6 +163,143 @@ namespace Capibara.Test.ViewModels.ViewModelBase
                 viewModel.OnNavigatingTo(parameters);
 
                 Assert.That(viewModel.Model.Name, Is.EqualTo(model.Name));
+            }
+        }
+    }
+
+    namespace OnFailTest
+    {
+        public abstract class ViewModelTestBase : ViewModels.ViewModelTestBase
+        {
+            protected StabViewModel Subject { get; private set; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject = new StabViewModel(this.NavigationService, this.PageDialogService.Object);
+            }
+        }
+
+        public class WhenHttpUnauthorizedException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShoulGoToSignIn()
+            {
+                Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+            }
+        }
+
+        public class WhenHttpForbiddenException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpForbiddenException(HttpStatusCode.Forbidden, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShoulGoBack()
+            {
+                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenHttpNotFoundException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpNotFoundException(HttpStatusCode.NotFound, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShoulGoBack()
+            {
+                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenHttpUpgradeRequiredException : ViewModelTestBase
+        {
+            bool IsOpenUriCalled;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.DeviceService
+                    .Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "http://example.com/store")))
+                    .Callback<Uri>(v => this.IsOpenUriCalled = true);
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpUpgradeRequiredException(HttpStatusCode.UpgradeRequired, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShoulGoBack()
+            {
+                Assert.That(this.IsOpenUriCalled, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenHttpServiceUnavailableException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpServiceUnavailableException(HttpStatusCode.ServiceUnavailable, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShoulExit()
+            {
+                Assert.That(this.IsExitCalled, Is.EqualTo(true));
             }
         }
     }

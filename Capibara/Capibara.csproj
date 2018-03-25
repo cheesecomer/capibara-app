@@ -62,7 +62,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MainPageViewModel.cs" />
-    <Compile Include="Services\IProgressDialogService.cs" />
     <Compile Include="Views\SettingPage.xaml.cs">
       <DependentUpon>SettingPage.xaml</DependentUpon>
     </Compile>
@@ -80,7 +79,6 @@
       <DependentUpon>EditProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Effects\BorderEffect.cs" />
-    <Compile Include="Services\IPickupPhotoService.cs" />
     <Compile Include="Forms\RoundImage.cs" />
     <Compile Include="ImageSourceExtensions.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
@@ -116,14 +114,14 @@
     <Compile Include="Converters\TopMarginConverter.cs" />
     <Compile Include="Converters\WebNavigatingEventArgsConverter.cs" />
     <Compile Include="ViewModels\OverrideUrlCommandParameters.cs" />
-    <Compile Include="Services\IOverrideUrlService.cs" />
     <Compile Include="Ioc\ContainerProvider.cs" />
-    <Compile Include="Services\IScreenService.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="ViewModels\InquiryPageViewModel.cs" />
     <Compile Include="Views\InquiryPage.xaml.cs">
       <DependentUpon>InquiryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\IOverrideUrlService.cs" />
+    <Compile Include="Services\IScreenService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
