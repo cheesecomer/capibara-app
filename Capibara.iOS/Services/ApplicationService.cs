@@ -13,6 +13,6 @@ namespace Capibara.iOS.Services
 
         string IApplicationService.Platform => "iOS";
 
-        string IApplicationService.AppVersion => NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
+        string IApplicationService.AppVersion => NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
     }
 }
