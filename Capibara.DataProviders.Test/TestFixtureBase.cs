@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 
+using Capibara.Services;
 using Capibara.Net;
 using Capibara.Net.Channels;
 
@@ -111,7 +112,7 @@ namespace Capibara.Test
 
             // RestClient のセットアップ
             var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
+            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>(), It.IsAny<IApplicationService>()));
             restClient
                 .Setup(x => x.GenerateAuthenticationHeader(It.IsAny<string>()))
                 .Returns<string>(token => new AuthenticationHeaderValue("Token", token));

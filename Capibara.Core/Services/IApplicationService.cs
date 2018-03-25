@@ -7,6 +7,10 @@ namespace Capibara.Services
         void Exit();
 
         string StoreUrl { get; }
+
+        string Platform { get; }
+
+        string AppVersion { get; }
     }
 }
 

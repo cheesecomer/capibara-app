@@ -105,7 +105,7 @@ namespace Capibara.ViewModels
 
         private async Task SignIn()
         {
-            var request = this.RequestFactory.SessionsRefreshRequest();
+            var request = this.RequestFactory.SessionsRefreshRequest().BuildUp(this.Container);
             try
             {
                 var response = await request.Execute();
@@ -125,7 +125,7 @@ namespace Capibara.ViewModels
                         : new NavigationParameters { { ParameterNames.Model, response as User } };
                 await this.NavigationService.NavigateAsync(pageName, parameters);
             }
-            catch (Exception e)
+            catch
             {
                 await this.PageDialogService.DisplayAlertAsync("ログインに失敗しました", "再度はじめからやり直してください", "閉じる");
             }
