@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+using Capibara.Services;
+
 using Newtonsoft.Json;
 using Unity;
 using Unity.Attributes;
@@ -74,6 +76,10 @@ namespace Capibara.Net
         public ICapibaraApplication Application { get; set; }
 
         [JsonIgnore]
+        [Dependency]
+        public IApplicationService ApplicationService { get; set; }
+
+        [JsonIgnore]
         public virtual string StringContent => string.Empty;
 
         [JsonIgnore]
@@ -91,7 +97,7 @@ namespace Capibara.Net
 
             var requestMessage = new HttpRequestMessage(this.Method, url);
 
-            this.RestClient.ApplyRequestHeader(requestMessage);
+            this.RestClient.BuildUp(this.Container).ApplyRequestHeader(requestMessage, this.ApplicationService);
 
             if (this.NeedAuthentication && this.IsolatedStorage.AccessToken.IsPresent())
             {

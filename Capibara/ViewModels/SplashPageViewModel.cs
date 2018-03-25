@@ -61,7 +61,7 @@ namespace Capibara.ViewModels
 
         private async Task ToFloorMapPage()
         {
-            var request = this.RequestFactory.SessionsRefreshRequest();
+            var request = this.RequestFactory.SessionsRefreshRequest().BuildUp(this.Container);
             try
             {
                 var response = await request.Execute();
