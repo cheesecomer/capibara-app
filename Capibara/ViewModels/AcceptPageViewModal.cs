@@ -44,8 +44,10 @@ namespace Capibara.ViewModels
             this.LoadedCommand.Subscribe(() => this.IsLoaded.Value = true);
 
             this.Model.CommitSuccess += this.OnCommitSuccess;
+            this.Model.CommitFail += this.OnFail;
 
             this.Model.DestroySuccess += this.OnDestroySuccess;
+            this.Model.DestroyFail += this.OnFail;
         }
 
         protected override void OnContainerChanged()

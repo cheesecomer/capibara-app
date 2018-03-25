@@ -118,6 +118,9 @@ namespace Capibara.ViewModels
             });
 
             this.Model.SpeakSuccess += (sender, e) => this.Message.Value = string.Empty;
+
+            this.Model.SpeakFail += this.OnFail;
+            this.Model.RefreshFail += this.OnFail;
         }
 
         private async Task ConnectCommandExecute()

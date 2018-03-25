@@ -30,8 +30,8 @@ namespace Capibara.Test.ViewModels.ViewModelBase
         public StabViewModel(INavigationService navigationService = null, IPageDialogService pageDialogService = null, StabModel model = null) 
             : base(navigationService, pageDialogService, model) { }
 
-        public async Task Fail(Exception exception) {
-            await this.OnFail(null, new FailEventArgs(exception));
+        public void Fail(Exception exception) {
+            this.OnFail(null, new FailEventArgs(exception));
         }
     }
 
@@ -189,7 +189,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject.BuildUp(this.Container).Fail(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{\"message\": null}")).Wait();
+                this.Subject.BuildUp(this.Container).Fail(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{\"message\": null}"));
             }
 
             [TestCase]
@@ -212,7 +212,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject.BuildUp(this.Container).Fail(new HttpForbiddenException(HttpStatusCode.Forbidden, "{\"message\": null}")).Wait();
+                this.Subject.BuildUp(this.Container).Fail(new HttpForbiddenException(HttpStatusCode.Forbidden, "{\"message\": null}"));
             }
 
             [TestCase]
@@ -235,7 +235,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject.BuildUp(this.Container).Fail(new HttpNotFoundException(HttpStatusCode.NotFound, "{\"message\": null}")).Wait();
+                this.Subject.BuildUp(this.Container).Fail(new HttpNotFoundException(HttpStatusCode.NotFound, "{\"message\": null}"));
             }
 
             [TestCase]
@@ -264,7 +264,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
                     .Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "http://example.com/store")))
                     .Callback<Uri>(v => this.IsOpenUriCalled = true);
 
-                this.Subject.BuildUp(this.Container).Fail(new HttpUpgradeRequiredException(HttpStatusCode.UpgradeRequired, "{\"message\": null}")).Wait();
+                this.Subject.BuildUp(this.Container).Fail(new HttpUpgradeRequiredException(HttpStatusCode.UpgradeRequired, "{\"message\": null}"));
             }
 
             [TestCase]
@@ -287,7 +287,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject.BuildUp(this.Container).Fail(new HttpServiceUnavailableException(HttpStatusCode.ServiceUnavailable, "{\"message\": null}")).Wait();
+                this.Subject.BuildUp(this.Container).Fail(new HttpServiceUnavailableException(HttpStatusCode.ServiceUnavailable, "{\"message\": null}"));
             }
 
             [TestCase]

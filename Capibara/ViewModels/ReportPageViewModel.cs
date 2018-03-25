@@ -64,6 +64,7 @@ namespace Capibara.ViewModels
             this.SelectedIndex.Value = 0;
 
             this.Model.ReportSuccess += this.OnReportSuccess;
+            this.Model.ReportFail += this.OnFail;
         }
 
         private void OnReportSuccess(object sender, EventArgs args)

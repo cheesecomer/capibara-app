@@ -85,6 +85,8 @@ namespace Capibara.ViewModels
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
+            this.Model.RefreshFail += this.OnFail;
+
             // EditCommand
             this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.EditCommand.Subscribe(async () => {
@@ -95,6 +97,13 @@ namespace Capibara.ViewModels
             // CommitCommand
             this.CommitCommand = this.Nickname.Select(x => x.ToSlim().IsPresent()).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
+
+            this.Model.CommitSuccess += async (sender, e) => {
+                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
+                await this.NavigationService.GoBackAsync(parameters);
+            };
+
+            this.Model.CommitFail += this.OnFail;
 
             // ChangePhotoCommand
             this.ChangePhotoCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -112,14 +121,11 @@ namespace Capibara.ViewModels
                 await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, deleteButton, pickupButton, takeButton);
             });
 
-            this.Model.CommitSuccess += async (sender, e) => {
-                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
-                await this.NavigationService.GoBackAsync(parameters);
-            };
-
             // BlockCommand
             this.BlockCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
+
+            this.Model.BlockFail += this.OnFail;
 
             // ReportCommand
             this.ReportCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

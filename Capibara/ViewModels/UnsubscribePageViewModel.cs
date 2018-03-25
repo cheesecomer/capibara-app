@@ -25,6 +25,7 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
 
             this.CurrentUser.DestroySuccess += this.OnDestroySuccess;
+            this.CurrentUser.DestroyFail += this.OnFail;
         }
 
         public async void OnDestroySuccess(object sender, EventArgs args)

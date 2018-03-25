@@ -42,11 +42,9 @@ namespace Capibara.ViewModels
                 response.Blocks?.ForEach(x => this.Blocks.Add(x.BuildUp(this.Container)));
 
             }
-            catch (Net.HttpUnauthorizedException)
+            catch (Exception e)
             {
-                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる");
-
-                await this.NavigationService.NavigateAsync("/SignInPage");
+                await this.DisplayErrorAlertAsync(e);
             }
         }
     }

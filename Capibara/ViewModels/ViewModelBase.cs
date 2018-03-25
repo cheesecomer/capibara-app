@@ -87,7 +87,7 @@ namespace Capibara.ViewModels
 
         protected virtual void OnContainerChanged() { }
 
-        protected virtual async Task OnFail(object sender, FailEventArgs args)
+        protected virtual async void OnFail(object sender, FailEventArgs args)
         {
             await this.DisplayErrorAlertAsync(args.Error);
         }
@@ -118,6 +118,10 @@ namespace Capibara.ViewModels
             {
                 await this.PageDialogService.DisplayAlertAsync("申し訳ございません！", "現在メンテナンス中です。時間を置いて再度お試しください。", "閉じる");
                 this.ApplicationService.Exit();
+            }
+            else
+            {
+                await this.PageDialogService.DisplayAlertAsync("申し訳ございません！", "通信エラーです。再度実行してください。", "閉じる");
             }
         }
     }
