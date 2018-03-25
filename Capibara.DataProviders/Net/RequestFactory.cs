@@ -35,6 +35,8 @@ namespace Capibara.Net
 
         RequestBase<User> UsersUpdateRequest(User target);
 
+        RequestBase<User> UsersUpdateRequest(bool isAccepted);
+
         RequestBase InquiriesCreateRequest(string email, string content);
     }
 
@@ -78,6 +80,9 @@ namespace Capibara.Net
 
         RequestBase<User> IRequestFactory.UsersUpdateRequest(User target)
             => new Users.UpdateRequest(target);
+
+        RequestBase<User> IRequestFactory.UsersUpdateRequest(bool isAccepted)
+            => new Users.UpdateRequest(isAccepted);
 
         RequestBase IRequestFactory.InquiriesCreateRequest(string email, string content)
             => new Inquiries.CreateRequest(email, content);
