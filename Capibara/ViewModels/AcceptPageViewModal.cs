@@ -37,14 +37,14 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService, model)
         {
             this.AgreeCommand = this.IsLoaded.ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.AgreeCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
+            this.AgreeCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Accept()));
 
             this.CancelCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Destroy()));
 
             this.LoadedCommand.Subscribe(() => this.IsLoaded.Value = true);
 
-            this.Model.CommitSuccess += this.OnCommitSuccess;
-            this.Model.CommitFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
+            this.Model.AcceptSuccess += this.OnAcceptSuccess;
+            this.Model.AcceptFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Accept()));
 
             this.Model.DestroySuccess += this.OnDestroySuccess;
             this.Model.DestroyFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Destroy()));
@@ -69,7 +69,7 @@ namespace Capibara.ViewModels
             this.Model.IsAccepted = true;
         }
 
-        private async void OnCommitSuccess(object sender, EventArgs args)
+        private async void OnAcceptSuccess(object sender, EventArgs args)
         {
             await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
         }

@@ -10,9 +10,16 @@ namespace Capibara.Net.Users
     {
         private User user;
 
+        private bool? isAccepted;
+
         public UpdateRequest(User user)
         {
             this.user = user;
+        }
+
+        public UpdateRequest(bool isAccepted)
+        {
+            this.isAccepted = isAccepted;
         }
 
         public override HttpMethod Method { get; } = HttpMethod.Put;
@@ -27,16 +34,16 @@ namespace Capibara.Net.Users
 
         public override string ContentType { get; } = "application/json";
 
-        [JsonProperty("nickname")]
-        public string Nickname => this.user.Nickname;
+        [JsonProperty("nickname", NullValueHandling = NullValueHandling.Ignore)]
+        public string Nickname => this.user?.Nickname;
 
-        [JsonProperty("biography")]
-        public string Biography => this.user.Biography;
+        [JsonProperty("biography", NullValueHandling = NullValueHandling.Ignore)]
+        public string Biography => this.user?.Biography;
 
-        [JsonProperty("accepted")]
-        public bool IsAccepted => this.user.IsAccepted;
+        [JsonProperty("accepted", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsAccepted => this.isAccepted;
 
         [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
-        public string IconBase64 => this.user.IconBase64.IsPresent() ? $"data:image/png;base64,{this.user.IconBase64}" : null;
+        public string IconBase64 => this.user?.IconBase64.IsPresent() ?? false? $"data:image/png;base64,{this.user.IconBase64}" : null;
     }
 }

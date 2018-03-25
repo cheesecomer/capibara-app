@@ -37,6 +37,10 @@ namespace Capibara.Models
 
         public virtual event EventHandler<FailEventArgs> CommitFail;
 
+        public virtual event EventHandler AcceptSuccess;
+
+        public virtual event EventHandler<FailEventArgs> AcceptFail;
+
         public virtual event EventHandler BlockSuccess;
 
         public virtual event EventHandler<FailEventArgs> BlockFail;
@@ -212,6 +216,39 @@ namespace Capibara.Models
             catch (Exception e)
             {
                 this.CommitFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        public virtual async Task<bool> Accept()
+        {
+            var request = this.RequestFactory.UsersUpdateRequest(true).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.Restore(response);
+
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                if (this.Container.IsRegistered(typeof(User), UnityInstanceNames.CurrentUser))
+                {
+                    this.Container.Resolve<User>(UnityInstanceNames.CurrentUser).Restore(this);
+                }
+                else
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
+
+                this.AcceptSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.AcceptFail?.Invoke(this, e);
                 return false;
             }
         }
