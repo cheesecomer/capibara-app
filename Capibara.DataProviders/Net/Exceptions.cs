@@ -39,6 +39,38 @@ namespace Capibara.Net
     }
 
     /// <summary>
+    /// 401 Unauthorized 例外
+    /// </summary>
+    public class HttpUnauthorizedException : HttpExceptionBase
+    {
+        public HttpUnauthorizedException(HttpStatusCode httpStatusCode, string message, Exception innerException)
+            : base(httpStatusCode, message, innerException)
+        {
+        }
+
+        public HttpUnauthorizedException(HttpStatusCode httpStatusCode, string message)
+            : this(httpStatusCode, message, null)
+        {
+        }
+    }
+
+    /// <summary>
+    /// 403 Forbidden 例外
+    /// </summary>
+    public class HttpForbiddenException : HttpExceptionBase
+    {
+        public HttpForbiddenException(HttpStatusCode httpStatusCode, string message, Exception innerException)
+            : base(httpStatusCode, message, innerException)
+        {
+        }
+
+        public HttpForbiddenException(HttpStatusCode httpStatusCode, string message)
+            : this(httpStatusCode, message, null)
+        {
+        }
+    }
+
+    /// <summary>
     /// 404 NotFound 例外
     /// </summary>
     public class HttpNotFoundException : HttpExceptionBase
@@ -55,16 +87,32 @@ namespace Capibara.Net
     }
 
     /// <summary>
-    /// 401 Unauthorized 例外
+    /// 426 Upgrade Required 例外
     /// </summary>
-    public class HttpUnauthorizedException : HttpExceptionBase
+    public class HttpUpgradeRequiredException : HttpExceptionBase
     {
-        public HttpUnauthorizedException(HttpStatusCode httpStatusCode, string message, Exception innerException)
+        public HttpUpgradeRequiredException(HttpStatusCode httpStatusCode, string message, Exception innerException)
             : base(httpStatusCode, message, innerException)
         {
         }
 
-        public HttpUnauthorizedException(HttpStatusCode httpStatusCode, string message)
+        public HttpUpgradeRequiredException(HttpStatusCode httpStatusCode, string message)
+            : this(httpStatusCode, message, null)
+        {
+        }
+    }
+
+    /// <summary>
+    /// 503 ServiceUnavailable 例外
+    /// </summary>
+    public class HttpServiceUnavailableException : HttpExceptionBase
+    {
+        public HttpServiceUnavailableException(HttpStatusCode httpStatusCode, string message, Exception innerException)
+            : base(httpStatusCode, message, innerException)
+        {
+        }
+
+        public HttpServiceUnavailableException(HttpStatusCode httpStatusCode, string message)
             : this(httpStatusCode, message, null)
         {
         }

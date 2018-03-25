@@ -113,6 +113,9 @@ namespace Capibara.Test.Net
 
         [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
         [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
+        [TestFixture(HttpStatusCode.Forbidden, "{\"message\": \"Bar\"}", typeof(HttpForbiddenException), "Bar")]
+        [TestFixture(HttpStatusCode.ServiceUnavailable, "{\"message\": \"Bar\"}", typeof(HttpServiceUnavailableException), "Bar")]
+        [TestFixture(HttpStatusCode.UpgradeRequired, "{\"message\": \"Bar\"}", typeof(HttpUpgradeRequiredException), "Bar")]
         public class WhenGetFail : TestFixtureBase
         {
             protected override HttpStatusCode HttpStabStatusCode => httpStatus;
@@ -311,6 +314,9 @@ namespace Capibara.Test.Net
         
         [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
         [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
+        [TestFixture(HttpStatusCode.Forbidden, "{\"message\": \"Bar\"}", typeof(HttpForbiddenException), "Bar")]
+        [TestFixture(HttpStatusCode.ServiceUnavailable, "{\"message\": \"Bar\"}", typeof(HttpServiceUnavailableException), "Bar")]
+        [TestFixture(HttpStatusCode.UpgradeRequired, "{\"message\": \"Bar\"}", typeof(HttpUpgradeRequiredException), "Bar")]
         public class WhenGetFail : TestFixtureBase
         {
             protected override HttpStatusCode HttpStabStatusCode => httpStatus;
