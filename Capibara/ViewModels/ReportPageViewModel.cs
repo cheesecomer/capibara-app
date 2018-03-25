@@ -64,7 +64,9 @@ namespace Capibara.ViewModels
             this.SelectedIndex.Value = 0;
 
             this.Model.ReportSuccess += this.OnReportSuccess;
-            this.Model.ReportFail += this.OnFail;
+            this.Model.ReportFail += this.OnFail(
+                () => this.ProgressDialogService.DisplayProgressAsync(
+                    this.Model.Report(this.SelectedItem.Value, this.Message.Value)));
         }
 
         private void OnReportSuccess(object sender, EventArgs args)

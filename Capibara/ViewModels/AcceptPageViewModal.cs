@@ -44,10 +44,10 @@ namespace Capibara.ViewModels
             this.LoadedCommand.Subscribe(() => this.IsLoaded.Value = true);
 
             this.Model.CommitSuccess += this.OnCommitSuccess;
-            this.Model.CommitFail += this.OnFail;
+            this.Model.CommitFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
 
             this.Model.DestroySuccess += this.OnDestroySuccess;
-            this.Model.DestroyFail += this.OnFail;
+            this.Model.DestroyFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Destroy()));
         }
 
         protected override void OnContainerChanged()

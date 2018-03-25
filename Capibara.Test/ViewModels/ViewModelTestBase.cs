@@ -47,6 +47,10 @@ namespace Capibara.Test.ViewModels
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.Run(() => true))
                 .Callback(() => this.IsShowDialog = true);
+            this.PageDialogService
+                .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.Run(() => true))
+                .Callback(() => this.IsShowDialog = true);
             
             var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
             navigationServiceMock

@@ -87,12 +87,15 @@ namespace Capibara.ViewModels
 
         protected virtual void OnContainerChanged() { }
 
-        protected virtual async void OnFail(object sender, FailEventArgs args)
+        protected virtual EventHandler<FailEventArgs> OnFail(Func<Task> func)
         {
-            await this.DisplayErrorAlertAsync(args.Error);
+            return async (s, args) =>
+            {
+                await this.DisplayErrorAlertAsync(args.Error, func);
+            };
         }
 
-        protected virtual async Task DisplayErrorAlertAsync(Exception exception)
+        protected virtual async Task DisplayErrorAlertAsync(Exception exception, Func<Task> func)
         {
             if (exception is Net.HttpUnauthorizedException)
             {
@@ -121,7 +124,14 @@ namespace Capibara.ViewModels
             }
             else
             {
-                await this.PageDialogService.DisplayAlertAsync("申し訳ございません！", "通信エラーです。再度実行してください。", "閉じる");
+                var needRetry = 
+                    await this.PageDialogService.DisplayAlertAsync(
+                        "申し訳ございません！", 
+                        "通信エラーです。リトライしますか？。", 
+                        "リトライ", 
+                        "閉じる");
+
+                if (needRetry) await func.Invoke();
             }
         }
     }

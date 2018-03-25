@@ -91,7 +91,7 @@ namespace Capibara.ViewModels
 
             // ConnectCommand
             this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(ConnectCommandExecute()));
+            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
 
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -119,14 +119,18 @@ namespace Capibara.ViewModels
 
             this.Model.SpeakSuccess += (sender, e) => this.Message.Value = string.Empty;
 
-            this.Model.SpeakFail += this.OnFail;
-            this.Model.RefreshFail += this.OnFail;
+            this.Model.SpeakFail += this.OnFail(
+                () => Task.Run(
+                    () => this.DeviceService.BeginInvokeOnMainThread(
+                        () => this.SpeakCommand.Execute())));
+            
+            this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
         }
 
-        private async Task ConnectCommandExecute()
+        private async Task Connect()
         {
             this.needClose = true;
-            await this.Model.Refresh();
+            if (!await this.Model.Refresh()) return;
             await this.Model.Connect();
         }
     }

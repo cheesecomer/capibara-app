@@ -37,6 +37,10 @@ namespace Capibara.ViewModels
             : base(navigationService, pageDialogService, model)
         {
             this.Model.SignUpSuccess += this.OnSignUpSuccess;
+            this.Model.SignUpFail += this.OnFail(
+                () => Task.Run(
+                    () => this.DeviceService.BeginInvokeOnMainThread(
+                        () => this.SignUpCommand.Execute())));
 
             // Nickname Property
             this.Nickname = this.Model

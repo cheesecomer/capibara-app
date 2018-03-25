@@ -31,7 +31,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             : base(navigationService, pageDialogService, model) { }
 
         public void Fail(Exception exception) {
-            this.OnFail(null, new FailEventArgs(exception));
+            this.OnFail(() => Task.Run(() => {})).Invoke(null, new FailEventArgs(exception));
         }
     }
 

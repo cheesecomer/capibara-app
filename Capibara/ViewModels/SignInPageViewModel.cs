@@ -95,7 +95,7 @@ namespace Capibara.ViewModels
             }
             else
             {
-                await this.DisplayErrorAlertAsync(args.Error);
+                await this.DisplayErrorAlertAsync(args.Error, () => this.ProgressDialogService.DisplayProgressAsync(this.Model.SignIn()));
             }
         }
     }

@@ -85,7 +85,7 @@ namespace Capibara.ViewModels
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
-            this.Model.RefreshFail += this.OnFail;
+            this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
             // EditCommand
             this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -103,7 +103,7 @@ namespace Capibara.ViewModels
                 await this.NavigationService.GoBackAsync(parameters);
             };
 
-            this.Model.CommitFail += this.OnFail;
+            this.Model.CommitFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
 
             // ChangePhotoCommand
             this.ChangePhotoCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -125,7 +125,7 @@ namespace Capibara.ViewModels
             this.BlockCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
 
-            this.Model.BlockFail += this.OnFail;
+            this.Model.BlockFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
 
             // ReportCommand
             this.ReportCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
