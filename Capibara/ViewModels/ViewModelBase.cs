@@ -1,4 +1,6 @@
-﻿using System.Reactive.Disposables;
+﻿using System;
+using System.Threading.Tasks;
+using System.Reactive.Disposables;
 
 using Capibara.Services;
 using Capibara.Models;
@@ -58,6 +60,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public ITaskService TaskService { get; set; }
 
+        [Dependency]
+        public IApplicationService ApplicationService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>
@@ -81,6 +86,40 @@ namespace Capibara.ViewModels
         public virtual void OnNavigatingTo(NavigationParameters parameters) { }
 
         protected virtual void OnContainerChanged() { }
+
+        protected virtual async Task OnFail(object sender, FailEventArgs args)
+        {
+            await this.DisplayErrorAlertAsync(args.Error);
+        }
+
+        protected virtual async Task DisplayErrorAlertAsync(Exception exception)
+        {
+            if (exception is Net.HttpUnauthorizedException)
+            {
+                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる");
+                await this.NavigationService.NavigateAsync("/SignInPage");
+            }
+            else if (exception is Net.HttpForbiddenException)
+            {
+                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "不正なアクセスです。再度操作をやり直してください。", "閉じる");
+                await this.NavigationService.GoBackAsync();
+            }
+            else if (exception is Net.HttpNotFoundException)
+            {
+                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "データが見つかりません。再度操作をやり直してください。", "閉じる");
+                await this.NavigationService.GoBackAsync();
+            }
+            else if (exception is Net.HttpUpgradeRequiredException)
+            {
+                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "最新のアプリが公開されています！アップデートを行ってください。", "閉じる");
+                this.DeviceService.OpenUri(new Uri(this.ApplicationService.StoreUrl));
+            }
+            else if (exception is Net.HttpServiceUnavailableException)
+            {
+                await this.PageDialogService.DisplayAlertAsync("申し訳ございません！", "現在メンテナンス中です。時間を置いて再度お試しください。", "閉じる");
+                this.ApplicationService.Exit();
+            }
+        }
     }
 
     public class ViewModelBase<TModel> : ViewModelBase where TModel : Models.ModelBase<TModel>, new()

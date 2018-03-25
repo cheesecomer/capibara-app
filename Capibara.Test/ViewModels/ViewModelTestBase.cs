@@ -21,7 +21,9 @@ namespace Capibara.Test.ViewModels
 
         protected NavigationParameters NavigationParameters { get; private set; }
 
-        protected INavigationService NavigationService { get; private set; }
+        protected NavigationService NavigationService { get; private set; }
+
+        protected Mock<IPageDialogService> PageDialogService { get; private set; }
 
         protected Mock<IDeviceService> DeviceService { get; private set; }
 
@@ -31,11 +33,21 @@ namespace Capibara.Test.ViewModels
 
         protected bool IsGoBackCalled { get; private set; }
 
+        protected bool IsExitCalled { get; private set; }
+
+        protected bool IsShowDialog { get; private set; }
+
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
+            this.PageDialogService = new Mock<IPageDialogService>();
+            this.PageDialogService
+                .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.Run(() => true))
+                .Callback(() => this.IsShowDialog = true);
+            
             var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
             navigationServiceMock
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
@@ -73,9 +85,14 @@ namespace Capibara.Test.ViewModels
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
+            var applicationService = new Mock<IApplicationService>();
+            applicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
+            applicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
+
             this.Container.RegisterInstance(progressDialogService.Object);
             this.Container.RegisterInstance(pickupPhotoService.Object);
             this.Container.RegisterInstance(taskService.Object);
+            this.Container.RegisterInstance(applicationService.Object);
         }
     }
 }

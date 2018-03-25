@@ -117,8 +117,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             {
                 base.SetUp();
 
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
+                this.PageDialogService
                     .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
                     .Returns((string name, IActionSheetButton[] buttons) =>
                     {
@@ -126,7 +125,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
                         return Task.Run(() => { });
                     });
 
-                var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object).BuildUp(this.Container);
+                var viewModel = new SubjectViewModel(pageDialogService: this.PageDialogService.Object).BuildUp(this.Container);
                 viewModel.Model.Id = 1;
 
                 viewModel.ChangePhotoCommand.Execute();
@@ -160,8 +159,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             {
                 base.SetUp();
 
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
+                this.PageDialogService
                     .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
                     .Returns((string name, IActionSheetButton[] buttons) =>
                     {
@@ -169,7 +167,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
                         return Task.Run(() => { });
                     });
 
-                var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
+                var viewModel = new SubjectViewModel(pageDialogService: this.PageDialogService.Object);
 
                 viewModel.Model.Id = 1;
 

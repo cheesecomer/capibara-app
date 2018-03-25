@@ -246,8 +246,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         {
             base.SetUp();
 
-            var pageDialogService = new Mock<IPageDialogService>();
-            pageDialogService
+            this.PageDialogService
                 .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
                 .Returns((string name, IActionSheetButton[] buttons) =>
                 {
@@ -255,7 +254,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
                     return Task.Run(() => { });
                 });
 
-            var viewModel = new SubjectViewModel(pageDialogService: pageDialogService.Object);
+            var viewModel = new SubjectViewModel(pageDialogService: this.PageDialogService.Object);
 
             viewModel.Model.Id = 1;
 

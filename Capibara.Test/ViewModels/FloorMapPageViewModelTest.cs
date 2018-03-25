@@ -144,8 +144,6 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            protected bool IsShowDialog { get; private set; }
-
             [SetUp]
             public override void SetUp()
             {
@@ -156,15 +154,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
 
                 this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.Run(() => true))
-                    .Callback(() => this.IsShowDialog = true);
-
-                var viewModel = new SubjectViewModel(
-                    this.NavigationService,
-                    pageDialogService.Object);
+                var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object);
 
                 viewModel.BuildUp(this.Container);
 

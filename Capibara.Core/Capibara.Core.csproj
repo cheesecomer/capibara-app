@@ -40,6 +40,9 @@
     <Compile Include="EventArgs.cs" />
     <Compile Include="Services\ITaskService.cs" />
     <Compile Include="Attributes\DisplayNameAttribute.cs" />
+    <Compile Include="Services\IApplicationService.cs" />
+    <Compile Include="Services\IPickupPhotoService.cs" />
+    <Compile Include="Services\IProgressDialogService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
