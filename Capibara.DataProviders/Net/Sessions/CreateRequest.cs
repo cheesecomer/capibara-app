@@ -16,15 +16,6 @@ namespace Capibara.Net.Sessions
         [JsonProperty("password", NullValueHandling = NullValueHandling.Ignore)]
         public string Password { get; }
 
-        [JsonProperty("provider", NullValueHandling = NullValueHandling.Ignore)]
-        public string Provider { get; }
-
-        [JsonProperty("access_token", NullValueHandling = NullValueHandling.Ignore)]
-        public string AccessToken { get; }
-
-        [JsonProperty("access_token_secret", NullValueHandling = NullValueHandling.Ignore)]
-        public string AccessTokenSecret { get; }
-
         public override string StringContent
             => JsonConvert.SerializeObject(this);
 

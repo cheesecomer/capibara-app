@@ -70,6 +70,7 @@
     <Compile Include="Net\Reports\CreateRequest.cs" />
     <Compile Include="Net\RequestFactory.cs" />
     <Compile Include="Net\Inquiries\CreateRequest.cs" />
+    <Compile Include="Net\Sessions\ShowRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

@@ -68,11 +68,11 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         {
             var container = this.Container;
             var model = new Mock<User>();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object, model.Object).BuildUp(container);
 
             model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
-            Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
+            Assert.That(this.IsShowDialog, Is.EqualTo(true));
         }
     }
 
@@ -262,7 +262,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
 
             viewModel.SignUpWithSnsCommand.Execute();
 
-            while (!viewModel.SignUpWithSnsCommand.CanExecute()) { };
+            while (!viewModel.SignUpWithSnsCommand.CanExecute()) { }
         }
 
         [TestCase]

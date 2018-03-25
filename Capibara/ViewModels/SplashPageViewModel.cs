@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Capibara.Models;
 
@@ -60,26 +61,38 @@ namespace Capibara.ViewModels
 
         private async Task ToFloorMapPage()
         {
-            var user = new User { Id = this.IsolatedStorage.UserId }.BuildUp(this.Container);
-            user.RefreshSuccess += async (s, e) =>
+            var request = this.RequestFactory.SessionsRefreshRequest();
+            try
             {
-                if (user.IsAccepted)
+                var response = await request.Execute();
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.Save();
+
+                await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
+                if (response.IsAccepted)
                 {
-                    await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
 
                     await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
                 }
                 else
                 {
-                    await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
-
-                    await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, user } }, animated: false);
+                    await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, response as User } }, animated: false);
                 }
-            };
-
-            user.RefreshFail += this.OnFail(() => user.Refresh());
-
-            await user.Refresh();
+            }
+            catch (Exception e)
+            {
+                if (e is Net.HttpUnauthorizedException)
+                {
+                    await this.ToSignUpPage();
+                }
+                else
+                {
+                    await this.DisplayErrorAlertAsync(e, () => this.ToFloorMapPage());
+                }
+            }
         }
 
         private async Task LogoScaleChangeAsync()

@@ -23,6 +23,8 @@ namespace Capibara.Net
 
         RequestBase<Room> RoomsShowRequest(Room target);
 
+        RequestBase<Sessions.CreateResponse> SessionsRefreshRequest();
+
         RequestBase<Sessions.CreateResponse> SessionsCreateRequest(string email, string password);
 
         RequestBase<Sessions.CreateResponse> UsersCreateRequest(string nickname);
@@ -58,6 +60,9 @@ namespace Capibara.Net
 
         RequestBase<Room> IRequestFactory.RoomsShowRequest(Room target)
             => new Rooms.ShowRequest(target);
+
+        RequestBase<Sessions.CreateResponse> IRequestFactory.SessionsRefreshRequest()
+            => new Sessions.ShowRequest();
 
         RequestBase<Sessions.CreateResponse> IRequestFactory.SessionsCreateRequest(string email, string password)
             => new Sessions.CreateRequest(email, password);

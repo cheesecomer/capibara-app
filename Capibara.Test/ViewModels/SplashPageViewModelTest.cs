@@ -3,6 +3,7 @@ using System.Net;
 
 using Capibara.Models;
 using Capibara.Net;
+using Capibara.Net.Sessions;
 
 using Moq;
 using NUnit.Framework;
@@ -73,14 +74,13 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
 
     namespace RefreshCommandTest
     {
-
         public abstract class TestBase : ViewModelTestBase
         {
             protected abstract string AccessToken { get; }
 
             protected SubjectViewModel Subject { get; private set; }
 
-            protected virtual User Response { get; }
+            protected virtual CreateResponse Response { get; }
 
             protected virtual Exception Exception { get; }
 
@@ -89,15 +89,15 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             {
                 base.SetUp();
 
-                this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object).BuildUp(this.Container);
 
-                var request = new Mock<RequestBase<User>>();
+                var request = new Mock<RequestBase<CreateResponse>>();
                 if (this.Response.IsPresent())
                     request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
                 else if (this.Exception.IsPresent())
                     request.Setup(x => x.Execute()).ThrowsAsync(this.Exception);
 
-                this.RequestFactory.Setup(x => x.UsersShowRequest(It.IsAny<User>())).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.SessionsRefreshRequest()).Returns(request.Object);
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = this.AccessToken;
@@ -140,7 +140,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
-            protected override User Response => new User();
+            protected override CreateResponse Response => new CreateResponse();
 
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
@@ -172,7 +172,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
-            protected override User Response => new User { IsAccepted = true };
+            protected override CreateResponse Response => new CreateResponse { IsAccepted = true };
 
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
