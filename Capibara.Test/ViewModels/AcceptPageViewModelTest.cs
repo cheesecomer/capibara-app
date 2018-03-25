@@ -59,7 +59,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
 
     public class AgreeCommandTest : ViewModelTestBase
     {
-        private bool IsCommitCalled;
+        private bool IsAcceptCalled;
 
         [SetUp]
         public override void SetUp()
@@ -68,7 +68,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
 
             var model = new Mock<User>();
             model.SetupAllProperties();
-            model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
+            model.Setup(x => x.Accept()).ReturnsAsync(true).Callback(() => this.IsAcceptCalled = true);
 
             var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
             viewModel.IsLoaded.Value = true;
@@ -87,7 +87,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldCommitCalled()
         {
-            Assert.That(this.IsCommitCalled, Is.EqualTo(true));
+            Assert.That(this.IsAcceptCalled, Is.EqualTo(true));
         }
     }
 
@@ -124,7 +124,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         }
     }
 
-    public class OnCommitSuccessTest : ViewModelTestBase
+    public class OnAcceptSuccessTest : ViewModelTestBase
     {
         [TestCase]
         public void ItShouldCommitCalled()
@@ -133,7 +133,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
 
             new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
 
-            model.Raise(x => x.CommitSuccess += null, EventArgs.Empty);
+            model.Raise(x => x.AcceptSuccess += null, EventArgs.Empty);
 
             Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
         }
