@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Capibara.Models;
 using Capibara.ViewModels;
 using Capibara.Net;
+using Capibara.Net.Sessions;
 
 using Moq;
 using NUnit.Framework;
@@ -185,10 +186,10 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = Guid.NewGuid().ToString();
 
-                var request = new Mock<RequestBase<User>>();
-                request.Setup(x => x.Execute()).ReturnsAsync(new User { IsAccepted = this.IsAccepted });
+                var request = new Mock<RequestBase<CreateResponse>>();
+                request.Setup(x => x.Execute()).ReturnsAsync(new CreateResponse { IsAccepted = this.IsAccepted });
 
-                this.RequestFactory.Setup(x => x.UsersShowRequest(It.IsAny<User>())).Returns(request.Object);
+                this.RequestFactory.Setup(x => x.SessionsRefreshRequest()).Returns(request.Object);
 
                 viewModel.OnResume();
             }
