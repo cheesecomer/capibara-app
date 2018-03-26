@@ -18,7 +18,7 @@ using Xamarin.Forms;
 
 namespace Capibara.ViewModels
 {
-    public class SignUpPageViewModel : ViewModelBase<User>, IApplicationLifecycleAware
+    public class SignUpPageViewModel : ViewModelBase<User>
     {
         public ReactiveProperty<string> Nickname { get; }
 
@@ -80,13 +80,13 @@ namespace Capibara.ViewModels
             });
         }
 
-        public void OnResume()
+        public override void OnResume()
         {
+            base.OnResume();
+
             if (this.IsolatedStorage.AccessToken.IsPresent())
                 this.ProgressDialogService.DisplayProgressAsync(this.SignIn());
         }
-
-        void IApplicationLifecycleAware.OnSleep() { }
 
         private void OnSignUpSuccess(object sender, EventArgs args)
         {

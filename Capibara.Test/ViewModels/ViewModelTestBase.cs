@@ -87,9 +87,12 @@ namespace Capibara.Test.ViewModels
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
+            var tracker = new Mock<Plugin.GoogleAnalytics.Abstractions.ITracker>();
+
             this.Container.RegisterInstance(progressDialogService.Object);
             this.Container.RegisterInstance(pickupPhotoService.Object);
             this.Container.RegisterInstance(taskService.Object);
+            this.Container.RegisterInstance(tracker.Object);
         }
     }
 }
