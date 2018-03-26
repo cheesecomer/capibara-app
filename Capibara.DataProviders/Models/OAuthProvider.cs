@@ -5,8 +5,6 @@ namespace Capibara.Models
     {
         Twitter,
         Line,
-        Instagram,
-        Facebook,
-        GitHub
+        Google
     }
 }
