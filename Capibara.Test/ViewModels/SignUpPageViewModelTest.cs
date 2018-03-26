@@ -269,19 +269,21 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         [TestCase]
         public void ItShouldHasFourButtons()
         {
-            Assert.That(this.buttons?.Length, Is.EqualTo(3));
+            Assert.That(this.buttons?.Length, Is.EqualTo(4));
         }
 
         [TestCase(0, "キャンセル")]
-        [TestCase(1, "Twitter")]
-        [TestCase(2, "LINE")]
+        [TestCase(1, "Google")]
+        [TestCase(2, "Twitter")]
+        [TestCase(3, "LINE")]
         public void ItShouldButtontTextExpected(int index, string expect)
         {
             Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
         }
 
-        [TestCase(1, "http://localhost:9999/api/oauth/twitter")]
-        [TestCase(1, "http://localhost:9999/api/oauth/line")]
+        [TestCase(1, "http://localhost:9999/api/oauth/google")]
+        [TestCase(2, "http://localhost:9999/api/oauth/twitter")]
+        [TestCase(3, "http://localhost:9999/api/oauth/line")]
         public void ItShouldOpenUrl(int index, string url)
         {
             this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == url))).Callback((Uri x) => this.IsOpenUrlCalled = true);
