@@ -9,7 +9,7 @@
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.AcceptPage"
-    Title="プライバシーポリシーへの同意">
+    Title="{Binding Title.Value}">
     <Grid BackgroundColor="#EEE">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -31,8 +31,8 @@
         <Button
             Grid.Row="1" 
             Margin="20, 10" 
-            Text="同意する" 
-            Command="{Binding AgreeCommand}"
+            Text="{Binding ActiveCommandName.Value}" 
+            Command="{Binding ActiveCommand.Value}"
             TextColor="{StaticResource PrimaryColor}"
             BorderColor="{StaticResource PrimaryColor}"
             BackgroundColor="White" />

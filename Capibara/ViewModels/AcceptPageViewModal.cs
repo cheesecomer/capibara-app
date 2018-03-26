@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 using System.Reactive.Linq;
 
 using Prism.Navigation;
@@ -22,6 +23,12 @@ namespace Capibara.ViewModels
         public ReactiveProperty<bool> IsLoaded { get; } = new ReactiveProperty<bool>(false);
 
         public ReactiveProperty<UrlWebViewSource> Source { get; } = new ReactiveProperty<UrlWebViewSource>();
+
+        public ReactiveProperty<string> ActiveCommandName { get; }
+
+        public ReactiveProperty<string> Title { get; }
+        
+        public ReactiveProperty<ICommand> ActiveCommand { get; } = new ReactiveProperty<ICommand>();
 
         public AsyncReactiveCommand AgreeCommand { get; }
 
@@ -50,6 +57,7 @@ namespace Capibara.ViewModels
             this.NextCommand.Subscribe(() => {
                 this.IsLoaded.Value = false;
                 this.Source.Value = new UrlWebViewSource { Url = this.Environment.PrivacyPolicyUrl };
+                this.ActiveCommand.Value = this.AgreeCommand;
             });
 
             this.AgreeCommand = this.PropertyChangedAsObservable()
@@ -67,6 +75,14 @@ namespace Capibara.ViewModels
 
             this.Model.DestroySuccess += this.OnDestroySuccess;
             this.Model.DestroyFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Destroy()));
+
+            this.ActiveCommand.Value = this.NextCommand;
+            this.ActiveCommandName = this.ActiveCommand
+                .Select(x => x == this.NextCommand ? "次へ" : "同意する")
+                .ToReactiveProperty();
+            this.Title = this.ActiveCommand
+                .Select(x => x == this.NextCommand ? "利用規約の同意" : "プライバシーポリシーの同意")
+                .ToReactiveProperty();
         }
 
         protected override void OnContainerChanged()

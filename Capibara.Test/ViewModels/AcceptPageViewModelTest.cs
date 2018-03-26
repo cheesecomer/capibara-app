@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Capibara.ViewModels;
 using Capibara.Models;
@@ -11,8 +9,6 @@ using NUnit.Framework;
 using Unity;
 
 using Prism.Services;
-
-using Xamarin.Forms;
 
 using SubjectViewModel = Capibara.ViewModels.AcceptPageViewModel;
 
@@ -42,6 +38,36 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var subject = new SubjectViewModel().BuildUp(this.Container);
             Assert.That(subject.Source.Value.Url, Is.EqualTo(this.Environment.TermsUrl));
+        }
+    }
+
+    public class ActiveCommandNamePropertyTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldIsNext()
+        {
+            var subject = new SubjectViewModel().BuildUp(this.Container);
+            Assert.That(subject.ActiveCommandName.Value, Is.EqualTo("次へ"));
+        }
+    }
+
+    public class TitlePropertyTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldIsTerms()
+        {
+            var subject = new SubjectViewModel().BuildUp(this.Container);
+            Assert.That(subject.Title.Value, Is.EqualTo("利用規約の同意"));
+        }
+    }
+
+    public class ActiveCommandPropertyTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldIsNext()
+        {
+            var subject = new SubjectViewModel().BuildUp(this.Container);
+            Assert.That(subject.ActiveCommand.Value, Is.EqualTo(subject.NextCommand));
         }
     }
 
@@ -95,6 +121,24 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         public void ItShouldNextCommandCanNotExecute()
         {
             Assert.That(this.Subject.NextCommand.CanExecute(), Is.EqualTo(false));
+        }
+
+        [TestCase]
+        public void ItShouldActiveCommandIsAgree()
+        {
+            Assert.That(this.Subject.ActiveCommand.Value, Is.EqualTo(this.Subject.AgreeCommand));
+        }
+
+        [TestCase]
+        public void ItShouldActiveCommandNameIsAgree()
+        {
+            Assert.That(this.Subject.ActiveCommandName.Value, Is.EqualTo("同意する"));
+        }
+
+        [TestCase]
+        public void ItShouldTitleIsPrivacyPolicy()
+        {
+            Assert.That(this.Subject.Title.Value, Is.EqualTo("プライバシーポリシーの同意"));
         }
     }
 
