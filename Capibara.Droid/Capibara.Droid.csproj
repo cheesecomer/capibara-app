@@ -198,6 +198,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ScreenService.cs" />
     <Compile Include="IsolatedStorage.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
