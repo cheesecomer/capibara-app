@@ -122,6 +122,7 @@
     </Compile>
     <Compile Include="Services\IOverrideUrlService.cs" />
     <Compile Include="Services\IScreenService.cs" />
+    <Compile Include="Forms\LinkableLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

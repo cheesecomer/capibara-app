@@ -231,6 +231,7 @@
     <Compile Include="Services\ScreenService.cs" />
     <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Renderers\LinkableLabelRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />
