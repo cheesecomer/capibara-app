@@ -171,6 +171,12 @@
     <Reference Include="Prism.Unity.Forms">
       <HintPath>..\packages\Prism.Unity.Forms.7.0.0.396\lib\netstandard2.0\Prism.Unity.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.GoogleAnalytics.Abstractions">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\MonoAndroid10\Plugin.GoogleAnalytics.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.GoogleAnalytics">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\MonoAndroid10\Plugin.GoogleAnalytics.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">

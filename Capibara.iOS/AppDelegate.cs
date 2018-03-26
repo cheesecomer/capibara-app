@@ -18,6 +18,8 @@ using Prism.Ioc;
 
 using UIKit;
 
+using Plugin.GoogleAnalytics;
+
 namespace Capibara.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
@@ -29,6 +31,9 @@ namespace Capibara.iOS
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
+        [Dependency]
+        public IContainerRegistry ContainerRegistry { get; set; }
+
         /// <summary>
         /// Finisheds the launching.
         /// </summary>
@@ -38,9 +43,19 @@ namespace Capibara.iOS
         [Export("application:didFinishLaunchingWithOptions:")]
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            IApplicationService applicationService = new ApplicationService();
+
+            GoogleAnalytics.Current.Config.TrackingId = PlatformVariable.GoogleAnalyticsTrackingId;
+            GoogleAnalytics.Current.Config.AppId = "Capibara";
+            GoogleAnalytics.Current.Config.AppName = "Capibara";
+            GoogleAnalytics.Current.Config.AppVersion = applicationService.AppVersion;
+            GoogleAnalytics.Current.Config.AutoAppLifetimeMonitoring = true;
+            GoogleAnalytics.Current.Config.ReportUncaughtExceptions = true;
+            GoogleAnalytics.Current.InitTracker();
+
             global::Xamarin.Forms.Forms.Init();
 
-            var application = new App(new iOSInitializer());
+            var application = new App(new iOSInitializer(applicationService));
 
             this.BuildUp(application.Container.Resolve<IUnityContainer>());
 
@@ -79,13 +94,20 @@ namespace Capibara.iOS
 
     public class iOSInitializer : IPlatformInitializer
     {
+        private IApplicationService applicationService;
+
+        public iOSInitializer(IApplicationService applicationService)
+        {
+            this.applicationService = applicationService;
+        }
+
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
-            containerRegistry.RegisterInstance<IApplicationService>(new ApplicationService());
+            containerRegistry.RegisterInstance(this.applicationService);
         }
     }
 }

@@ -139,6 +139,19 @@
     <Reference Include="Prism.Forms">
       <HintPath>..\packages\Prism.Forms.7.0.0.396\lib\netstandard2.0\Prism.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="Plugin.GoogleAnalytics.Abstractions">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\net45\Plugin.GoogleAnalytics.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.GoogleAnalytics">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\net45\Plugin.GoogleAnalytics.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">

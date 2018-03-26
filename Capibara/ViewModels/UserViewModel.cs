@@ -42,6 +42,10 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ReportCommand { get; }
 
+        protected override bool NeedTrackingView => !this.Model.IsOwn;
+
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
+
         [UnityDependency]
         public IPickupPhotoService PickupPhotoService { get; set; }
 

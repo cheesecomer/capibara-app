@@ -18,6 +18,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand<UserViewModel> ItemTappedCommand { get; }
 
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
+
         public ParticipantsPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -27,7 +29,7 @@ namespace Capibara.ViewModels
             this.Participants = this.Model
                 .Participants
                 .ToReadOnlyReactiveCollection((x) => new UserViewModel(model: x).BuildUp(this.Container));
-            
+
             this.ItemTappedCommand = new AsyncReactiveCommand<UserViewModel>();
             this.ItemTappedCommand.Subscribe(async x =>
             {

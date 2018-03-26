@@ -7,6 +7,8 @@ namespace Capibara.Views
         public MyProfilePage()
         {
             InitializeComponent();  
+
+            Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker.SendView(this.GetType().Name);
         }
     }
 }

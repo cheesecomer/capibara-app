@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Reactive.Disposables;
 
@@ -12,6 +13,10 @@ using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Services;
 
+using Plugin.GoogleAnalytics.Abstractions;
+
+using Prism.AppModel;
+
 namespace Capibara.ViewModels
 {
     public static class ParameterNames
@@ -23,7 +28,7 @@ namespace Capibara.ViewModels
         public const string Url = "ParameterNames.Url";
     }
 
-    public class ViewModelBase : BindableBase, INavigationAware
+    public class ViewModelBase : BindableBase, INavigationAware, IApplicationLifecycleAware
     {
         private IUnityContainer container;
 
@@ -38,6 +43,10 @@ namespace Capibara.ViewModels
         protected INavigationService NavigationService { get; }
 
         protected IPageDialogService PageDialogService { get; }
+
+        protected virtual bool NeedTrackingView { get; } = true;
+
+        protected virtual string OptionalScreenName { get; } = string.Empty;
 
         [Dependency]
         public IProgressDialogService ProgressDialogService { get; set; }
@@ -63,6 +72,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public IApplicationService ApplicationService { get; set; }
 
+        [Dependency]
+        public ITracker Tracker { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>
@@ -79,9 +91,28 @@ namespace Capibara.ViewModels
             }
         }
 
+        public virtual void OnResume()
+        {
+            if (this.NeedTrackingView)
+            {
+                var screenName = this.GetType().Name.Replace("PageViewModel", string.Empty).Replace("ViewModel", string.Empty);
+                this.Tracker.SendView(screenName + this.OptionalScreenName);
+            }
+        }
+
+        public virtual void OnSleep()
+        {
+        }
+
         public virtual void OnNavigatedFrom(NavigationParameters parameters) { }
 
-        public virtual void OnNavigatedTo(NavigationParameters parameters) { }
+        public virtual void OnNavigatedTo(NavigationParameters parameters)
+        {
+            if (this.DeviceService?.DeviceRuntimePlatform == Xamarin.Forms.Device.iOS && !(this is MainPageViewModel))
+            {
+                this.OnResume();
+            }
+        }
 
         public virtual void OnNavigatingTo(NavigationParameters parameters) { }
 
@@ -124,11 +155,11 @@ namespace Capibara.ViewModels
             }
             else
             {
-                var needRetry = 
+                var needRetry =
                     await this.PageDialogService.DisplayAlertAsync(
-                        "申し訳ございません！", 
-                        "通信エラーです。リトライしますか？。", 
-                        "リトライ", 
+                        "申し訳ございません！",
+                        "通信エラーです。リトライしますか？。",
+                        "リトライ",
                         "閉じる");
 
                 if (needRetry) await func.Invoke();
@@ -148,17 +179,17 @@ namespace Capibara.ViewModels
 
         protected override void OnContainerChanged()
         {
-            base.OnContainerChanged();
-
             if (this.Container != null)
                 this.Model.BuildUp(this.Container);
+
+            base.OnContainerChanged();
         }
 
         public override void OnNavigatingTo(NavigationParameters parameters)
         {
-            base.OnNavigatingTo(parameters);
+            this.Model.Restore(parameters?.TryGetValue<TModel>(ParameterNames.Model) ?? this.Model);
 
-            this.Model.Restore(parameters?.TryGetValue<TModel>(ParameterNames.Model) ?? this.Model); 
+            base.OnNavigatingTo(parameters);
         }
     }
 }

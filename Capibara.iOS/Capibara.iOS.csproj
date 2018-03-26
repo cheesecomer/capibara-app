@@ -174,6 +174,12 @@
     <Reference Include="Google.MobileAds">
       <HintPath>..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\lib\Xamarin.iOS10\Google.MobileAds.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.GoogleAnalytics.Abstractions">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.GoogleAnalytics">
+      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
@@ -264,6 +270,7 @@
       source ~/.bash_profile
       cp $(ProjectDir)\PlatformVariable.cs $(ProjectDir)\PlatformVariable.cs.bak
       sed -i '' 's/${IOS_ADMOB_UNIT_ID_FOR_BANNER}/'$IOS_ADMOB_UNIT_ID_FOR_BANNER'/g' $(ProjectDir)\PlatformVariable.cs
+      sed -i '' 's/${GA_TRACKING_ID}/'$GA_TRACKING_ID'/g' $(ProjectDir)\PlatformVariable.cs
       git diff $(ProjectDir)PlatformVariable.cs
     </PreBuildEvent>
     <PostBuildEvent>mv $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
