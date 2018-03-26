@@ -9,6 +9,8 @@ using Prism.Services;
 
 using Reactive.Bindings;
 
+using Unity;
+
 namespace Capibara.ViewModels
 {
     public class SplashPageViewModel : ViewModelBase
@@ -66,21 +68,25 @@ namespace Capibara.ViewModels
             {
                 var response = await request.Execute();
 
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response as User);
+
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
                 this.IsolatedStorage.UserId = response.Id;
                 this.IsolatedStorage.Save();
 
                 await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
-                if (response.IsAccepted)
-                {
 
-                    await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", animated: false);
-                }
-                else
-                {
-                    await this.NavigationService.NavigateAsync("/NavigationPage/AcceptPage", new NavigationParameters { { ParameterNames.Model, response as User } }, animated: false);
-                }
+                var pageName =
+                    response.IsAccepted
+                        ? "/MainPage/NavigationPage/FloorMapPage"
+                        : "/NavigationPage/AcceptPage";
+                var parameters =
+                    response.IsAccepted
+                        ? null
+                        : new NavigationParameters { { ParameterNames.Model, response as User } };
+                
+                await this.NavigationService.NavigateAsync(pageName, parameters, animated: false);
             }
             catch (Exception e)
             {
