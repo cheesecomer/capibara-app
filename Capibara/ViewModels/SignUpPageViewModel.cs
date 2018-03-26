@@ -110,6 +110,8 @@ namespace Capibara.ViewModels
             {
                 var response = await request.Execute();
 
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response as User);
+
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
                 this.IsolatedStorage.UserId = response.Id;

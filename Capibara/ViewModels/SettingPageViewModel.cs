@@ -19,6 +19,7 @@ namespace Capibara.ViewModels
             new ReactiveCollection<SettingItem>
             {
             new SettingItem { Name = "ブロック中のユーザー", PagePath = "BlockUsersPage" },
+            new SettingItem { Name = "利用規約", PagePath = "WebViewPage" },
             new SettingItem { Name = "プライバシーポリシー", PagePath = "WebViewPage" },
             new SettingItem { Name = "お問い合わせ", PagePath = "InquiryPage" },
             new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" },
@@ -40,6 +41,12 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
 
             this.SettingItems[1].Parameters = new NavigationParameters
+            {
+                { ParameterNames.Url, this.Environment.TermsUrl } ,
+                { ParameterNames.Title, "利用規約" }
+            };
+
+            this.SettingItems[2].Parameters = new NavigationParameters
             { 
                 { ParameterNames.Url, this.Environment.PrivacyPolicyUrl } ,
                 { ParameterNames.Title, "プライバシーポリシー" }

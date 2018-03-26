@@ -26,6 +26,12 @@ namespace Capibara
         string OAuthBaseUrl { get; }
 
         /// <summary>
+        /// 利用規約のURLを取得します。
+        /// </summary>
+        /// <value>The terms URL.</value>
+        string TermsUrl { get; }
+
+        /// <summary>
         /// プライバシーポリシーのURLを取得します。
         /// </summary>
         /// <value>The privacy policy URL.</value>
