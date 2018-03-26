@@ -25,7 +25,7 @@ namespace Capibara
             this.HasPlatformInitializer = initializer.IsPresent();
         }
 
-        public App() : base((IPlatformInitializer)null) { }
+        public App() : base(null) { }
 
         public bool HasPlatformInitializer { get; private set; }
 
@@ -45,13 +45,14 @@ namespace Capibara
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterInstance<ICapibaraApplication>(this);
-            containerRegistry.RegisterInstance<IContainerRegistry>(containerRegistry);
+            containerRegistry.RegisterInstance(containerRegistry);
             containerRegistry.RegisterInstance<IRestClient>(new RestClient());
-            containerRegistry.RegisterInstance<IEnvironment>(this.Environment);
+            containerRegistry.RegisterInstance(this.Environment);
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
             containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
+            containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
@@ -94,9 +95,7 @@ namespace Capibara
             public Uri OAuthCallbackUrl { get; set; }
 
             public void Save()
-            {
-                throw new NotImplementedException();
-            }
+                => throw new NotImplementedException();
         }
 
         private class ProgressDialogServiceStub : IProgressDialogService
