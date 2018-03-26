@@ -36,6 +36,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<bool> IsConnected { get; }
 
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
+
         public RoomPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,

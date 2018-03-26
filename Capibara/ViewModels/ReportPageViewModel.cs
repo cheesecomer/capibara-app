@@ -37,6 +37,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand SubmitCommand { get; }
 
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
+
         public ReportPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
