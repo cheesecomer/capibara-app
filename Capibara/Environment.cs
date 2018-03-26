@@ -13,7 +13,7 @@ namespace Capibara
 
         string IEnvironment.PrivacyPolicyUrl { get; } = "https://capibara-staging.herokuapp.com/privacy_policy?from_app=1";
 
-        string IEnvironment.TermsUrl { get; } = "https://capibara-staging.herokuapp.com/privacy_policy?from_app=2";
+        string IEnvironment.TermsUrl { get; } = "https://capibara-staging.herokuapp.com/terms";
 
         int IEnvironment.WebSocketReceiveBufferSize { get; } = 1024;
 
@@ -32,7 +32,7 @@ namespace Capibara
 
         string IEnvironment.PrivacyPolicyUrl { get; } = "https://capibara-staging.herokuapp.com/privacy_policy?from_app=1";
 
-        string IEnvironment.TermsUrl { get; } = "https://capibara-staging.herokuapp.com/privacy_policy?from_app=2";
+        string IEnvironment.TermsUrl { get; } = "https://capibara-staging.herokuapp.com/terms";
 
         int IEnvironment.WebSocketReceiveBufferSize { get; } = 1024;
 
