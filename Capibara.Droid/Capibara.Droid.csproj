@@ -183,6 +183,14 @@
       <Project>{4BAFE42D-1E8C-4CD7-921B-F069E2132A8C}</Project>
       <Name>Capibara</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
+      <Project>{DD777B11-BCCB-4543-91F5-16F7B679653F}</Project>
+      <Name>Capibara.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Capibara.DataProviders\Capibara.DataProviders.csproj">
+      <Project>{6BD9633D-6376-4208-B7DE-DE00159154BF}</Project>
+      <Name>Capibara.DataProviders</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
