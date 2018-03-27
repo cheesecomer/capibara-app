@@ -68,7 +68,6 @@ namespace Capibara.ViewModels
                     x => x.IconUrl,
                     x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)),
                     x => (x as UriImageSource)?.Uri.AbsoluteUri);
-            this.Icon.Subscribe(x => this.Model.IconBase64 = Convert.ToBase64String(x.ToByteArray()));
 
             this.IconThumbnail = 
                 this.Model.ToReactivePropertyAsSynchronized(
@@ -119,6 +118,7 @@ namespace Capibara.ViewModels
                     if (bytes != null)
                     {
                         this.Icon.Value = ImageSource.FromStream(() => new MemoryStream(bytes));
+                        this.Model.IconBase64 = Convert.ToBase64String(bytes);
                     }
                 });
                 var takeButton = ActionSheetButton.CreateButton("カメラで撮影", () => { });
