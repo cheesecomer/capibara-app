@@ -48,6 +48,7 @@
                             WidthRequest="60"
                             BorderWidth="0"
                             BorderRadius="30"
+                            BackgroundColor="Transparent"
                             Command="{Binding ShowProfileCommand}"
                             />
                         <Label Grid.Column="0" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
@@ -86,6 +87,7 @@
                             WidthRequest="60"
                             BorderWidth="0"
                             BorderRadius="30"
+                            BackgroundColor="Transparent"
                             Command="{Binding ShowProfileCommand}"
                             />
                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
