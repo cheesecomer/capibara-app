@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
@@ -17,6 +20,7 @@ using Unity.Attributes;
 namespace Capibara.Droid
 {
     [Activity(Label = "Capibara", Icon = "@drawable/icon", MainLauncher = true, Theme = "@android:style/Theme.Holo.Light", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [IntentFilter(new[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "com.cheesecomer.capibara", DataHost = "oauth")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         public enum RequestCodes
@@ -45,6 +49,28 @@ namespace Capibara.Droid
             this.BuildUp(application.Container.Resolve<IUnityContainer>());
 
             LoadApplication(application);
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            var intent = this.Intent;
+
+            var uri = intent.Data;
+            if (Intent.ActionView.Equals(intent.Action))
+            {
+                if (uri.Scheme == "com.cheesecomer.capibara" && uri.Host.StartsWith("oauth", StringComparison.Ordinal))
+                {
+                    var query = uri.Query
+                       .Replace("?", string.Empty).Split('&')
+                       .Select(x => x.Split('='))
+                       .Where(x => x.Length == 2)
+                       .ToDictionary(x => x.First(), x => x.Last());
+                    this.IsolatedStorage.AccessToken = query["access_token"];
+                    this.IsolatedStorage.UserId = query["id"].ToInt();
+                }
+            }
         }
 
         protected override async void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
