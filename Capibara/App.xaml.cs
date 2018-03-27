@@ -52,7 +52,6 @@ namespace Capibara
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
             containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
-            containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
