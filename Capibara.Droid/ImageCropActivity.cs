@@ -41,9 +41,7 @@ namespace Capibara.Droid
             //var myCallBack = new CallBack().OnErrorDo(() => Console.WriteLine("oh no!")).OnSuccessDo(obj => Console.WriteLine("yeah!");
 
             cropImageView.SetCustomRatio(1, 1);
-            cropImageView.SetCropMode(CropImageView.CropMode.Circle);
-            cropImageView.SetOutputMaxSize(500, 500);
-            
+
             var cropButton = this.FindViewById<Button>(Resource.Id.crop_button);
             cropButton.Click += (s, e) =>
             {
@@ -52,9 +50,9 @@ namespace Capibara.Droid
                 var file = new File(dir, filename);
                 file.CreateNewFile();
                 file.SetWritable(true);
-                
+
                 var uri = AndroidUri.FromFile(file);
-                
+
                 var cropCallback = new CropCallback()
                     .OnSuccessDo(x => { })
                     .OnErrorDo(() => { });
@@ -65,7 +63,7 @@ namespace Capibara.Droid
                         this.Finish();
                     })
                     .OnErrorDo(() => { });
-                
+
                 cropImageView.StartCrop(uri, cropCallback, saveCallback);
             };
 
