@@ -177,6 +177,9 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\MonoAndroid10\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Droid.SimpleCropView">
+      <HintPath>..\packages\Xam.Droid.SimpleCropView.1.1.4.2\lib\MonoAndroid10\Xam.Droid.SimpleCropView.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
