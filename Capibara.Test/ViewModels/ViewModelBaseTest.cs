@@ -107,22 +107,22 @@ namespace Capibara.Test.ViewModels.ViewModelBase
     namespace OnNavigatedToTest
     {
         [TestFixture]
-        public class WhenNavigationParametersIsNull
+        public class WhenNavigationParametersIsNull : ViewModelTestBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {
-                Assert.DoesNotThrow(() => new StabViewModel().OnNavigatedTo(null));
+                Assert.DoesNotThrow(() => new StabViewModel().BuildUp(this.Container).OnNavigatedTo(null));
             }
         }
 
         [TestFixture]
-        public class WhenNavigationParametersIsEmpty
+        public class WhenNavigationParametersIsEmpty : ViewModelTestBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {
-                Assert.DoesNotThrow(() => new StabViewModel().OnNavigatedTo(new NavigationParameters()));
+                Assert.DoesNotThrow(() => new StabViewModel().BuildUp(this.Container).OnNavigatedTo(new NavigationParameters()));
             }
         }
     }

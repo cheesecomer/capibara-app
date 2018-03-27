@@ -108,7 +108,7 @@ namespace Capibara.ViewModels
 
         public virtual void OnNavigatedTo(NavigationParameters parameters)
         {
-            if (this.DeviceService?.DeviceRuntimePlatform == Xamarin.Forms.Device.iOS && !(this is MainPageViewModel))
+            if (!(this is MainPageViewModel))
             {
                 this.OnResume();
             }
