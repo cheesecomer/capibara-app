@@ -203,6 +203,7 @@
     <Compile Include="IsolatedStorage.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
+    <Compile Include="Renderers\RoundImageRenderer.cs" />
     <Compile Include="ImageCropActivity.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
   </ItemGroup>
@@ -216,6 +217,7 @@
     <Folder Include="Resources\layout\" />
     <Folder Include="Resources\values\" />
     <Folder Include="Services\" />
+    <Folder Include="Renderers\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
