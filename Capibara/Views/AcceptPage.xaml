@@ -27,7 +27,7 @@
                 <behaviors:EventToCommandBehavior EventName="Navigating" Command="{Binding OverrideUrlCommand}" EventArgsConverter="{StaticResource webNavigatingEventArgs}" />
             </WebView.Behaviors>
         </WebView>
-        <ProgressBar x:Name="ProgressBar" />
+        <ProgressBar x:Name="ProgressBar" VerticalOptions="Start" />
         <Button
             Grid.Row="1" 
             Margin="20, 10" 
@@ -41,6 +41,7 @@
             Text="アプリの使用を取りやめる" 
             FontSize="Small"
             BorderColor="Transparent"
+            BackgroundColor="Transparent"
             Command="{Binding CancelCommand}" />
     </Grid>
 </ContentPage>

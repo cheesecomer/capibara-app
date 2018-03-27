@@ -19,6 +19,6 @@
                 <behaviors:EventToCommandBehavior EventName="Navigating" Command="{Binding OverrideUrlCommand}" EventArgsConverter="{StaticResource webNavigatingEventArgs}" />
             </WebView.Behaviors>
         </WebView>
-        <ProgressBar x:Name="ProgressBar" />
+        <ProgressBar x:Name="ProgressBar" VerticalOptions="Start" />
     </Grid>
 </ContentPage>
