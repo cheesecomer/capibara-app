@@ -1,24 +1,22 @@
-﻿using System;
+﻿using System.IO;
 
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using Android.Graphics;
 using Android.OS;
 
-using Capibara.Services;
 using Capibara.Droid.Services;
-
-using Unity;
+using Capibara.Services;
 
 using Prism;
 using Prism.Ioc;
 
+using Unity;
+using Unity.Attributes;
+
 namespace Capibara.Droid
 {
-    [Activity(Label = "Capibara.Droid", Icon = "@drawable/icon", MainLauncher = true, Theme = "@android:style/Theme.Holo.Light", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Capibara", Icon = "@drawable/icon", MainLauncher = true, Theme = "@android:style/Theme.Holo.Light", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         public enum RequestCodes
@@ -27,20 +25,29 @@ namespace Capibara.Droid
             CropPhoto = 2
         }
 
+        [Dependency]
+        public IIsolatedStorage IsolatedStorage { get; set; }
+
         internal static MainActivity Instance { get; private set; }
 
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
 
             MainActivity.Instance = this;
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            IApplicationService applicationService = new ApplicationService();
 
-            LoadApplication(new App(new AndroidInitializer()));
+            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+            var application = new App(new AndroidInitializer(applicationService));
+
+            this.BuildUp(application.Container.Resolve<IUnityContainer>());
+
+            LoadApplication(application);
         }
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
+        protected override async void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
@@ -53,7 +60,7 @@ namespace Capibara.Droid
                 using (var bitmap = Android.Provider.MediaStore.Images.Media.GetBitmap(this.ContentResolver, data.Data))
                 using (var memory = new MemoryStream())
                 {
-                    bitmap.Compress(Bitmap.CompressFormat.Png, 100, memory);
+                    await bitmap.CompressAsync(Bitmap.CompressFormat.Png, 100, memory);
 
                     PickupPhotoService.ActiveTaskCompletionSource.SetResult(memory.ToArray());
                 }
@@ -67,9 +74,21 @@ namespace Capibara.Droid
 
     public class AndroidInitializer : IPlatformInitializer
     {
+        private IApplicationService applicationService;
+
+        public AndroidInitializer(IApplicationService applicationService)
+        {
+            this.applicationService = applicationService;
+        }
+
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
+            containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
+            containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
+            containerRegistry.RegisterInstance(this.applicationService);
+            containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }
     }
 }
