@@ -225,6 +225,7 @@
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
     <Compile Include="SplashActivity.cs" />
+    <Compile Include="Renderers\LinkableLabelRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
