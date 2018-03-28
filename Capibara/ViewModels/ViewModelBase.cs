@@ -126,7 +126,7 @@ namespace Capibara.ViewModels
             };
         }
 
-        protected virtual async Task DisplayErrorAlertAsync(Exception exception, Func<Task> func)
+        protected virtual async Task<bool> DisplayErrorAlertAsync(Exception exception, Func<Task> func)
         {
             if (exception is Net.HttpUnauthorizedException)
             {
@@ -162,8 +162,14 @@ namespace Capibara.ViewModels
                         "リトライ",
                         "閉じる");
 
-                if (needRetry) await func.Invoke();
+                if (needRetry)
+                {
+                    await func.Invoke();
+                    return true;
+                }
             }
+
+            return false;
         }
     }
 
