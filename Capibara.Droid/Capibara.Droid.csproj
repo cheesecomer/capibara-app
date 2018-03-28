@@ -224,6 +224,7 @@
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
+    <Compile Include="SplashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -245,12 +246,15 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\layout\activity_image_crop.xml" />
     <AndroidResource Include="Resources\layout\overlay_progress.axml" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\Icon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\logo.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\logo.png" />
     <AndroidResource Include="Resources\drawable-hdpi\logo.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\bg_launch.png" />
+    <AndroidResource Include="Resources\drawable\splash_screen.xml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon_without_bg.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\LottieResources\loading.json">
