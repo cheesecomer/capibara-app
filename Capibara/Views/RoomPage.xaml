@@ -110,21 +110,23 @@
             <RowDefinition Height="50" />
             <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
         </Grid.RowDefinitions>
-        <forms:ExtendedListView
+        <ListView
             x:Name="ListView"
             Grid.Row="0"
             HasUnevenRows="true"
             VerticalOptions="FillAndExpand"
             SeparatorColor="Transparent"
             ItemsSource="{Binding Messages}"
-            ItemTemplate="{StaticResource messageDataTemplateSelector}">
+            ItemTemplate="{StaticResource messageDataTemplateSelector}"
+            Rotation="180"
+            RotationY="180">
             <ListView.Header>
                 <BoxView HeightRequest="0" />
             </ListView.Header>
             <ListView.Footer>
                 <BoxView HeightRequest="0" />
             </ListView.Footer>
-        </forms:ExtendedListView>
+        </ListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

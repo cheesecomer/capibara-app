@@ -82,7 +82,6 @@
     <Compile Include="Forms\RoundImage.cs" />
     <Compile Include="ImageSourceExtensions.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="Forms\ExtendedListView.cs" />
     <Compile Include="ViewModels\BlockUsersPageViewModel.cs" />
     <Compile Include="Views\BlockUsersPage.xaml.cs">
       <DependentUpon>BlockUsersPage.xaml</DependentUpon>

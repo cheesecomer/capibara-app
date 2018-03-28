@@ -246,7 +246,6 @@
     <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
     <Compile Include="Renderers\RoundImageRenderer.cs" />
-    <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Services\ScreenService.cs" />
