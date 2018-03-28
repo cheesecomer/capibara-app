@@ -96,7 +96,8 @@ namespace Capibara.ViewModels
                 }
                 else
                 {
-                    await this.DisplayErrorAlertAsync(e, () => this.ToFloorMapPage());
+                    var isRetried = await this.DisplayErrorAlertAsync(e, () => this.ToFloorMapPage());
+                    if (!isRetried) this.ApplicationService.Exit();
                 }
             }
         }
