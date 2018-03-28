@@ -11,6 +11,8 @@ using Android.OS;
 using Capibara.Droid.Services;
 using Capibara.Services;
 
+using Plugin.GoogleAnalytics;
+
 using Prism;
 using Prism.Ioc;
 
@@ -41,6 +43,14 @@ namespace Capibara.Droid
             MainActivity.Instance = this;
 
             IApplicationService applicationService = new ApplicationService();
+
+            GoogleAnalytics.Current.Config.TrackingId = PlatformVariable.GoogleAnalyticsTrackingId;
+            GoogleAnalytics.Current.Config.AppId = "Capibara";
+            GoogleAnalytics.Current.Config.AppName = "Capibara";
+            GoogleAnalytics.Current.Config.AppVersion = applicationService.AppVersion;
+            GoogleAnalytics.Current.Config.AutoAppLifetimeMonitoring = true;
+            GoogleAnalytics.Current.Config.ReportUncaughtExceptions = true;
+            GoogleAnalytics.Current.InitTracker();
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
