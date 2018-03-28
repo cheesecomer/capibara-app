@@ -236,6 +236,7 @@
     <Folder Include="Resources\values\" />
     <Folder Include="Services\" />
     <Folder Include="Renderers\" />
+    <Folder Include="Resources\drawable-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -244,6 +245,12 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\layout\activity_image_crop.xml" />
     <AndroidResource Include="Resources\layout\overlay_progress.axml" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\Icon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\bg_launch.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\LottieResources\loading.json">
