@@ -97,6 +97,13 @@ namespace Capibara.Droid.Renderers
 
             var radius = (float)Math.Min(drawableRect.Width(), drawableRect.Height()) / 2f;
 
+            using (var paint = new Paint { AntiAlias = true, StrokeWidth = strokeWidth })
+            {
+                paint.SetStyle(Paint.Style.Fill);
+                paint.Color = Element.BackgroundColor.ToAndroid();
+                canvas.DrawCircle(drawableRect.CenterX(), drawableRect.CenterY(), radius, paint);
+            }
+
             var drawablePaint = this.BitmapPaint;
             if (drawablePaint != null)
                 canvas.DrawCircle(drawableRect.CenterX(), drawableRect.CenterY(), radius - strokeWidth, drawablePaint);
