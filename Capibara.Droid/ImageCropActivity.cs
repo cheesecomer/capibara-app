@@ -70,14 +70,6 @@ namespace Capibara.Droid
             cropButton.Enabled = false;
 
             var origin = this.Intent.GetParcelableExtra(Arguments.Data) as AndroidUri;
-            //var cacheFile = File.CreateTempFile(System.IO.Path.GetFileName(origin.Path), ".jpg", this.CacheDir);
-
-
-            //using (var bitmap = Android.Provider.MediaStore.Images.Media.GetBitmap(this.ContentResolver, origin));
-            //using (var stream = new System.IO.FileStream(cacheFile.AbsolutePath, System.IO.FileMode.Truncate))
-            //{
-            //    bitmap.Compress(Bitmap.CompressFormat.Jpeg, 100, stream);
-            //}
 
             var loadCallback = new LoadCallback()
                 .OnSuccessDo(() => cropButton.Enabled = true)

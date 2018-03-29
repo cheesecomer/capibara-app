@@ -7,6 +7,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
+using Android.Views;
 
 using Capibara.Droid.Services;
 using Capibara.Services;
@@ -19,11 +20,14 @@ using Prism.Ioc;
 using Unity;
 using Unity.Attributes;
 
+using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+
 namespace Capibara.Droid
 {
     [Activity(Label = "Capibara", Icon = "@drawable/icon", Theme = "@style/Theme.Main", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "com.cheesecomer.capibara", DataHost = "oauth")]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
+    public class MainActivity : FormsApplicationActivity
     {
         public enum RequestCodes
         {
@@ -52,6 +56,16 @@ namespace Capibara.Droid
             GoogleAnalytics.Current.Config.ReportUncaughtExceptions = true;
             GoogleAnalytics.Current.InitTracker();
 
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
+                this.Window.DecorView.SystemUiVisibility = 0;
+                var statusBarHeightInfo = 
+                    typeof(FormsApplicationActivity)
+                        .GetField("_statusBarHeight", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                statusBarHeightInfo?.SetValue(this, 0);
+                this.Window.SetStatusBarColor(new Color(0x58, 0xCE, 0x91, 255));
+            }
+
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             var application = new App(new AndroidInitializer(applicationService));
@@ -59,6 +73,13 @@ namespace Capibara.Droid
             this.BuildUp(application.Container.Resolve<IUnityContainer>());
 
             LoadApplication(application);
+
+            Xamarin
+                .Forms
+                .Application
+                .Current
+                .On<Xamarin.Forms.PlatformConfiguration.Android>()
+                .UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
         }
 
         protected override void OnResume()
