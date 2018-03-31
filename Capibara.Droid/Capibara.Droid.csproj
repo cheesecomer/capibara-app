@@ -196,12 +196,6 @@
     <Reference Include="Xamarin.Android.Support.CustomTabs">
       <HintPath>..\packages\Xamarin.Android.Support.CustomTabs.27.0.2\lib\MonoAndroid81\Xamarin.Android.Support.CustomTabs.dll</HintPath>
     </Reference>
-    <Reference Include="AiForms.Effects">
-      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\MonoAndroid\AiForms.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="AiForms.Effects.Droid">
-      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\MonoAndroid\AiForms.Effects.Droid.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">

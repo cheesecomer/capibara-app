@@ -1,5 +1,4 @@
-﻿using AiForms.Effects.Droid;
-using Android.Graphics.Drawables;
+﻿using Android.Graphics.Drawables;
 using Capibara.Effects; 
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;

@@ -18,12 +18,13 @@ namespace Capibara.ViewModels
         public ReactiveCollection<SettingItem> SettingItems { get; } =
             new ReactiveCollection<SettingItem>
             {
-            new SettingItem { Name = "ブロック中のユーザー", PagePath = "BlockUsersPage" },
-            new SettingItem { Name = "利用規約", PagePath = "WebViewPage" },
-            new SettingItem { Name = "プライバシーポリシー", PagePath = "WebViewPage" },
-            new SettingItem { Name = "お問い合わせ", PagePath = "InquiryPage" },
-            new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" },
-            new SettingItem { Name = "バージョン情報", PagePath = "AboutPage" },
+                new SettingItem { Name = "ブロック中のユーザー", PagePath = "BlockUsersPage" },
+                new SettingItem { Name = "利用規約", PagePath = "WebViewPage" },
+                new SettingItem { Name = "プライバシーポリシー", PagePath = "WebViewPage" },
+                new SettingItem { Name = "お問い合わせ", PagePath = "InquiryPage" },
+                new SettingItem { Name = "バージョン情報", PagePath = "AboutPage" },
+                new SettingItem { Name = "ライセンス", PagePath = "LicensePage" },
+                new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" },
             };
 
         public AsyncReactiveCommand<SettingItem> ItemTappedCommand { get; }
@@ -48,7 +49,7 @@ namespace Capibara.ViewModels
             };
 
             this.SettingItems[2].Parameters = new NavigationParameters
-            { 
+            {
                 { ParameterNames.Url, this.Environment.PrivacyPolicyUrl } ,
                 { ParameterNames.Title, "プライバシーポリシー" }
             };

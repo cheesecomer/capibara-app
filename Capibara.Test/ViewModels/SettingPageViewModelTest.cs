@@ -55,7 +55,7 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         [TestCase]
         public void ItShouldCountWithExpected()
         {
-            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(6));
+            Assert.That(this.Subject.SettingItems.Count, Is.EqualTo(7));
         }
     }
 
@@ -73,8 +73,9 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
                     { ParameterNames.Title, "プライバシーポリシー" }
                 } },
             new object[] { 3, "お問い合わせ", "InquiryPage", null },
-            new object[] { 4, "退会する", "UnsubscribePage", null },
-            new object[] { 5, "バージョン情報", "AboutPage", null }
+            new object[] { 4, "バージョン情報", "AboutPage", null },
+            new object[] { 5, "ライセンス", "LicensePage", null },
+            new object[] { 6, "退会する", "UnsubscribePage", null },
         };
 
         protected SubjectViewModel Subject;
