@@ -16,7 +16,7 @@ namespace Capibara.iOS
             this.UserId = (int)preference.IntForKey("AUTH.user_id");
             this.AccessToken = preference.StringForKey("AUTH.access_token");
 #else
-            var properties = AccountStore.Create().FindAccountsForService("com.cheese-comer.Capibara").SingleOrDefault()?.Properties;
+            var properties = AccountStore.Create().FindAccountsForService("com.cheesecomer.Capibara").SingleOrDefault()?.Properties;
 
             this.Email = properties?.ValueOrDefault("email");
             this.AccessToken = properties?.ValueOrDefault("access_token");
@@ -45,7 +45,7 @@ namespace Capibara.iOS
             };
 
             var account = new Account(this.Email, properties);
-            AccountStore.Create().Save(account, "com.cheese-comer.Capibara");
+            AccountStore.Create().Save(account, "com.cheesecomer.Capibara");
 #endif
         }
     }

@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Capibara</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.cheese-comer.Capibara</string>
+	<string>com.cheesecomer.Capibara</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
@@ -50,7 +50,7 @@
 				<string>com.cheesecomer.capibara</string>
 			</array>
 			<key>CFBundleURLName</key>
-			<string>com.cheese-comer.capibara</string>
+			<string>com.cheesecomer.capibara</string>
 		</dict>
 	</array>
 </dict>
