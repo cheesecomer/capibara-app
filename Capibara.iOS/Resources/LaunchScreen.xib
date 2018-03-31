@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,12 +18,6 @@
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_launch" translatesAutoresizingMaskIntoConstraints="NO" id="Cox-6c-TXm">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="639"/>
                 </imageView>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Copyright (c) 2017 ${AuthorCopyright}" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="8ie-xW-0ye">
-                    <rect key="frame" x="20" y="598.5" width="440" height="20.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="Aw3-dc-4L5">
                     <rect key="frame" x="121.5" y="200" width="237" height="76"/>
                     <constraints>
@@ -35,11 +29,8 @@
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="Cox-6c-TXm" secondAttribute="bottom" id="70b-HM-DUr"/>
-                <constraint firstAttribute="bottom" secondItem="8ie-xW-0ye" secondAttribute="bottom" constant="20" id="Kzo-t9-V3l"/>
                 <constraint firstItem="Cox-6c-TXm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="M3A-mH-CEA"/>
                 <constraint firstItem="Aw3-dc-4L5" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Ma7-ci-3mD"/>
-                <constraint firstItem="8ie-xW-0ye" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="MfP-vx-nX0"/>
-                <constraint firstAttribute="centerX" secondItem="8ie-xW-0ye" secondAttribute="centerX" id="ZEH-qu-HZ9"/>
                 <constraint firstAttribute="trailing" secondItem="Cox-6c-TXm" secondAttribute="trailing" id="drH-zF-7ww"/>
                 <constraint firstItem="Cox-6c-TXm" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="k6t-vI-5t0"/>
                 <constraint firstItem="Aw3-dc-4L5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="200" id="skB-0o-FkN"/>
@@ -51,6 +42,6 @@
     </objects>
     <resources>
         <image name="bg_launch" width="320" height="568"/>
-        <image name="logo" width="236" height="76"/>
+        <image name="logo" width="236" height="73"/>
     </resources>
 </document>
