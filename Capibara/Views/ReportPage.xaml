@@ -5,7 +5,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
-    xmlns:effects="clr-namespace:Capibara.Effects;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.ReportPage"
@@ -31,17 +31,17 @@
                     Margin="10, 10, 0, 10" />
                 <Label Text="コメント" />
                 <Editor
+                    ef:Border.Width="2"
+                    ef:Border.Radius="6"
+                    ef:Border.Color="#D1D1D1"
                     Text="{Binding Message.Value, Mode=TwoWay}"
                     Margin="10, 10, 0, 0"
-                    HeightRequest="150">
-                    <Editor.Effects>
-                        <effects:BorderEffect />
-                    </Editor.Effects>
-                </Editor>
+                    HeightRequest="150" />
             </StackLayout>
         </ScrollView>
         <Button 
             Grid.Row="1"
+            ef:ToFlatButton.On="true" 
             HeightRequest="50"
             Text="通報する"
             BackgroundColor="White"

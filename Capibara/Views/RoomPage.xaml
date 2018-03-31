@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:selectors="clr-namespace:Capibara.Selectors;assembly=Capibara"
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.RoomPage"
     Title="{Binding Name.Value}">
@@ -130,10 +131,10 @@
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="Auto"  />
             </Grid.ColumnDefinitions>
-            <Editor Grid.Column="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" Text="Send" BackgroundColor="#58CE91" TextColor="White" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
+            <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="1" ef:ToFlatButton.On="true" MinimumWidthRequest="50" Text="Send" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
         </Grid>
         <forms:AdMobBanner Grid.Row="2" />
 

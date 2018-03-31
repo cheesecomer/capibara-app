@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.SignUpPage"
     BackgroundColor="#2f8e5b">
@@ -34,6 +35,10 @@
                 HorizontalTextAlignment="Center"
                 />
             <Entry
+                ef:Border.Width="2"
+                ef:Border.Radius="6"
+                ef:Border.Color="#D1D1D1"
+                BackgroundColor="#F1F1F1"
                 HorizontalOptions="FillAndExpand"
                 Placeholder="ニックネーム"
                 Text="{Binding Nickname.Value, Mode=TwoWay}"
@@ -48,6 +53,7 @@
                 TextColor="Red"
                 />
             <Button
+                ef:ToFlatButton.On="true" 
                 HorizontalOptions="FillAndExpand"
                 Text="登録！"
                 TextColor="{StaticResource PrimaryColor}"
@@ -57,6 +63,7 @@
                 Margin="0, 0, 0, 20"
                 />
             <Button
+                ef:ToFlatButton.On="true" 
                 HorizontalOptions="FillAndExpand"
                 Text="SNSアカウントでログイン！"
                 TextColor="{StaticResource PrimaryColor}"
@@ -66,6 +73,7 @@
                 Margin="0, 0, 0, 20"
                 />
             <Button
+                ef:ToFlatButton.On="true" 
                 HorizontalOptions="FillAndExpand"
                 FontSize="Small"
                 Text="既にアカウントのある方"
