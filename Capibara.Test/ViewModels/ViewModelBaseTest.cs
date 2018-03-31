@@ -201,7 +201,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulGoToSignIn()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
             }
         }
 

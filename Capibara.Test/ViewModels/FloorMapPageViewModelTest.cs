@@ -172,7 +172,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
             [TestCase]
             public void ItShouldNavigateToLogin()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
             }
         }
     }
