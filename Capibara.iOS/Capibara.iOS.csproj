@@ -180,6 +180,12 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="AiForms.Effects">
+      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\Xamarin.iOS10\AiForms.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="AiForms.Effects.iOS">
+      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\Xamarin.iOS10\AiForms.Effects.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
@@ -243,16 +249,16 @@
     <Compile Include="SecureIsolatedStorage.cs" />
     <Compile Include="ViewExtensions.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
-    <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
     <Compile Include="Renderers\RoundImageRenderer.cs" />
-    <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Services\ScreenService.cs" />
     <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Renderers\LinkableLabelRenderer.cs" />
+    <Compile Include="Effects\NamespaceInfo.cs" />
+    <Compile Include="Effects\BorderPlatformEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

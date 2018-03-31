@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.SignInPage"
     BackgroundColor="#2f8e5b">
@@ -34,6 +35,10 @@
                 HorizontalTextAlignment="Center"
                 />
             <Entry
+                ef:Border.Width="2"
+                ef:Border.Radius="6"
+                ef:Border.Color="#D1D1D1"
+                BackgroundColor="#F1F1F1"
                 HorizontalOptions="FillAndExpand"
                 Placeholder="メールアドレス"
                 HeightRequest="40"
@@ -41,6 +46,10 @@
                 Margin="0, 0, 0, 20"
                 />
             <Entry
+                ef:Border.Width="2"
+                ef:Border.Radius="6"
+                ef:Border.Color="#D1D1D1"
+                BackgroundColor="#F1F1F1"
                 HorizontalOptions="FillAndExpand"
                 Placeholder="パスワード"
                 HeightRequest="40"
@@ -56,6 +65,7 @@
                 TextColor="Red"
                 />
             <Button
+                ef:ToFlatButton.On="true" 
                 HorizontalOptions="FillAndExpand"
                 Text="ログイン"
                 FontSize="Medium"
@@ -66,6 +76,7 @@
                 Margin="0, 0, 0, 20"
                 />
             <Button
+                ef:ToFlatButton.On="true" 
                 HorizontalOptions="FillAndExpand"
                 FontSize="Small"
                 Text="アカウントを作成する"

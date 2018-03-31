@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.props" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.props')" />
   <Import Project="..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -177,11 +178,43 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\MonoAndroid10\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Droid.SimpleCropView">
+      <HintPath>..\packages\Xam.Droid.SimpleCropView.1.1.4.2\lib\MonoAndroid10\Xam.Droid.SimpleCropView.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Basement">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Basement.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads.Lite">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Ads.Lite.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Ads.Lite.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Gass">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Gass.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Gass.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Ads.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Ads.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.CustomTabs">
+      <HintPath>..\packages\Xamarin.Android.Support.CustomTabs.27.0.2\lib\MonoAndroid81\Xamarin.Android.Support.CustomTabs.dll</HintPath>
+    </Reference>
+    <Reference Include="AiForms.Effects">
+      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\MonoAndroid\AiForms.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="AiForms.Effects.Droid">
+      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\MonoAndroid\AiForms.Effects.Droid.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
       <Project>{4BAFE42D-1E8C-4CD7-921B-F069E2132A8C}</Project>
       <Name>Capibara</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
+      <Project>{DD777B11-BCCB-4543-91F5-16F7B679653F}</Project>
+      <Name>Capibara.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Capibara.DataProviders\Capibara.DataProviders.csproj">
+      <Project>{6BD9633D-6376-4208-B7DE-DE00159154BF}</Project>
+      <Name>Capibara.DataProviders</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +222,19 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ScreenService.cs" />
+    <Compile Include="IsolatedStorage.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Services\PickupPhotoService.cs" />
+    <Compile Include="Renderers\RoundImageRenderer.cs" />
+    <Compile Include="ImageCropActivity.cs" />
+    <Compile Include="Services\ProgressDialogService.cs" />
+    <Compile Include="PlatformVariable.cs" />
+    <Compile Include="Renderers\AdMobBannerRenderer.cs" />
+    <Compile Include="SplashActivity.cs" />
+    <Compile Include="Renderers\LinkableLabelRenderer.cs" />
+    <Compile Include="Effects\ToFlatButtonPlatformEffect.cs" />
+    <Compile Include="Effects\NamespaceInfo.cs" />
+    <Compile Include="Effects\BorderPlatformEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -200,12 +246,31 @@
     <Folder Include="Resources\layout\" />
     <Folder Include="Resources\values\" />
     <Folder Include="Services\" />
+    <Folder Include="Renderers\" />
+    <Folder Include="Resources\drawable-xxxhdpi\" />
+    <Folder Include="Effects\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\layout\activity_image_crop.xml" />
+    <AndroidResource Include="Resources\layout\overlay_progress.axml" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\bg_launch.png" />
+    <AndroidResource Include="Resources\drawable\splash_screen.xml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon_without_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="..\LottieResources\loading.json">
+      <Link>Assets\loading.json</Link>
+    </AndroidAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets')" />
@@ -229,4 +294,27 @@
   <Import Project="..\packages\Xamarin.Android.Support.Design.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.Design.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Design.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.Design.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.v7.MediaRouter.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.MediaRouter.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.v7.MediaRouter.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.280555\build\netstandard1.0\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Ads.Lite.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Ads.Lite.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Ads.Lite.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Ads.Lite.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Gass.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Gass.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Gass.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Gass.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Ads.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Ads.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Ads.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Ads.targets')" />
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PreBuildEvent>
+      copy /Y $(ProjectDir)PlatformVariable.cs $(ProjectDir)PlatformVariable.cs.bak
+      git diff $(ProjectDir)PlatformVariable.cs
+    </PreBuildEvent>
+    <PostBuildEvent>move /Y $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <PreBuildEvent>
+      source ~/.bash_profile
+      cp $(ProjectDir)\PlatformVariable.cs $(ProjectDir)\PlatformVariable.cs.bak
+      sed -i '' 's/${ANDROID_ADMOB_UNIT_ID_FOR_BANNER}/'$ANDROID_ADMOB_UNIT_ID_FOR_BANNER'/g' $(ProjectDir)\PlatformVariable.cs
+      sed -i '' 's/${GA_TRACKING_ID}/'$GA_TRACKING_ID'/g' $(ProjectDir)\PlatformVariable.cs
+      git diff $(ProjectDir)PlatformVariable.cs
+    </PreBuildEvent>
+    <PostBuildEvent>mv $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\Xamarin.Android.Support.CustomTabs.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.CustomTabs.targets" Condition="Exists('..\packages\Xamarin.Android.Support.CustomTabs.27.0.2\build\MonoAndroid81\Xamarin.Android.Support.CustomTabs.targets')" />
 </Project>

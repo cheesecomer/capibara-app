@@ -78,11 +78,9 @@
     <Compile Include="Views\EditProfilePage.xaml.cs">
       <DependentUpon>EditProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Effects\BorderEffect.cs" />
     <Compile Include="Forms\RoundImage.cs" />
     <Compile Include="ImageSourceExtensions.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="Forms\ExtendedListView.cs" />
     <Compile Include="ViewModels\BlockUsersPageViewModel.cs" />
     <Compile Include="Views\BlockUsersPage.xaml.cs">
       <DependentUpon>BlockUsersPage.xaml</DependentUpon>
@@ -123,6 +121,8 @@
     <Compile Include="Services\IOverrideUrlService.cs" />
     <Compile Include="Services\IScreenService.cs" />
     <Compile Include="Forms\LinkableLabel.cs" />
+    <Compile Include="Effects\ToFlatButton.cs" />
+    <Compile Include="Effects\Border.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

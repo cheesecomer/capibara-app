@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.UserProfilePage"
     Title="プロフィール"
@@ -31,6 +32,7 @@
         <Label Text="自己紹介" />
         <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 30"  />
         <Button 
+            ef:ToFlatButton.On="true" 
             Text="ブロック"
             BorderWidth="0"
             BackgroundColor="{StaticResource WarningColor}"
@@ -39,6 +41,7 @@
             Margin="0, 0, 0, 10"
             />
         <Button 
+            ef:ToFlatButton.On="true" 
             Text="通報"
             BorderWidth="0"
             BackgroundColor="{StaticResource DangerColor}"

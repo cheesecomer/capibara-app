@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.UnsubscribePage"
     Title="退会する"
@@ -34,6 +35,7 @@
                 />
         </StackLayout>
         <Button 
+            ef:ToFlatButton.On="true"
             Grid.Row="1"
             x:Name="UnsubscribeButton"
             Text="退会する"

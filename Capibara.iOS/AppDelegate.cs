@@ -31,9 +31,6 @@ namespace Capibara.iOS
         [Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
-        [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
         /// <summary>
         /// Finisheds the launching.
         /// </summary>
@@ -108,6 +105,7 @@ namespace Capibara.iOS
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
             containerRegistry.RegisterInstance(this.applicationService);
+            containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }
     }
 }
