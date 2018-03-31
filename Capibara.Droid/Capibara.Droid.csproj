@@ -235,6 +235,7 @@
     <Compile Include="Effects\ToFlatButtonPlatformEffect.cs" />
     <Compile Include="Effects\NamespaceInfo.cs" />
     <Compile Include="Effects\BorderPlatformEffect.cs" />
+    <Compile Include="Effects\EffectBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

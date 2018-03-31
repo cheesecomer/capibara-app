@@ -60,7 +60,7 @@ namespace Capibara
 
             if (this.Container.TryResolve<IIsolatedStorage>() == null)
                 containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorageStub());
-            
+
             if (this.Container.TryResolve<IProgressDialogService>() == null)
                 containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogServiceStub());
 
@@ -89,6 +89,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<WebViewPage>();
             containerRegistry.RegisterForNavigation<AcceptPage>();
             containerRegistry.RegisterForNavigation<InquiryPage>();
+            containerRegistry.RegisterForNavigation<AboutPage>();
             containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
@@ -202,7 +203,7 @@ namespace Capibara
 
             void ITracker.SendTransaction(Transaction transaction)
                 => throw new NotImplementedException();
-            
+
             void ITracker.SendTransactionItem(TransactionItem transactionItem)
                 => throw new NotImplementedException();
 

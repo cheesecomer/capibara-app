@@ -23,6 +23,7 @@ namespace Capibara.ViewModels
             new SettingItem { Name = "プライバシーポリシー", PagePath = "WebViewPage" },
             new SettingItem { Name = "お問い合わせ", PagePath = "InquiryPage" },
             new SettingItem { Name = "退会する", PagePath = "UnsubscribePage" },
+            new SettingItem { Name = "バージョン情報", PagePath = "AboutPage" },
             };
 
         public AsyncReactiveCommand<SettingItem> ItemTappedCommand { get; }
