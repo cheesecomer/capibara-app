@@ -180,12 +180,6 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
-    <Reference Include="AiForms.Effects">
-      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\Xamarin.iOS10\AiForms.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="AiForms.Effects.iOS">
-      <HintPath>..\packages\AiForms.Effects.1.2.0\lib\Xamarin.iOS10\AiForms.Effects.iOS.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">

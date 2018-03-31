@@ -7,7 +7,7 @@ using Xamarin.Forms.Platform.Android;
 [assembly: ExportEffect(typeof(Capibara.Droid.Effects.BorderPlatformEffect), nameof(Capibara.Effects.Border))]
 namespace Capibara.Droid.Effects
 {
-    public class BorderPlatformEffect : AiEffectBase
+    public class BorderPlatformEffect : EffectBase
     {
         Android.Views.View _view;
         GradientDrawable _border;

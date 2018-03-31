@@ -203,6 +203,7 @@
     <Compile Include="Converters\TopMarginConverterTest.cs" />
     <Compile Include="Converters\EnumToStringConverterTest.cs" />
     <Compile Include="ViewModels\InquiryPageViewModelTest.cs" />
+    <Compile Include="ViewModels\AboutPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

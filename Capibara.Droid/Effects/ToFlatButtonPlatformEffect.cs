@@ -11,7 +11,7 @@ using NativeButton = Android.Widget.Button;
 [assembly: ExportEffect(typeof(Capibara.Droid.Effects.ToFlatButtonPlatformEffect), nameof(Capibara.Effects.ToFlatButton))]
 namespace Capibara.Droid.Effects
 {
-    public class ToFlatButtonPlatformEffect : AiEffectBase
+    public class ToFlatButtonPlatformEffect : EffectBase
     {
 
         private ColorStateList Colors;

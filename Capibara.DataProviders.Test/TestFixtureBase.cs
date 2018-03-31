@@ -94,6 +94,8 @@ namespace Capibara.Test
 
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
+        protected Mock<IApplicationService> ApplicationService { get; private set; }
+
         protected IUnityContainer Container { get; private set; }
 
         protected bool IsExitCalled { get; private set; }
@@ -218,21 +220,21 @@ namespace Capibara.Test
 
             this.RequestFactory = new Mock<IRequestFactory>();
 
-            var applicationService = new Mock<IApplicationService>();
-            applicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
-            applicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
-            applicationService.SetupGet(x => x.AppVersion).Returns("1.0.0");
-            applicationService.SetupGet(x => x.Platform).Returns("iOS");
+            this.ApplicationService = new Mock<IApplicationService>();
+            this.ApplicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
+            this.ApplicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
+            this.ApplicationService.SetupGet(x => x.AppVersion).Returns("1.0.0");
+            this.ApplicationService.SetupGet(x => x.Platform).Returns("iOS");
 
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(this.Environment = environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<IIsolatedStorage>(this.IsolatedStorage = isolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-            container.RegisterInstance<IWebSocketClientFactory>(webSocketClientFactory.Object);
-            container.RegisterInstance<IRequestFactory>(this.RequestFactory.Object);
-            container.RegisterInstance(applicationService.Object);
+            container.RegisterInstance(this.Environment = environment.Object);
+            container.RegisterInstance(restClient.Object);
+            container.RegisterInstance(this.IsolatedStorage = isolatedStorage.Object);
+            container.RegisterInstance(application.Object);
+            container.RegisterInstance(webSocketClientFactory.Object);
+            container.RegisterInstance(this.RequestFactory.Object);
+            container.RegisterInstance(this.ApplicationService.Object);
 
             this.Container = container;
         }
