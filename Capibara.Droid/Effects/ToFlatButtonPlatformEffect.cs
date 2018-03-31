@@ -1,14 +1,16 @@
 ﻿using System;
-using AiForms.Effects;
-using AiForms.Effects.Droid;
 using Android.Animation;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
+
+using Capibara.Effects;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+
 using NativeButton = Android.Widget.Button;
 
-[assembly: ExportEffect(typeof(Capibara.Droid.Effects.ToFlatButtonPlatformEffect), nameof(Capibara.Effects.ToFlatButton))]
+[assembly: ExportEffect(typeof(Capibara.Droid.Effects.ToFlatButtonPlatformEffect), nameof(ToFlatButton))]
 namespace Capibara.Droid.Effects
 {
     public class ToFlatButtonPlatformEffect : EffectBase

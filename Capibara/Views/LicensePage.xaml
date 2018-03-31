@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    x:Class="Capibara.Views.LicensePage"
+    BackgroundColor="#F1F1F1"
+    Title="ライセンス">
+    <ScrollView>
+        <StackLayout>
+            <StackLayout Margin="20" IsVisible="false">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="true" />
+                        <On Platform="iOS" Value="false" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="Com.Airbnb.Android.Lottie" TextColor="#111" />
+                <Label Text="Copyright (c) Martijn van Dijkz" TextColor="#666" />
+                <Label Text="Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);" TextColor="#666" />
+                <Label Text="you may not use this file except in compliance with the License." TextColor="#666" />
+                <Label Text="You may obtain a copy of the License at" TextColor="#666" />
+                <forms:LinkableLabel Text="http://www.apache.org/licenses/LICENSE-2.0" TextColor="#666" Margin="0, 5, 0, 5" LinkTextColor="#0044CC" />
+                <Label Text="Unless required by applicable law or agreed to in writing, software" TextColor="#666" />
+                <Label Text="distributed under the License is distributed on an &quot;AS IS&quot; BASIS," TextColor="#666" />
+                <Label Text="WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." TextColor="#666" />
+                <Label Text="See the License for the specific language governing permissions and" TextColor="#666" />
+                <Label Text="limitations under the License." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20" IsVisible="false">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="Com.Airbnb.iOS.Lottie" TextColor="#111" />
+                <Label Text="Copyright (c) Martijn van Dijkz" TextColor="#666" />
+                <Label Text="Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);" TextColor="#666" />
+                <Label Text="you may not use this file except in compliance with the License." TextColor="#666" />
+                <Label Text="You may obtain a copy of the License at" TextColor="#666" />
+                <forms:LinkableLabel Text="http://www.apache.org/licenses/LICENSE-2.0" TextColor="#666" Margin="0, 5, 0, 5" LinkTextColor="#0044CC" />
+                <Label Text="Unless required by applicable law or agreed to in writing, software" TextColor="#666" />
+                <Label Text="distributed under the License is distributed on an &quot;AS IS&quot; BASIS," TextColor="#666" />
+                <Label Text="WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." TextColor="#666" />
+                <Label Text="See the License for the specific language governing permissions and" TextColor="#666" />
+                <Label Text="limitations under the License." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Com.Airbnb.Xamarin.Forms.Lottie" TextColor="#111" />
+                <Label Text="Copyright (c) Martijn van Dijkz" TextColor="#666" />
+                <Label Text="Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);" TextColor="#666" />
+                <Label Text="you may not use this file except in compliance with the License." TextColor="#666" />
+                <Label Text="You may obtain a copy of the License at" TextColor="#666" />
+                <forms:LinkableLabel Text="http://www.apache.org/licenses/LICENSE-2.0" TextColor="#666" Margin="0, 10, 0, 10" LinkTextColor="#0044CC" />
+                <Label Text="Unless required by applicable law or agreed to in writing, software" TextColor="#666" />
+                <Label Text="distributed under the License is distributed on an &quot;AS IS&quot; BASIS," TextColor="#666" />
+                <Label Text="WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." TextColor="#666" />
+                <Label Text="See the License for the specific language governing permissions and" TextColor="#666" />
+                <Label Text="limitations under the License." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="CommonServiceLocator" TextColor="#111" />
+                <Label Text="Copyright (c) Microsoft 2008" TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="ksemenenko.GoogleAnalytics" TextColor="#111" />
+                <Label Text="Copyright (c) 2016 ksemenenko" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20" IsVisible="false">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="Microsoft.Bcl.Build" TextColor="#111" />
+                <Label Text="Copyright (c) Microsoft Corporation All rights reserved." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Microsoft.CSharp" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation and Contributors. All rights reserved." TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Microsoft.NETCore.Platforms" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation and Contributors. All rights reserved." TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Microsoft.NETCore.Platforms" TextColor="#111" />
+                <Label Text="Copyright (c) Microsoft Corporation. All rights reserved." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Microsoft.Win32.Primitives" TextColor="#111" />
+                <Label Text="Copyright (c) Microsoft Corporation. All rights reserved." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="NETStandard.Library" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation and Contributors. All rights reserved." TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Newtonsoft.Json" TextColor="#111" />
+                <Label Text="Copyright (c) 2007 James Newton-King" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="PCLCrypto" TextColor="#111" />
+                <Label Text="Copyright (c) Andrew Arnott" TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="PInvoke.BCrypt" TextColor="#111" />
+                <Label Text="Copyright (c) Andrew Arnott" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="PInvoke.Kernel32" TextColor="#111" />
+                <Label Text="Copyright (c) Andrew Arnott" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="PInvoke.NCrypt" TextColor="#111" />
+                <Label Text="Copyright (c) Andrew Arnott" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <StackLayout.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android" Value="false" />
+                        <On Platform="iOS" Value="true" />
+                    </OnPlatform>
+                </StackLayout.IsVisible>
+                <Label Text="PInvoke.Windows.Core" TextColor="#111" />
+                <Label Text="Copyright (c) Andrew Arnott" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Prism.Core" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Prism.Core" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Prism.Forms" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="Prism.Unity.Forms" TextColor="#111" />
+                <Label Text="Copyright (c) .NET Foundation" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+            <StackLayout Margin="20">
+                <Label Text="ReactiveProperty" TextColor="#111" />
+                <Label Text="Copyright (c) 2018 neuecc, xin9le, okazuki" TextColor="#666" />
+                <Label Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:" TextColor="#666" />
+                <Label Text="The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." TextColor="#666" Margin="0, 5, 0, 5" />
+                <Label Text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." TextColor="#666" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
