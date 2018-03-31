@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
-using AiForms.Effects;
+using CoreGraphics;
+using Capibara.Effects;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 
-[assembly: ExportEffect(typeof(Capibara.iOS.Effects.BorderPlatformEffect), nameof(Capibara.Effects.Border))]
+[assembly: ExportEffect(typeof(Capibara.iOS.Effects.BorderPlatformEffect), nameof(Border))]
 namespace Capibara.iOS.Effects
 {
     public class BorderPlatformEffect : PlatformEffect
@@ -28,6 +29,8 @@ namespace Capibara.iOS.Effects
             {
                 var textfield = _view as UITextField;
                 textfield.BorderStyle = UITextBorderStyle.None;
+                textfield.LeftView = new UIView(new CGRect(0, 0, 7, textfield.Bounds.Height));
+                textfield.LeftViewMode = UITextFieldViewMode.Always;
             }
 
             UpdateRadius();
