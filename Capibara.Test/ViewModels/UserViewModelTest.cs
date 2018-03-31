@@ -136,13 +136,11 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             [TestCase]
             public void ItShouldHasFourButtons()
             {
-                Assert.That(this.buttons?.Length, Is.EqualTo(4));
+                Assert.That(this.buttons?.Length, Is.EqualTo(2));
             }
 
             [TestCase(0, "キャンセル")]
-            [TestCase(1, "削除")]
-            [TestCase(2, "アルバムから選択")]
-            [TestCase(3, "カメラで撮影")]
+            [TestCase(1, "アルバムから選択")]
             public void ItShouldButtontTextExpected(int index, string expect)
             {
                 Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
@@ -177,7 +175,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
 
                 while (!viewModel.RefreshCommand.CanExecute()) { }
 
-                this.buttons.ElementAtOrDefault(2)?.Action?.Invoke();
+                this.buttons.ElementAtOrDefault(1)?.Action?.Invoke();
             }
 
             [TestCase]

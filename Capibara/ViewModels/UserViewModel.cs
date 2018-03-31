@@ -119,7 +119,7 @@ namespace Capibara.ViewModels
                     }
                 });
                 var takeButton = ActionSheetButton.CreateButton("カメラで撮影", () => { });
-                await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, deleteButton, pickupButton, takeButton);
+                await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, pickupButton);
             });
 
             // BlockCommand

@@ -131,7 +131,7 @@ namespace Capibara.ViewModels
             if (exception is Net.HttpUnauthorizedException)
             {
                 await this.PageDialogService.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる");
-                await this.NavigationService.NavigateAsync("/SignInPage");
+                await this.NavigationService.NavigateAsync("/SignUpPage");
             }
             else if (exception is Net.HttpForbiddenException)
             {

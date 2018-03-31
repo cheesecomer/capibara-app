@@ -150,7 +150,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
             [TestCase]
             public void ItShouldNavigateToLogin()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
             }
         }
     }
