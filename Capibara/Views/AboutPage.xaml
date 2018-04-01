@@ -29,6 +29,7 @@
         </StackLayout>
         <Button 
             Grid.RowSpan="3"
+            BackgroundColor="Transparent"
             BorderColor="Transparent"
             Command="{Binding CloseCommand}"
             />
