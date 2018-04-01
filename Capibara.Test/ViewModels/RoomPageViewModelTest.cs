@@ -120,8 +120,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
 
-                viewModel.ConnectCommand.Execute();
-                while (!viewModel.ConnectCommand.CanExecute()) { }
+                viewModel.OnResume();
 
                 viewModel.Message.Value = "Foo.Bar!";
                 viewModel.SpeakCommand.Execute();
@@ -147,7 +146,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         }
     }
 
-    namespace ConnectCommandTest
+    namespace OnResumeTest
     {
         [TestFixture]
         public class WhenSuccess : ViewModelTestBase
@@ -171,8 +170,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel.BuildUp(this.Container);
 
-                ViewModel.ConnectCommand.Execute();
-                while (!ViewModel.ConnectCommand.CanExecute()) { }
+                ViewModel.OnResume();
             }
 
             [TearDown]
@@ -218,8 +216,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel.BuildUp(this.Container);
 
-                ViewModel.ConnectCommand.Execute();
-                while (!ViewModel.ConnectCommand.CanExecute()) { }
+                ViewModel.OnResume();
 
                 ViewModel.CloseCommand.Execute();
                 while (!ViewModel.CloseCommand.CanExecute()) { }
@@ -259,8 +256,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
                 ViewModel.BuildUp(this.Container);
 
-                ViewModel.ConnectCommand.Execute();
-                while (!ViewModel.ConnectCommand.CanExecute()) { }
+                ViewModel.OnResume();
 
                 ViewModel.ShowParticipantsCommand.Execute();
                 while (!ViewModel.ShowParticipantsCommand.CanExecute()) { }

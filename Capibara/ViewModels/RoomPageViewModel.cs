@@ -16,7 +16,7 @@ namespace Capibara.ViewModels
     {
         private bool needClose = true;
 
-        public AsyncReactiveCommand ConnectCommand { get; }
+        //public AsyncReactiveCommand ConnectCommand { get; }
 
         public AsyncReactiveCommand CloseCommand { get; }
 
@@ -91,10 +91,6 @@ namespace Capibara.ViewModels
             this.IsConnected.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsConnected)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Message)));
 
-            // ConnectCommand
-            this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
-
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.CloseCommand.Subscribe(async () =>
@@ -127,6 +123,17 @@ namespace Capibara.ViewModels
                         () => this.SpeakCommand.Execute())));
             
             this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
+
+
+            this.Model.Disconnected += (s, e) => 
+                this.ProgressDialogService.DisplayProgressAsync(this.Connect());
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+
+            this.ProgressDialogService.DisplayProgressAsync(this.Connect());
         }
 
         private async Task Connect()
