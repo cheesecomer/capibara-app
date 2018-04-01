@@ -80,6 +80,7 @@ namespace Capibara.iOS
                    .ToDictionary(x => x.First(), x => x.Last());
                 this.IsolatedStorage.AccessToken = query["access_token"];
                 this.IsolatedStorage.UserId = query["id"].ToInt();
+                this.IsolatedStorage.Save();
             }
 
             return false;
