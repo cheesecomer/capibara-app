@@ -37,7 +37,7 @@ test_script:
       -targetargs:"Capibara.Test/bin/Debug/Capibara.Test.dll" `
       -target:"nunit3-console.exe" `
       -register:user `
-      -filter:"+[Capibara]* -[Capibara]Capibara.Ioc.* -[Capibara]Capibara.Forms.* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment*" `
+      -filter:"+[Capibara]* -[Capibara]Capibara.Effects.* -[Capibara]Capibara.Ioc.* -[Capibara]Capibara.Forms.* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment*" `
       -output:"coverage.xml" `
       -mergeoutput
 
