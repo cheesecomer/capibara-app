@@ -8,6 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
+    BackgroundColor="#F1F1F1"
     x:Class="Capibara.Views.RoomPage"
     Title="{Binding Name.Value}">
     <ContentView.Behaviors>
@@ -91,7 +92,7 @@
                             Command="{Binding ShowProfileCommand}"
                             />
                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
-                        <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" CornerRadius="5" HasShadow="false">
+                        <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" BackgroundColor="White" CornerRadius="5" HasShadow="false">
                             <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
                         </Frame>
                         <Label Grid.Column="2" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Small" HorizontalTextAlignment="End" TextColor="#444" Margin="0, 0, 10, 0" />
