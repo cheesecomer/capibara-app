@@ -35,7 +35,11 @@ namespace Capibara
         /// 環境設定
         /// </summary>
         /// <value>The environment.</value>
-        public IEnvironment Environment { get; } = new EnvironmentLocal();
+#if DEBUG
+        public IEnvironment Environment { get; } = new EnvironmentStaging();
+#else
+        public IEnvironment Environment { get; } = new EnvironmentProduction();
+#endif
 
         protected override void OnInitialized()
         {
