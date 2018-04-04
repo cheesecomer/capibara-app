@@ -131,10 +131,15 @@ namespace Capibara.Net.Channels
         {
             if (!this.IsOpen)
                 return;
-                    
-            await this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-            this.Disconnected?.Invoke(this, null);
-            this.Dispose();
+                   
+            try
+            {
+                await this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+            }
+            catch (Exception e)
+            {
+                this.LastException = e;
+            }
         }
 
         public Task SendSubscribe(IChannelIdentifier channelIdentifier)
