@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>プロフィール画像をアルバムから選択</string>
 	<key>CFBundleDisplayName</key>
 	<string>Capibara</string>
 	<key>CFBundleIdentifier</key>
@@ -9,7 +11,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.1</string>
+	<string>1.0.2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -53,8 +55,6 @@
 			<string>com.cheesecomer.capibara</string>
 		</dict>
 	</array>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>プロフィール画像をアルバムから選択</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>プロフィール画像をアルバムから選択</string>
 </dict>
