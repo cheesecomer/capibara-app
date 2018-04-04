@@ -56,6 +56,8 @@ namespace Capibara.Test
     {
         protected bool IsWebSocketConnectCalled { get; private set; }
 
+        protected bool IsWebSocketCloseCalled { get; private set; }
+
         protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
 
         protected string WebSocketRequestUrl { get;  private set; } = string.Empty;
@@ -90,7 +92,9 @@ namespace Capibara.Test
 
         protected virtual Exception RestException { get; }
 
-        private Mock<IWebSocketClient> webSocketClient;
+        protected virtual Exception WebSocketCloseException { get; }
+
+        protected Mock<IWebSocketClient> WebSocketClient;
 
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
@@ -165,15 +169,15 @@ namespace Capibara.Test
                 .Callback<string, string>((k, v) => WebSocketRequestHeaders[k] = v);
 
             // IWebSocketClient のセットアップ
-            webSocketClient = new Mock<IWebSocketClient>();
-            webSocketClient.SetupAllProperties();
-            webSocketClient.SetupGet(x => x.Options).Returns(clientWebSocketOptions.Object);
-            webSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
+            WebSocketClient = new Mock<IWebSocketClient>();
+            WebSocketClient.SetupAllProperties();
+            WebSocketClient.SetupGet(x => x.Options).Returns(clientWebSocketOptions.Object);
+            WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
 
             this.ResetDispose();
 
             this.ConnectTaskSource = new TaskCompletionSource<bool>();
-            webSocketClient
+            WebSocketClient
                 .Setup(x => x.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .Returns(() => ConnectTaskSource.Task)
                 .Callback((Uri uri, CancellationToken token) =>
@@ -190,7 +194,7 @@ namespace Capibara.Test
             var receiveMessageQueue = new Queue<ReceiveMessage>();
             ReceiveMessages.ForEach(x => receiveMessageQueue.Enqueue(x));
 
-            webSocketClient
+            WebSocketClient
                 .Setup(x => x.ReceiveAsync(It.IsAny<ArraySegment<byte>>(), It.IsAny<CancellationToken>()))
                 .Returns((ArraySegment<byte> buffer, CancellationToken cancellationToken) =>
                 {
@@ -209,11 +213,29 @@ namespace Capibara.Test
                     return Task.Run(() => receiveMessageQueue.Peek().Write(buffer));
                 });
 
+            if (this.WebSocketCloseException.IsPresent())
+            {
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .ThrowsAsync(this.WebSocketCloseException);
+            }
+            else
+            {
+                WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask)
+                    .Callback((WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken) =>
+                {
+                    this.IsWebSocketCloseCalled = true;
+                });
+            }
+
             this.ResetSendAsync();
 
             // IWebSocketClientFactory のセットアップ
             var webSocketClientFactory = new Mock<IWebSocketClientFactory>();
-            webSocketClientFactory.Setup(x => x.Create()).Returns(webSocketClient.Object);
+            webSocketClientFactory.Setup(x => x.Create()).Returns(WebSocketClient.Object);
 
             var application = new Mock<ICapibaraApplication>();
             application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
@@ -274,7 +296,7 @@ namespace Capibara.Test
             this.DisposeTaskSource?.TrySetCanceled();
             this.DisposeTaskSource?.Task?.Dispose();
             this.DisposeTaskSource = new TaskCompletionSource<bool>();
-            webSocketClient
+            WebSocketClient
                 .Setup(x => x.Dispose())
                 .Callback(() => DisposeTaskSource.TrySetResult(true));
         }
@@ -286,7 +308,7 @@ namespace Capibara.Test
             this.SendAsyncSource = new TaskCompletionSource<string>();
             var isTextMessage = It.Is<WebSocketMessageType>(v => v == WebSocketMessageType.Text);
             var stream = new MemoryStream();
-            webSocketClient.Setup(x => x.SendAsync(It.IsAny<ArraySegment<byte>>(), isTextMessage, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            WebSocketClient.Setup(x => x.SendAsync(It.IsAny<ArraySegment<byte>>(), isTextMessage, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns((ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken) =>
                 {
                     stream.Write(buffer.Array, buffer.Offset, buffer.Count());

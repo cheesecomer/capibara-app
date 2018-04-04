@@ -124,15 +124,25 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
     namespace CloseTest
     {
-        public class WhenHasDisconnectEvenHandler: TestBase
+        public class WhenIsOpen: TestBase
         {
             protected override Action SendMessage
-                => () => this.cable.Close().Wait();
+            => () =>
+            {
+                this.WebSocketState = WebSocketState.Open;
+                this.cable.Close().Wait();
+            };
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldWebSocketCloseCalled()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(true));
+                Assert.That(this.IsWebSocketCloseCalled, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
             }
         }
 
@@ -146,23 +156,33 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
                 };
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldWebSocketCloseNotCalled()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(false));
+                Assert.That(this.IsWebSocketCloseCalled, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
             }
         }
 
-        public class WhenHasNotDisconnectEvenHandler : TestBase
+        public class WhenFail : TestBase
         {
             protected override Action SendMessage
-                => () => this.cable.Close().Wait();
+            => () =>
+            {
+                this.WebSocketState = WebSocketState.Open;
+                this.cable.Close().Wait();
+            };
 
-            protected override bool NeedEventHandler { get; } = false;
+            protected override Exception WebSocketCloseException => new Exception();
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldLastExceptionNull()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(false));
+                Assert.That(this.cable.LastException, Is.Not.Null);
             }
         }
     }
