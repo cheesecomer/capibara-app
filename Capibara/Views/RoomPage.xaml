@@ -119,8 +119,20 @@
             SeparatorColor="Transparent"
             ItemsSource="{Binding Messages}"
             ItemTemplate="{StaticResource messageDataTemplateSelector}"
-            Rotation="180"
-            RotationY="180">
+            ef:Reverse.On="true"
+            >
+            <ListView.Rotation>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.Rotation>
+            <ListView.RotationY>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.RotationY>
             <ListView.Header>
                 <BoxView HeightRequest="0" />
             </ListView.Header>
@@ -134,7 +146,7 @@
                 <ColumnDefinition Width="Auto"  />
             </Grid.ColumnDefinitions>
             <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" ef:ToFlatButton.On="true" MinimumWidthRequest="50" Text="Send" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
+            <Button Grid.Column="1" ef:ToFlatButton.On="true" MinimumWidthRequest="75" Text="Send" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
         </Grid>
         <forms:AdMobBanner Grid.Row="2" />
 

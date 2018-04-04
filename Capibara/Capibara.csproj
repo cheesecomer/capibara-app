@@ -130,6 +130,7 @@
     <Compile Include="Views\LicensePage.xaml.cs">
       <DependentUpon>LicensePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Effects\Reverse.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
