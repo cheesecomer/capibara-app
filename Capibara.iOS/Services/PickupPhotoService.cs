@@ -32,7 +32,7 @@ namespace Capibara.iOS.Services
         private EventHandler<UIImagePickerMediaPickedEventArgs> OnFinishedPickingMedia(TaskCompletionSource<byte[]> taskSource)
         {
             return async (sender, args) => {
-                await (sender as UIImagePickerController).DismissViewControllerAsync(true);
+                await (sender as UIViewController).DismissViewControllerAsync(true);
 
                 var cropViewController = new RSKImageCropViewController(args.Info[UIImagePickerController.OriginalImage] as UIImage);
                 cropViewController.Canceled += this.OnCancel(taskSource);
@@ -48,7 +48,7 @@ namespace Capibara.iOS.Services
             return async (sender, args) => {
                 //Console.WriteLine(args.Info[UIImagePickerController.ImageUrl]);
                 var image = args.CroppedImage;
-                await (sender as RSKImageCropViewController).DismissViewControllerAsync(true);
+                await (sender as UIViewController).DismissViewControllerAsync(true);
                 using (var memoryStream = new MemoryStream())
                 {
                     image.AsPNG().AsStream().CopyTo(memoryStream);
@@ -61,7 +61,7 @@ namespace Capibara.iOS.Services
         private EventHandler OnCancel(TaskCompletionSource<byte[]> taskSource)
         {
             return async (sender, args) => {
-                await (sender as UIImagePickerController).DismissViewControllerAsync(true);
+                await (sender as UIViewController).DismissViewControllerAsync(true);
                 taskSource.SetResult(null);
             };
         }
