@@ -262,10 +262,14 @@
     <Folder Include="Services\" />
     <Folder Include="Effects\" />
     <Folder Include="Renderers\" />
+    <Folder Include="Resources\Fonts\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\LottieResources\loading.json">
       <Link>Resources\loading.json</Link>
+    </BundleResource>
+    <BundleResource Include="..\segoe-mdl2-assets.ttf">
+      <Link>Resources\Fonts\segoe-mdl2-assets.ttf</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

@@ -230,6 +230,7 @@
     <Compile Include="Effects\NamespaceInfo.cs" />
     <Compile Include="Effects\BorderPlatformEffect.cs" />
     <Compile Include="Effects\EffectBase.cs" />
+    <Compile Include="Effects\CustomFontPlatformEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -244,6 +245,7 @@
     <Folder Include="Renderers\" />
     <Folder Include="Resources\drawable-xxxhdpi\" />
     <Folder Include="Effects\" />
+    <Folder Include="Assets\fonts\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -265,6 +267,9 @@
   <ItemGroup>
     <AndroidAsset Include="..\LottieResources\loading.json">
       <Link>Assets\loading.json</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\segoe-mdl2-assets.ttf">
+      <Link>Assets\fonts\segoe-mdl2-assets.ttf</Link>
     </AndroidAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
