@@ -11,6 +11,8 @@ namespace Capibara.Services
         string Platform { get; }
 
         string AppVersion { get; }
+
+        string UUID { get; }
     }
 }
 

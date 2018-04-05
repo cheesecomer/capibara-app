@@ -20,6 +20,7 @@ namespace Capibara.Net
         {
             requestMessage.Headers.Add("X-Platform", applicationService.Platform);
             requestMessage.Headers.Add("X-ApplicationVersion", applicationService.AppVersion);
+            requestMessage.Headers.Add("X-DeviceId", applicationService.UUID);
         }
 
         AuthenticationHeaderValue IRestClient.GenerateAuthenticationHeader(string token)

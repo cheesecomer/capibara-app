@@ -1,6 +1,4 @@
-﻿using System;
-
-using Capibara.Services;
+﻿using Capibara.Services;
 
 namespace Capibara.Droid.Services
 {
@@ -9,6 +7,8 @@ namespace Capibara.Droid.Services
         string IApplicationService.StoreUrl => "https://play.google.com/store/apps/details?id=com.cheesecomer.Capibara&hl=ja&ah=hTX9fjpkOefw1O8lhfrlt5IHbyM";
 
         string IApplicationService.Platform => "Android";
+
+        string IApplicationService.UUID => Android.Provider.Settings.Secure.AndroidId;
 
         string IApplicationService.AppVersion
         {
