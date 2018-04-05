@@ -68,11 +68,10 @@ namespace Capibara.ViewModels
             this.Icon = new ReactiveProperty<ImageSource>();
             this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x => this.Icon.Value = x);
 
-            this.IconThumbnail = 
-                this.Model.ToReactivePropertyAsSynchronized(
-                    x => x.IconThumbnailUrl, 
-                    x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)),
-                    x => (x as UriImageSource)?.Uri.AbsoluteUri);
+            this.IconThumbnail = this.Model
+                .ObserveProperty(x => x.IconThumbnailUrl)
+                .Select(x => ImageSource.FromUri(new Uri(x)))
+                .ToReactiveProperty();
             
             this.IsBlock = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsBlock)
