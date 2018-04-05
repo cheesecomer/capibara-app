@@ -6,7 +6,7 @@ namespace Capibara.Droid.Services
 {
     public class ApplicationService : IApplicationService
     {
-        string IApplicationService.StoreUrl => string.Empty;
+        string IApplicationService.StoreUrl => "https://play.google.com/store/apps/details?id=com.cheesecomer.Capibara&hl=ja&ah=hTX9fjpkOefw1O8lhfrlt5IHbyM";
 
         string IApplicationService.Platform => "Android";
 

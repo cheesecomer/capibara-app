@@ -9,7 +9,7 @@ namespace Capibara.iOS.Services
     {
         void IApplicationService.Exit() => System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
 
-        string IApplicationService.StoreUrl => string.Empty;
+        string IApplicationService.StoreUrl => "https://itunes.apple.com/jp/app/capibara/id1367296814?l=ja&ls=1&mt=8";
 
         string IApplicationService.Platform => "iOS";
 
