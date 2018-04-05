@@ -21,15 +21,36 @@ namespace Capibara.Droid.Renderers
 
             if (Control == null)
             {
-                var adMobBanner = new AdView(this.Context);
-                adMobBanner.AdSize = AdSize.Banner;
-                adMobBanner.AdUnitId = PlatformVariable.AdMobUnitIdForBanner;
+                var adMobBanner = new AdView(this.Context)
+                {
+                    AdUnitId = PlatformVariable.AdMobUnitIdForBanner,
+                    AdSize = AdSize.Banner,
+                };
 
-                var requestbuilder = new AdRequest.Builder();
-                //requestbuilder.te
-                adMobBanner.LoadAd(requestbuilder.Build());
+                adMobBanner.AdListener = new AdListener(adMobBanner);
+                adMobBanner.LoadAd(new AdRequest.Builder().Build());
 
                 this.SetNativeControl(adMobBanner);
+            }
+        }
+
+        private class AdListener : Android.Gms.Ads.AdListener
+        {
+            private AdView adView;
+
+            public AdListener(AdView adView)
+            {
+                this.adView = adView;
+            }
+
+            public override void OnAdFailedToLoad(int errorCode)
+            {
+                base.OnAdFailedToLoad(errorCode);
+
+                System.Threading.Tasks.Task.Delay(1000).ContinueWith(_ =>
+                {
+                    Device.BeginInvokeOnMainThread(() => this.adView.LoadAd(new AdRequest.Builder().Build()));
+                });
             }
         }
     }

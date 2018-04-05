@@ -38,12 +38,21 @@ namespace Capibara.iOS.Renderers
                     viewOnScreen = true;
                 };
 
-                var request = Request.GetDefaultRequest();
-                request.TestDevices = new[] { "kGADSimulatorID" }; 
+                this.adMobBanner.ReceiveAdFailed += (sender, args) =>
+                {
+                    System.Threading.Tasks.Task.Delay(1000).ContinueWith(t => this.DoAdRequest());
+                };
 
-                this.adMobBanner.LoadRequest(request);
+                this.DoAdRequest();
                 this.SetNativeControl(this.adMobBanner);
             }
+        }
+
+        private void DoAdRequest()
+        {
+            var request = Request.GetDefaultRequest();
+            request.TestDevices = new[] { "kGADSimulatorID" };
+            this.adMobBanner.LoadRequest(request);
         }
     }
 }
