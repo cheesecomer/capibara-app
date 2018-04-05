@@ -18,10 +18,18 @@ namespace Capibara.iOS.Services
         public async Task DisplayProgressAsync(Task task, string message = null)
         {
             var window = UIApplication.SharedApplication.KeyWindow;
-            var rootViewController = window.RootViewController;
-            while (rootViewController.PresentedViewController != null)
+            if (window.IsNull())
             {
-                rootViewController = rootViewController.PresentedViewController;
+                try
+                {
+                    await task;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+
+                return;
             }
 
             var bounds = UIScreen.MainScreen.Bounds;
@@ -35,7 +43,7 @@ namespace Capibara.iOS.Services
                 AutoresizingMask = UIViewAutoresizing.All,
             };
 
-            rootViewController.Add(container);
+            window.AddSubview(container);
 
             var animationSize = new[] { bounds.Width, bounds.Height }.Min();
             var animationHalfSize = animationSize / 2;
@@ -52,9 +60,9 @@ namespace Capibara.iOS.Services
                     animationSize)
             };
 
-            animationView.Play();
-
             container.AddSubview(animationView);
+
+            animationView.Play();
 
             // create and configure the "Loading Data" label
             //if (message.IsPresent())
@@ -92,6 +100,7 @@ namespace Capibara.iOS.Services
 
             await Task.Delay(TimeSpan.FromSeconds(0.5));
 
+            container.RemoveFromSuperview();
             container.Dispose();
         }
     }
