@@ -70,7 +70,7 @@ namespace Capibara.ViewModels
 
             this.IconThumbnail = this.Model
                 .ObserveProperty(x => x.IconThumbnailUrl)
-                .Select(x => ImageSource.FromUri(new Uri(x)))
+                .Select(x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)))
                 .ToReactiveProperty();
             
             this.IsBlock = this.Model
