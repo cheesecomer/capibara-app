@@ -42,6 +42,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ReportCommand { get; }
 
+        public AsyncReactiveCommand CooperationSnsCommand { get; }
+
         protected override bool NeedTrackingView => !this.Model.IsOwn;
 
         protected override string OptionalScreenName => $"/{this.Model.Id}";
@@ -136,6 +138,27 @@ namespace Capibara.ViewModels
                 parameters.Add(ParameterNames.Model, this.Model);
                 return this.NavigationService.NavigateAsync("ReportPage", parameters);
             });
+
+            // SignUpWithSnsCommand
+            this.CooperationSnsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.CooperationSnsCommand.Subscribe(async () => {
+                var buttons = new[] {
+                    ActionSheetButton.CreateCancelButton("キャンセル", () => { }),
+                    ActionSheetButton.CreateButton("Google", () => this.OpenOAuthUri(OAuthProvider.Google)),
+                    ActionSheetButton.CreateButton("Twitter", () => this.OpenOAuthUri(OAuthProvider.Twitter)),
+                    ActionSheetButton.CreateButton("LINE", () => this.OpenOAuthUri(OAuthProvider.Line))
+                };
+
+                await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", buttons);
+            });
+        }
+
+        private void OpenOAuthUri(OAuthProvider provider)
+        {
+            var uri = new Uri(
+                Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower()) + 
+                $"?user_id={this.Model.Id}&access_token={this.IsolatedStorage.AccessToken}");
+            this.DeviceService.OpenUri(uri);
         }
     }
 }
