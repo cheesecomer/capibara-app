@@ -231,6 +231,7 @@
     <Compile Include="Effects\BorderPlatformEffect.cs" />
     <Compile Include="Effects\EffectBase.cs" />
     <Compile Include="Effects\CustomFontPlatformEffect.cs" />
+    <Compile Include="Services\BalloonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

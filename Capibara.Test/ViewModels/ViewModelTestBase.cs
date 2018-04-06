@@ -89,10 +89,13 @@ namespace Capibara.Test.ViewModels
 
             var tracker = new Mock<Plugin.GoogleAnalytics.Abstractions.ITracker>();
 
+            var balloonService = new Mock<IBalloonService>();
+
             this.Container.RegisterInstance(progressDialogService.Object);
             this.Container.RegisterInstance(pickupPhotoService.Object);
             this.Container.RegisterInstance(taskService.Object);
             this.Container.RegisterInstance(tracker.Object);
+            this.Container.RegisterInstance(balloonService.Object);
         }
     }
 }

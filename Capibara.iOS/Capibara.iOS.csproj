@@ -254,6 +254,7 @@
     <Compile Include="Effects\NamespaceInfo.cs" />
     <Compile Include="Effects\BorderPlatformEffect.cs" />
     <Compile Include="Effects\ReversePlatformEffect.cs" />
+    <Compile Include="Services\BalloonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

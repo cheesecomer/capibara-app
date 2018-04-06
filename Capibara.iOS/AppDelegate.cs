@@ -105,6 +105,7 @@ namespace Capibara.iOS
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
+            containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
             containerRegistry.RegisterInstance(this.applicationService);
             containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }

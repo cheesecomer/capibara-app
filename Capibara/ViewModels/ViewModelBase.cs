@@ -75,6 +75,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public ITracker Tracker { get; set; }
 
+        [Dependency]
+        public IBalloonService BalloonService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

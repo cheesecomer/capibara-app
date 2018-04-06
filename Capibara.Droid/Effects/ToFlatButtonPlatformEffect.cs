@@ -2,6 +2,7 @@
 using Android.Animation;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
+using Android.OS;
 
 using Capibara.Effects;
 
@@ -29,6 +30,11 @@ namespace Capibara.Droid.Effects
 
         protected override void OnAttached()
         {
+            if (BuildVersionCodes.Lollipop > Build.VERSION.SdkInt)
+            {
+                return;
+            }
+
             NativeButton = Control as NativeButton;
             if (NativeButton == null)
                 return;

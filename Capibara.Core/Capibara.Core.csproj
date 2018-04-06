@@ -43,6 +43,7 @@
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IPickupPhotoService.cs" />
     <Compile Include="Services\IProgressDialogService.cs" />
+    <Compile Include="Services\IBalloonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
