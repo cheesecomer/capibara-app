@@ -136,6 +136,9 @@ namespace Capibara.ViewModels
                     await this.NavigationService.GoBackAsync();
                 });
             };
+
+            this.Model.JoinUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが入室しました");
+            this.Model.LeaveUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが退室しました");
         }
 
         public override void OnResume()
