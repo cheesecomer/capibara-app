@@ -42,7 +42,7 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Label Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Large" />
                             <Label Grid.Row="1" Grid.Column="0" FontSize="Small" Text="{Binding NumberOfParticipants, StringFormat='現在の入室者 {0}'}" Margin="10, 0, 0, 0" />
