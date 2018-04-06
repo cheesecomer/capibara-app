@@ -140,8 +140,18 @@ namespace Capibara.Models
             this.Name = model.Name;
             this.Capacity = model.Capacity;
             this.NumberOfParticipants = model.NumberOfParticipants;
-            this.Participants.Clear();
-            model.Participants?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
+
+            // 差分を追加
+            model.Participants
+                ?.Where(x => this.Participants.All(v => v.Id != x.Id))
+                ?.ToList()
+                ?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
+
+            // 差分を削除
+            this.Participants
+                ?.Where(x => model.Participants.All(v => v.Id != x.Id))
+                ?.ToList()
+                ?.ForEach(x => this.Participants.Remove(x));
         }
 
         public virtual async Task<bool> Speak(string message)
