@@ -11,7 +11,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.5</string>
+	<string>1.0.6</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -57,9 +57,9 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>プロフィール画像をアルバムから選択</string>
-    <key>UIAppFonts</key>
-    <array>
-        <string>Fonts/segoe-mdl2-assets.ttf</string>
-    </array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/segoe-mdl2-assets.ttf</string>
+	</array>
 </dict>
 </plist>
