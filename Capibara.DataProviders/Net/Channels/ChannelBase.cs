@@ -14,6 +14,8 @@ namespace Capibara.Net.Channels
 
         public event EventHandler Disconnected;
 
+        public event EventHandler RejectSubscription;
+
         public event EventHandler<TMessage> MessageReceive;
 
         protected ChannelCable Cable { get; private set; }
@@ -55,6 +57,7 @@ namespace Capibara.Net.Channels
             this.Cable.Connected += this.OnConnected;
             this.Cable.Disconnected += this.OnDisconnected;
             this.Cable.MessageReceived += this.OnMessageReceive;
+            this.Cable.RejectSubscriptionReceived += this.OnRejectSubscriptionReceived;
             return this.Cable.Connect();
         }
 
@@ -79,6 +82,11 @@ namespace Capibara.Net.Channels
             }
 
             this.Disconnected?.Invoke(this, null);
+        }
+
+        private void OnRejectSubscriptionReceived(object sender, EventArgs args)
+        {
+            this.RejectSubscription?.Invoke(this, null);
         }
 
         private void OnMessageReceive(object sender,  string message)

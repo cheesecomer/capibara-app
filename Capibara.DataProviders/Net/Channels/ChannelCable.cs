@@ -20,6 +20,7 @@ namespace Capibara.Net.Channels
         Ping,
         ConfirmSubscription,
         Message,
+        RejectSubscription,
         Unknown
     }
 
@@ -34,6 +35,8 @@ namespace Capibara.Net.Channels
         public event EventHandler PingReceived;
 
         public event EventHandler ConfirmSubscriptionReceived;
+
+        public event EventHandler RejectSubscriptionReceived;
 
         public event EventHandler<string> MessageReceived;
 
@@ -241,6 +244,11 @@ namespace Capibara.Net.Channels
             {
                 this.ConfirmSubscriptionReceived?.Invoke(this, null);
                 result = MessageType.ConfirmSubscription;
+            }
+            else if (type == "reject_subscription")
+            {
+                this.RejectSubscriptionReceived?.Invoke(this, null);
+                result = MessageType.RejectSubscription;
             }
 
             return result;

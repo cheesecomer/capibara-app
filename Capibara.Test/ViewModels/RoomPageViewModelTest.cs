@@ -368,4 +368,32 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             }
         }
     }
+
+    [TestFixture]
+    public class RejectSubscriptionTest : ViewModelTestBase
+    {
+        protected SubjectViewModel viewModel;
+
+        protected bool IsCloseCalled;
+
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            var model = new Mock<Room>();
+
+            model.Setup(x => x.Close()).Callback(() => this.IsCloseCalled = true).Returns(System.Threading.Tasks.Task.Run(() => true));
+
+            viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
+
+            model.Raise(x => x.RejectSubscription += null, System.EventArgs.Empty);
+        }
+
+        [TestCase]
+        public void ItShouldCloseCalled()
+        {
+            Assert.That(this.IsCloseCalled, Is.EqualTo(true));
+        }
+    }
 }

@@ -1140,4 +1140,38 @@ namespace Capibara.Test.Models.RoomTest
             }
         }
     }
+
+    namespace RejectSubscriptionTest
+    {
+        [TestFixture]
+        public class WhenHasEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+                => new List<ReceiveMessage>()
+                {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
+                };
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionFire()
+            {
+                this.Subject = new Room().BuildUp(this.Container);
+
+                bool isRejectSubscription = false;
+                this.Subject.RejectSubscription += (s, e) => isRejectSubscription = true;
+
+                this.Subject.Connect().Wait();
+
+                // 受信完了を待機
+                Task.WaitAny(
+                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
+                    Task.Run(() => { while (this.Subject.IsConnected) { } })
+                );
+
+                Assert.That(isRejectSubscription, Is.EqualTo(true));
+            }
+        }
+    }
 }

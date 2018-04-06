@@ -264,4 +264,38 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
             }
         }
     }
+
+    namespace OnRejectSubscriptionTest
+    {
+        public abstract class TestFixtureBase : ChannelBaseTest.TestFixtureBase
+        {
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+            => new List<ReceiveMessage>()
+            {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
+            };
+        }
+
+        public class WhenConnectSuccessEventHandlerExists : TestFixtureBase
+        {
+            protected override bool HasEventHandler => true;
+
+            [TestCase]
+            public void ItShouldConnectedEventToOccur()
+            {
+                Assert.That(this.IsFireRejectSubscription, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenConnectSuccessEventHandlerNotExists : TestFixtureBase
+        {
+            protected override bool HasEventHandler => false;
+
+            [TestCase]
+            public void ItShouldConnectedEventToNotOccur()
+            {
+                Assert.That(this.IsFireRejectSubscription, Is.EqualTo(false));
+            }
+        }
+    }
 }

@@ -332,6 +332,8 @@ namespace Capibara.Test
 
         protected abstract IChannel<TMessage> Channel { get; }
 
+        protected bool IsFireRejectSubscription { get; private set; }
+
         protected bool IsFireMessageReceive { get; private set; }
 
         protected bool IsFireConnected { get; private set; }
@@ -362,6 +364,7 @@ namespace Capibara.Test
                 this.Channel.Connected += (sender, e) => this.IsFireConnected = true;
                 this.Channel.Disconnected += (sender, e) => this.IsFireDisconnected = true;
                 this.Channel.MessageReceive += (sender, e) => this.IsFireMessageReceive = true;
+                this.Channel.RejectSubscription += (sender, e) => this.IsFireRejectSubscription = true;
             }
 
             if (this.NeedConnect)

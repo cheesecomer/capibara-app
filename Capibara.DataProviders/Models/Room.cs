@@ -41,6 +41,8 @@ namespace Capibara.Models
 
         public virtual event EventHandler<User> LeaveUser;
 
+        public virtual event EventHandler RejectSubscription;
+
         public virtual bool IsConnected
         {
             get => this.isConnected;
@@ -114,6 +116,7 @@ namespace Capibara.Models
             this.channel.MessageReceive += this.OnMessageReceive;
             this.channel.Disconnected += (sender, e) => this.Disconnected?.Invoke(this, null);
             this.channel.Disconnected += (sender, e) => this.IsConnected = false;
+            this.channel.RejectSubscription += (sender, e) => this.RejectSubscription?.Invoke(this, null);
 
             return await this.channel.Connect();
         }

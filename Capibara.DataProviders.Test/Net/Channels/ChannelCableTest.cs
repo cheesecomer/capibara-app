@@ -26,6 +26,8 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         protected bool isPingReceived;
 
+        protected bool isRejectSubscriptionReceived;
+
         protected bool isConfirmSubscriptionReceived;
 
         protected bool isMessageReceived;
@@ -61,6 +63,7 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
                         this.ReceiveMessage = e;
                         this.isMessageReceived = true;
                     };
+                    this.cable.RejectSubscriptionReceived += (sender, e) => this.isRejectSubscriptionReceived = true;
                     this.cable.Disconnected += (sender, e) => this.isDisconnected = true;
                 }
 
@@ -284,6 +287,23 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             }
         }
 
+        public class WhenReceiveRejectSubscriptionWithoutEventHandler : TestBase
+        {
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+                => new List<ReceiveMessage>()
+                {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
+                };
+
+            protected override bool NeedEventHandler { get; } = false;
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
+            }
+        }
+
         public class WhenReceiveConfirmSubscriptionWithoutEventHandler : TestBase
         {
             protected override List<ReceiveMessage> OptionalReceiveMessages
@@ -472,6 +492,57 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             }
         }
 
+        public class WhneReceiveRejectSubscription : TestBase
+        {
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+                => new List<ReceiveMessage>()
+                {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
+                };
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
+            }
+
+            [TestCase]
+            public void ItShouldConnectedEventToNotOccur()
+            {
+                Assert.That(this.isConnectedEventCalled, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldPingReceivedEventToOccur()
+            {
+                Assert.That(this.isPingReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldConfirmSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isConfirmSubscriptionReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldMessageReceivedEventToNotOccur()
+            {
+                Assert.That(this.isMessageReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldDisconnectedToNotOccur()
+            {
+                Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(true));
+            }
+        }
+
         public class WhenReceiveConfirmSubscription : TestBase
         {
             protected override List<ReceiveMessage> OptionalReceiveMessages
@@ -508,6 +579,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
 
@@ -560,6 +637,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.ReceiveMessage.ToSlim(), Is.EqualTo("{ \"content\": \"寿限無、寿限無、五劫の擦り切れ、海砂利水魚の、水行末 雲来末 風来末、食う寝る処に住む処、藪ら柑子の藪柑子\" }".ToSlim()));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveMessage : TestBase
@@ -611,6 +694,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.ReceiveMessage.ToSlim(), Is.EqualTo("{ \"content\": \"FooBar\" }".ToSlim()));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveInvalidMessage : TestBase
@@ -655,6 +744,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
 
@@ -701,6 +796,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(true));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveNotJsonMessage : TestBase{
@@ -745,6 +846,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
     }

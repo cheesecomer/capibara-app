@@ -124,6 +124,18 @@ namespace Capibara.ViewModels
             
             this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
 
+            this.Model.RejectSubscription += async (s, e) =>
+            {
+                this.Model.Disconnected -= this.OnDisconnected;
+                await this.Model.Close();
+
+                this.DeviceService.BeginInvokeOnMainThread(async () =>
+                {
+                    await this.PageDialogService.DisplayAlertAsync("入室できませんでした", "もう一度やり直すか、時間を置いてお試し下さい", "閉じる");
+                    
+                    await this.NavigationService.GoBackAsync();
+                });
+            };
         }
 
         public override void OnResume()

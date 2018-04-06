@@ -108,6 +108,8 @@ namespace Capibara
 
             string IApplicationService.AppVersion { get; } = string.Empty;
 
+            string IApplicationService.UUID { get; } = string.Empty;
+
             void IApplicationService.Exit()
                 => throw new NotImplementedException();
         }

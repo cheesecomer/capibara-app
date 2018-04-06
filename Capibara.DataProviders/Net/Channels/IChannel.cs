@@ -14,6 +14,8 @@ namespace Capibara.Net.Channels
 
         event EventHandler<TMessage> MessageReceive;
 
+        event EventHandler RejectSubscription;
+
         /// <summary>
         /// DIコンテナ
         /// </summary>
