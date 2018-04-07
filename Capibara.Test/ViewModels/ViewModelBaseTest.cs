@@ -35,6 +35,14 @@ namespace Capibara.Test.ViewModels.ViewModelBase
         }
     }
 
+    public class OnSleepTest
+    {
+        public void ItShouldDoseNotThrow()
+        {
+            Assert.DoesNotThrow(new StabViewModel().OnSleep);
+        }
+    }
+
     namespace ModelTest
     {
         [TestFixture]
@@ -299,6 +307,42 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             public void ItShoulExit()
             {
                 this.ApplicationService.Verify(x => x.Exit());
+            }
+        }
+
+        public class WhenExceptionToFinish : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
+            }
+        }
+
+        public class WhenExceptionToRetry : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
             }
         }
     }
