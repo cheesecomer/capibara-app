@@ -75,18 +75,18 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class RefreshCommandTest : ViewModelTestBase
     {
-        private bool IsRefreshCalled;
+        private Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Refresh()).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(model: this.Model.Object).BuildUp(this.Container);
 
             viewModel.RefreshCommand.Execute();
 
@@ -102,7 +102,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldRefreshCalled()
         {
-            Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Refresh(), Times.Once());
         }
     }
 
@@ -229,18 +229,18 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class CommitCommandTest : ViewModelTestBase
     {
-        private bool IsCommitCalled;
+        protected Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = "FooBar";
 
             viewModel.CommitCommand.Execute();
@@ -257,7 +257,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldCommitCalled()
         {
-            Assert.That(this.IsCommitCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Commit(), Times.Once());
         }
     }
 
@@ -283,18 +283,18 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     {
         private SubjectViewModel ViewModel;
 
-        protected bool IsBlockCalled;
+        protected Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Block()).ReturnsAsync(true);
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+            this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
             this.ViewModel.IsBlock.Value = false;
             this.ViewModel.BlockCommand.Execute();
         }
@@ -302,7 +302,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldIsBlockCalled()
         {
-            Assert.That(this.IsBlockCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Block(), Times.Once());
         }
 
         [TestCase]
