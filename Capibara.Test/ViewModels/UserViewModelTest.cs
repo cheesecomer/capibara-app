@@ -16,6 +16,37 @@ using SubjectViewModel = Capibara.ViewModels.UserViewModel;
 
 namespace Capibara.Test.ViewModels.UserViewModelTest
 {
+    namespace OnResumeTest
+    {
+        public class WhenOther : ViewModelTestBase
+        {
+            public void ItShouldSendView()
+            {
+                this.IsolatedStorage.UserId = 2;
+
+                var subject = new SubjectViewModel(model: new User { Id = 1 }).BuildUp(this.Container);
+
+                subject.OnResume();
+
+                this.Tracker.Verify(x => x.SendView(It.Is<string>(v => v == "/User/1")), Times.Once());
+            }
+        }
+
+        public class WhenOwn : ViewModelTestBase
+        {
+            public void ItShouldSendView()
+            {
+                this.IsolatedStorage.UserId = 1;
+
+                var subject = new SubjectViewModel(model: new User { Id = 1 }).BuildUp(this.Container);
+
+                subject.OnResume();
+
+                this.Tracker.Verify(x => x.SendView(It.IsAny<string>()), Times.Never());
+            }
+        }
+    }
+
     public class NicknamePropertyTest : ViewModelTestBase
     {
         protected SubjectViewModel Subject;
@@ -343,6 +374,62 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             this.ViewModel.ReportCommand.Execute();
 
             while (!this.ViewModel.ReportCommand.CanExecute()) { }
+        }
+    }
+
+    [TestFixture]
+    public class CooperationSnsCommandTest : ViewModelTestBase
+    {
+        private ActionSheetButton[] buttons;
+
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            this.IsolatedStorage.AccessToken = "abcdefg";
+
+            this.PageDialogService
+                .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
+                .Returns((string name, IActionSheetButton[] buttons) =>
+                {
+                    this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
+                    return Task.Run(() => { });
+                });
+
+            var viewModel = new SubjectViewModel(pageDialogService: this.PageDialogService.Object);
+
+            viewModel.Model.Id = 1;
+
+            viewModel.BuildUp(this.Container);
+
+            viewModel.CooperationSnsCommand.Execute();
+
+            while (!viewModel.CooperationSnsCommand.CanExecute()) { }
+        }
+
+        [TestCase]
+        public void ItShouldHasFourButtons()
+        {
+            Assert.That(this.buttons?.Length, Is.EqualTo(4));
+        }
+
+        [TestCase(0, "キャンセル")]
+        [TestCase(1, "Google")]
+        [TestCase(2, "Twitter")]
+        [TestCase(3, "LINE")]
+        public void ItShouldButtontTextExpected(int index, string expect)
+        {
+            Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
+        }
+
+        [TestCase(1, "http://localhost:9999/api/oauth/google?user_id=1&access_token=abcdefg")]
+        [TestCase(2, "http://localhost:9999/api/oauth/twitter?user_id=1&access_token=abcdefg")]
+        [TestCase(3, "http://localhost:9999/api/oauth/line?user_id=1&access_token=abcdefg")]
+        public void ItShouldOpenUrl(int index, string url)
+        {
+            this.buttons.ElementAtOrDefault(index)?.Action?.Invoke();
+            this.SnsLoginService.Verify(x => x.Open(url), Times.Once());
         }
     }
 }

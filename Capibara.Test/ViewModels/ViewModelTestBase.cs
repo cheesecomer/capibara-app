@@ -27,6 +27,8 @@ namespace Capibara.Test.ViewModels
 
         protected Mock<ISnsLoginService> SnsLoginService { get; set; }
 
+        protected Mock<Plugin.GoogleAnalytics.Abstractions.ITracker> Tracker { get; set; }
+
         [SetUp]
         public override void SetUp()
         {
@@ -71,7 +73,7 @@ namespace Capibara.Test.ViewModels
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
-            var tracker = new Mock<Plugin.GoogleAnalytics.Abstractions.ITracker>();
+            this.Tracker = new Mock<Plugin.GoogleAnalytics.Abstractions.ITracker>();
 
             var balloonService = new Mock<IBalloonService>();
 
@@ -79,7 +81,7 @@ namespace Capibara.Test.ViewModels
             this.Container.RegisterInstance(this.PickupPhotoService.Object);
             this.Container.RegisterInstance(this.SnsLoginService.Object);
             this.Container.RegisterInstance(taskService.Object);
-            this.Container.RegisterInstance(tracker.Object);
+            this.Container.RegisterInstance(this.Tracker.Object);
             this.Container.RegisterInstance(balloonService.Object);
         }
     }
