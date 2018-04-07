@@ -10,6 +10,20 @@ using SubjectViewModel = Capibara.ViewModels.ReportPageViewModel;
 
 namespace Capibara.Test.ViewModels.ReportPageViewModel
 {
+    public class OnResumeTest : ViewModelTestBase
+    {
+        public void ItShouldSendView()
+        {
+            this.IsolatedStorage.UserId = 2;
+
+            var subject = new SubjectViewModel(model: new User { Id = 1 }).BuildUp(this.Container);
+
+            subject.OnResume();
+
+            this.Tracker.Verify(x => x.SendView(It.Is<string>(v => v == "/Report/1")), Times.Once());
+        }
+    }
+
     public class ReportReasonsPropertyTest : ViewModelTestBase
     {
         protected User Model;
