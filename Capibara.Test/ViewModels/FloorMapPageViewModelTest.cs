@@ -112,9 +112,6 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
         [TestFixture]
         public class WhenSuccess1 : WhenSuccessBase
         {
-            protected override string HttpStabResponse
-                => "{\"rooms\": [{ \"name\": \"AAA\", \"capacity\": 10 }] }";
-
             protected override IndexResponse Response => new IndexResponse
             {
                 Rooms = { new Room { Name = "AAA", Capacity = 10 } }
@@ -125,6 +122,27 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
             {
                 var comparer = new RoomComparer();
                 var expect = new List<Room> { new Room { Name = "AAA", Capacity = 10 } };
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
+            }
+        }
+
+        [TestFixture]
+        public class WhenExists : WhenSuccessBase
+        {
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms =
+                {
+                    new Room { Id = 1, Name = "AAA", Capacity = 10 },
+                    new Room { Id = 1, Name = "AAA", Capacity = 10 }
+                }
+            };
+
+            [TestCase]
+            public void ItShouldRoomsWithExpected()
+            {
+                var comparer = new RoomComparer();
+                var expect = new List<Room> { new Room { Id = 1, Name = "AAA", Capacity = 10 } };
                 Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
             }
         }
