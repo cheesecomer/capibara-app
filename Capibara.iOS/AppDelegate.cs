@@ -108,6 +108,7 @@ namespace Capibara.iOS
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
             containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
             containerRegistry.RegisterInstance<ISnsLoginService>(new SnsLoginService(isolatedStorage));
+            containerRegistry.RegisterInstance<IRewardedVideoService>(new RewardedVideoService());
             containerRegistry.RegisterInstance(this.applicationService);
             containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }

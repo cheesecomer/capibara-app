@@ -27,6 +27,8 @@ namespace Capibara.Test.ViewModels
 
         protected Mock<ISnsLoginService> SnsLoginService { get; set; }
 
+        protected Mock<IRewardedVideoService> RewardedVideoService { get; set; }
+
         protected Mock<Plugin.GoogleAnalytics.Abstractions.ITracker> Tracker { get; set; }
 
         [SetUp]
@@ -70,6 +72,8 @@ namespace Capibara.Test.ViewModels
 
             this.SnsLoginService = new Mock<ISnsLoginService>();
 
+            this.RewardedVideoService = new Mock<IRewardedVideoService>();
+
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
@@ -80,6 +84,7 @@ namespace Capibara.Test.ViewModels
             this.Container.RegisterInstance(this.ProgressDialogService.Object);
             this.Container.RegisterInstance(this.PickupPhotoService.Object);
             this.Container.RegisterInstance(this.SnsLoginService.Object);
+            this.Container.RegisterInstance(this.RewardedVideoService.Object);
             this.Container.RegisterInstance(taskService.Object);
             this.Container.RegisterInstance(this.Tracker.Object);
             this.Container.RegisterInstance(balloonService.Object);

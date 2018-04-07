@@ -81,6 +81,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public ISnsLoginService SnsLoginService { get; set; }
 
+        [Dependency]
+        public IRewardedVideoService RewardedVideoService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

@@ -97,7 +97,23 @@ namespace Capibara.ViewModels
 
             // CommitCommand
             this.CommitCommand = this.Nickname.Select(x => x.ToSlim().IsPresent()).ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
+            this.CommitCommand.Subscribe(async () => {
+                if (!this.Model.IconBase64.IsNullOrEmpty())
+                {
+                    var canReward = await this.PageDialogService.DisplayAlertAsync(
+                        string.Empty, 
+                        "動画広告を視聴して\r\n" +
+                        "プロフィール画像を更新しよう！", 
+                        "視聴する", 
+                        "閉じる");
+                    if (!canReward) return;
+
+                    var completed = await this.RewardedVideoService.DisplayRewardedVideo();
+                    if (!completed) return;
+                }
+
+                await this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit());
+            });
 
             this.Model.CommitSuccess += async (sender, e) => {
                 var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };

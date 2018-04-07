@@ -256,40 +256,252 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         }
     }
 
-    [TestFixture]
-    public class CommitCommandTest : ViewModelTestBase
+    namespace CommitCommandTest
     {
-        protected Mock<User> Model;
-
-        [SetUp]
-        public override void SetUp()
+        [TestFixture]
+        public class WhenIconBase64IsEmpty : ViewModelTestBase
         {
-            base.SetUp();
+            protected Mock<User> Model;
+            
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
 
-            this.Model = new Mock<User>();
-            this.Model.SetupAllProperties();
-            this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
-            viewModel.Nickname.Value = "FooBar";
+                this.RewardedVideoService
+                    .Setup(x => x.DisplayRewardedVideo())
+                    .ReturnsAsync(true);
+                
+                this.Model = new Mock<User>();
+                this.Model.SetupAllProperties();
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+                
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+                viewModel.Nickname.Value = "FooBar";
+                
+                viewModel.CommitCommand.Execute();
+                
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
 
-            viewModel.CommitCommand.Execute();
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService.Verify(
+                    x => x.DisplayAlertAsync(
+                        string.Empty,
+                        "動画広告を視聴して\r\nプロフィール画像を更新しよう！", 
+                        "視聴する", 
+                        "閉じる"), 
+                    Times.Never());
+            }
 
-            while (!viewModel.CommitCommand.CanExecute()) { }
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Never());
+            }
+            
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
+            }
+            
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Once());
+            }
         }
 
-        [TestCase]
-        public void ItShouldShowDialog()
+        [TestFixture]
+        public class WhenIconBase64IsPresent : ViewModelTestBase
         {
-            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                //this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
+                    .ReturnsAsync(true);
+
+                this.RewardedVideoService
+                    .Setup(x => x.DisplayRewardedVideo())
+                    .ReturnsAsync(true);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Once());
+            }
         }
 
-        [TestCase]
-        public void ItShouldCommitCalled()
+        [TestFixture]
+        public class WhenIconBase64IsPresentDialogCancel : ViewModelTestBase
         {
-            this.Model.Verify(x => x.Commit(), Times.Once());
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(false);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Never());
+            }
+        }
+
+        [TestFixture]
+        public class WhenIconBase64IsPresentRewardVideoCancel : ViewModelTestBase
+        {
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(true);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Never());
+            }
         }
     }
+
 
     [TestFixture]
     public class BlockCommandCanExecuteTest : ViewModelTestBase

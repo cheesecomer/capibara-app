@@ -233,6 +233,7 @@
     <Compile Include="Effects\CustomFontPlatformEffect.cs" />
     <Compile Include="Services\BalloonService.cs" />
     <Compile Include="Services\SnsLoginService.cs" />
+    <Compile Include="Services\RewardedVideoService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -313,6 +314,7 @@
       source ~/.bash_profile
       cp $(ProjectDir)\PlatformVariable.cs $(ProjectDir)\PlatformVariable.cs.bak
       sed -i '' 's/${ANDROID_ADMOB_UNIT_ID_FOR_BANNER}/'$ANDROID_ADMOB_UNIT_ID_FOR_BANNER'/g' $(ProjectDir)\PlatformVariable.cs
+      sed -i '' 's/${ANDROID_ADMOB_UNIT_ID_FOR_REWARDED_VIDEO}/'$ANDROID_ADMOB_UNIT_ID_FOR_REWARDED_VIDEO'/g' $(ProjectDir)\PlatformVariable.cs
       sed -i '' 's/${GA_TRACKING_ID}/'$GA_TRACKING_ID'/g' $(ProjectDir)\PlatformVariable.cs
       git diff $(ProjectDir)PlatformVariable.cs
     </PreBuildEvent>
