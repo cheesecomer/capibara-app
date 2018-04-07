@@ -145,17 +145,18 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
 
             protected SubjectViewModel Subject { get; private set; }
 
-            protected bool IsSignInCalled;
+            protected Mock<Session> Model;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var model = new Mock<Session>();
-                model.SetupAllProperties();
-                model.Setup(x => x.SignIn()).ReturnsAsync(true).Callback(() => this.IsSignInCalled = true);
-                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
+                this.Model = new Mock<Session>();
+                this.Model.SetupAllProperties();
+                this.Model.Setup(x => x.SignIn()).ReturnsAsync(true);
+
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
                 this.Subject.Email.Value = "user@email.com";
                 this.Subject.Password.Value = "password";
 
@@ -170,7 +171,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             [TestCase]
             public void ItShouldIsSignInCalled()
             {
-                Assert.That(this.IsSignInCalled, Is.EqualTo(true));
+                this.Model.Verify(x => x.SignIn(), Times.Once());
             }
         }
 

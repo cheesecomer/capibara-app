@@ -14,7 +14,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
 {
     public class UnsubscribeCommandTest : ViewModelTestBase
     {
-        private bool IsDestroyCalled { get; set; }
+        private Mock<User> Model { get; set; }
 
         private SubjectViewModel Subject { get; set; }
 
@@ -23,12 +23,12 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         {
             base.SetUp();
 
-            var currentUser = new Mock<User>();
+            this.Model = new Mock<User>();
 
-            currentUser.Setup(x => x.Destroy()).ReturnsAsync(() => true).Callback(() => this.IsDestroyCalled = true);
+            this.Model.Setup(x => x.Destroy()).ReturnsAsync(() => true);
 
             // カレントユーザーの登録
-            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.Model.Object);
 
             this.Subject = new SubjectViewModel().BuildUp(this.Container);
 
@@ -40,14 +40,12 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         [TestCase]
         public void ItShouldDestroyCalled()
         {
-            Assert.That(this.IsDestroyCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Destroy(), Times.Once());
         }
     }
 
     public class OnUnsubscribeTest : ViewModelTestBase
     {
-        private bool IsDestroyCalled { get; set; }
-
         private SubjectViewModel Subject { get; set; }
 
         [SetUp]

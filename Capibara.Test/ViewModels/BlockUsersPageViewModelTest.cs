@@ -26,8 +26,6 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
 
             protected virtual IndexResponse Response { get; } = new IndexResponse();
 
-            private bool IsBlocksIndexExecute;
-
             [SetUp]
             public override void SetUp()
             {

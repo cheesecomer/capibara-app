@@ -197,7 +197,6 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         [TestCase]
         public void ItShouldNavigateToWebViewPage()
         {
-
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new Information { Url = "http://example.com/informations/1" });

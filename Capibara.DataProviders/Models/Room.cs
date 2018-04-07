@@ -105,9 +105,14 @@ namespace Capibara.Models
 
         public virtual async Task<bool> Connect()
         {
-            if (this.channel != null)
+            if (this.channel != null && this.channel.IsOpen)
             {
                 return true;
+            }
+
+            if (this.channel != null)
+            {
+                await this.channel.Close();
             }
 
             this.channel = this.ChannelFactory.CreateChantChannel(this).BuildUp(this.Container);

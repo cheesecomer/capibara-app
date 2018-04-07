@@ -109,18 +109,18 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
 
     public class SubmitCommandTest : ViewModelTestBase
     {
-        private bool IsReportCalled;
+        private Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>())).ReturnsAsync(true).Callback(() => this.IsReportCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>())).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
 
             viewModel.SubmitCommand.Execute();
 
@@ -136,7 +136,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         [TestCase]
         public void ItShouldCommitCalled()
         {
-            Assert.That(this.IsReportCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>()), Times.Once());
         }
     }
 

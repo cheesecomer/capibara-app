@@ -123,17 +123,18 @@ namespace Capibara.Test.Net.Channels
 
                 var cable = new Mock<ChannelCableBase>();
                 cable
-                    .Setup(x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
-                        v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message == "Hello!")))
-                    .Returns(Task.CompletedTask)
-                    .Callback(() => isSendCommandCalled = true);
+                    .Setup(x => x.SendCommand(It.IsAny<MessageCommand<SpeakActionContext>>()))
+                    .Returns(Task.CompletedTask);
 
                 this.ChannelCableFactory.Setup(x => x.Create()).Returns(cable.Object);
 
                 this.Subject.Connect();
                 this.Subject.Speak("Hello!");
 
-                Assert.That(isSendCommandCalled, Is.EqualTo(true));
+                cable.Verify(
+                    x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
+                        v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message == "Hello!")),
+                    Times.Once());
             }
         }
     }

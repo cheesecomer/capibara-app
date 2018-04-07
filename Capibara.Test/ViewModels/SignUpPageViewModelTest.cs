@@ -117,18 +117,18 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
 
             protected SubjectViewModel Subject { get; private set; }
 
-            protected bool IsSignUpCalled;
+            protected Mock<User> Model;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var model = new Mock<User>();
-                model.SetupAllProperties();
-                model.Setup(x => x.SignUp()).ReturnsAsync(true).Callback(() => this.IsSignUpCalled = true);
+                this.Model = new Mock<User>();
+                this.Model.SetupAllProperties();
+                this.Model.Setup(x => x.SignUp()).ReturnsAsync(true);
 
-                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
                 this.Subject.Nickname.Value = "Foo.Bar";
 
                 if (!this.NeedSignUpWait)
@@ -142,7 +142,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             [TestCase]
             public void ItShouldIsSignUpCalled()
             {
-                Assert.That(this.IsSignUpCalled, Is.EqualTo(true));
+                this.Model.Verify(x => x.SignUp(), Times.Once());
             }
         }
 
@@ -260,8 +260,6 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
     public class SignUpWithSnsCommandTest : ViewModelTestBase
     {
         private ActionSheetButton[] buttons;
-
-        private bool IsOpenUrlCalled = false;
 
         [SetUp]
         public override void SetUp()

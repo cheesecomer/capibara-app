@@ -83,17 +83,17 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
     {
         protected SubjectViewModel Subject;
 
-        private int index;
+        private int Index { get; }
 
-        private string name;
+        private string Name { get; }
 
-        private string pagePath;
+        private string PagePath { get; }
 
         public MenuItemsItemPropertyTest(int index, string name, string pagePath)
         {
-            this.index = index;
-            this.name = name;
-            this.pagePath = pagePath;
+            this.Index = index;
+            this.Name = name;
+            this.PagePath = pagePath;
         }
 
         [SetUp]
@@ -107,13 +107,13 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         [TestCase]
         public void ItShouldFirstItemNameWithExpect()
         {
-            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(Index)?.Name, Is.EqualTo(Name));
         }
 
         [TestCase]
         public void ItShouldFirstItemPagePathWithExpect()
         {
-            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(Index)?.PagePath, Is.EqualTo(PagePath));
         }
     }
 }

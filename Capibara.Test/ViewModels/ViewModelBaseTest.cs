@@ -298,7 +298,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulExit()
             {
-                Assert.That(this.IsExitCalled, Is.EqualTo(true));
+                this.ApplicationService.Verify(x => x.Exit());
             }
         }
     }

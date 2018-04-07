@@ -120,6 +120,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestCase]
         public void ItShouldCreateChantChannelOnece()
         {
+            this.Channel.SetupGet(x => x.IsOpen).Returns(true);
             this.Subject.Connect().Wait();
             this.ChannelFactory.Verify(x => x.CreateChantChannel(It.IsAny<Room>()), Times.Once());
         }

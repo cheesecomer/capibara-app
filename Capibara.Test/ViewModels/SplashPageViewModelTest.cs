@@ -175,7 +175,6 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             }
         }
 
-
         public class WhenHasValidAccessTokenAndAccepted : TestBase
         {
             protected override string AccessToken => Guid.NewGuid().ToString();

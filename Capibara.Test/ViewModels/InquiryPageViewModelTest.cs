@@ -37,21 +37,20 @@ namespace Capibara.Test.ViewModels.InquiryPageViewModelTest
 
     public class SubmitCommandTest : ViewModelTestBase
     {
-        private bool IsInquiriesCreateRequestCalled;
+        private Mock<RequestBase> Request;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var request = new Mock<RequestBase>();
-            request.Setup(x => x.Execute()).Returns(Task.CompletedTask);
+            this.Request = new Mock<RequestBase>();
+            this.Request.Setup(x => x.Execute()).Returns(Task.CompletedTask);
 
             var container = this.Container;
             this.RequestFactory.Setup(x => x.InquiriesCreateRequest("example@email.com", "Message!"))
-                .Returns(request.Object)
-                .Callback<string, string>((a, b) => this.IsInquiriesCreateRequestCalled = true);
-
+                .Returns(this.Request.Object);
+            
             var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(container);
             viewModel.Email.Value = "example@email.com";
             viewModel.Message.Value = "Message!";
@@ -76,7 +75,7 @@ namespace Capibara.Test.ViewModels.InquiryPageViewModelTest
         [TestCase]
         public void ItShouldInquiriesCreateRequestCalled()
         {
-            Assert.That(this.IsInquiriesCreateRequestCalled, Is.EqualTo(true));
+            this.Request.Verify(x => x.Execute(), Times.Once());
         }
     }
 }

@@ -54,13 +54,7 @@ namespace Capibara.Test
 
     public abstract class TestFixtureBase
     {
-        protected bool IsWebSocketConnectCalled { get; private set; }
-
-        protected bool IsWebSocketCloseCalled { get; private set; }
-
         protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
-
-        protected string WebSocketRequestUrl { get;  private set; } = string.Empty;
 
         protected Dictionary<string, string> WebSocketRequestHeaders { get; private set; }  = new Dictionary<string, string>();
 
@@ -173,25 +167,20 @@ namespace Capibara.Test
                 .Callback<string, string>((k, v) => WebSocketRequestHeaders[k] = v);
 
             // IWebSocketClient のセットアップ
-            WebSocketClient = new Mock<IWebSocketClient>();
-            WebSocketClient.SetupAllProperties();
-            WebSocketClient.SetupGet(x => x.Options).Returns(clientWebSocketOptions.Object);
-            WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
+            this.WebSocketClient = new Mock<IWebSocketClient>();
+            this.WebSocketClient.SetupAllProperties();
+            this.WebSocketClient.SetupGet(x => x.Options).Returns(clientWebSocketOptions.Object);
+            this.WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
 
             this.ResetDispose();
 
             this.ConnectTaskSource = new TaskCompletionSource<bool>();
-            WebSocketClient
+            this.WebSocketClient
                 .Setup(x => x.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .Returns(() => ConnectTaskSource.Task)
-                .Callback((Uri uri, CancellationToken token) =>
-                {
-                    this.WebSocketRequestUrl = uri.AbsoluteUri;
-                    ConnectTaskSource.TrySetResult(true);
-                    this.IsWebSocketConnectCalled = true;
-                });
+                .Returns(Task.CompletedTask);
 
-            this.ReceiveMessages = new List<ReceiveMessage>() {
+            this.ReceiveMessages = new List<ReceiveMessage>
+            {
                 new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"welcome\"}")
             }.Concat(this.OptionalReceiveMessages).ToList();
 
@@ -226,13 +215,9 @@ namespace Capibara.Test
             }
             else
             {
-                WebSocketClient
+                this.WebSocketClient
                     .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.CompletedTask)
-                    .Callback((WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken) =>
-                {
-                    this.IsWebSocketCloseCalled = true;
-                });
+                    .Returns(Task.CompletedTask);
             }
 
             this.ResetSendAsync();
@@ -251,7 +236,7 @@ namespace Capibara.Test
             this.ChannelCableFactory = new Mock<IChannelCableFactory>();
 
             this.ApplicationService = new Mock<IApplicationService>();
-            this.ApplicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
+            this.ApplicationService.Setup(x => x.Exit());
             this.ApplicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
             this.ApplicationService.SetupGet(x => x.AppVersion).Returns("1.0.0");
             this.ApplicationService.SetupGet(x => x.Platform).Returns("iOS");

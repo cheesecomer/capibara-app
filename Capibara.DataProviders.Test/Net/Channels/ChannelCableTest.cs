@@ -103,7 +103,11 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
         [TestCase]
         public void ItShouldConnectToExpectedUrl()
         {
-            Assert.That(this.WebSocketRequestUrl, Is.EqualTo(this.Environment.WebSocketUrl));
+            this.WebSocketClient.Verify(
+                x => x.ConnectAsync(
+                    It.Is<Uri>(v => v.AbsoluteUri == this.Environment.WebSocketUrl),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [TestCase]
@@ -139,7 +143,9 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             [TestCase]
             public void ItShouldWebSocketCloseCalled()
             {
-                Assert.That(this.IsWebSocketCloseCalled, Is.EqualTo(true));
+                this.WebSocketClient.Verify(
+                    x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                    Times.Once());
             }
 
             [TestCase]
@@ -161,7 +167,9 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             [TestCase]
             public void ItShouldWebSocketCloseNotCalled()
             {
-                Assert.That(this.IsWebSocketCloseCalled, Is.EqualTo(false));
+                this.WebSocketClient.Verify(
+                    x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                    Times.Never());
             }
 
             [TestCase]

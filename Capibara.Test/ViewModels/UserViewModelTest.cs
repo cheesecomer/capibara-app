@@ -193,7 +193,6 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldNavigateToEditProfilePage()
         {
-
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.EditCommand.Execute();
@@ -203,8 +202,8 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             this.NavigationService.Verify(
                 x => x.NavigateAsync(
                     "EditProfilePage",
-                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model))
-                , Times.Once());
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model)),
+                Times.Once());
         }
     }
 
@@ -328,8 +327,8 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             this.NavigationService.Verify(
                 x => x.NavigateAsync(
                     "ReportPage",
-                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model))
-                , Times.Once());
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model)),
+                Times.Once());
         }
 
         private SubjectViewModel ViewModel;

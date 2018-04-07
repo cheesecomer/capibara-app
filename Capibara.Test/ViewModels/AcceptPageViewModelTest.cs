@@ -275,16 +275,14 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldAccepted()
         {
-            bool isSetAcceptedTrue = false;
-
             var model = new Mock<User>();
             model.SetupAllProperties();
-            model.SetupSet(x => x.IsAccepted = true).Callback(() => isSetAcceptedTrue = true);
 
             var subject = new SubjectViewModel(model: model.Object);
             subject.BuildUp(this.Container);
             subject.OnNavigatedTo(null);
-            Assert.That(isSetAcceptedTrue, Is.EqualTo(true));
+
+            model.VerifySet(x => x.IsAccepted = true);
         }
     }
 

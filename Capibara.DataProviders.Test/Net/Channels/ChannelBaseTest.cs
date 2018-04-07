@@ -114,11 +114,9 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
         [TestCase]
         public void ItShouldCallConnect()
         {
-            var isConnectCalled = false;
-            this.Cable.Setup(x => x.Connect()).Callback(() => isConnectCalled = true);
-
+            this.Cable.Setup(x => x.Connect());
             this.Channel.Connect();
-            Assert.That(isConnectCalled, Is.EqualTo(true));
+            this.Cable.Verify(x => x.Connect(), Times.Once());
         }
     }
     namespace CloseTest
@@ -149,14 +147,12 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
     {
         public class WhenWihtEventHandler : TestFixtureBase
         {
-            bool IsSendSubscribe = false;
             bool IsFireEvent = false;
             public override void SetUp()
             {
                 base.SetUp();
                 this.Cable
-                    .Setup(x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")))
-                    .Callback((IChannelIdentifier x) => this.IsSendSubscribe = true)
+                    .Setup(x => x.SendSubscribe(It.IsAny<IChannelIdentifier>()))
                     .Returns(Task.CompletedTask);
                 this.Channel.Connected += (s, e) => this.IsFireEvent = true;
                 this.Channel.Connect();
@@ -166,7 +162,9 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
             [TestCase]
             public void ItShouldSendSubscribe()
             {
-                Assert.That(this.IsSendSubscribe, Is.EqualTo(true));
+                this.Cable.Verify(
+                    x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")),
+                    Times.Once());
             }
 
             [TestCase]
@@ -178,13 +176,11 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
 
         public class WhenWihtoutEventHandler : TestFixtureBase
         {
-            bool IsSendSubscribe = false;
             public override void SetUp()
             {
                 base.SetUp();
                 this.Cable
-                    .Setup(x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")))
-                    .Callback((IChannelIdentifier x) => this.IsSendSubscribe = true)
+                    .Setup(x => x.SendSubscribe(It.IsAny<IChannelIdentifier>()))
                     .Returns(Task.CompletedTask);
                 this.Channel.Connect();
                 this.Cable.Raise(x => x.Connected += null, EventArgs.Empty);
@@ -193,7 +189,9 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
             [TestCase]
             public void ItShouldSendSubscribe()
             {
-                Assert.That(this.IsSendSubscribe, Is.EqualTo(true));
+                this.Cable.Verify(
+                    x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")),
+                    Times.Once());
             }
         }
     }
@@ -202,14 +200,12 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
     {
         public class WhenWihtEventHandler : TestFixtureBase
         {
-            bool IsDisposeCalled = false;
             bool IsFireEvent = false;
             public override void SetUp()
             {
                 base.SetUp();
                 this.Cable
-                    .Setup(x => x.Dispose())
-                    .Callback(() => this.IsDisposeCalled = true);
+                    .Setup(x => x.Dispose());
                 this.Channel.Disconnected += (s, e) => this.IsFireEvent = true;
                 this.Channel.Connect();
                 this.Cable.Raise(x => x.Disconnected += null, EventArgs.Empty);
@@ -218,7 +214,7 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
             [TestCase]
             public void ItShouldCloseCalled()
             {
-                Assert.That(this.IsDisposeCalled, Is.EqualTo(true));
+                this.Cable.Verify(x => x.Dispose(), Times.Once());
             }
 
             [TestCase]
@@ -230,14 +226,11 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
 
         public class WhenWihtoutEventHandler : TestFixtureBase
         {
-            bool IsDisposeCalled = false;
             public override void SetUp()
             {
                 base.SetUp();
-                this.Channel.Connect();
                 this.Cable
-                    .Setup(x => x.Dispose())
-                    .Callback(() => this.IsDisposeCalled = true);
+                    .Setup(x => x.Dispose());
                 this.Channel.Connect();
                 this.Cable.Raise(x => x.Disconnected += null, EventArgs.Empty);
             }
@@ -245,7 +238,7 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
             [TestCase]
             public void ItShouldCloseCalled()
             {
-                Assert.That(this.IsDisposeCalled, Is.EqualTo(true));
+                this.Cable.Verify(x => x.Dispose());
             }
         }
     }

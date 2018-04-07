@@ -20,7 +20,7 @@ namespace Capibara.Net.Channels
 
         protected ChannelCableBase Cable { get; private set; }
 
-        public bool IsOpen => this.Cable?.IsOpen ?? false;
+        public virtual bool IsOpen => this.Cable?.IsOpen ?? false;
         
         /// <summary>
         /// DIコンテナ
@@ -80,11 +80,7 @@ namespace Capibara.Net.Channels
         private void OnDisconnected(object sender, EventArgs args)
         {
             this.Cable?.Dispose();
-
-            using (this.Cable)
-            {
-                this.Cable = null;
-            }
+            this.Cable = null;
 
             this.Disconnected?.Invoke(this, null);
         }

@@ -94,7 +94,6 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         [TestCase]
         public void ItShouldIsSpeakCalled()
         {
-
             this.Model = new Mock<Room>();
             this.Model.SetupGet(x => x.IsConnected).Returns(true);
             this.Model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true);
@@ -139,20 +138,18 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             protected SubjectViewModel ViewModel { get; private set; }
 
-            protected bool IsRefreshCalled;
-
-            protected bool IsConnectCalled;
+            protected Mock<Room> Model;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var model = new Mock<Room>();
-                model.Setup(x => x.Connect()).ReturnsAsync(true).Callback(() => this.IsConnectCalled = true);
-                model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
+                this.Model = new Mock<Room>();
+                this.Model.Setup(x => x.Connect()).ReturnsAsync(true);
+                this.Model.Setup(x => x.Refresh()).ReturnsAsync(true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -168,13 +165,13 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             [TestCase]
             public void ItShouldIsRefreshCalled()
             {
-                Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
+                this.Model.Verify(x => x.Refresh(), Times.Once());
             }
 
             [TestCase]
             public void ItShouldIsConnectCalled()
             {
-                Assert.That(this.IsConnectCalled, Is.EqualTo(true));
+                this.Model.Verify(x => x.Connect(), Times.Once());
             }
         }
     }
@@ -186,19 +183,19 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             protected SubjectViewModel ViewModel { get; private set; }
 
-            protected bool IsCloseCalled;
+            protected Mock<Room> Model;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var model = new Mock<Room>();
-                model.Setup(x => x.Connect()).ReturnsAsync(true);
-                model.Setup(x => x.Refresh()).ReturnsAsync(true);
-                model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
+                this.Model = new Mock<Room>();
+                this.Model.Setup(x => x.Connect()).ReturnsAsync(true);
+                this.Model.Setup(x => x.Refresh()).ReturnsAsync(true);
+                this.Model.Setup(x => x.Close()).ReturnsAsync(true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -211,7 +208,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             [TestCase]
             public void ItShouldCloseCalled()
             {
-                Assert.That(this.IsCloseCalled, Is.EqualTo(true));
+                this.Model.Verify(x => x.Close(), Times.Once());
             }
 
             [TearDown]
@@ -226,19 +223,19 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             protected SubjectViewModel ViewModel { get; private set; }
 
-            protected bool IsCloseCalled;
+            protected Mock<Room> Model;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var model = new Mock<Room>();
-                model.Setup(x => x.Connect()).ReturnsAsync(true);
-                model.Setup(x => x.Refresh()).ReturnsAsync(true);
-                model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
+                this.Model = new Mock<Room>();
+                this.Model.Setup(x => x.Connect()).ReturnsAsync(true);
+                this.Model.Setup(x => x.Refresh()).ReturnsAsync(true);
+                this.Model.Setup(x => x.Close()).ReturnsAsync(true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -254,7 +251,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             [TestCase]
             public void ItShouldIsCloseNotCalled()
             {
-                Assert.That(this.IsCloseCalled, Is.EqualTo(false));
+                this.Model.Verify(x => x.Close(), Times.Never());
             }
 
             [TearDown]
@@ -360,26 +357,26 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
     {
         protected SubjectViewModel viewModel;
 
-        protected bool IsCloseCalled;
+        protected Mock<Room> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<Room>();
+            this.Model = new Mock<Room>();
 
-            model.Setup(x => x.Close()).Callback(() => this.IsCloseCalled = true).Returns(System.Threading.Tasks.Task.Run(() => true));
+            this.Model.Setup(x => x.Close()).ReturnsAsync(true);
 
-            viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
+            viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
 
-            model.Raise(x => x.RejectSubscription += null, System.EventArgs.Empty);
+            this.Model.Raise(x => x.RejectSubscription += null, System.EventArgs.Empty);
         }
 
         [TestCase]
         public void ItShouldCloseCalled()
         {
-            Assert.That(this.IsCloseCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Close(), Times.Once());
         }
     }
 }
