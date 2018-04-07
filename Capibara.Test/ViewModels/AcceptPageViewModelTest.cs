@@ -98,7 +98,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             var model = new Mock<User>();
             model.SetupAllProperties();
 
-            this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             this.Subject.Source.Value.Url = "http://localhost:9999/terms";
             this.Subject.IsLoaded.Value = true;
 
@@ -170,7 +170,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             model.SetupAllProperties();
             model.Setup(x => x.Accept()).ReturnsAsync(true).Callback(() => this.IsAcceptCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.Source.Value.Url = "http://localhost:9999/privacy_policy";
             viewModel.IsLoaded.Value = true;
 
@@ -205,7 +205,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             model.SetupAllProperties();
             model.Setup(x => x.Destroy()).ReturnsAsync(true).Callback(() => this.IsDestroyCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             viewModel.CancelCommand.Execute();
 
@@ -232,7 +232,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.AcceptSuccess += null, EventArgs.Empty);
 
@@ -247,7 +247,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
 

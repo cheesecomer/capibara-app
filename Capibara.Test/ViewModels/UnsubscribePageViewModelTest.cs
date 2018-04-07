@@ -60,7 +60,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
             // カレントユーザーの登録
             this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, currentUser.Object);
 
-            this.Subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+            this.Subject = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
 
             currentUser.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
         }

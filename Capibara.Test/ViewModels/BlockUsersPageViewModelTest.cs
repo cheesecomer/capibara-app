@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ using Capibara.Net;
 using Capibara.Net.Blocks;
 
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 
 using Prism.Services;
@@ -122,35 +124,25 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void IsShouldDisplayErrorAlertAsyncCall()
             {
-                base.SetUp();
+                var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 
                 var request = new Mock<RequestBase<IndexResponse>>();
-                request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
+                request.Setup(x => x.Execute()).ThrowsAsync(exception);
 
                 this.RequestFactory.Setup(x => x.BlocksIndexRequest()).Returns(request.Object);
 
-                var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object);
+                var subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object);
 
-                viewModel.BuildUp(this.Container);
+                subject.Object.BuildUp(this.Container);
 
-                viewModel.RefreshCommand.Execute();
+                subject.Object.RefreshCommand.Execute();
 
-                while (!viewModel.RefreshCommand.CanExecute()) { }
-            }
+                while (!subject.Object.RefreshCommand.CanExecute()) { }
 
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigateToLogin()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
             }
         }
     }

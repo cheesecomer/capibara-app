@@ -15,7 +15,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
             {
                 base.SetUp();
 
-                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+                var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
 
                 viewModel.ItemTappedCommand.Execute(new UserViewModel(model: new User { Id = 1 }));
 
@@ -49,7 +49,7 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
             {
                 base.SetUp();
 
-                var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+                var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
 
                 this.IsolatedStorage.UserId = 1;
 

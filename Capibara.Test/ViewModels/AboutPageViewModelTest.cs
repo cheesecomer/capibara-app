@@ -14,7 +14,7 @@ namespace Capibara.Test.ViewModels
         public void VersionPropertyTest()
         {
             this.ApplicationService.SetupGet(x => x.AppVersion).Returns("1.9");
-            var subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+            var subject = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
 
             Assert.That(subject.Version.Value, Is.EqualTo("Version 1.9"));
         }
@@ -22,7 +22,7 @@ namespace Capibara.Test.ViewModels
         [TestCase]
         public void CloseCommandTest()
         {
-            var subject = new SubjectViewModel(this.NavigationService).BuildUp(this.Container);
+            var subject = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
 
             subject.CloseCommand.Execute();
 

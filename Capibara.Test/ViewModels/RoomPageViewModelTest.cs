@@ -15,7 +15,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ShowParticipantsCommand.Execute();
 
@@ -166,7 +166,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
                 model.Setup(x => x.Connect()).ReturnsAsync(true).Callback(() => this.IsConnectCalled = true);
                 model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -212,7 +212,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
                 model.Setup(x => x.Refresh()).ReturnsAsync(true);
                 model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -252,7 +252,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
                 model.Setup(x => x.Refresh()).ReturnsAsync(true);
                 model.Setup(x => x.Close()).ReturnsAsync(true).Callback(() => this.IsCloseCalled = true);
 
-                ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object);
+                ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object);
 
                 ViewModel.BuildUp(this.Container);
 
@@ -385,7 +385,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
 
             model.Setup(x => x.Close()).Callback(() => this.IsCloseCalled = true).Returns(System.Threading.Tasks.Task.Run(() => true));
 
-            viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
+            viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.RejectSubscription += null, System.EventArgs.Empty);
         }

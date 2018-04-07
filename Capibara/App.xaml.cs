@@ -56,6 +56,8 @@ namespace Capibara
             containerRegistry.RegisterInstance(this.Environment);
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
+            containerRegistry.RegisterInstance<IChannelFactory>(new ChannelFactory());
+            containerRegistry.RegisterInstance<IChannelCableFactory>(new ChannelCableFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
             containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
 

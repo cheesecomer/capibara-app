@@ -19,7 +19,7 @@ namespace Capibara.Test.ViewModels.MessageViewModel
 
             this.model = new Message { Sender = new User().BuildUp(this.Container) }.BuildUp(this.Container);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: this.model);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.model);
             viewModel.BuildUp(this.Container);
 
             viewModel.ShowProfileCommand.Execute();

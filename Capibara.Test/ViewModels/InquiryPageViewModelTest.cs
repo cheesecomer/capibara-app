@@ -52,7 +52,7 @@ namespace Capibara.Test.ViewModels.InquiryPageViewModelTest
                 .Returns(request.Object)
                 .Callback<string, string>((a, b) => this.IsInquiriesCreateRequestCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService).BuildUp(container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(container);
             viewModel.Email.Value = "example@email.com";
             viewModel.Message.Value = "Message!";
 

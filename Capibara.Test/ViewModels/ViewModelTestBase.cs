@@ -9,8 +9,6 @@ using Moq;
 using Prism.Services;
 using Prism.Navigation;
 
-using Xamarin.Forms;
-
 using NUnit.Framework;
 
 namespace Capibara.Test.ViewModels
@@ -21,7 +19,7 @@ namespace Capibara.Test.ViewModels
 
         protected NavigationParameters NavigationParameters { get; private set; }
 
-        protected NavigationService NavigationService { get; private set; }
+        protected Mock<NavigationService> NavigationService { get; private set; }
 
         protected Mock<IPageDialogService> PageDialogService { get; private set; }
 
@@ -33,6 +31,7 @@ namespace Capibara.Test.ViewModels
 
         protected bool IsGoBackCalled { get; private set; }
 
+        [Obsolete]
         protected bool IsShowDialog { get; private set; }
 
         [SetUp]
@@ -43,15 +42,13 @@ namespace Capibara.Test.ViewModels
             this.PageDialogService = new Mock<IPageDialogService>();
             this.PageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.Run(() => true))
-                .Callback(() => this.IsShowDialog = true);
+                .Returns(Task.Run(() => true));
             this.PageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.Run(() => true))
-                .Callback(() => this.IsShowDialog = true);
+                .Returns(Task.Run(() => true));
             
-            var navigationServiceMock = new Mock<NavigationService> { CallBase = true };
-            navigationServiceMock
+            this.NavigationService = new Mock<NavigationService> { CallBase = true };
+            this.NavigationService
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(true))
                 .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
@@ -60,12 +57,10 @@ namespace Capibara.Test.ViewModels
                     this.NavigationParameters = parameters;
                 });
 
-            navigationServiceMock
+            this.NavigationService
                 .Setup(x => x.GoBackAsync())
                 .Callback(() => this.IsGoBackCalled = true)
                 .ReturnsAsync(true);
-
-            this.NavigationService = navigationServiceMock.Object;
 
             var progressDialogService = new Mock<IProgressDialogService>();
             progressDialogService
@@ -82,6 +77,7 @@ namespace Capibara.Test.ViewModels
                 .Returns(Task.FromResult(new byte[0]));
 
             this.DeviceService = new Mock<IDeviceService>();
+            this.DeviceService.Setup(x => x.BeginInvokeOnMainThread(It.IsAny<Action>())).Callback((Action action) => action?.Invoke());
             this.Container.RegisterInstance(this.DeviceService.Object);
 
             var taskService = new Mock<ITaskService>();

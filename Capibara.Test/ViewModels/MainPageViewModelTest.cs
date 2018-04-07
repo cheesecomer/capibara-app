@@ -24,7 +24,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
 

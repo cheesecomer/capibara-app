@@ -121,11 +121,19 @@ namespace Capibara.ViewModels
 
         protected virtual void OnContainerChanged() { }
 
-        protected virtual EventHandler<FailEventArgs> OnFail(Func<Task> func)
+        protected EventHandler<FailEventArgs> OnFail(Func<Task> func)
         {
             return async (s, args) =>
             {
-                await this.DisplayErrorAlertAsync(args.Error, func);
+                var taskSource = new TaskCompletionSource<bool>();
+
+                this.DeviceService.BeginInvokeOnMainThread(async () =>
+                {
+                    await this.DisplayErrorAlertAsync(args.Error, func);
+                    taskSource.TrySetResult(true);
+                });
+
+                await taskSource.Task;
             };
         }
 

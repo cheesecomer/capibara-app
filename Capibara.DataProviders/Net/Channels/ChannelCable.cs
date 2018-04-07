@@ -24,28 +24,21 @@ namespace Capibara.Net.Channels
         Unknown
     }
 
-    public class ChannelCable : IDisposable
+    public abstract class ChannelCableBase : IDisposable
     {
-        private IWebSocketClient webSocket;
+        public abstract event EventHandler Connected;
 
-        public event EventHandler Connected;
+        public abstract event EventHandler Disconnected;
 
-        public event EventHandler Disconnected;
+        public abstract event EventHandler PingReceived;
 
-        public event EventHandler PingReceived;
+        public abstract event EventHandler ConfirmSubscriptionReceived;
 
-        public event EventHandler ConfirmSubscriptionReceived;
+        public abstract event EventHandler RejectSubscriptionReceived;
 
-        public event EventHandler RejectSubscriptionReceived;
+        public abstract event EventHandler<EventArgs<string>> MessageReceived;
 
-        public event EventHandler<string> MessageReceived;
-
-        public event EventHandler MessageSent;
-
-        public bool IsOpen
-            => (this.webSocket?.State ?? WebSocketState.None) == WebSocketState.Open;
-
-        public Exception LastException;
+        public abstract event EventHandler MessageSent;
 
         /// <summary>
         /// DIコンテナ
@@ -73,9 +66,47 @@ namespace Capibara.Net.Channels
         /// </summary>
         /// <value>The secure isolated storage.</value>
         [Dependency]
-        public IWebSocketClientFactory WebSocketClientFactory{ get; set; }
+        public IWebSocketClientFactory WebSocketClientFactory { get; set; }
 
-        public void Dispose()
+        public abstract bool IsOpen { get; }
+
+        public abstract void Dispose();
+
+        public abstract Exception LastException { get; protected set; }
+
+        public abstract Task<bool> Connect();
+
+        public abstract Task Close();
+
+        public abstract Task SendSubscribe(IChannelIdentifier channelIdentifier);
+
+        public abstract Task SendCommand<TCommand>(TCommand command) where TCommand : ICommand;
+    }
+
+    public class ChannelCable : ChannelCableBase
+    {
+        private IWebSocketClient webSocket;
+
+        public override event EventHandler Connected;
+
+        public override event EventHandler Disconnected;
+
+        public override event EventHandler PingReceived;
+
+        public override event EventHandler ConfirmSubscriptionReceived;
+
+        public override event EventHandler RejectSubscriptionReceived;
+
+        public override event EventHandler<EventArgs<string>> MessageReceived;
+
+        public override event EventHandler MessageSent;
+
+        public override bool IsOpen
+            => (this.webSocket?.State ?? WebSocketState.None) == WebSocketState.Open;
+
+        public override Exception LastException { get; protected set; }
+
+        public override void Dispose()
         {
             this.webSocket?.Dispose();
             this.webSocket = null;
@@ -84,7 +115,7 @@ namespace Capibara.Net.Channels
         /// <summary>
         /// チャンネルに接続します。
         /// </summary>
-        public Task<bool> Connect()
+        public override Task<bool> Connect()
         {
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
 
@@ -105,8 +136,8 @@ namespace Capibara.Net.Channels
                         if (!isOpen)
                         {
                             taskCompletionSource.SetResult(false);
-                            this.Disconnected?.Invoke(this, null);
                             this.Dispose();
+                            this.Disconnected?.Invoke(this, null);
                             return;
                         }
 
@@ -122,15 +153,15 @@ namespace Capibara.Net.Channels
 
                         if (this.webSocket != null)
                         {
-                            this.Disconnected?.Invoke(this, null);
                             this.Dispose();
+                            this.Disconnected?.Invoke(this, null);
                         }
                     });
 
             return taskCompletionSource.Task;
         }
 
-        public async Task Close()
+        public override async Task Close()
         {
             if (!this.IsOpen)
                 return;
@@ -145,13 +176,13 @@ namespace Capibara.Net.Channels
             }
         }
 
-        public Task SendSubscribe(IChannelIdentifier channelIdentifier)
+        public override Task SendSubscribe(IChannelIdentifier channelIdentifier)
         {
             var command = new SubscribeCommand(channelIdentifier);
             return this.SendCommand(command);
         }
 
-        public async Task SendCommand<TCommand>(TCommand command) where TCommand : ICommand
+        public override async Task SendCommand<TCommand>(TCommand command)
         {
             var chunkSize = this.Environment.WebSocketSendBufferSize;
             var message = JsonConvert.SerializeObject(command);

@@ -25,12 +25,26 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
 
     public class MockChannel : ChannelBase<object>
     {
-        protected override IChannelIdentifier ChannelIdentifier { get;  } = new MockChannelIdentifier();
+        public override IChannelIdentifier ChannelIdentifier { get;  } = new MockChannelIdentifier();
     }
 
-    public abstract class TestFixtureBase : ChannelTestFixtureBase<object>
+    public abstract class TestFixtureBase : Capibara.Test.TestFixtureBase
     {
-        protected override IChannel<object> Channel { get; } = new MockChannel();
+        protected ChannelBase<object> Channel { get; } = new MockChannel();
+
+        protected Mock<ChannelCableBase> Cable;
+
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            this.Cable = new Mock<ChannelCableBase>();
+
+            this.ChannelCableFactory.Setup(x => x.Create()).Returns(this.Cable.Object);
+
+            this.Channel.BuildUp(this.Container);
+        }
     }
 
     namespace DisposeTest
@@ -38,11 +52,10 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
         [TestFixture]
         public class WhenConnected : TestFixtureBase
         {
-            protected override bool NeedConnect => true;
-
             [TestCase]
             public void ItShouldNotThrow()
             {
+                this.Channel.Connect();
                 Assert.DoesNotThrow(this.Channel.Dispose);
             }
         }
@@ -50,8 +63,6 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
         [TestFixture]
         public class WhenNotConnect : TestFixtureBase
         {
-            protected override bool NeedConnect => false;
-
             [TestCase]
             public void ItShouldNotThrow()
             {
@@ -63,24 +74,34 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
     namespace IsOpenTest
     {
         [TestFixture]
-        public class WhenConnected : TestFixtureBase
+        public class WhenIsOpen : TestFixtureBase
         {
-            protected override bool NeedConnect => true;
-
             [TestCase]
             public void ItShouldIsOpen()
             {
+                this.Channel.Connect();
+                this.Cable.SetupGet(x => x.IsOpen).Returns(true);
                 Assert.That(this.Channel.IsOpen, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenIsNotOpen : TestFixtureBase
+        {
+            [TestCase]
+            public void ItShouldIsOpen()
+            {
+                this.Channel.Connect();
+                this.Cable.SetupGet(x => x.IsOpen).Returns(false);
+                Assert.That(this.Channel.IsOpen, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenNotConnect : TestFixtureBase
         {
-            protected override bool NeedConnect => false;
-
             [TestCase]
-            public void ItShouldIsNotOpen()
+            public void ItShouldIsOpen()
             {
                 Assert.That(this.Channel.IsOpen, Is.EqualTo(false));
             }
@@ -90,211 +111,204 @@ namespace Capibara.Test.Net.Channels.ChannelBaseTest
     [TestFixture]
     public class ConnectTest : TestFixtureBase
     {
-        protected override bool HasEventHandler => false;
-
-        protected override bool NeedWaitConnect => false;
-
         [TestCase]
         public void ItShouldCallConnect()
         {
-            Assert.That(this.IsWebSocketConnectCalled, Is.EqualTo(true));
+            var isConnectCalled = false;
+            this.Cable.Setup(x => x.Connect()).Callback(() => isConnectCalled = true);
+
+            this.Channel.Connect();
+            Assert.That(isConnectCalled, Is.EqualTo(true));
         }
     }
-
     namespace CloseTest
     {
-
         [TestFixture]
         public class WhenConnected : TestFixtureBase
         {
-            protected override bool HasEventHandler => false;
+            [TestCase]
+            public void ItShouldCallConnect()
+            {
+                this.Channel.Connect();
+                Assert.DoesNotThrowAsync(this.Channel.Close);
+            }
+        }
 
-            protected override bool NeedWaitConnect => false;
-
+        [TestFixture]
+        public class WhenNotConnected : TestFixtureBase
+        {
             [TestCase]
             public void ItShouldCallConnect()
             {
                 Assert.DoesNotThrowAsync(this.Channel.Close);
             }
         }
-
-        [TestFixture]
-        public class WhenNotConnected
-        {
-
-            [TestCase]
-            public void ItShouldCallConnect()
-            {
-                Assert.DoesNotThrowAsync(new MockChannel().Close);
-            }
-        }
     }
 
     namespace OnConnectedTest
     {
-        public abstract class TestFixtureBase : ChannelBaseTest.TestFixtureBase
+        public class WhenWihtEventHandler : TestFixtureBase
         {
-            [TestCase]
-            public void ItShouldCallSendSubscribe()
+            bool IsSendSubscribe = false;
+            bool IsFireEvent = false;
+            public override void SetUp()
             {
-                var command = JsonConvert.DeserializeObject<Dictionary<string, string>>(this.SendMessage);
-                Assert.That(command.ValueOrDefault("command"), Is.EqualTo("subscribe"));
+                base.SetUp();
+                this.Cable
+                    .Setup(x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")))
+                    .Callback((IChannelIdentifier x) => this.IsSendSubscribe = true)
+                    .Returns(Task.CompletedTask);
+                this.Channel.Connected += (s, e) => this.IsFireEvent = true;
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.Connected += null, EventArgs.Empty);
+            }
+
+            [TestCase]
+            public void ItShouldSendSubscribe()
+            {
+                Assert.That(this.IsSendSubscribe, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldFireConnectedEvent()
+            {
+                Assert.That(this.IsFireEvent, Is.EqualTo(true));
             }
         }
 
-        public class WhenConnectSuccessEventHandlerExists : TestFixtureBase
+        public class WhenWihtoutEventHandler : TestFixtureBase
         {
-            protected override bool HasEventHandler => true;
-
-            [TestCase]
-            public void ItShouldConnectedEventToOccur()
+            bool IsSendSubscribe = false;
+            public override void SetUp()
             {
-                Assert.That(this.IsFireConnected, Is.EqualTo(true));
+                base.SetUp();
+                this.Cable
+                    .Setup(x => x.SendSubscribe(It.Is<IChannelIdentifier>(v => v.Channel == "MockChannel")))
+                    .Callback((IChannelIdentifier x) => this.IsSendSubscribe = true)
+                    .Returns(Task.CompletedTask);
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.Connected += null, EventArgs.Empty);
             }
 
             [TestCase]
-            public void ItShouldDisconnectedEventToNotOccur()
+            public void ItShouldSendSubscribe()
             {
-                Assert.That(this.IsFireDisconnected, Is.EqualTo(false));
-            }
-        }
-
-        public class WhenConnectSuccessEventHandlerNotExists : TestFixtureBase
-        {
-            protected override bool HasEventHandler => false;
-
-            [TestCase]
-            public void ItShouldConnectedEventToNotOccur()
-            {
-                Assert.That(this.IsFireConnected, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldDisconnectedEventToNotOccur()
-            {
-                Assert.That(this.IsFireDisconnected, Is.EqualTo(false));
-            }
-        }
-
-        public class WhenConnectFailEventHandlerExists : ChannelBaseTest.TestFixtureBase
-        {
-            protected override bool HasEventHandler => true;
-
-            protected override bool NeedWaitDispose => true;
-
-            protected override bool NeedWaitConnect { get; } = false;
-
-            protected override bool NeedWaitReceiveMessage { get; } = false;
-
-            protected override bool NeedWaitSendMessage { get; } = false;
-
-            protected override WebSocketState WebSocketState => WebSocketState.Aborted;
-
-            [TestCase]
-            public void ItShouldConnectedEventToOccur()
-            {
-                Assert.That(this.IsFireConnected, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldDisconnectedEventToNotOccur()
-            {
-                Assert.That(this.IsFireDisconnected, Is.EqualTo(true));
-            }
-        }
-
-        public class WhenConnectFailEventHandlerNotExists : ChannelBaseTest.TestFixtureBase
-        {
-            protected override bool HasEventHandler => false;
-
-            protected override bool NeedWaitDispose => true;
-
-            protected override bool NeedWaitConnect { get; } = false;
-
-            protected override bool NeedWaitReceiveMessage { get; } = false;
-
-            protected override bool NeedWaitSendMessage { get; } = false;
-
-            protected override WebSocketState WebSocketState => WebSocketState.Aborted;
-
-            [TestCase]
-            public void ItShouldConnectedEventToNotOccur()
-            {
-                Assert.That(this.IsFireConnected, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldDisconnectedEventToNotOccur()
-            {
-                Assert.That(this.IsFireDisconnected, Is.EqualTo(false));
+                Assert.That(this.IsSendSubscribe, Is.EqualTo(true));
             }
         }
     }
 
-    namespace OnReceiveMessageTest
+    namespace OnDisconnectedTest
     {
-        public abstract class TestFixtureBase : ChannelBaseTest.TestFixtureBase
+        public class WhenWihtEventHandler : TestFixtureBase
         {
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-            => new List<ReceiveMessage>()
+            bool IsDisposeCalled = false;
+            bool IsFireEvent = false;
+            public override void SetUp()
             {
-                new ReceiveMessage(WebSocketMessageType.Text, "{\"message\": { \"content\": \"FooBar\" } }")
-            };
-        }
-
-        public class WhenConnectSuccessEventHandlerExists : TestFixtureBase
-        {
-            protected override bool HasEventHandler => true;
+                base.SetUp();
+                this.Cable
+                    .Setup(x => x.Dispose())
+                    .Callback(() => this.IsDisposeCalled = true);
+                this.Channel.Disconnected += (s, e) => this.IsFireEvent = true;
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.Disconnected += null, EventArgs.Empty);
+            }
 
             [TestCase]
-            public void ItShouldConnectedEventToOccur()
+            public void ItShouldCloseCalled()
             {
-                Assert.That(this.IsFireMessageReceive, Is.EqualTo(true));
+                Assert.That(this.IsDisposeCalled, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldFireConnectedEvent()
+            {
+                Assert.That(this.IsFireEvent, Is.EqualTo(true));
             }
         }
 
-        public class WhenConnectSuccessEventHandlerNotExists : TestFixtureBase
+        public class WhenWihtoutEventHandler : TestFixtureBase
         {
-            protected override bool HasEventHandler => false;
+            bool IsDisposeCalled = false;
+            public override void SetUp()
+            {
+                base.SetUp();
+                this.Channel.Connect();
+                this.Cable
+                    .Setup(x => x.Dispose())
+                    .Callback(() => this.IsDisposeCalled = true);
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.Disconnected += null, EventArgs.Empty);
+            }
 
             [TestCase]
-            public void ItShouldConnectedEventToNotOccur()
+            public void ItShouldCloseCalled()
             {
-                Assert.That(this.IsFireMessageReceive, Is.EqualTo(false));
+                Assert.That(this.IsDisposeCalled, Is.EqualTo(true));
             }
         }
     }
 
-    namespace OnRejectSubscriptionTest
+    namespace OnMessageReceiveTest
     {
-        public abstract class TestFixtureBase : ChannelBaseTest.TestFixtureBase
+        public class WhenWihtEventHandler : TestFixtureBase
         {
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-            => new List<ReceiveMessage>()
+            bool IsFireEvent = false;
+            public override void SetUp()
             {
-                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
-            };
-        }
-
-        public class WhenConnectSuccessEventHandlerExists : TestFixtureBase
-        {
-            protected override bool HasEventHandler => true;
+                base.SetUp();
+                this.Channel.MessageReceive += (s, e) => this.IsFireEvent = true;
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.MessageReceived += null, new EventArgs<string>("{\"message\": \"welcome\"}"));
+            }
 
             [TestCase]
-            public void ItShouldConnectedEventToOccur()
+            public void ItShouldFireConnectedEvent()
             {
-                Assert.That(this.IsFireRejectSubscription, Is.EqualTo(true));
+                Assert.That(this.IsFireEvent, Is.EqualTo(true));
             }
         }
 
-        public class WhenConnectSuccessEventHandlerNotExists : TestFixtureBase
+        public class WhenWihtoutEventHandler : TestFixtureBase
         {
-            protected override bool HasEventHandler => false;
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                this.Channel.Connect();
+                Assert.DoesNotThrow(() => this.Cable.Raise(x => x.MessageReceived += null, new EventArgs<string>("{\"message\": \"welcome\"}")));
+            }
+        }
+    }
+
+
+    namespace OnRejectSubscriptionReceived
+    {
+        public class WhenWihtEventHandler : TestFixtureBase
+        {
+            bool IsFireEvent = false;
+            public override void SetUp()
+            {
+                base.SetUp();
+                this.Channel.RejectSubscription += (s, e) => this.IsFireEvent = true;
+                this.Channel.Connect();
+                this.Cable.Raise(x => x.RejectSubscriptionReceived += null, EventArgs.Empty);
+            }
 
             [TestCase]
-            public void ItShouldConnectedEventToNotOccur()
+            public void ItShouldFireConnectedEvent()
             {
-                Assert.That(this.IsFireRejectSubscription, Is.EqualTo(false));
+                Assert.That(this.IsFireEvent, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenWihtoutEventHandler : TestFixtureBase
+        {
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                this.Channel.Connect();
+                Assert.DoesNotThrow(() => this.Cable.Raise(x => x.RejectSubscriptionReceived += null, EventArgs.Empty));
             }
         }
     }

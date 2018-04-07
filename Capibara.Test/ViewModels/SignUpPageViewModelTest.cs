@@ -9,6 +9,7 @@ using Capibara.Net;
 using Capibara.Net.Sessions;
 
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 
 using Prism.Navigation;
@@ -45,7 +46,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             var container = this.Container;
             var model = new Mock<User>();
             model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
-            this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            this.Subjet = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignUpSuccess += null, EventArgs.Empty);
 
@@ -65,15 +66,17 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         }
 
         [TestCaseSource("TestCaseSource")]
-        public void ItShouldNotNavigate(Exception exception)
+        public void ItShouldDisplayErrorAlertAsyncCall(Exception exception)
         {
             var container = this.Container;
             var model = new Mock<User>();
-            var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object, model.Object).BuildUp(container);
+            var viewModel = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object, model.Object);
+            viewModel.Object.BuildUp(container);
 
             model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
-            Assert.That(this.IsShowDialog, Is.EqualTo(true));
+            //this.PageDialogService.Verify(x => x.DisplayAlertAsync("ログインに失敗しました", "再度はじめからやり直してください", "閉じる"), Times.Once());
+            viewModel.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
         }
     }
 
@@ -96,7 +99,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
                 model.SetupAllProperties();
                 model.Setup(x => x.SignUp()).ReturnsAsync(true).Callback(() => this.IsSignUpCalled = true);
 
-                this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
                 this.Subject.Nickname.Value = "Foo.Bar";
 
                 if (!this.NeedSignUpWait)
@@ -145,7 +148,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.SignInCommand.Execute();
 
@@ -180,7 +183,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             {
                 base.SetUp();
 
-                var viewModel = new SubjectViewModel(this.NavigationService);
+                var viewModel = new SubjectViewModel(this.NavigationService.Object);
                 viewModel.BuildUp(this.Container);
 
                 this.IsolatedStorage.UserId = 1;
@@ -215,7 +218,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             {
                 base.SetUp();
 
-                var viewModel = new SubjectViewModel(this.NavigationService);
+                var viewModel = new SubjectViewModel(this.NavigationService.Object);
                 viewModel.BuildUp(this.Container);
 
                 viewModel.OnResume();

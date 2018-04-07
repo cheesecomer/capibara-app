@@ -89,7 +89,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             {
                 base.SetUp();
 
-                this.Subject = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object).BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<CreateResponse>>();
                 if (this.Response.IsPresent())

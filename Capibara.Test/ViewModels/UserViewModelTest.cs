@@ -194,7 +194,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.EditCommand.Execute();
 
@@ -231,7 +231,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = nickname;
 
             Assert.That(viewModel.CommitCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -252,7 +252,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             model.SetupAllProperties();
             model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = "FooBar";
 
             viewModel.CommitCommand.Execute();
@@ -282,7 +282,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.IsBlock.Value = isBlock;
 
             Assert.That(viewModel.BlockCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -306,7 +306,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             model.SetupAllProperties();
             model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             this.ViewModel.IsBlock.Value = false;
             this.ViewModel.BlockCommand.Execute();
         }
@@ -335,7 +335,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             base.SetUp();
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService);
+            this.ViewModel = new SubjectViewModel(this.NavigationService.Object);
 
             this.ViewModel.ReportCommand.Execute();
 

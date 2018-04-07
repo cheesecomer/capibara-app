@@ -25,7 +25,7 @@ namespace Capibara.Models
 
         private int numberOfParticipants;
 
-        private ChatChannel channel;
+        private ChatChannelBase channel;
 
         public virtual event EventHandler RefreshSuccess;
 
@@ -110,12 +110,16 @@ namespace Capibara.Models
                 return true;
             }
 
-            this.channel = new ChatChannel(this).BuildUp(this.Container);
+            this.channel = this.ChannelFactory.CreateChantChannel(this).BuildUp(this.Container);
 
             this.channel.Connected += (sender, e) => this.IsConnected = true;
             this.channel.MessageReceive += this.OnMessageReceive;
-            this.channel.Disconnected += (sender, e) => this.Disconnected?.Invoke(this, null);
-            this.channel.Disconnected += (sender, e) => this.IsConnected = false;
+            this.channel.Disconnected += async (sender, e) =>
+            {
+                await this.Close(); 
+                this.Disconnected?.Invoke(this, null);
+            };
+
             this.channel.RejectSubscription += (sender, e) => this.RejectSubscription?.Invoke(this, null);
 
             return await this.channel.Connect();
@@ -126,8 +130,8 @@ namespace Capibara.Models
             this.IsConnected = false;
             if (this.channel != null)
             {
-                await this.channel.Close();
-                this.channel.Dispose();
+                await this.channel?.Close();
+                this.channel?.Dispose();
             }
 
             this.channel = null;
@@ -172,15 +176,15 @@ namespace Capibara.Models
             }
         }
 
-        private void OnMessageReceive(object sender, Message message)
+        private void OnMessageReceive(object sender, EventArgs<Message> args)
         {
-            if (message.Id != 0)
+            if (args.Value.Id != 0)
             {
-                this.Messages.Insert(0, message.BuildUp(this.Container));
+                this.Messages.Insert(0, args.Value.BuildUp(this.Container));
             }
             else
             {
-                this.OnSystemMessageReceive(message);
+                this.OnSystemMessageReceive(args.Value);
             }
         }
 

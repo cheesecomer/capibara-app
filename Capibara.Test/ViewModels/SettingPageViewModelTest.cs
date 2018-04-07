@@ -26,7 +26,7 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new SettingItem { PagePath = this.pagePath });
 

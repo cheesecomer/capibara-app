@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Capibara.Models;
@@ -6,6 +7,7 @@ using Capibara.Net;
 using Capibara.Net.Rooms;
 using Capibara.ViewModels;
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 using Prism.Services;
 using SubjectViewModel = Capibara.ViewModels.FloorMapPageViewModel;
@@ -20,7 +22,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new Room());
 
@@ -144,35 +146,25 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void IsShouldDisplayErrorAlertAsyncCall()
             {
-                base.SetUp();
+                var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 
                 var request = new Mock<RequestBase<IndexResponse>>();
-                request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
+                request.Setup(x => x.Execute()).ThrowsAsync(exception);
 
                 this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
-                var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object);
+                var subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object);
 
-                viewModel.BuildUp(this.Container);
+                subject.Object.BuildUp(this.Container);
 
-                viewModel.RefreshCommand.Execute();
+                subject.Object.RefreshCommand.Execute();
 
-                while(!viewModel.RefreshCommand.CanExecute()) { }
-            }
+                while (!subject.Object.RefreshCommand.CanExecute()) { }
 
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigateToLogin()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
             }
         }
     }

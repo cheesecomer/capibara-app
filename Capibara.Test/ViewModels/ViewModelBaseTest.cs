@@ -178,7 +178,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject = new StabViewModel(this.NavigationService, this.PageDialogService.Object);
+                this.Subject = new StabViewModel(this.NavigationService.Object, this.PageDialogService.Object);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる"), Times.Once());
             }
 
             [TestCase]
@@ -218,7 +218,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "不正なアクセスです。再度操作をやり直してください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
@@ -241,7 +241,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "データが見つかりません。再度操作をやり直してください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
@@ -270,11 +270,11 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "最新のアプリが公開されています！アップデートを行ってください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
-            public void ItShoulGoBack()
+            public void ItShoulOpenUriCalled()
             {
                 Assert.That(this.IsOpenUriCalled, Is.EqualTo(true));
             }
@@ -293,7 +293,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "現在メンテナンス中です。時間を置いて再度お試しください。", "閉じる"), Times.Once());
             }
 
             [TestCase]

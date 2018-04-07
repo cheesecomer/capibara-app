@@ -119,7 +119,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
             model.SetupAllProperties();
             model.Setup(x => x.Report(It.IsAny<ReportReason>(), It.IsAny<string>())).ReturnsAsync(true).Callback(() => this.IsReportCalled = true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             viewModel.SubmitCommand.Execute();
 
@@ -146,7 +146,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.ReportSuccess += null, EventArgs.Empty);
 

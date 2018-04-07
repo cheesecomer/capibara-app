@@ -98,6 +98,10 @@ namespace Capibara.Test
 
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
+        protected Mock<IChannelFactory> ChannelFactory { get; private set; }
+
+        protected Mock<IChannelCableFactory> ChannelCableFactory { get; private set; }
+
         protected Mock<IApplicationService> ApplicationService { get; private set; }
 
         protected IUnityContainer Container { get; private set; }
@@ -242,6 +246,10 @@ namespace Capibara.Test
 
             this.RequestFactory = new Mock<IRequestFactory>();
 
+            this.ChannelFactory = new Mock<IChannelFactory>();
+
+            this.ChannelCableFactory = new Mock<IChannelCableFactory>();
+
             this.ApplicationService = new Mock<IApplicationService>();
             this.ApplicationService.Setup(x => x.Exit()).Callback(() => this.IsExitCalled = true);
             this.ApplicationService.SetupGet(x => x.StoreUrl).Returns("http://example.com/store");
@@ -256,6 +264,8 @@ namespace Capibara.Test
             container.RegisterInstance(application.Object);
             container.RegisterInstance(webSocketClientFactory.Object);
             container.RegisterInstance(this.RequestFactory.Object);
+            container.RegisterInstance(this.ChannelFactory.Object);
+            container.RegisterInstance(this.ChannelCableFactory.Object);
             container.RegisterInstance(this.ApplicationService.Object);
 
             this.Container = container;
@@ -323,79 +333,6 @@ namespace Capibara.Test
 
                     return Task.Run(() => { });
                 });
-        }
-    }
-
-    public abstract class ChannelTestFixtureBase<TMessage> : TestFixtureBase
-    {
-        protected virtual bool HasEventHandler { get; }
-
-        protected abstract IChannel<TMessage> Channel { get; }
-
-        protected bool IsFireRejectSubscription { get; private set; }
-
-        protected bool IsFireMessageReceive { get; private set; }
-
-        protected bool IsFireConnected { get; private set; }
-
-        protected bool IsFireDisconnected { get; private set; }
-
-        protected virtual bool NeedConnect { get; } = true;
-
-        protected virtual bool NeedWaitConnect { get; } = true;
-
-        protected virtual bool NeedWaitReceiveMessage { get; } = true;
-
-        protected virtual bool NeedWaitSendMessage { get; } = true;
-
-        protected virtual bool NeedWaitDispose { get; } = false;
-
-        protected string SendMessage { get; private set; }
-
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-
-            this.Channel.BuildUp(this.Container);
-
-            if (this.HasEventHandler)
-            {
-                this.Channel.Connected += (sender, e) => this.IsFireConnected = true;
-                this.Channel.Disconnected += (sender, e) => this.IsFireDisconnected = true;
-                this.Channel.MessageReceive += (sender, e) => this.IsFireMessageReceive = true;
-                this.Channel.RejectSubscription += (sender, e) => this.IsFireRejectSubscription = true;
-            }
-
-            if (this.NeedConnect)
-            {
-                this.Channel.Connect();
-
-                // 接続処理終了を待機
-                if (this.NeedWaitConnect)
-                    this.ConnectTaskSource.Task.Wait();
-
-                // 受信完了を待機
-                if (this.NeedWaitReceiveMessage)
-                    Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
-
-                // 送信完了を待機
-                if (this.NeedWaitSendMessage)
-                {
-                    this.SendAsyncSource.Task.Wait();
-
-                    this.SendMessage = this.SendAsyncSource.Task.Result;
-                }
-
-                if (this.NeedWaitDispose)
-                    this.DisposeTaskSource.Task.Wait();
-            }
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            this.Channel.Dispose();
         }
     }
 }

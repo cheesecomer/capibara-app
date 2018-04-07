@@ -44,7 +44,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             var container = this.Container;
             var model = new Mock<Session>();
             model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
-            this.Subjet = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(container);
+            this.Subjet = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(container);
 
             model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
 
@@ -66,7 +66,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
                 base.SetUp();
 
                 var model = new Mock<Session>();
-                this.Subject = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
 
                 model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
             }
@@ -127,7 +127,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
                 var model = new Mock<Session>();
                 model.SetupAllProperties();
                 model.Setup(x => x.SignIn()).ReturnsAsync(true).Callback(() => this.IsSignInCalled = true);
-                this.Subject = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
                 this.Subject.Email.Value = "user@email.com";
                 this.Subject.Password.Value = "password";
 
@@ -179,7 +179,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object);
 
             viewModel.SignUpCommand.Execute();
 
