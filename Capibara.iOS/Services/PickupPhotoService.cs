@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 
+using CoreGraphics;
+
 using Capibara.Services;
 
 using UIKit;
@@ -18,7 +20,6 @@ namespace Capibara.iOS.Services
 
             var imagePickerController = new UIImagePickerController();
             imagePickerController.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
-            imagePickerController.ModalPresentationStyle = UIModalPresentationStyle.Popover;
             imagePickerController.MediaTypes = new [] { "public.image" };
             imagePickerController.FinishedPickingMedia += this.OnFinishedPickingMedia(taskSource);
             imagePickerController.Canceled += this.OnCancel(taskSource);
