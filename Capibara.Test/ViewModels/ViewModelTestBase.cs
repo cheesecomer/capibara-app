@@ -25,6 +25,8 @@ namespace Capibara.Test.ViewModels
 
         protected Mock<IPickupPhotoService> PickupPhotoService { get; set; }
 
+        protected Mock<ISnsLoginService> SnsLoginService { get; set; }
+
         [SetUp]
         public override void SetUp()
         {
@@ -64,6 +66,8 @@ namespace Capibara.Test.ViewModels
             this.DeviceService.Setup(x => x.BeginInvokeOnMainThread(It.IsAny<Action>())).Callback((Action action) => action?.Invoke());
             this.Container.RegisterInstance(this.DeviceService.Object);
 
+            this.SnsLoginService = new Mock<ISnsLoginService>();
+
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.Delay(It.IsAny<int>())).Returns(Task.CompletedTask);
 
@@ -73,6 +77,7 @@ namespace Capibara.Test.ViewModels
 
             this.Container.RegisterInstance(this.ProgressDialogService.Object);
             this.Container.RegisterInstance(this.PickupPhotoService.Object);
+            this.Container.RegisterInstance(this.SnsLoginService.Object);
             this.Container.RegisterInstance(taskService.Object);
             this.Container.RegisterInstance(tracker.Object);
             this.Container.RegisterInstance(balloonService.Object);

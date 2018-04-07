@@ -154,10 +154,9 @@ namespace Capibara.ViewModels
 
         private void OpenOAuthUri(OAuthProvider provider)
         {
-            var uri = new Uri(
-                Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower()) + 
-                $"?user_id={this.Model.Id}&access_token={this.IsolatedStorage.AccessToken}");
-            this.DeviceService.OpenUri(uri);
+            var query = $"?user_id={this.Model.Id}&access_token={this.IsolatedStorage.AccessToken}";
+            var url = Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower());
+            this.SnsLoginService.Open(url + query);
         }
     }
 }

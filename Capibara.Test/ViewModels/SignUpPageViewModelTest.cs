@@ -307,10 +307,8 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         [TestCase(3, "http://localhost:9999/api/oauth/line")]
         public void ItShouldOpenUrl(int index, string url)
         {
-            this.DeviceService.Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == url))).Callback((Uri x) => this.IsOpenUrlCalled = true);
-
             this.buttons.ElementAtOrDefault(index)?.Action?.Invoke();
-            Assert.That(this.IsOpenUrlCalled, Is.EqualTo(true));
+            this.SnsLoginService.Verify(x => x.Open(url), Times.Once());
         }
     }
 }

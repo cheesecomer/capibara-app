@@ -240,7 +240,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="SecureIsolatedStorage.cs" />
+    <Compile Include="IsolatedStorage.cs" />
     <Compile Include="ViewExtensions.cs" />
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="Services\PickupPhotoService.cs" />
@@ -255,6 +255,7 @@
     <Compile Include="Effects\BorderPlatformEffect.cs" />
     <Compile Include="Effects\ReversePlatformEffect.cs" />
     <Compile Include="Services\BalloonService.cs" />
+    <Compile Include="Services\SnsLoginService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images.xcassets\logo.imageset\" />

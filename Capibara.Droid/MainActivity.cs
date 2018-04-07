@@ -148,6 +148,7 @@ namespace Capibara.Droid
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
             containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
+            containerRegistry.RegisterInstance<ISnsLoginService>(new SnsLoginService());
             containerRegistry.RegisterInstance(this.applicationService);
             containerRegistry.RegisterInstance(GoogleAnalytics.Current.Tracker);
         }

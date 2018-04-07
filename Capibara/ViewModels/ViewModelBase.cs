@@ -78,6 +78,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public IBalloonService BalloonService { get; set; }
 
+        [Dependency]
+        public ISnsLoginService SnsLoginService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

@@ -101,11 +101,13 @@ namespace Capibara.iOS
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
+            var isolatedStorage = new IsolatedStorage();
+            containerRegistry.RegisterInstance<IIsolatedStorage>(isolatedStorage);
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
             containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
+            containerRegistry.RegisterInstance<ISnsLoginService>(new SnsLoginService(isolatedStorage));
             containerRegistry.RegisterInstance(this.applicationService);
             containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }

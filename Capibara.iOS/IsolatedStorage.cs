@@ -6,6 +6,8 @@ namespace Capibara.iOS
 {
     public class IsolatedStorage : IIsolatedStorage
     {
+        public event EventHandler Saved;
+
         public int UserId { get; set; }
 
         public string UserNickname { get; set; }
@@ -27,6 +29,8 @@ namespace Capibara.iOS
             preference.SetString(this.UserNickname ?? string.Empty, "user_nickname");
             preference.SetInt(this.UserId, "AUTH.user_id");
             preference.SetString(this.AccessToken ?? string.Empty, "AUTH.access_token");
+
+            this.Saved?.Invoke(this, null);
         }
     }
 }

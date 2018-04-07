@@ -1,4 +1,6 @@
-﻿using Android.Content;
+﻿using System;
+
+using Android.Content;
 
 using Capibara;
 
@@ -6,6 +8,8 @@ namespace Capibara.Droid
 {
     public class IsolatedStorage : IIsolatedStorage
     {
+        public event EventHandler Saved;
+
         public string UserNickname { get; set; }
         public string AccessToken { get; set; }
         public int UserId { get; set; }

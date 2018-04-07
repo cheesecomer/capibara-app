@@ -15,7 +15,6 @@ namespace Capibara.iOS.Services
         async Task<byte[]> IPickupPhotoService.DisplayAlbumAsync()
         {
             var taskSource = new TaskCompletionSource<byte[]>();
-            await Task.Delay(100);
 
             var imagePickerController = new UIImagePickerController();
             imagePickerController.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
@@ -25,6 +24,11 @@ namespace Capibara.iOS.Services
             imagePickerController.Canceled += this.OnCancel(taskSource);
 
             var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+            while (viewController.PresentedViewController != null)
+            {
+                viewController = viewController.PresentedViewController;
+            }
+
             await viewController.PresentViewControllerAsync(imagePickerController, true);
             return await taskSource.Task;
         }
@@ -39,6 +43,11 @@ namespace Capibara.iOS.Services
                 cropViewController.Cropped += this.OnCropped(taskSource);
 
                 var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+                while (viewController.PresentedViewController != null)
+                {
+                    viewController = viewController.PresentedViewController;
+                }
+
                 await viewController.PresentViewControllerAsync(cropViewController, true);
             };
         }

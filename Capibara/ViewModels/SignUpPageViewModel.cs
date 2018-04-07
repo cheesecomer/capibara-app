@@ -84,6 +84,20 @@ namespace Capibara.ViewModels
         {
             base.OnResume();
 
+            this.IsolatedStorage.Saved += this.OnIsolatedStorageSaved;
+
+            this.OnIsolatedStorageSaved(null, null);
+        }
+
+        public override void OnSleep()
+        {
+            base.OnSleep();
+
+            this.IsolatedStorage.Saved -= this.OnIsolatedStorageSaved;
+        }
+
+        private void OnIsolatedStorageSaved(object sender, EventArgs args)
+        {
             if (this.IsolatedStorage.AccessToken.IsPresent())
                 this.ProgressDialogService.DisplayProgressAsync(this.SignIn());
         }
@@ -98,13 +112,15 @@ namespace Capibara.ViewModels
                 this.Model.IsAccepted 
                     ? null 
                     : new NavigationParameters { { ParameterNames.Model, this.Model } };
+
+            this.IsolatedStorage.Saved -= this.OnIsolatedStorageSaved;
             this.NavigationService.NavigateAsync(pageName, parameters);
         }
 
         private void OpenOAuthUri(OAuthProvider provider)
         {
-            var uri = new Uri(Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower()));
-            this.DeviceService.OpenUri(uri);
+            var url = Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower());
+            this.SnsLoginService.Open(url);
         }
 
         private async Task SignIn()
@@ -115,6 +131,8 @@ namespace Capibara.ViewModels
                 var response = await request.Execute();
 
                 this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response as User);
+
+                this.IsolatedStorage.Saved -= this.OnIsolatedStorageSaved;
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;
@@ -129,6 +147,7 @@ namespace Capibara.ViewModels
                     response.IsAccepted
                         ? null
                         : new NavigationParameters { { ParameterNames.Model, response as User } };
+
                 await this.NavigationService.NavigateAsync(pageName, parameters);
             }
             catch

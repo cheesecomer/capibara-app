@@ -118,6 +118,7 @@ namespace Capibara
 
         private class IsolatedStorageStub : IIsolatedStorage
         {
+            public event EventHandler Saved;
             public string UserNickname { get; set; }
             public string AccessToken { get; set; }
             public int UserId { get; set; }
