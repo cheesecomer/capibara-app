@@ -4,40 +4,29 @@ using Capibara.ViewModels;
 using Moq;
 using NUnit.Framework;
 
+using Prism.Navigation;
+
 using SubjectViewModel = Capibara.ViewModels.RoomPageViewModel;
+
 namespace Capibara.Test.ViewModels.RoomPageViewModel
 {
     [TestFixture]
     public class ShowParticipantsCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToParticipantsPage()
         {
-            base.SetUp();
-
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ShowParticipantsCommand.Execute();
 
             while (!viewModel.ShowParticipantsCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("ParticipantsPage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsRoom()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model] is Room, Is.EqualTo(true));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "ParticipantsPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model))
+                , Times.Once());
         }
     }
 
@@ -95,54 +84,51 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             }
         }
     }
-
-    namespace SpeakCommandExecuteTest
+    [TestFixture]
+    public class SpeakCommandExecuteTest : ViewModelTestBase
     {
-        [TestFixture]
-        public class WhenSuccess : ViewModelTestBase
+        protected SubjectViewModel viewModel;
+
+        protected Mock<Room> Model;
+
+        [TestCase]
+        public void ItShouldIsSpeakCalled()
         {
-            protected SubjectViewModel viewModel;
 
-            protected bool IsSpeakCalled;
+            this.Model = new Mock<Room>();
+            this.Model.SetupGet(x => x.IsConnected).Returns(true);
+            this.Model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true);
 
-            [SetUp]
-            public override void SetUp()
-            {
-                base.SetUp();
+            viewModel = new SubjectViewModel(model: this.Model.Object).BuildUp(this.Container);
 
-                var model = new Mock<Room>();
-                model.SetupGet(x => x.IsConnected).Returns(true);
-                model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true).Callback(() =>
-                {
-                    this.IsSpeakCalled = true;
-                    model.Raise(x => x.SpeakSuccess += null, System.EventArgs.Empty);
-                });
+            viewModel.OnResume();
 
-                viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
+            viewModel.Message.Value = "Foo.Bar!";
+            viewModel.SpeakCommand.Execute();
 
-                viewModel.OnResume();
+            this.Model.Verify(x => x.Speak("Foo.Bar!"), Times.Once());
+        }
+    }
 
-                viewModel.Message.Value = "Foo.Bar!";
-                viewModel.SpeakCommand.Execute();
-            }
+    [TestFixture]
+    public class OnSpeakSuccessTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldMessageWithEmpty()
+        {
+            var model = new Mock<Room>();
+            model.SetupGet(x => x.IsConnected).Returns(true);
+            model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true);
 
-            [TearDown]
-            public void TearDown()
-            {
-                viewModel.Model.Close().Wait();
-            }
+            var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
 
-            [TestCase]
-            public void ItShouldMessageWithEmpty()
-            {
-                Assert.That(this.viewModel.Message.Value, Is.EqualTo(string.Empty));
-            }
+            viewModel.OnResume();
 
-            [TestCase]
-            public void ItShouldIsSpeakCalled()
-            {
-                Assert.That(this.IsSpeakCalled, Is.EqualTo(true));
-            }
+            viewModel.Message.Value = "Foo.Bar!";
+            viewModel.SpeakCommand.Execute();
+
+            model.Raise(x => x.SpeakSuccess += null, System.EventArgs.Empty);
+            Assert.That(viewModel.Message.Value, Is.EqualTo(string.Empty));
         }
     }
 

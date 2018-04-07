@@ -38,7 +38,7 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         }
 
         [TestCase]
-        public void IsShouldDestroyCalled()
+        public void ItShouldDestroyCalled()
         {
             Assert.That(this.IsDestroyCalled, Is.EqualTo(true));
         }
@@ -66,9 +66,9 @@ namespace Capibara.Test.ViewModels.UnsubscribePageViewModel
         }
 
         [TestCase]
-        public void IsShouldNavigated()
+        public void ItShouldNavigated()
         {
-            Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("/SignUpPage", null), Times.Once());
         }
     }
 }

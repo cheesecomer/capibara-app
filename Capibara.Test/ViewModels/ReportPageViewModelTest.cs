@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Capibara.Models;
 
@@ -129,7 +130,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
@@ -150,7 +151,7 @@ namespace Capibara.Test.ViewModels.ReportPageViewModel
 
             model.Raise(x => x.ReportSuccess += null, EventArgs.Empty);
 
-            Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+            this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
         }
     }
 }

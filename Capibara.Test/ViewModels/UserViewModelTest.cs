@@ -8,6 +8,7 @@ using Capibara.ViewModels;
 using Moq;
 using NUnit.Framework;
 using Prism.Services;
+using Prism.Navigation;
 
 using Xamarin.Forms;
 
@@ -95,7 +96,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
@@ -181,7 +182,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             [TestCase]
             public void ItShouldShowPhotoPicker()
             {
-                Assert.That(this.IsDisplayedPhotoPicker, Is.EqualTo(true));
+                this.PickupPhotoService.Verify(x => x.DisplayAlbumAsync(), Times.Once());
             }
         }
     }
@@ -189,34 +190,21 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class EditCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToEditProfilePage()
         {
-            base.SetUp();
 
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.EditCommand.Execute();
 
             while (!viewModel.EditCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("EditProfilePage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsUser()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "EditProfilePage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model))
+                , Times.Once());
         }
     }
 
@@ -263,7 +251,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
@@ -320,7 +308,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
     }
 
@@ -328,6 +316,22 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class ReportCommandTest : ViewModelTestBase
     {
+        [TestCase]
+        public void ItShouldNavigateToEditProfilePage()
+        {
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
+
+            viewModel.ReportCommand.Execute();
+
+            while (!viewModel.ReportCommand.CanExecute()) { }
+
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "ReportPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model))
+                , Times.Once());
+        }
+
         private SubjectViewModel ViewModel;
 
         [SetUp]
@@ -340,24 +344,6 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             this.ViewModel.ReportCommand.Execute();
 
             while (!this.ViewModel.ReportCommand.CanExecute()) { }
-        }
-
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("ReportPage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsExpect()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model], Is.EqualTo(this.ViewModel.Model));
         }
     }
 }

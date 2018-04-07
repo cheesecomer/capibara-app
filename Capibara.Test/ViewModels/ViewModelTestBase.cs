@@ -15,24 +15,15 @@ namespace Capibara.Test.ViewModels
 {
     public abstract class ViewModelTestBase : TestFixtureBase
     {
-        protected string NavigatePageName { get; private set; }
-
-        protected NavigationParameters NavigationParameters { get; private set; }
-
         protected Mock<NavigationService> NavigationService { get; private set; }
 
         protected Mock<IPageDialogService> PageDialogService { get; private set; }
 
         protected Mock<IDeviceService> DeviceService { get; private set; }
 
-        protected bool IsDisplayedProgressDialog { get; private set; }
+        protected Mock<IProgressDialogService> ProgressDialogService { get; set; }
 
-        protected bool IsDisplayedPhotoPicker { get; private set; }
-
-        protected bool IsGoBackCalled { get; private set; }
-
-        [Obsolete]
-        protected bool IsShowDialog { get; private set; }
+        protected Mock<IPickupPhotoService> PickupPhotoService { get; set; }
 
         [SetUp]
         public override void SetUp()
@@ -42,38 +33,31 @@ namespace Capibara.Test.ViewModels
             this.PageDialogService = new Mock<IPageDialogService>();
             this.PageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.Run(() => true));
+                .Returns(Task.CompletedTask);
+            
             this.PageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.Run(() => true));
+                .ReturnsAsync(true);
             
             this.NavigationService = new Mock<NavigationService> { CallBase = true };
             this.NavigationService
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(true))
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    this.NavigationParameters = parameters;
-                });
+                .Returns(Task.CompletedTask);
 
             this.NavigationService
                 .Setup(x => x.GoBackAsync())
-                .Callback(() => this.IsGoBackCalled = true)
                 .ReturnsAsync(true);
 
-            var progressDialogService = new Mock<IProgressDialogService>();
-            progressDialogService
+            this.ProgressDialogService = new Mock<IProgressDialogService>();
+            this.ProgressDialogService
                 .Setup(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()))
-                .Callback<Task, string>((task, message) => this.IsDisplayedProgressDialog = true)
                 .Returns<Task, string>((task, message) => task);
 
             // IPickupPhotoService のセットアップ
-            var pickupPhotoService = new Mock<IPickupPhotoService>();
-            pickupPhotoService.SetupAllProperties();
-            pickupPhotoService
+            this.PickupPhotoService = new Mock<IPickupPhotoService>();
+            this.PickupPhotoService.SetupAllProperties();
+            this.PickupPhotoService
                 .Setup(x => x.DisplayAlbumAsync())
-                .Callback(() => this.IsDisplayedPhotoPicker = true)
                 .Returns(Task.FromResult(new byte[0]));
 
             this.DeviceService = new Mock<IDeviceService>();
@@ -87,8 +71,8 @@ namespace Capibara.Test.ViewModels
 
             var balloonService = new Mock<IBalloonService>();
 
-            this.Container.RegisterInstance(progressDialogService.Object);
-            this.Container.RegisterInstance(pickupPhotoService.Object);
+            this.Container.RegisterInstance(this.ProgressDialogService.Object);
+            this.Container.RegisterInstance(this.PickupPhotoService.Object);
             this.Container.RegisterInstance(taskService.Object);
             this.Container.RegisterInstance(tracker.Object);
             this.Container.RegisterInstance(balloonService.Object);

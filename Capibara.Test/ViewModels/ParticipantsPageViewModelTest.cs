@@ -1,6 +1,8 @@
 ﻿using Capibara.Models;
 using Capibara.ViewModels;
 using NUnit.Framework;
+using Moq;
+using Prism.Navigation;
 using SubjectViewModel = Capibara.ViewModels.ParticipantsPageViewModel;
 
 namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
@@ -10,42 +12,28 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
         [TestFixture]
         public class WhenOther : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void ItShouldNavigateToUserProfilePage()
             {
-                base.SetUp();
-
                 var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
-
-                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: new User { Id = 1 }));
+                var model = new User { Id = 1 };
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: model));
 
                 while (!viewModel.ItemTappedCommand.CanExecute()) { }
-            }
 
-            [TestCase]
-            public void ItShouldNavigateToParticipantsPage()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("UserProfilePage"));
-            }
-
-            [TestCase]
-            public void ItShouldNavigationParametersHsaModel()
-            {
-                Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigationParameterModelIsRoom()
-            {
-                Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "UserProfilePage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == model))
+                    , Times.Once());
             }
         }
 
         [TestFixture]
         public class WhenOwn : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void ItShouldNavigateToMyProfilePage()
             {
                 base.SetUp();
 
@@ -53,27 +41,16 @@ namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
 
                 this.IsolatedStorage.UserId = 1;
 
-                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: new User { Id = 1 }));
+                var model = new User { Id = 1 };
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: model));
 
                 while (!viewModel.ItemTappedCommand.CanExecute()) { }
-            }
 
-            [TestCase]
-            public void ItShouldNavigateToParticipantsPage()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("MyProfilePage"));
-            }
-
-            [TestCase]
-            public void ItShouldNavigationParametersHsaModel()
-            {
-                Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigationParameterModelIsRoom()
-            {
-                Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "MyProfilePage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.CurrentUser))
+                    , Times.Once());
             }
         }
     }

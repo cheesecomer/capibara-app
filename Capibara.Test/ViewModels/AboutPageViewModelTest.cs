@@ -26,7 +26,7 @@ namespace Capibara.Test.ViewModels
 
             subject.CloseCommand.Execute();
 
-            Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+            this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
         }
     }
 }

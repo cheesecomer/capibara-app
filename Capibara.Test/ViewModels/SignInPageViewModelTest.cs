@@ -4,9 +4,16 @@ using System.Threading.Tasks;
 
 using Capibara.Net;
 using Capibara.Models;
+using Capibara.ViewModels;
 
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
+
+using Unity;
+using Unity.Extension;
+
+using Prism.Navigation;
 
 using SubjectViewModel = Capibara.ViewModels.SignInPageViewModel;
 
@@ -33,22 +40,55 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         }
     }
 
-    public class OnSignInSuccessTest : ViewModelTestBase
+    namespace OnSignInSuccessTest
     {
-        protected SubjectViewModel Subjet { get; private set; }
-
-        [TestCase(false, "/NavigationPage/AcceptPage")]
-        [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
-        public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
+        public abstract class TestBase : ViewModelTestBase
         {
-            var container = this.Container;
-            var model = new Mock<Session>();
-            model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
-            this.Subjet = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(container);
+            public virtual bool IsAccepted { get; }
 
-            model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
+            protected SubjectViewModel Subject { get; private set; }
 
-            Assert.That(this.NavigatePageName, Is.EqualTo(expected));
+            protected User User;
+
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var model = new Mock<Session>();
+                model.SetupGet(x => x.IsAccepted).Returns(IsAccepted);
+
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.User = new User());
+
+                model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndAccepted : TestBase
+        {
+            public override bool IsAccepted => true;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndNotAccepted : TestBase
+        {
+            public override bool IsAccepted => false;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "/NavigationPage/AcceptPage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == this.User))
+                    , Times.Once());
+            }
         }
     }
 
@@ -56,17 +96,17 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
     {
         public abstract class TestBase : ViewModelTestBase
         {
-            protected SubjectViewModel Subject { get; private set; }
+            protected Mock<SubjectViewModel> Subject { get; private set; }
 
             protected abstract Exception Exception { get; }
 
-            [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
                 var model = new Mock<Session>();
-                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, model.Object).BuildUp(this.Container);
+                this.Subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object, model.Object);
+                this.Subject.Object.BuildUp(this.Container);
 
                 model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
             }
@@ -75,36 +115,24 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         [TestFixture]
         public class WhenHttpUnauthorizedException : TestBase
         {
-            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}");
+            protected override Exception Exception { get; } = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}");
 
             [TestCase]
-            public void ItShouldNotNavigate()
+            public void ItShouldErrorMessageExpect()
             {
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldErrorWithExpect()
-            {
-                Assert.That(this.Subject.Error.Value, Is.EqualTo("m9(^Д^)"));
+                Assert.That(this.Subject.Object.Error.Value, Is.EqualTo("m9(^Д^)"));
             }
         }
 
         [TestFixture]
         public class WhenFailWebException : TestBase
         {
-            protected override Exception Exception => new WebException();
+            protected override Exception Exception { get; } = new WebException();
 
             [TestCase]
-            public void ItShouldNotNavigate()
+            public void ItShouldDisplayErrorAlertAsyncCall()
             {
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldErrorIsEmpty()
-            {
-                Assert.That(this.Subject.Error.Value, Is.EqualTo(string.Empty).Or.Null);
+                this.Subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), this.Exception, ItExpr.IsAny<Func<Task>>());
             }
         }
     }
@@ -174,22 +202,16 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
     [TestFixture]
     public class SignUpCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToSignUpPage()
         {
-            base.SetUp();
-
             var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object);
 
             viewModel.SignUpCommand.Execute();
 
             while (!viewModel.SignUpCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToSignUpPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("SignUpPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("SignUpPage", null, null, false), Times.Once());
         }
     }
 }

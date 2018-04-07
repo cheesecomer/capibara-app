@@ -38,7 +38,6 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
 
                 this.RequestFactory
                     .Setup(x => x.BlocksIndexRequest())
-                    .Callback(() => this.IsBlocksIndexExecute = true)
                     .Returns(request.Object);
 
                 this.Subject = new SubjectViewModel();
@@ -53,13 +52,13 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
             [TestCase]
             public void ItShouldShowDialog()
             {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
             }
 
             [TestCase]
             public void ItShouldBlocksIndexExecute()
             {
-                Assert.That(this.IsBlocksIndexExecute, Is.EqualTo(true));
+                this.RequestFactory.Verify(x => x.BlocksIndexRequest(), Times.Once());
             }
         }
 
@@ -125,7 +124,7 @@ namespace Capibara.Test.ViewModels.BlockUsersPageViewModel
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             [TestCase]
-            public void IsShouldDisplayErrorAlertAsyncCall()
+            public void ItShouldDisplayErrorAlertAsyncCall()
             {
                 var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 

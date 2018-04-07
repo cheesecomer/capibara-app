@@ -12,6 +12,8 @@ using Moq;
 using Moq.Protected;
 using NUnit.Framework;
 
+using Unity;
+
 using Prism.Navigation;
 using Prism.Services;
 
@@ -34,23 +36,51 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         }
     }
 
-    [TestFixture]
-    public class OnSignUpSuccessTest : ViewModelTestBase
+    namespace OnSignUpSuccessTest
     {
-        protected SubjectViewModel Subjet { get; private set; }
-
-        [TestCase(false, "/NavigationPage/AcceptPage")]
-        [TestCase(true, "/MainPage/NavigationPage/FloorMapPage")]
-        public void ItShouldNavigatePagePathIsExpect(bool isAccepted, string expected)
+        public abstract class TestBase : ViewModelTestBase
         {
-            var container = this.Container;
-            var model = new Mock<User>();
-            model.SetupGet(x => x.IsAccepted).Returns(isAccepted);
-            this.Subjet = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(container);
+            public virtual bool IsAccepted { get; }
 
-            model.Raise(x => x.SignUpSuccess += null, EventArgs.Empty);
+            protected SubjectViewModel Subject { get; private set; }
 
-            Assert.That(this.NavigatePageName, Is.EqualTo(expected));
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var model = new Mock<User>();
+                model.SetupGet(x => x.IsAccepted).Returns(IsAccepted);
+
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+
+                model.Raise(x => x.SignUpSuccess += null, EventArgs.Empty);
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndAccepted : TestBase
+        {
+            public override bool IsAccepted => true;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndNotAccepted : TestBase
+        {
+            public override bool IsAccepted => false;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "/NavigationPage/AcceptPage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == this.Subject.Model))
+                    , Times.Once());
+            }
         }
     }
 
@@ -75,7 +105,6 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
 
             model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
-            //this.PageDialogService.Verify(x => x.DisplayAlertAsync("ログインに失敗しました", "再度はじめからやり直してください", "閉じる"), Times.Once());
             viewModel.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
         }
     }
@@ -143,97 +172,86 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
     [TestFixture]
     public class SignInCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToSignUpPage()
         {
-            base.SetUp();
-
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.SignInCommand.Execute();
 
             while (!viewModel.SignInCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToSignUpPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("SignInPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("SignInPage", null, null, false), Times.Once());
         }
     }
 
     namespace OnResume
     {
-        [TestFixture(false, "/NavigationPage/AcceptPage")]
-        [TestFixture(true, "/MainPage/NavigationPage/FloorMapPage")]
-        public class WhenAccessTokenIsPresent : ViewModelTestBase
+        public abstract class WhenAccessTokenIsPresent : ViewModelTestBase
         {
-            private bool IsAccepted;
+            public virtual bool IsAccepted { get; }
 
-            private string ExpectedNavigatePageName;
+            public SubjectViewModel Subject { get; private set; }
 
-            public WhenAccessTokenIsPresent(bool isAccepted, string expectedNavigatePageName)
-            {
-                this.IsAccepted = isAccepted;
-                this.ExpectedNavigatePageName = expectedNavigatePageName;
-            }
+            public CreateResponse Response;
 
             [SetUp]
             public override void SetUp()
             {
                 base.SetUp();
 
-                var viewModel = new SubjectViewModel(this.NavigationService.Object);
-                viewModel.BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object);
+                this.Subject.BuildUp(this.Container);
 
                 this.IsolatedStorage.UserId = 1;
                 this.IsolatedStorage.AccessToken = Guid.NewGuid().ToString();
 
                 var request = new Mock<RequestBase<CreateResponse>>();
-                request.Setup(x => x.Execute()).ReturnsAsync(new CreateResponse { IsAccepted = this.IsAccepted });
+                request.Setup(x => x.Execute()).ReturnsAsync(this.Response = new CreateResponse { IsAccepted = this.IsAccepted });
 
                 this.RequestFactory.Setup(x => x.SessionsRefreshRequest()).Returns(request.Object);
 
-                viewModel.OnResume();
+                this.Subject.OnResume();
             }
+        }
+
+        public class WhenAccessTokenIsPresentAndAccepted : WhenAccessTokenIsPresent
+        {
+            public override bool IsAccepted => true;
 
             [TestCase]
-            public void ItShouldNavigatePagePathIsExpect()
+            public void ItShouldNavigateAcceptPage()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo(this.ExpectedNavigatePageName));
+                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
             }
+        }
+        public class WhenAccessTokenIsPresentAndNotAccepted : WhenAccessTokenIsPresent
+        {
+            public override bool IsAccepted => false;
 
             [TestCase]
-            public void ItShouldShowDialog()
+            public void ItShouldNavigateAcceptPage()
             {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "/NavigationPage/AcceptPage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == this.Response))
+                    , Times.Once());
             }
         }
 
         [TestFixture]
         public class WhenAccessTokenIsEmpty : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void ItShouldSessionsRefreshNotCall()
             {
-                base.SetUp();
-
                 var viewModel = new SubjectViewModel(this.NavigationService.Object);
                 viewModel.BuildUp(this.Container);
 
                 viewModel.OnResume();
-            }
 
-            [TestCase]
-            public void ItShouldNotNavigate()
-            {
-                Assert.That(this.NavigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldNotShowDialog()
-            {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(false));
+                this.RequestFactory.Verify(x => x.SessionsRefreshRequest(), Times.Never());
             }
         }
     }

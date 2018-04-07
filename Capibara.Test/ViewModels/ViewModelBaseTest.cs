@@ -157,8 +157,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 var model = new StabModel();
                 var viewModel = new StabViewModel();
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, model);
+                var parameters = new NavigationParameters { { ParameterNames.Model, model } };
 
                 viewModel.OnNavigatingTo(parameters);
 
@@ -201,7 +200,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulGoToSignIn()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+                this.NavigationService.Verify(x => x.NavigateAsync("/SignUpPage", null), Times.Once());
             }
         }
 
@@ -224,7 +223,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulGoBack()
             {
-                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
             }
         }
 
@@ -247,7 +246,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulGoBack()
             {
-                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
             }
         }
 

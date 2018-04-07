@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 
+using Moq;
+
 using Prism.Navigation;
 
 using ParameterNames = Capibara.ViewModels.ParameterNames;
@@ -25,18 +27,20 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         public override void SetUp()
         {
             base.SetUp();
-
+        }
+        
+        [TestCase("FloorMapPage")]
+        [TestCase("MyProfilePage")]
+        [TestCase("SettingPage")]
+        public void ItShouldNavigateToParticipantsPage(string pagePath)
+        {
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
-            viewModel.ItemTappedCommand.Execute(new SettingItem { PagePath = this.pagePath });
+            viewModel.ItemTappedCommand.Execute(new SettingItem { PagePath = pagePath });
 
             while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo(this.pagePath));
+            this.NavigationService.Verify(x => x.NavigateAsync(pagePath, null), Times.Once());
         }
     }
 
@@ -80,19 +84,19 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
 
         protected SubjectViewModel Subject;
 
-        private int index;
+        private int Index { get; }
 
-        private string name;
+        private string Name { get; }
 
-        private string pagePath;
+        private string PagePath { get; }
 
         private NavigationParameters parameters;
 
         public SettingItemsPropertyItemTest(int index, string name, string pagePath, NavigationParameters parameters)
         {
-            this.index = index;
-            this.name = name;
-            this.pagePath = pagePath;
+            this.Index = index;
+            this.Name = name;
+            this.PagePath = pagePath;
             this.parameters = parameters;
         }
 
@@ -107,19 +111,19 @@ namespace Capibara.Test.ViewModels.SettingPageViewModel
         [TestCase]
         public void ItShouldItemNameWithExpect()
         {
-            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(Index)?.Name, Is.EqualTo(Name));
         }
 
         [TestCase]
         public void ItShouldItemPagePathWithExpect()
         {
-            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(Index)?.PagePath, Is.EqualTo(PagePath));
         }
 
         [TestCase]
         public void ItShouldItemParametersWithExpect()
         {
-            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(index)?.Parameters, Is.EqualTo(parameters));
+            Assert.That(this.Subject.SettingItems.ElementAtOrDefault(Index)?.Parameters, Is.EqualTo(parameters));
         }
     }
 }

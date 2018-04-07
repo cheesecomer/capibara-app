@@ -22,13 +22,13 @@ namespace Capibara.Test.Net.Sessions.CreateResponseTest
             }
 
             [TestCase]
-            public void IsShouldNicknameWithExpect()
+            public void ItShouldNicknameWithExpect()
             {
                 Assert.That(this.Subject.Nickname, Is.EqualTo("xxxxx!"));
             }
 
             [TestCase]
-            public void IsShouldBiographyWithExpect()
+            public void ItShouldBiographyWithExpect()
             {
                 Assert.That(this.Subject.Biography, Is.EqualTo("..."));
             }

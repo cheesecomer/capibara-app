@@ -29,4 +29,12 @@ namespace Capibara.Test
             return this.NavigateAsync(name, parameters, useModalNavigation, animated);
         }
     }
+
+    public static class NavigationParametersExtension
+    {
+        public static object GetValueOrDefault(this NavigationParameters source, string key)
+        {
+            return source.ContainsKey(key) ? source[key] : null;
+        }
+    }
 }

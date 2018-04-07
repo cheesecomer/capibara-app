@@ -126,7 +126,7 @@ namespace Capibara.ViewModels
                         ? "/MainPage/NavigationPage/FloorMapPage"
                         : "/NavigationPage/AcceptPage";
                 var parameters =
-                    this.Model.IsAccepted
+                    response.IsAccepted
                         ? null
                         : new NavigationParameters { { ParameterNames.Model, response as User } };
                 await this.NavigationService.NavigateAsync(pageName, parameters);

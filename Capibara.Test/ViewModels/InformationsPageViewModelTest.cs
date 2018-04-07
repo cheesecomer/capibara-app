@@ -12,7 +12,7 @@ using Moq;
 using Moq.Protected;
 using NUnit.Framework;
 
-using Prism.Services;
+using Prism.Navigation;
 
 using SubjectViewModel = Capibara.ViewModels.InformationsPageViewModel;
 
@@ -48,7 +48,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
             [TestCase]
             public void ItShouldShowDialog()
             {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
             }
         }
 
@@ -57,7 +57,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         {
             protected override IndexResponse Response => new IndexResponse
             {
-                Informations = 
+                Informations =
                 {
                     new Information { Id = 01, Title = "Title0001", Message = "Message0001", PublishedAt = new DateTimeOffset(2017, 01, 28, 20, 25, 20, TimeSpan.FromHours(9)) },
                     new Information { Id = 02, Title = "Title0002", Message = "Message0002", PublishedAt = new DateTimeOffset(2017, 02, 28, 20, 25, 20, TimeSpan.FromHours(9)) },
@@ -141,7 +141,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             [TestCase]
-            public void IsShouldDisplayErrorAlertAsyncCall()
+            public void ItShouldDisplayErrorAlertAsyncCall()
             {
                 var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 
@@ -171,10 +171,10 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
                 else if (x == null | y == null)
                     return false;
                 else
-                    return 
-                        x.Id == y.Id 
-                     && x.Title == y.Title 
-                     && x.Message == y.Message 
+                    return
+                        x.Id == y.Id
+                     && x.Title == y.Title
+                     && x.Message == y.Message
                      && x.PublishedAt == y.PublishedAt;
             }
 
@@ -192,24 +192,23 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         public override void SetUp()
         {
             base.SetUp();
+        }
+
+        [TestCase]
+        public void ItShouldNavigateToWebViewPage()
+        {
 
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new Information { Url = "http://example.com/informations/1" });
 
             while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("WebViewPage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterUrlIsExpect()
-        {
-            Assert.That(this.NavigationParameters.TryGetValue<string>(ParameterNames.Url), Is.EqualTo("http://example.com/informations/1"));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "WebViewPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Url) as string == "http://example.com/informations/1"))
+                , Times.Once());
         }
     }
 }

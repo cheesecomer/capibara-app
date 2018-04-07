@@ -9,7 +9,7 @@ using Capibara.ViewModels;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
-using Prism.Services;
+using Prism.Navigation;
 using SubjectViewModel = Capibara.ViewModels.FloorMapPageViewModel;
 
 namespace Capibara.Test.ViewModels.FloorMapPageViewModel
@@ -17,34 +17,20 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
     [TestFixture]
     public class ItemTappedCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-
-            var viewModel = new SubjectViewModel(this.NavigationService.Object);
-
-            viewModel.ItemTappedCommand.Execute(new Room());
-
-            while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
-
         [TestCase]
         public void ItShouldNavigateToParticipantsPage()
         {
-            Assert.That(this.NavigatePageName, Is.EqualTo("RoomPage"));
-        }
+            var room = new Room();
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
+            viewModel.ItemTappedCommand.Execute(room);
 
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsRoom()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model] is Room, Is.EqualTo(true));
+            while (!viewModel.ItemTappedCommand.CanExecute()) { }
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "RoomPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == room))
+                , Times.Once());
         }
     }
 
@@ -78,7 +64,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
             [TestCase]
             public void ItShouldShowDialog()
             {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
             }
         }
 
@@ -147,7 +133,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
             [TestCase]
-            public void IsShouldDisplayErrorAlertAsyncCall()
+            public void ItShouldDisplayErrorAlertAsyncCall()
             {
                 var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 

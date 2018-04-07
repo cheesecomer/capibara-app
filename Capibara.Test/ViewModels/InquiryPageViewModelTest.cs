@@ -64,13 +64,13 @@ namespace Capibara.Test.ViewModels.InquiryPageViewModelTest
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
         public void ItShouldGoBackCalled()
         {
-            Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+            this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
         }
 
         [TestCase]

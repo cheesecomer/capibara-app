@@ -2,39 +2,29 @@
 using Capibara.Models;
 using NUnit.Framework;
 using Unity;
+using Moq;
+using Prism.Navigation;
 using MenuItem = Capibara.ViewModels.MainPageViewModel.MenuItem;
 using SubjectViewModel = Capibara.ViewModels.MainPageViewModel;
 
 namespace Capibara.Test.ViewModels.MainPageViewModel
 {
-    [TestFixture("FloorMapPage")]
-    [TestFixture("MyProfilePage")]
-    [TestFixture("SettingPage")]
     public class ItemTappedCommandTest : ViewModelTestBase
     {
-        private string pagePath;
-
-        public ItemTappedCommandTest(string pagePath)
-        {
-            this.pagePath = pagePath;
-        }
-
-        [SetUp]
-        public override void SetUp()
+        [TestCase("FloorMapPage")]
+        [TestCase("MyProfilePage")]
+        [TestCase("SettingPage")]
+        public void ItShouldNavigateToExpet(string pagePath)
         {
             base.SetUp();
 
             var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
-            viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
+            viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = pagePath });
 
             while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo(this.pagePath));
+            this.NavigationService.Verify(x => x.NavigateAsync(pagePath, null), Times.Once());
         }
     }
 
@@ -47,7 +37,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         {
             base.SetUp();
 
-            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User { Nickname = "xxxx"});
 
             this.Subject = new SubjectViewModel().BuildUp(this.Container);
         }
