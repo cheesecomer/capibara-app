@@ -47,7 +47,7 @@ namespace Capibara.Droid.Renderers
             {
                 base.OnAdFailedToLoad(errorCode);
 
-                System.Threading.Tasks.Task.Delay(1000).ContinueWith(_ =>
+                System.Threading.Tasks.Task.Delay(5000).ContinueWith(_ =>
                 {
                     Device.BeginInvokeOnMainThread(() => this.adView.LoadAd(new AdRequest.Builder().Build()));
                 });

@@ -40,7 +40,7 @@ namespace Capibara.iOS.Renderers
 
                 this.adMobBanner.ReceiveAdFailed += (sender, args) =>
                 {
-                    System.Threading.Tasks.Task.Delay(1000).ContinueWith(t => this.DoAdRequest());
+                    System.Threading.Tasks.Task.Delay(5000).ContinueWith(t => this.DoAdRequest());
                 };
 
                 this.DoAdRequest();
