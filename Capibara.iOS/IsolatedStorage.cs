@@ -2,13 +2,26 @@
 
 using Foundation;
 
+using Plugin.GoogleAnalytics;
+
 namespace Capibara.iOS
 {
     public class IsolatedStorage : IIsolatedStorage
     {
+        private int userId;
+
         public event EventHandler Saved;
 
-        public int UserId { get; set; }
+        public int UserId
+        {
+            get => this.userId;
+            set
+            {
+                this.userId = value;
+
+                GoogleAnalytics.Current.Tracker.UserId = value == 0 ? string.Empty : $"{value}";
+            }
+        }
 
         public string UserNickname { get; set; }
 
@@ -16,7 +29,6 @@ namespace Capibara.iOS
 
         public IsolatedStorage()
         {
-
             var preference = NSUserDefaults.StandardUserDefaults;
             this.UserNickname = preference.StringForKey("user_nickname");
             this.UserId = (int)preference.IntForKey("AUTH.user_id");

@@ -4,15 +4,30 @@ using Android.Content;
 
 using Capibara;
 
+using Plugin.GoogleAnalytics;
+
 namespace Capibara.Droid
 {
     public class IsolatedStorage : IIsolatedStorage
     {
+        private int userId;
+
         public event EventHandler Saved;
 
+        public int UserId
+        {
+            get => this.userId;
+            set
+            {
+                this.userId = value;
+
+                GoogleAnalytics.Current.Tracker.UserId = value == 0 ? string.Empty : $"{value}";
+            }
+        }
+
         public string UserNickname { get; set; }
+
         public string AccessToken { get; set; }
-        public int UserId { get; set; }
 
         public IsolatedStorage()
         {
