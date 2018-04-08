@@ -32,5 +32,13 @@ namespace Capibara.Test
         {
             Assert.That(value.IsPresent(), Is.EqualTo(expect));
         }
+
+        [TestCase("", null)]
+        [TestCase(null, null)]
+        [TestCase("Foo", "Foo")]
+        public void PresenceTest(string value, string expect)
+        {
+            Assert.That(value.Presence(), Is.EqualTo(expect));
+        }
     }
 }
