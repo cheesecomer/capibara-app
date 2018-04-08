@@ -71,6 +71,7 @@ namespace Capibara.Test.ViewModels
             this.Container.RegisterInstance(this.DeviceService.Object);
 
             this.SnsLoginService = new Mock<ISnsLoginService>();
+            this.SnsLoginService.Setup(x => x.Open(It.IsAny<string>()));
 
             this.RewardedVideoService = new Mock<IRewardedVideoService>();
 
