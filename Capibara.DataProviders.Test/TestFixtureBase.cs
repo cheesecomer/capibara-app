@@ -54,19 +54,11 @@ namespace Capibara.Test
 
     public abstract class TestFixtureBase
     {
-        protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
-
-        protected Dictionary<string, string> WebSocketRequestHeaders { get; private set; }  = new Dictionary<string, string>();
-
         protected virtual List<ReceiveMessage> OptionalReceiveMessages { get; } = new List<ReceiveMessage>();
 
         protected List<ReceiveMessage> ReceiveMessages { get; private set; }
 
-        protected TaskCompletionSource<HttpResponseMessage> RestSendAsyncSource { get; private set; }
-
         protected TaskCompletionSource<string> SendAsyncSource { get; private set; }
-
-        protected TaskCompletionSource<bool> DisposeTaskSource { get; private set; }
 
         protected TaskCompletionSource<bool> ConnectTaskSource { get; private set; }
 
@@ -82,13 +74,11 @@ namespace Capibara.Test
 
         protected virtual HttpStatusCode HttpStabStatusCode { get; } = HttpStatusCode.OK;
 
-        protected virtual bool IsInfiniteWait { get; }
+        protected Mock<IRestClient> RestClient { get; private set; }
 
-        protected virtual Exception RestException { get; }
+        protected Mock<IWebSocketOptions> WebSocketOptions { get; private set; }
 
-        protected virtual Exception WebSocketCloseException { get; }
-
-        protected Mock<IWebSocketClient> WebSocketClient;
+        protected Mock<IWebSocketClient> WebSocketClient { get; private set; }
 
         protected Mock<IRequestFactory> RequestFactory { get; private set; }
 
@@ -118,61 +108,43 @@ namespace Capibara.Test
             environment.SetupGet(x => x.WebSocketSendBufferSize).Returns(1024);
 
             // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>(), It.IsAny<IApplicationService>()));
-            restClient
+            this.RestClient = new Mock<IRestClient>();
+            this.RestClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>(), It.IsAny<IApplicationService>()));
+            this.RestClient
                 .Setup(x => x.GenerateAuthenticationHeader(It.IsAny<string>()))
                 .Returns<string>(token => new AuthenticationHeaderValue("Token", token));
 
-            if (this.RestException.IsPresent())
-            {
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ThrowsAsync(this.RestException);
-            }
-            else if (this.IsInfiniteWait)
-            {
-                this.RestSendAsyncSource = new TaskCompletionSource<HttpResponseMessage>();
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .Returns(() => this.RestSendAsyncSource.Task);
-            }
-            else
-            {
-                var responseMessage =
-                    new HttpResponseMessage()
+            var responseMessage =
+                new HttpResponseMessage()
+                {
+                    StatusCode = this.HttpStabStatusCode,
+                    Content = new Net.HttpContentHandler()
                     {
-                        StatusCode = this.HttpStabStatusCode,
-                        Content = new Net.HttpContentHandler()
-                        {
-                            ResultOfString = this.HttpStabResponse ?? string.Empty
-                        }
-                    };
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync((HttpRequestMessage request) => {
-                        this.RequestMessage = request;
-                        return responseMessage;
-                    });
-            }
+                        ResultOfString = this.HttpStabResponse ?? string.Empty
+                    }
+                };
+            this.RestClient
+                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
+                .ReturnsAsync((HttpRequestMessage request) => {
+                    this.RequestMessage = request;
+                    return responseMessage;
+                });
 
             // ISecureIsolatedStorage のセットアップ
             var isolatedStorage = new Mock<IIsolatedStorage>();
             isolatedStorage.SetupAllProperties();
 
-            var clientWebSocketOptions = new Mock<IWebSocketOptions>();
-            clientWebSocketOptions.SetupAllProperties();
-            clientWebSocketOptions
-                .Setup(x => x.SetRequestHeader(It.IsAny<string>(), It.IsAny<string>()))
-                .Callback<string, string>((k, v) => WebSocketRequestHeaders[k] = v);
+            this.WebSocketOptions = new Mock<IWebSocketOptions>();
+            this.WebSocketOptions.SetupAllProperties();
+            this.WebSocketOptions
+                .Setup(x => x.SetRequestHeader(It.IsAny<string>(), It.IsAny<string>()));
 
             // IWebSocketClient のセットアップ
             this.WebSocketClient = new Mock<IWebSocketClient>();
             this.WebSocketClient.SetupAllProperties();
-            this.WebSocketClient.SetupGet(x => x.Options).Returns(clientWebSocketOptions.Object);
-            this.WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
+            this.WebSocketClient.SetupGet(x => x.Options).Returns(this.WebSocketOptions.Object);
 
-            this.ResetDispose();
+            //this.ResetDispose();
 
             this.ConnectTaskSource = new TaskCompletionSource<bool>();
             this.WebSocketClient
@@ -187,7 +159,7 @@ namespace Capibara.Test
             var receiveMessageQueue = new Queue<ReceiveMessage>();
             ReceiveMessages.ForEach(x => receiveMessageQueue.Enqueue(x));
 
-            WebSocketClient
+            this.WebSocketClient
                 .Setup(x => x.ReceiveAsync(It.IsAny<ArraySegment<byte>>(), It.IsAny<CancellationToken>()))
                 .Returns((ArraySegment<byte> buffer, CancellationToken cancellationToken) =>
                 {
@@ -205,20 +177,6 @@ namespace Capibara.Test
 
                     return Task.Run(() => receiveMessageQueue.Peek().Write(buffer));
                 });
-
-            if (this.WebSocketCloseException.IsPresent())
-            {
-
-                this.WebSocketClient
-                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                    .ThrowsAsync(this.WebSocketCloseException);
-            }
-            else
-            {
-                this.WebSocketClient
-                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.CompletedTask);
-            }
 
             this.ResetSendAsync();
 
@@ -244,7 +202,7 @@ namespace Capibara.Test
             var container = new UnityContainer();
             container.RegisterInstance<IUnityContainer>(container);
             container.RegisterInstance(this.Environment = environment.Object);
-            container.RegisterInstance(restClient.Object);
+            container.RegisterInstance(this.RestClient.Object);
             container.RegisterInstance(this.IsolatedStorage = isolatedStorage.Object);
             container.RegisterInstance(application.Object);
             container.RegisterInstance(webSocketClientFactory.Object);
@@ -263,10 +221,6 @@ namespace Capibara.Test
             this.ConnectTaskSource?.Task?.Dispose();
             this.ConnectTaskSource = null;
 
-            this.DisposeTaskSource?.TrySetCanceled();
-            this.DisposeTaskSource?.Task?.Dispose();
-            this.DisposeTaskSource = null;
-
             this.SendAsyncSource?.TrySetCanceled();
             this.SendAsyncSource?.Task?.Dispose();
             this.SendAsyncSource = null;
@@ -280,20 +234,6 @@ namespace Capibara.Test
             this.ReceiveAsyncInfinityTaskSource?.TrySetCanceled();
             this.ReceiveAsyncInfinityTaskSource?.Task?.Dispose();
             this.ReceiveAsyncInfinityTaskSource = null;
-
-            this.RestSendAsyncSource?.TrySetCanceled();
-            this.RestSendAsyncSource?.Task?.Dispose();
-            this.RestSendAsyncSource = null;
-        }
-
-        public void ResetDispose()
-        {
-            this.DisposeTaskSource?.TrySetCanceled();
-            this.DisposeTaskSource?.Task?.Dispose();
-            this.DisposeTaskSource = new TaskCompletionSource<bool>();
-            WebSocketClient
-                .Setup(x => x.Dispose())
-                .Callback(() => DisposeTaskSource.TrySetResult(true));
         }
 
         public void ResetSendAsync()

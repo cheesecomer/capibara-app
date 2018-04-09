@@ -28,7 +28,7 @@ test_script:
       -targetargs:"Capibara.DataProviders.Test/bin/Debug/Capibara.DataProviders.Test.dll" `
       -target:"nunit3-console.exe" `
       -register:user `
-      -filter:"+[Capibara.DataProviders]* -[Capibara.DataProviders]Capibara.Net.RequestFactory* -[Capibara.DataProviders]Capibara.Net.WebSocket* -[Capibara.DataProviders]Capibara.Models.Error -[Capibara.DataProviders]Capibara.Models.RoomComparer" `
+      -filter:"+[Capibara.DataProviders]* -[Capibara.DataProviders]Capibara.Net.ChannelCableFactory  -[Capibara.DataProviders]Capibara.Net.ChannelFactory -[Capibara.DataProviders]Capibara.Net.RequestFactory* -[Capibara.DataProviders]Capibara.Net.WebSocket* -[Capibara.DataProviders]Capibara.Models.Error -[Capibara.DataProviders]Capibara.Models.RoomComparer" `
       -output:"coverage.xml" `
       -mergeoutput
 

@@ -46,40 +46,44 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         protected virtual int WebSocketSendBufferSize { get; } = 50;
 
-        [SetUp]
+        protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
+
         public override void SetUp()
         {
             base.SetUp();
+            this.WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
 
-            using (this.cable = new ChannelCable().BuildUp(this.Container))
+            this.cable = new ChannelCable().BuildUp(this.Container);
+            if (this.NeedEventHandler)
             {
-                if (this.NeedEventHandler)
+                this.cable.Connected += (sender, e) => this.isConnectedEventCalled = true;
+                this.cable.PingReceived += (sender, e) => this.isPingReceived = true;
+                this.cable.ConfirmSubscriptionReceived += (sender, e) => this.isConfirmSubscriptionReceived = true;
+                this.cable.MessageReceived += (sender, e) =>
                 {
-                    this.cable.Connected += (sender, e) => this.isConnectedEventCalled = true;
-                    this.cable.PingReceived += (sender, e) => this.isPingReceived = true;
-                    this.cable.ConfirmSubscriptionReceived += (sender, e) => this.isConfirmSubscriptionReceived = true;
-                    this.cable.MessageReceived += (sender, e) =>
-                    {
-                        this.ReceiveMessage = e;
-                        this.isMessageReceived = true;
-                    };
-                    this.cable.RejectSubscriptionReceived += (sender, e) => this.isRejectSubscriptionReceived = true;
-                    this.cable.Disconnected += (sender, e) => this.isDisconnected = true;
-                }
-
-                // 接続完了を待機
-                (this.ConnectTask = cable.Connect()).Wait();
-
-                this.Connected?.Invoke();
-
-                // 受信処理の完了を待機
-                Task.WaitAny(Task.Run(() => { while (this.cable.IsOpen) { } }), Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()));
-
-                // 送信処理を実行する
-                this.SendMessage?.Invoke();
-
-                this.cable.Dispose();
+                    this.ReceiveMessage = e;
+                    this.isMessageReceived = true;
+                };
+                this.cable.RejectSubscriptionReceived += (sender, e) => this.isRejectSubscriptionReceived = true;
+                this.cable.Disconnected += (sender, e) => this.isDisconnected = true;
             }
+
+            // 接続完了を待機
+            (this.ConnectTask = cable.Connect()).Wait();
+
+            this.Connected?.Invoke();
+
+            // 受信処理の完了を待機
+            Task.WaitAny(Task.Run(() => { while (this.cable.IsOpen) { } }), Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()));
+
+            // 送信処理を実行する
+            this.SendMessage?.Invoke();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.cable?.Dispose();
         }
     }
 
@@ -113,7 +117,7 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
         [TestCase]
         public void ItShouldAuthorizationWithExpected()
         {
-            Assert.That(this.WebSocketRequestHeaders.ValueOrDefault("Authorization"), Is.EqualTo($"Token {this.IsolatedStorage.AccessToken}"));
+            this.WebSocketOptions.Verify(x => x.SetRequestHeader("Authorization", $"Token {this.IsolatedStorage.AccessToken}"), Times.Once);
         }
 
         [TestCase]
@@ -133,12 +137,18 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
     {
         public class WhenIsOpen: TestBase
         {
-            protected override Action SendMessage
-            => () =>
+            public override void SetUp()
             {
+                base.SetUp();
+
                 this.WebSocketState = WebSocketState.Open;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
                 this.cable.Close().Wait();
-            };
+            }
 
             [TestCase]
             public void ItShouldWebSocketCloseCalled()
@@ -157,12 +167,18 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         public class WhenIsNotOpen : TestBase
         {
-            protected override Action SendMessage
-            => () =>
-                {
-                    this.WebSocketState = WebSocketState.Closed;
-                    this.cable.Close().Wait();
-                };
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.WebSocketState = WebSocketState.Closed;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
+                this.cable.Close().Wait();
+            }
 
             [TestCase]
             public void ItShouldWebSocketCloseNotCalled()
@@ -181,14 +197,18 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         public class WhenFail : TestBase
         {
-            protected override Action SendMessage
-            => () =>
+            public override void SetUp()
             {
-                this.WebSocketState = WebSocketState.Open;
-                this.cable.Close().Wait();
-            };
+                base.SetUp();
 
-            protected override Exception WebSocketCloseException => new Exception();
+                this.WebSocketState = WebSocketState.Open;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .ThrowsAsync(new Exception());
+                
+                this.cable.Close().Wait();
+            }
 
             [TestCase]
             public void ItShouldLastExceptionNull()

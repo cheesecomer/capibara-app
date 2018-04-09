@@ -178,8 +178,6 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
         [TestFixture]
         public class WhenWait : ExecuteTestBase
         {
-            protected override bool IsInfiniteWait { get; } = true;
-
             protected override bool NeedSignInWait { get; } = false;
 
             [TestCase]

@@ -306,7 +306,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
         public void ItShouldOpenUrl(int index, string url)
         {
             this.buttons.ElementAtOrDefault(index)?.Action?.Invoke();
-            this.SnsLoginService.Verify(x => x.Open(new Uri(url).AbsoluteUri), Times.Once());
+            this.SnsLoginService.Verify(x => x.Open(It.Is<string>(v => new Uri(v).AbsoluteUri == url)), Times.Once());
         }
     }
 }

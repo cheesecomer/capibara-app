@@ -583,12 +583,6 @@ namespace Capibara.Test.Models.UserTest
                 Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
-
-        [TestFixture]
-        public class WhenTimeout : WhenFail
-        {
-            protected override Exception RestException => new WebException();
-        }
     }
 
     namespace CommitTest
