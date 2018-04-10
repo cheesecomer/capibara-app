@@ -132,6 +132,9 @@
     </Compile>
     <Compile Include="Effects\Reverse.cs" />
     <Compile Include="Effects\CustomFont.cs" />
+    <Compile Include="Forms\ItemsControl.cs" />
+    <Compile Include="Forms\WrapLayout.cs" />
+    <Compile Include="Forms\AttachedLayoutProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
