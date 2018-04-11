@@ -26,6 +26,8 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         protected bool isPingReceived;
 
+        protected bool isRejectSubscriptionReceived;
+
         protected bool isConfirmSubscriptionReceived;
 
         protected bool isMessageReceived;
@@ -44,37 +46,44 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
         protected virtual int WebSocketSendBufferSize { get; } = 50;
 
-        [SetUp]
-        public void SetUp()
+        protected virtual WebSocketState WebSocketState { get; set; } = WebSocketState.Open;
+
+        public override void SetUp()
         {
-            using (this.cable = new ChannelCable().BuildUp(this.GenerateUnityContainer()))
+            base.SetUp();
+            this.WebSocketClient.SetupGet(x => x.State).Returns(() => this.WebSocketState);
+
+            this.cable = new ChannelCable().BuildUp(this.Container);
+            if (this.NeedEventHandler)
             {
-                if (this.NeedEventHandler)
+                this.cable.Connected += (sender, e) => this.isConnectedEventCalled = true;
+                this.cable.PingReceived += (sender, e) => this.isPingReceived = true;
+                this.cable.ConfirmSubscriptionReceived += (sender, e) => this.isConfirmSubscriptionReceived = true;
+                this.cable.MessageReceived += (sender, e) =>
                 {
-                    this.cable.Connected += (sender, e) => this.isConnectedEventCalled = true;
-                    this.cable.PingReceived += (sender, e) => this.isPingReceived = true;
-                    this.cable.ConfirmSubscriptionReceived += (sender, e) => this.isConfirmSubscriptionReceived = true;
-                    this.cable.MessageReceived += (sender, e) =>
-                    {
-                        this.ReceiveMessage = e;
-                        this.isMessageReceived = true;
-                    };
-                    this.cable.Disconnected += (sender, e) => this.isDisconnected = true;
-                }
-
-                // 接続完了を待機
-                (this.ConnectTask = cable.Connect()).Wait();
-
-                this.Connected?.Invoke();
-
-                // 受信処理の完了を待機
-                Task.WaitAny(Task.Run(() => { while (this.cable.IsOpen) { } }), Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()));
-
-                // 送信処理を実行する
-                this.SendMessage?.Invoke();
-
-                this.cable.Dispose();
+                    this.ReceiveMessage = e;
+                    this.isMessageReceived = true;
+                };
+                this.cable.RejectSubscriptionReceived += (sender, e) => this.isRejectSubscriptionReceived = true;
+                this.cable.Disconnected += (sender, e) => this.isDisconnected = true;
             }
+
+            // 接続完了を待機
+            (this.ConnectTask = cable.Connect()).Wait();
+
+            this.Connected?.Invoke();
+
+            // 受信処理の完了を待機
+            Task.WaitAny(Task.Run(() => { while (this.cable.IsOpen) { } }), Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()));
+
+            // 送信処理を実行する
+            this.SendMessage?.Invoke();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.cable?.Dispose();
         }
     }
 
@@ -98,13 +107,17 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
         [TestCase]
         public void ItShouldConnectToExpectedUrl()
         {
-            Assert.That(this.WebSocketRequestUrl, Is.EqualTo(this.Environment.WebSocketUrl));
+            this.WebSocketClient.Verify(
+                x => x.ConnectAsync(
+                    It.Is<Uri>(v => v.AbsoluteUri == this.Environment.WebSocketUrl),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [TestCase]
         public void ItShouldAuthorizationWithExpected()
         {
-            Assert.That(this.WebSocketRequestHeaders.ValueOrDefault("Authorization"), Is.EqualTo($"Token {this.SecureIsolatedStorage.AccessToken}"));
+            this.WebSocketOptions.Verify(x => x.SetRequestHeader("Authorization", $"Token {this.IsolatedStorage.AccessToken}"), Times.Once);
         }
 
         [TestCase]
@@ -122,45 +135,85 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
 
     namespace CloseTest
     {
-        public class WhenHasDisconnectEvenHandler: TestBase
+        public class WhenIsOpen: TestBase
         {
-            protected override Action SendMessage
-                => () => this.cable.Close().Wait();
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.WebSocketState = WebSocketState.Open;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
+                this.cable.Close().Wait();
+            }
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldWebSocketCloseCalled()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(true));
+                this.WebSocketClient.Verify(
+                    x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                    Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
             }
         }
 
         public class WhenIsNotOpen : TestBase
         {
-            protected override Action SendMessage
-            => () =>
-                {
-                    this.WebSocketState = WebSocketState.Closed;
-                    this.cable.Close().Wait();
-                };
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.WebSocketState = WebSocketState.Closed;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
+                this.cable.Close().Wait();
+            }
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldWebSocketCloseNotCalled()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(false));
+                this.WebSocketClient.Verify(
+                    x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                    Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
             }
         }
 
-        public class WhenHasNotDisconnectEvenHandler : TestBase
+        public class WhenFail : TestBase
         {
-            protected override Action SendMessage
-                => () => this.cable.Close().Wait();
+            public override void SetUp()
+            {
+                base.SetUp();
 
-            protected override bool NeedEventHandler { get; } = false;
+                this.WebSocketState = WebSocketState.Open;
+
+                this.WebSocketClient
+                    .Setup(x => x.CloseAsync(It.IsAny<WebSocketCloseStatus>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .ThrowsAsync(new Exception());
+                
+                this.cable.Close().Wait();
+            }
 
             [TestCase]
-            public void ItShouldDisconnectedToExpected()
+            public void ItShouldLastExceptionNull()
             {
-                Assert.That(this.isDisconnected, Is.EqualTo(false));
+                Assert.That(this.cable.LastException, Is.Not.Null);
             }
         }
     }
@@ -251,6 +304,23 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
                 => new List<ReceiveMessage>()
                 {
                 new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"ping\"}")
+                };
+
+            protected override bool NeedEventHandler { get; } = false;
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
+            }
+        }
+
+        public class WhenReceiveRejectSubscriptionWithoutEventHandler : TestBase
+        {
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+                => new List<ReceiveMessage>()
+                {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
                 };
 
             protected override bool NeedEventHandler { get; } = false;
@@ -450,6 +520,57 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             }
         }
 
+        public class WhneReceiveRejectSubscription : TestBase
+        {
+            protected override List<ReceiveMessage> OptionalReceiveMessages
+                => new List<ReceiveMessage>()
+                {
+                new ReceiveMessage(WebSocketMessageType.Text, "{\"type\": \"reject_subscription\"}")
+                };
+
+            [TestCase]
+            public void ItShouldLastExceptionNull()
+            {
+                Assert.That(this.cable.LastException, Is.Null);
+            }
+
+            [TestCase]
+            public void ItShouldConnectedEventToNotOccur()
+            {
+                Assert.That(this.isConnectedEventCalled, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldPingReceivedEventToOccur()
+            {
+                Assert.That(this.isPingReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldConfirmSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isConfirmSubscriptionReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldMessageReceivedEventToNotOccur()
+            {
+                Assert.That(this.isMessageReceived, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldDisconnectedToNotOccur()
+            {
+                Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(true));
+            }
+        }
+
         public class WhenReceiveConfirmSubscription : TestBase
         {
             protected override List<ReceiveMessage> OptionalReceiveMessages
@@ -486,6 +607,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
 
@@ -538,6 +665,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.ReceiveMessage.ToSlim(), Is.EqualTo("{ \"content\": \"寿限無、寿限無、五劫の擦り切れ、海砂利水魚の、水行末 雲来末 風来末、食う寝る処に住む処、藪ら柑子の藪柑子\" }".ToSlim()));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveMessage : TestBase
@@ -589,6 +722,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.ReceiveMessage.ToSlim(), Is.EqualTo("{ \"content\": \"FooBar\" }".ToSlim()));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveInvalidMessage : TestBase
@@ -633,6 +772,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
 
@@ -679,6 +824,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(true));
             }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
+            }
         }
 
         public class WhenReceiveNotJsonMessage : TestBase{
@@ -723,6 +874,12 @@ namespace Capibara.Test.Net.Channels.ChannelCableTest
             public void ItShouldDisconnectedToNotOccur()
             {
                 Assert.That(this.isDisconnected, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionReceivedEventToNotOccur()
+            {
+                Assert.That(this.isRejectSubscriptionReceived, Is.EqualTo(false));
             }
         }
     }

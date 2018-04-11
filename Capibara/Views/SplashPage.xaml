@@ -6,17 +6,27 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:lottie="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.SplashPage">
-    <StackLayout
-        HorizontalOptions="FillAndExpand"
-        VerticalOptions="FillAndExpand">
-        <lottie:AnimationView 
-            x:Name="AnimationView" 
-            Animation="bubble.json" 
-            AutoPlay="True"
-            VerticalOptions="FillAndExpand"
-            HorizontalOptions="FillAndExpand"
-            IsPlaying="{Binding IsPlaying.Value, Mode=OneWayToSource}"
-            />
-    </StackLayout>
+    x:Class="Capibara.Views.SplashPage"
+    BackgroundColor="#2f8e5b">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
+    </ContentView.Behaviors>
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
+            <RowDefinition Height="{Binding LogoTopMargin.Value}" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Image 
+            Grid.RowSpan="4"
+            Source="bg_launch"
+            Aspect="Fill" />
+        <Image
+            Grid.Row="2"
+            Opacity="{Binding LogoOpacity.Value}"
+            Scale="{Binding LogoScale.Value}"
+            Source="logo">
+        </Image>
+    </Grid>
 </ContentPage>

@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
-
+using Capibara.Net;
 using Capibara.Models;
 using Capibara.ViewModels;
-using Capibara.Net;
 
 using Moq;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 
+using Prism.Services;
 using Prism.Navigation;
 
-namespace Capibara.Test.ViewModels.ViewModelBaseTest
+namespace Capibara.Test.ViewModels.ViewModelBase
 {
 
     public class StabModel : ModelBase<StabModel>
@@ -30,37 +27,19 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
 
     public class StabViewModel : ViewModelBase<StabModel>
     {
-        public StabViewModel(INavigationService navigationService = null, StabModel model = null) 
-            : base(navigationService, null, model) { }
+        public StabViewModel(INavigationService navigationService = null, IPageDialogService pageDialogService = null, StabModel model = null) 
+            : base(navigationService, pageDialogService, model) { }
+
+        public void Fail(Exception exception) {
+            this.OnFail(() => Task.Run(() => {})).Invoke(null, new FailEventArgs(exception));
+        }
     }
 
-    public class TestHelper
+    public class OnSleepTest
     {
-        public static IUnityContainer GenerateContainer()
+        public void ItShouldDoseNotThrow()
         {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-
-            // ISecureIsolatedStorage のセットアップ
-            var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-            secureIsolatedStorage.SetupAllProperties();
-
-            var application = new Mock<ICapibaraApplication>();
-            application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-            return container;
+            Assert.DoesNotThrow(new StabViewModel().OnSleep);
         }
     }
 
@@ -100,12 +79,12 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
         }
 
         [TestFixture]
-        public class WhenValueIsPresent
+        public class WhenValueIsPresent : TestFixtureBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {   
-                Assert.DoesNotThrow(() => new StabViewModel().Container = TestHelper.GenerateContainer());
+                Assert.DoesNotThrow(() => new StabViewModel().Container = this.Container);
             }
         }
     }
@@ -136,22 +115,22 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
     namespace OnNavigatedToTest
     {
         [TestFixture]
-        public class WhenNavigationParametersIsNull
+        public class WhenNavigationParametersIsNull : ViewModelTestBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {
-                Assert.DoesNotThrow(() => new StabViewModel().OnNavigatedTo(null));
+                Assert.DoesNotThrow(() => new StabViewModel().BuildUp(this.Container).OnNavigatedTo(null));
             }
         }
 
         [TestFixture]
-        public class WhenNavigationParametersIsEmpty
+        public class WhenNavigationParametersIsEmpty : ViewModelTestBase
         {
             [TestCase]
             public void ItShoulNotThrowException()
             {
-                Assert.DoesNotThrow(() => new StabViewModel().OnNavigatedTo(new NavigationParameters()));
+                Assert.DoesNotThrow(() => new StabViewModel().BuildUp(this.Container).OnNavigatedTo(new NavigationParameters()));
             }
         }
     }
@@ -186,12 +165,184 @@ namespace Capibara.Test.ViewModels.ViewModelBaseTest
             {
                 var model = new StabModel();
                 var viewModel = new StabViewModel();
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, model);
+                var parameters = new NavigationParameters { { ParameterNames.Model, model } };
 
                 viewModel.OnNavigatingTo(parameters);
 
                 Assert.That(viewModel.Model.Name, Is.EqualTo(model.Name));
+            }
+        }
+    }
+
+    namespace OnFailTest
+    {
+        public abstract class ViewModelTestBase : ViewModels.ViewModelTestBase
+        {
+            protected StabViewModel Subject { get; private set; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject = new StabViewModel(this.NavigationService.Object, this.PageDialogService.Object);
+            }
+        }
+
+        public class WhenHttpUnauthorizedException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる"), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShoulGoToSignIn()
+            {
+                this.NavigationService.Verify(x => x.NavigateAsync("/SignUpPage", null), Times.Once());
+            }
+        }
+
+        public class WhenHttpForbiddenException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpForbiddenException(HttpStatusCode.Forbidden, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "不正なアクセスです。再度操作をやり直してください。", "閉じる"), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShoulGoBack()
+            {
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
+            }
+        }
+
+        public class WhenHttpNotFoundException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpNotFoundException(HttpStatusCode.NotFound, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "データが見つかりません。再度操作をやり直してください。", "閉じる"), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShoulGoBack()
+            {
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
+            }
+        }
+
+        public class WhenHttpUpgradeRequiredException : ViewModelTestBase
+        {
+            bool IsOpenUriCalled;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.DeviceService
+                    .Setup(x => x.OpenUri(It.Is<Uri>(v => v.ToString() == "http://example.com/store")))
+                    .Callback<Uri>(v => this.IsOpenUriCalled = true);
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpUpgradeRequiredException(HttpStatusCode.UpgradeRequired, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "最新のアプリが公開されています！アップデートを行ってください。", "閉じる"), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShoulOpenUriCalled()
+            {
+                Assert.That(this.IsOpenUriCalled, Is.EqualTo(true));
+            }
+        }
+
+        public class WhenHttpServiceUnavailableException : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject.BuildUp(this.Container).Fail(new HttpServiceUnavailableException(HttpStatusCode.ServiceUnavailable, "{\"message\": null}"));
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "現在メンテナンス中です。時間を置いて再度お試しください。", "閉じる"), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShoulExit()
+            {
+                this.ApplicationService.Verify(x => x.Exit());
+            }
+        }
+
+        public class WhenExceptionToFinish : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
+            }
+        }
+
+        public class WhenExceptionToRetry : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
             }
         }
     }

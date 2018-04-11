@@ -5,12 +5,13 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:selectors="clr-namespace:Capibara.Selectors;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
+    BackgroundColor="#F1F1F1"
     x:Class="Capibara.Views.RoomPage"
-    Title="{Binding Name.Value}"
-    BackgroundColor="#FEFEFE">
+    Title="{Binding Name.Value}">
     <ContentView.Behaviors>
-        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding ConnectCommand}" />
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
     </ContentView.Behaviors>
     <ContentPage.ToolbarItems>
@@ -20,31 +21,83 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ownMessageTemplate">
                 <ViewCell>
-                    <Grid Padding="75, 10, 10, 10">
+                    <Grid Padding="75, 10, 10, 10" Rotation="180" RotationY="180">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="0" />
+                            <ColumnDefinition Width="0" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="0" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Frame Grid.Row="0" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false">
-                            <Label Text="{Binding Content}" TextColor="#444" />
+                        <forms:RoundImage
+                            Grid.RowSpan="3"
+                            Grid.Column="2"
+                            Source="{Binding Sender.Value.IconThumbnail.Value}"
+                            BorderWidth="2"
+                            HeightRequest="60"
+                            VerticalOptions="Start"
+                            CornerRadius="30"
+                            HasShadow="false"
+                            />
+                        <Button
+                            Grid.RowSpan="3"
+                            Grid.Column="2"
+                            HeightRequest="60"
+                            VerticalOptions="Start"
+                            WidthRequest="60"
+                            BorderWidth="0"
+                            BorderRadius="30"
+                            BackgroundColor="Transparent"
+                            Command="{Binding ShowProfileCommand}"
+                            />
+                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
+                        <Frame Grid.Column="0" Grid.Row="1" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
+                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
                         </Frame>
-                        <Label Grid.Row="1" Text="{Binding At, StringFormat='{0:HH:mm:ss}'}" FontSize="Small" TextColor="#444" Margin="10, 0, 0, 0" />
+                        <Label Grid.Column="0" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" />
                     </Grid>
                 </ViewCell>
             </DataTemplate>
             <DataTemplate x:Key="othersMessageTemplate">
                 <ViewCell>
-                    <Grid Padding="10, 10, 50, 10">
+                    <Grid Padding="10, 10, 50, 10" Rotation="180" RotationY="180">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Text="{Binding Sender.Nickname}" FontSize="Small" />
-                        <Frame Grid.Row="1" OutlineColor="#999999" CornerRadius="5" HasShadow="false">
-                            <Label Text="{Binding Content}" TextColor="#444" />
+                        <forms:RoundImage
+                            Grid.RowSpan="3"
+                            Source="{Binding Sender.Value.IconThumbnail.Value}"
+                            BorderWidth="2"
+                            HeightRequest="60"
+                            VerticalOptions="Start"
+                            CornerRadius="30"
+                            HasShadow="false"
+                            />
+                        <Button
+                            Grid.RowSpan="3"
+                            HeightRequest="60"
+                            VerticalOptions="Start"
+                            WidthRequest="60"
+                            BorderWidth="0"
+                            BorderRadius="30"
+                            BackgroundColor="Transparent"
+                            Command="{Binding ShowProfileCommand}"
+                            />
+                        <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" Margin="0, 0, 0, 5" />
+                        <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" BackgroundColor="White" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
+                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
                         </Frame>
-                        <Label Grid.Row="2" Text="{Binding At, StringFormat='{0:HH:mm:ss}'}" FontSize="Small" HorizontalTextAlignment="End" TextColor="#444" Margin="0, 0, 10, 0" />
+                        <Label Grid.Column="2" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" HorizontalTextAlignment="End" TextColor="#6c757d" Margin="0, 5, 10, 0" />
                     </Grid>
                 </ViewCell>
             </DataTemplate>
@@ -57,21 +110,63 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
         </Grid.RowDefinitions>
         <ListView
+            x:Name="ListView"
             Grid.Row="0"
+            BackgroundColor="#F1F1F1"
             HasUnevenRows="true"
             VerticalOptions="FillAndExpand"
             SeparatorColor="Transparent"
             ItemsSource="{Binding Messages}"
-            ItemTemplate="{StaticResource messageDataTemplateSelector}" />
+            ItemTemplate="{StaticResource messageDataTemplateSelector}"
+            ef:Reverse.On="true"
+            >
+            <ListView.Rotation>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.Rotation>
+            <ListView.RotationY>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.RotationY>
+            <ListView.Header>
+                <BoxView HeightRequest="0" />
+            </ListView.Header>
+            <ListView.Footer>
+                <BoxView HeightRequest="0" />
+            </ListView.Footer>
+        </ListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="50" />
+                <ColumnDefinition>
+                    <ColumnDefinition.Width>
+                        <OnPlatform x:TypeArguments="GridLength">
+                            <On Platform="iOS" Value="60" />
+                            <On Platform="Android" Value="Auto" />
+                        </OnPlatform>
+                    </ColumnDefinition.Width>
+                </ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Editor Grid.Column="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" Text="Send" BackgroundColor="#58CE91" TextColor="White" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}" />
+            <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="1" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
         </Grid>
+        <forms:AdMobBanner Grid.Row="2" />
+
+        <BoxView Grid.Row="3" BackgroundColor="#EEE" />
     </Grid>
 </ContentPage>

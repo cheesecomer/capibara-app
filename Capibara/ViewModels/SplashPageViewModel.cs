@@ -1,61 +1,129 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using Prism.Mvvm;
-using Prism.Navigation;
-using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
+using Capibara.Models;
 
-using Xamarin.Forms;
+using Prism.AppModel;
+using Prism.Navigation;
+using Prism.Services;
+
+using Reactive.Bindings;
+
+using Unity;
 
 namespace Capibara.ViewModels
 {
-    public class SplashPageViewModel : BindableBase, INavigationAware
+    public class SplashPageViewModel : ViewModelBase
     {
-        private readonly INavigationService navigationService;
+        public ReactiveProperty<double> LogoTopMargin { get; }
+            = new ReactiveProperty<double>(180);
 
-        public ReactiveProperty<bool> IsPlaying { get; } = new ReactiveProperty<bool>();
+        public ReactiveProperty<double> LogoScale { get; }
+            = new ReactiveProperty<double>(1);
 
-        public SplashPageViewModel(INavigationService navigationService)
+        public ReactiveProperty<double> LogoOpacity { get; }
+            = new ReactiveProperty<double>(1);
+
+        public AsyncReactiveCommand RefreshCommand { get; }
+
+        public SplashPageViewModel(
+            INavigationService navigationService = null,
+            IPageDialogService pageDialogService = null)
+            : base(navigationService, pageDialogService)
         {
-            this.navigationService = navigationService;
+            this.RefreshCommand = new AsyncReactiveCommand();
+            this.RefreshCommand.Subscribe(this.RefreshAsync);
+        }
 
-            //var timer = new ReactiveTimer(TimeSpan.FromSeconds(3));
-            //timer.Subscribe(async _ =>
-            //    {
-            //        timer.Stop();
-            //        Console.WriteLine("Go to FloorMapPage");
-            //        await DeviceUtil.BeginInvokeOnMainThreadAsync(async () => await this.navigationService.NavigateAsync("/FloorMapPage", null, false, false));
-            //        Console.WriteLine("Forwarded FloorMapPage");
-            //    });
-            //timer.Start(TimeSpan.FromSeconds(3));
+        protected Task RefreshAsync()
+        {
+            if (this.IsolatedStorage.AccessToken.IsNullOrEmpty())
+            {
+                return this.ToSignUpPage();
+            }
+            else
+            {
+                return this.ToFloorMapPage();
+            }
+        }
 
-            this.IsPlaying
-                .Where(x => !x)
-                .Delay(TimeSpan.FromSeconds(3))
-                .ObserveOnUIDispatcher()
-                .Subscribe(async _ =>
+        private async Task ToSignUpPage()
+        {
+            var millisecondPerFrame = 10;
+            while (this.LogoTopMargin.Value > 20)
+            {
+                await this.TaskService.Delay(millisecondPerFrame);
+                this.LogoTopMargin.Value -= (180d - 20d) / (500d / (double)millisecondPerFrame);
+            }
+
+            this.LogoTopMargin.Value = 20;
+
+            await this.NavigationService.NavigateAsync("SignUpPage", animated: false);
+        }
+
+        private async Task ToFloorMapPage()
+        {
+            var request = this.RequestFactory.SessionsRefreshRequest().BuildUp(this.Container);
+            try
+            {
+                var response = await request.Execute();
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response as User);
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.Save();
+
+                await Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync());
+
+                var pageName =
+                    response.IsAccepted
+                        ? "/MainPage/NavigationPage/FloorMapPage"
+                        : "/NavigationPage/AcceptPage";
+                var parameters =
+                    response.IsAccepted
+                        ? null
+                        : new NavigationParameters { { ParameterNames.Model, response as User } };
+                
+                await this.NavigationService.NavigateAsync(pageName, parameters, animated: false);
+            }
+            catch (Exception e)
+            {
+                if (e is Net.HttpUnauthorizedException)
                 {
-                    Console.WriteLine("Go to FloorMapPage");
-                    await this.navigationService.NavigateAsync("/FloorMapPage", null, false, false);
-                    Console.WriteLine("Forwarded FloorMapPage");
-                });
+                    await this.ToSignUpPage();
+                }
+                else
+                {
+                    var isRetried = await this.DisplayErrorAlertAsync(e, () => this.ToFloorMapPage());
+                    if (!isRetried) this.ApplicationService.Exit();
+                }
+            }
         }
 
-        public void OnNavigatedFrom(NavigationParameters parameters)
+        private async Task LogoScaleChangeAsync()
         {
+            var millisecondPerFrame = 10;
+            while (this.LogoScale.Value < 3)
+            {
+                await this.TaskService.Delay(millisecondPerFrame);
+                this.LogoScale.Value += 2 / (500d / (double)millisecondPerFrame);
+            }
 
+            this.LogoScale.Value = 3;
         }
 
-        public void OnNavigatedTo(NavigationParameters parameters)
+        private async Task LogoOpacityChangeAsync()
         {
-        }
+            var millisecondPerFrame = 10;
+            while (this.LogoOpacity.Value > 0)
+            {
+                await this.TaskService.Delay(millisecondPerFrame);
+                this.LogoOpacity.Value -= 1 / (500d / (double)millisecondPerFrame);
+            }
 
-        public void OnNavigatingTo(NavigationParameters parameters)
-        {
-
+            this.LogoOpacity.Value = 0;
         }
     }
 }

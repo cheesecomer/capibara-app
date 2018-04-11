@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 using Newtonsoft.Json;
 
 namespace Capibara.Net.Channels
 {
-    public abstract class ChannelBase<TMessage> : IChannel<TMessage>, IDisposable
+    public abstract class ChannelBase<TMessage> : IDisposable
     {
-        public event EventHandler Connected;
+        public virtual event EventHandler Connected;
 
-        public event EventHandler Disconnected;
+        public virtual event EventHandler Disconnected;
 
-        public event EventHandler<TMessage> MessageReceive;
+        public virtual event EventHandler RejectSubscription;
 
-        protected ChannelCable Cable { get; private set; }
+        public virtual event EventHandler<EventArgs<TMessage>> MessageReceive;
 
-        public bool IsOpen => this.Cable?.IsOpen ?? false;
+        protected ChannelCableBase Cable { get; private set; }
+
+        public virtual bool IsOpen => this.Cable?.IsOpen ?? false;
         
         /// <summary>
         /// DIコンテナ
@@ -38,26 +41,30 @@ namespace Capibara.Net.Channels
         /// </summary>
         /// <value>The secure isolated storage.</value>
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
-        protected abstract IChannelIdentifier ChannelIdentifier { get; }
+        [Dependency]
+        public IChannelCableFactory ChannelCableFactory { get; set; }
 
-        public void Dispose()
+        public abstract IChannelIdentifier ChannelIdentifier { get; }
+
+        public virtual void Dispose()
         {
             this.Cable?.Dispose();
             this.Cable = null;
         }
 
-        public Task<bool> Connect()
+        public virtual Task<bool> Connect()
         {
-            this.Cable = new ChannelCable().BuildUp(this.Container);
+            this.Cable = this.ChannelCableFactory.Create().BuildUp(this.Container);
             this.Cable.Connected += this.OnConnected;
             this.Cable.Disconnected += this.OnDisconnected;
             this.Cable.MessageReceived += this.OnMessageReceive;
+            this.Cable.RejectSubscriptionReceived += this.OnRejectSubscriptionReceived;
             return this.Cable.Connect();
         }
 
-        public async Task Close()
+        public virtual async Task Close()
         {
             if (this.Cable != null)
                 await this.Cable.Close();
@@ -72,17 +79,20 @@ namespace Capibara.Net.Channels
 
         private void OnDisconnected(object sender, EventArgs args)
         {
-            using (this.Cable)
-            {
-                this.Cable = null;
-            }
+            this.Cable?.Dispose();
+            this.Cable = null;
 
             this.Disconnected?.Invoke(this, null);
         }
 
-        private void OnMessageReceive(object sender,  string message)
+        private void OnRejectSubscriptionReceived(object sender, EventArgs args)
         {
-            this.MessageReceive?.Invoke(this, JsonConvert.DeserializeObject<TMessage>(message));
+            this.RejectSubscription?.Invoke(this, null);
+        }
+
+        private void OnMessageReceive(object sender,  EventArgs<string> args)
+        {
+            this.MessageReceive?.Invoke(this, JsonConvert.DeserializeObject<TMessage>(args.Value));
         }
     }
 }

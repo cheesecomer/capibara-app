@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-
 using Capibara.Models;
 using Capibara.Net;
-
-using Capibara.Test.Net;
-using Capibara.Test.Net.Channels.ChannelBaseTest;
-
+using Capibara.Net.Channels;
 using Moq;
-using Microsoft.Practices.Unity;
-using NUnit.Framework;
 using Newtonsoft.Json;
+using NUnit.Framework;
 
 namespace Capibara.Test.Models.RoomTest
 {
@@ -27,37 +18,37 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
             public void Setup()
             {
                 var json = "{ \"name\": \"AAA\", \"capacity\": 10, \"id\": 99999, \"number_of_participants\": 5 }";
-                this.actual = JsonConvert.DeserializeObject<Room>(json);
+                this.Subject = JsonConvert.DeserializeObject<Room>(json);
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Name, Is.EqualTo("AAA"));
+                Assert.That(this.Subject.Name, Is.EqualTo("AAA"));
             }
 
             [TestCase]
             public void ItShouldCapacityWithExpected()
             {
-                Assert.That(this.actual.Capacity, Is.EqualTo(10));
+                Assert.That(this.Subject.Capacity, Is.EqualTo(10));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(99999));
+                Assert.That(this.Subject.Id, Is.EqualTo(99999));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(5));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(5));
             }
         }
     }
@@ -67,7 +58,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenSuccess
         {
-            private Room actual;
+            private Room Subject;
 
             private Room expect;
 
@@ -75,489 +66,139 @@ namespace Capibara.Test.Models.RoomTest
             public void Setup()
             {
                 this.expect = new Room { Capacity = 10, Id = 999, Name = "AAA", NumberOfParticipants = 5 };
-                this.actual = new Room();
-                this.actual.Restore(this.expect);
+                this.Subject = new Room();
+                this.Subject.Restore(this.expect);
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.That(this.actual.Name, Is.EqualTo(this.expect.Name));
+                Assert.That(this.Subject.Name, Is.EqualTo(this.expect.Name));
             }
 
             [TestCase]
             public void ItShouldCapacityWithExpected()
             {
-                Assert.That(this.actual.Capacity, Is.EqualTo(this.expect.Capacity));
+                Assert.That(this.Subject.Capacity, Is.EqualTo(this.expect.Capacity));
             }
 
             [TestCase]
             public void ItShouldIdWithExpected()
             {
-                Assert.That(this.actual.Id, Is.EqualTo(this.expect.Id));
+                Assert.That(this.Subject.Id, Is.EqualTo(this.expect.Id));
             }
 
             [TestCase]
             public void ItShouldNumberOfParticipantsWithExpected()
             {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(this.expect.NumberOfParticipants));
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(this.expect.NumberOfParticipants));
             }
         }
     }
-
-    namespace ConnectTest
+    [TestFixture]
+    public class ConnectTest : TestFixtureBase
     {
-        [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        private Room Subject;
+
+        private Mock<ChatChannelBase> Channel;
+
+        [SetUp]
+        public override void SetUp()
         {
-            private Room actual;
+            base.SetUp();
 
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-            }
+            this.Channel = new Mock<ChatChannelBase>();
+            this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
 
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
+            this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
 
-            [TestCase]
-            public void ItShouldNameWithExpected()
-            {
-                Assert.DoesNotThrowAsync(this.actual.Connect);
-            }
+            this.Subject = new Room().BuildUp(this.Container);
+
+            this.Subject.Connect().Wait();
         }
 
-        [TestFixture]
-        public class WhenTwiceCall : TestFixtureBase
+        [TestCase]
+        public void ItShouldCreateChantChannelOnece()
         {
-            private Room actual;
+            this.Channel.SetupGet(x => x.IsOpen).Returns(true);
+            this.Subject.Connect().Wait();
+            this.ChannelFactory.Verify(x => x.CreateChantChannel(It.IsAny<Room>()), Times.Once());
+        }
 
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Connect().Wait();
-                this.actual.BuildUp(this.GenerateUnityContainer());
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldNameWithExpected()
-            {
-                Assert.DoesNotThrowAsync(this.actual.Connect);
-            }
+        [TestCase]
+        public void ItShouldConnectCalled()
+        {
+            this.Channel.Verify(x => x.Connect(), Times.Once());
         }
     }
 
     namespace CloseTest
     {
         [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public class WhenConnected : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Connect().Wait();
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+                this.Subject.Close().Wait();
             }
 
             [TestCase]
-            public void ItShouldNameWithExpected()
+            public void ItShouldCloseCalled()
             {
-                Assert.DoesNotThrowAsync(this.actual.Close);
+                this.Channel.Verify(x => x.Close(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldDisposeCalled()
+            {
+                this.Channel.Verify(x => x.Dispose(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldClosed()
+            {
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
         public class WhenNotConnected : TestFixtureBase
         {
-            private Room actual;
+            private Room Subject;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new Room().BuildUp(this.Container);
             }
 
             [TestCase]
             public void ItShouldNameWithExpected()
             {
-                Assert.DoesNotThrowAsync(this.actual.Close);
-            }
-        }
-    }
-
-    namespace ReceiveTest
-    {
-        [TestFixture]
-        public class WhenInvalidSystemMessage : TestFixtureBase
-        {
-            private Room actual;
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0 } }")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAny(
-                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
-                );
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
+                Assert.DoesNotThrowAsync(this.Subject.Close);
             }
 
             [TestCase]
-            public void ItShouldIsConnected()
+            public void ItShouldClosed()
             {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenUnknownTypeSystemMessage : TestFixtureBase
-        {
-            private Room actual;
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0}, \"content\": \"{\\\"type\\\":\\\"foo_bar\\\" }\"} }")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAny(
-                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
-                );
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldIsConnected()
-            {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenSystemMessageTypeIsEmpty : TestFixtureBase
-        {
-            private Room actual;
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0}, \"content\": \"{\\\"type\\\":\\\"\\\" }\"} }")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAny(
-                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
-                );
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldIsConnected()
-            {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenSuccess : TestFixtureBase
-        {
-            private Room actual;
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                    new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" } }")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldMessagesCountWithExpected()
-            {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(1));
-            }
-        }
-
-        [TestFixture]
-        public class WhenLeaveUser : TestFixtureBase
-        {
-            private Room actual;
-
-            protected bool NeedEventHandler { get; set; }
-
-            protected int ExceptParticipantsCount { get; set; } = 0;
-
-            protected bool IsFireJoinUser { get; private set; }
-
-            protected bool IsFireLeaveUser { get; private set; }
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                    new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0,\"content\": \"{\\\"type\\\":\\\"leave_user\\\",\\\"number_of_participants\\\": 1, \\\"user\\\": { \\\"id\\\": 10, \\\"nickname\\\": \\\"ABC\\\" } }\"} }")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Participants.Add(new User() { Id = 10 });
-
-                if (NeedEventHandler)
-                {
-                    this.actual.JoinUser += (sender, e) => this.IsFireJoinUser = true;
-                    this.actual.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
-                }
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAny(
-                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
-                );
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldIsConnected()
-            {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldMessagesCountWithExpected()
-            {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(0));
-            }
-
-            [TestCase]
-            public void ItShouldNumberOfParticipantsWithExpected()
-            {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(1));
-            }
-
-            [TestCase]
-            public void ItShouldParticipantsCountWithExpected()
-            {
-                Assert.That(this.actual.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
-            }
-        }
-
-        [TestFixture]
-        public class WhenLeaveNotExistUser : WhenLeaveUser
-        {
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                    new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0,\"content\": \"{\\\"type\\\":\\\"leave_user\\\",\\\"number_of_participants\\\": 1, \\\"user\\\": { \\\"id\\\": 11, \\\"nickname\\\": \\\"ABC\\\" } }\"} }")
-            };
-
-            public WhenLeaveNotExistUser()
-            {
-                this.ExceptParticipantsCount = 1;
-            }
-        }
-
-        public class WhenLeaveUserWithEventHandler : WhenLeaveUser
-        {
-            public WhenLeaveUserWithEventHandler()
-            {
-                this.NeedEventHandler = true;
-            }
-
-            [TestCase]
-            public void ItShouldJoinUserEventToNotOccur()
-            {
-                Assert.That(this.IsFireJoinUser, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldLeaveUserEventToOccur()
-            {
-                Assert.That(this.IsFireLeaveUser, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenJoinUser : TestFixtureBase
-        {
-            private Room actual;
-
-            protected virtual bool NeedEventHandler { get; set; }
-
-            protected bool IsFireJoinUser { get; set; }
-
-            protected bool IsFireLeaveUser { get; set; }
-
-            protected int ExceptParticipantsCount { get; set; } = 2;
-
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                new ReceiveMessage(WebSocketMessageType.Text, "{\"message\": { \"id\": 0, \"content\": \"{\\\"type\\\":\\\"join_user\\\",\\\"number_of_participants\\\": 10, \\\"user\\\": { \\\"id\\\": 10, \\\"nickname\\\": \\\"ABC\\\" } }\"}}")
-                };
-
-            [SetUp]
-            public void Setup()
-            {
-                this.actual = new Room().BuildUp(this.GenerateUnityContainer());
-                this.actual.Participants.Add(new User() { Id = 11 });
-
-                if (NeedEventHandler)
-                {
-                    this.actual.JoinUser += (sender, e) => this.IsFireJoinUser = true;
-                    this.actual.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
-                }
-
-                this.actual.Connect().Wait();
-
-                // 受信完了を待機
-                Task.WaitAny(
-                    Task.WhenAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray()),
-                    Task.Run(() => { while (this.actual.IsConnected) { } })
-                );
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                this.actual.Close().Wait();
-            }
-
-            [TestCase]
-            public void ItShouldIsConnected()
-            {
-                Assert.That(this.actual.IsConnected, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldMessagesCountWithExpected()
-            {
-                Assert.That(this.actual.Messages.Count, Is.EqualTo(0));
-            }
-
-            [TestCase]
-            public void ItShouldNumberOfParticipantsWithExpected()
-            {
-                Assert.That(this.actual.NumberOfParticipants, Is.EqualTo(10));
-            }
-
-            [TestCase]
-            public void ItShouldParticipantsCountWithExpected()
-            {
-                Assert.That(this.actual.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
-            }
-        }
-
-        [TestFixture]
-        public class WhenJoinExitUser : WhenJoinUser
-        {
-            protected override List<ReceiveMessage> OptionalReceiveMessages
-                => new List<ReceiveMessage>()
-                {
-                    new ReceiveMessage(WebSocketMessageType.Text, "{ \"message\": { \"id\": 0,\"content\": \"{\\\"type\\\":\\\"join_user\\\",\\\"number_of_participants\\\": 10, \\\"user\\\": { \\\"id\\\": 11, \\\"nickname\\\": \\\"ABC\\\" } }\"} }")
-                };
-
-            public WhenJoinExitUser()
-            {
-                this.ExceptParticipantsCount = 1;
-            }
-        }
-
-        public class WhenJoinUserWithEventHandler : WhenJoinUser
-        {
-            public WhenJoinUserWithEventHandler()
-            {
-                this.NeedEventHandler = true;
-            }
-
-            [TestCase]
-            public void ItShouldJoinUserEventToOccur()
-            {
-                Assert.That(this.IsFireJoinUser, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldLeaveUserEventToNotOccur()
-            {
-                Assert.That(this.IsFireLeaveUser, Is.EqualTo(false));
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(false));
             }
         }
     }
@@ -567,7 +208,7 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public abstract class SpeakTestBase : TestFixtureBase
         {
-            protected Room actual;
+            protected Room Subject;
 
             protected bool IsSuccess { get; private set; }
 
@@ -575,43 +216,57 @@ namespace Capibara.Test.Models.RoomTest
 
             protected virtual bool NeedEventHandler { get; } = true;
 
-            protected virtual bool NeedResetSendAsync { get; } = true;
+            protected virtual Exception Exception { get; } = null;
+
+            private Mock<ChatChannelBase> Channel;
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                this.actual = new Room() { Id = 1 }.BuildUp(container);
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+                var speak = this.Channel.Setup(x => x.Speak(It.IsAny<string>()));
+                if (this.Exception.IsNull())
+                {
+                    speak.Returns(Task.CompletedTask);
+                }
+                else
+                {
+                    speak.ThrowsAsync(this.Exception);
+                }
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+
+                this.Subject = new Room { Id = 1 }.BuildUp(this.Container);
 
                 if (this.NeedEventHandler)
                 {
-                    this.actual.SpeakSuccess += (sender, e) => this.IsSuccess = true;
-                    this.actual.SpeakFail+= (sender, e) => this.IsFail = true;
+                    this.Subject.SpeakSuccess += (sender, e) => this.IsSuccess = true;
+                    this.Subject.SpeakFail += (sender, e) => this.IsFail = true;
                 }
 
                 // 接続の完了を待機
-                this.actual.Connect().Wait();
+                this.Subject.Connect().Wait();
 
-                // 接続処理終了を待機
-                ConnectTaskSource.Task.Wait();
-
-                // 受信完了を待機
-                Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
-
-                // 送信完了を待機
-                SendAsyncSource.Task.Wait();
-
-                if (this.NeedResetSendAsync)
-                    ResetSendAsync();
-
-                this.actual.Speak("Foo. Bar!").Wait();
+                this.Subject.Speak("Foo. Bar!").Wait();
             }
 
-            [TearDown]
-            public void TearDown()
+            [TestCase]
+            public void ItShouldDoesNotThrow()
             {
-                this.actual.Close().Wait();
+                Assert.DoesNotThrowAsync(() => this.Subject.Speak("Foo. Bar!"));
+            }
+
+            [TestCase]
+            public void ItShouldSpeakCalled()
+            {
+                this.Channel.Verify(x => x.Speak(It.Is<string>(v => v == "Foo. Bar!")), Times.Once());
             }
         }
 
@@ -619,18 +274,6 @@ namespace Capibara.Test.Models.RoomTest
         public class WhenSuccessWithoutEventHandler : SpeakTestBase
         {
             protected override bool NeedEventHandler { get; } = false;
-
-            [TestCase]
-            public void ItShouldRefreshSuccessEventToNotOccur()
-            {
-                Assert.That(this.IsSuccess, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldRefreshFailEventToNotOccur()
-            {
-                Assert.That(this.IsFail, Is.EqualTo(false));
-            }
         }
 
         [TestFixture]
@@ -654,25 +297,13 @@ namespace Capibara.Test.Models.RoomTest
         {
             protected override bool NeedEventHandler { get; } = false;
 
-            protected override bool NeedResetSendAsync { get; } = false;
-
-            [TestCase]
-            public void ItShouldSuccessEventToNotOccur()
-            {
-                Assert.That(this.IsSuccess, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldFailEventToNotOccur()
-            {
-                Assert.That(this.IsFail, Is.EqualTo(false));
-            }
+            protected override Exception Exception => new Exception(); 
         }
 
         [TestFixture]
         public class WhenFailWithEventHandler : SpeakTestBase
         {
-            protected override bool NeedResetSendAsync { get; } = false;
+            protected override Exception Exception => new Exception(); 
 
             [TestCase]
             public void ItShouldSuccessEventToOccur()
@@ -681,7 +312,7 @@ namespace Capibara.Test.Models.RoomTest
             }
 
             [TestCase]
-            public void ItShouldFailEventToNotOccur()
+            public void ItShouldFailEventToOccur()
             {
                 Assert.That(this.IsFail, Is.EqualTo(true));
             }
@@ -701,12 +332,18 @@ namespace Capibara.Test.Models.RoomTest
 
             protected virtual bool NeedEventHandler { get; } = true;
 
-            [SetUp]
-            public void Setup()
-            {
-                var container = this.GenerateUnityContainer();
+            protected virtual Room Response { get; }
 
-                this.model = new Room() { Id = 1 }.BuildUp(container);
+            protected virtual Exception Exception { get; }
+
+            protected bool Result { get; private set; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.model = new Room { Id = 1 }.BuildUp(this.Container);
 
                 if (this.NeedEventHandler)
                 {
@@ -714,17 +351,36 @@ namespace Capibara.Test.Models.RoomTest
                     this.model.RefreshFail += (sender, e) => this.IsRefreshFail = true;
                 }
 
+                var request = new Mock<RequestBase<Room>>();
+
+                var methodMock = request.Setup(x => x.Execute());
+
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
+
+                this.RequestFactory.Setup(x => x.RoomsShowRequest(It.IsAny<Room>())).Returns(request.Object);
+
                 // リフレッシュの終了を待機
-                this.model.Refresh().Wait();
+                this.Result = this.model.Refresh().Result;
             }
         }
 
         [TestFixture]
         public class WhenUnauthorizedWithoutEventHandler : RefreshTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
             protected override bool NeedEventHandler { get; } = false;
+
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
@@ -742,7 +398,13 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenUnauthorized : RefreshTestBase
         {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
 
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
@@ -762,6 +424,14 @@ namespace Capibara.Test.Models.RoomTest
         {
             protected override bool NeedEventHandler { get; } = false;
 
+            protected override Room Response => new Room();
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
             [TestCase]
             public void ItShouldRefreshSuccessEventToNotOccur()
             {
@@ -778,6 +448,14 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenEmpty : RefreshTestBase
         {
+            protected override Room Response => new Room();
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
             [TestCase]
             public void ItShouldRefreshSuccessEventToOccur()
             {
@@ -794,8 +472,18 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasNotMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[] }";
+            protected override Room Response => new Room
+            {
+                Name = "AAA",
+                Capacity = 10,
+                NumberOfParticipants = 5
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -835,10 +523,31 @@ namespace Capibara.Test.Models.RoomTest
         }
 
         [TestFixture]
-        public class WhenHasMessage: RefreshTestBase
+        public class WhenHasMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99998, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }, { \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }], \"participants\":[] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Messages.Add(new Message { Id = 1 });
+                    result.Messages.Add(new Message { Id = 2 });
+
+                    return result;
+                }
+            }
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -877,12 +586,27 @@ namespace Capibara.Test.Models.RoomTest
             }
         }
 
-
         [TestFixture]
         public class WhenHasDuplicateMessage : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [{ \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }, { \"sender\": { \"id\": 10, \"nickname\": \"ABC\" }, \"id\": 99999, \"content\": \"FooBar. Yes!Yes!Yeeeeees!\", \"at\":  \"2017-10-28T20:25:20.000+09:00\" }], \"participants\":[] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Messages.Add(new Message { Id = 9999 });
+                    result.Messages.Add(new Message { Id = 9999 });
+
+                    return result;
+                }
+            }
+
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -924,8 +648,18 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasNotParticipants : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[] }";
+            protected override Room Response => new Room
+            {
+                Name = "AAA",
+                Capacity = 10,
+                NumberOfParticipants = 5
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -967,8 +701,22 @@ namespace Capibara.Test.Models.RoomTest
         [TestFixture]
         public class WhenHasParticipants : RefreshTestBase
         {
-            protected override string HttpStabResponse
-            => "{ \"name\": \"AAA\", \"capacity\": 10, \"number_of_participants\": 5, messages: [], \"participants\":[{ \"id\": 10, \"nickname\": \"ABC\" }] }";
+            protected override Room Response
+            {
+                get
+                {
+                    var result = new Room
+                    {
+                        Name = "AAA",
+                        Capacity = 10,
+                        NumberOfParticipants = 5
+                    };
+
+                    result.Participants.Add(new User());
+
+                    return result;
+                }
+            }
 
             [TestCase]
             public void ItShouldNameWithExpected()
@@ -1004,6 +752,518 @@ namespace Capibara.Test.Models.RoomTest
             public void ItShouldRefreshFailEventToNotOccur()
             {
                 Assert.That(this.IsRefreshFail, Is.EqualTo(false));
+            }
+        }
+    }
+
+    namespace OnMessageReceiveTest
+    {
+        [TestFixture]
+        public class WhenInvalidSystemMessage : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                Assert.DoesNotThrow(() => this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(new Message { Id = 0, Content = "" })));
+            }
+        }
+
+        [TestFixture]
+        public class WhenUnknownTypeSystemMessage : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                Assert.DoesNotThrow(() => this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(new Message { Id = 0, Content = "{\"type\":\"foo_bar\"}" })));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSystemMessageTypeIsEmpty : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                Assert.DoesNotThrow(() => this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(new Message { Id = 0, Content = "{\"type\":\"\"}" })));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSystemMessageTypeIsNull : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                Assert.DoesNotThrow(() => this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(new Message { Id = 0, Content = "{\"type\": null}" })));
+            }
+        }
+
+        [TestFixture]
+        public class WhenLeaveUser : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            protected bool NeedEventHandler { get; set; }
+
+            protected int ExceptParticipantsCount { get; set; } = 0;
+
+            protected bool IsFireJoinUser { get; private set; }
+
+            protected bool IsFireLeaveUser { get; private set; }
+
+            protected int UserId { get; set; } = 10;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Participants.Add(new User { Id = this.UserId });
+
+                this.Subject.Connect().Wait();
+
+                if (NeedEventHandler)
+                {
+                    this.Subject.JoinUser += (sender, e) => this.IsFireJoinUser = true;
+                    this.Subject.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
+                }
+
+                var message = new Message { Id = 0, Content = "{\"type\": \"leave_user\", \"number_of_participants\": 1, \"user\": { \"id\": 10, \"nickname\": \"ABC\" } }" };
+                
+                this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(message));
+            }
+
+            [TestCase]
+            public void ItShouldMessagesCountWithExpected()
+            {
+                Assert.That(this.Subject.Messages.Count, Is.EqualTo(0));
+            }
+
+            [TestCase]
+            public void ItShouldNumberOfParticipantsWithExpected()
+            {
+                Assert.That(this.Subject.NumberOfParticipants, Is.EqualTo(1));
+            }
+
+            [TestCase]
+            public void ItShouldParticipantsCountWithExpected()
+            {
+                Assert.That(this.Subject.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
+            }
+        }
+
+        [TestFixture]
+        public class WhenLeaveNotExistUser : WhenLeaveUser
+        {
+
+            public WhenLeaveNotExistUser()
+            {
+                this.ExceptParticipantsCount = 1;
+                this.UserId = 1;
+            }
+        }
+
+        public class WhenLeaveUserWithEventHandler : WhenLeaveUser
+        {
+            public WhenLeaveUserWithEventHandler()
+            {
+                this.NeedEventHandler = true;
+            }
+
+            [TestCase]
+            public void ItShouldJoinUserEventToNotOccur()
+            {
+                Assert.That(this.IsFireJoinUser, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldLeaveUserEventToOccur()
+            {
+                Assert.That(this.IsFireLeaveUser, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenJoinUser : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            protected bool NeedEventHandler { get; set; }
+
+            protected int ExceptParticipantsCount { get; set; } = 2;
+
+            protected bool IsFireJoinUser { get; private set; }
+
+            protected bool IsFireLeaveUser { get; private set; }
+
+            protected int UserId { get; set; } = 11;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Participants.Add(new User { Id = this.UserId });
+
+                this.Subject.Connect().Wait();
+
+                if (NeedEventHandler)
+                {
+                    this.Subject.JoinUser += (sender, e) => this.IsFireJoinUser = true;
+                    this.Subject.LeaveUser += (sender, e) => this.IsFireLeaveUser = true;
+                }
+
+                var message = new Message { Id = 0, Content = "{\"type\": \"join_user\", \"number_of_participants\": 10, \"user\": { \"id\": 10, \"nickname\": \"ABC\" } }" };
+
+                this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(message));
+            }
+
+            [TestCase]
+            public void ItShouldParticipantsCountWithExpected()
+            {
+                Assert.That(this.Subject.Participants.Count(), Is.EqualTo(this.ExceptParticipantsCount));
+            }
+        }
+
+        [TestFixture]
+        public class WhenJoinExitUser : WhenJoinUser
+        {
+            public WhenJoinExitUser()
+            {
+                this.ExceptParticipantsCount = 1;
+                this.UserId = 10;
+            }
+        }
+
+        public class WhenJoinUserWithEventHandler : WhenJoinUser
+        {
+            public WhenJoinUserWithEventHandler()
+            {
+                this.NeedEventHandler = true;
+            }
+
+            [TestCase]
+            public void ItShouldJoinUserEventToOccur()
+            {
+                Assert.That(this.IsFireJoinUser, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldLeaveUserEventToNotOccur()
+            {
+                Assert.That(this.IsFireLeaveUser, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+
+                var message = new Message { Id = 999, Sender = new User(), Content = "FooBar. Yes!Yes!Yeeeeees!", At = DateTimeOffset.Now };
+
+                this.Channel.Raise(x => x.MessageReceive += null, new EventArgs<Message>(message));
+            }
+
+            [TestCase]
+            public void ItShouldMessagesCountWithExpected()
+            {
+                Assert.That(this.Subject.Messages.Count, Is.EqualTo(1));
+            }
+        }
+    }
+
+    namespace OnRejectSubscriptionTest
+    {
+        [TestFixture]
+        public class WhenWithEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionFire()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                bool isRejectSubscription = false;
+                this.Subject.RejectSubscription += (s, e) => isRejectSubscription = true;
+
+                this.Subject.Connect().Wait();
+
+                this.Channel.Raise(x => x.RejectSubscription += null, EventArgs.Empty);
+
+                Assert.That(isRejectSubscription, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenWithoutEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [TestCase]
+            public void ItShouldDoesNotThrow()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+
+                Assert.DoesNotThrow(() => this.Channel.Raise(x => x.RejectSubscription += null, EventArgs.Empty));
+            }
+        }
+    }
+
+    namespace OnConnectedTest
+    {
+        [TestFixture]
+        public class WhenWithEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            [TestCase]
+            public void ItShouldRejectSubscriptionFire()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+
+                this.Channel.Raise(x => x.Connected += null, EventArgs.Empty);
+
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(true));
+            }
+        }
+    }
+
+    namespace OnDisconnectedTest
+    {
+        [TestFixture]
+        public class WhenWithEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            private bool IsDisconnected;
+
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Disconnected += (s, e) => this.IsDisconnected = true;
+
+                this.Subject.Connect().Wait();
+
+                this.Channel.Raise(x => x.Disconnected += null, EventArgs.Empty);
+            }
+
+            [TestCase]
+            public void ItShouldDisconnectedFire()
+            {
+                Assert.That(this.IsDisconnected, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldCloseCalled()
+            {
+                this.Channel.Verify(x => x.Close(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldDisposeCalled()
+            {
+                this.Channel.Verify(x => x.Dispose(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldClosed()
+            {
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenWithoutEventHandler : TestFixtureBase
+        {
+            private Room Subject;
+
+            private Mock<ChatChannelBase> Channel;
+
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Channel = new Mock<ChatChannelBase>();
+                this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
+
+                this.ChannelFactory.Setup(x => x.CreateChantChannel(It.IsAny<Room>())).Returns(this.Channel.Object);
+
+                this.Subject = new Room().BuildUp(this.Container);
+
+                this.Subject.Connect().Wait();
+
+                this.Channel.Raise(x => x.Disconnected += null, EventArgs.Empty);
+            }
+
+            [TestCase]
+            public void ItShouldCloseCalled()
+            {
+                this.Channel.Verify(x => x.Close(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldDisposeCalled()
+            {
+                this.Channel.Verify(x => x.Dispose(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldClosed()
+            {
+                Assert.That(this.Subject.IsConnected, Is.EqualTo(false));
             }
         }
     }

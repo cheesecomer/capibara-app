@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    x:Class="Capibara.Views.AcceptPage"
+    Title="{Binding Title.Value}">
+    <Grid BackgroundColor="#EEE">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="70" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <WebView
+            x:Name="WebView"
+            Source="{Binding Source.Value, Mode=OneWay}"
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand">
+            <WebView.Behaviors>
+                <behaviors:EventToCommandBehavior EventName="Navigated" Command="{Binding LoadedCommand}" />
+                <behaviors:EventToCommandBehavior EventName="Navigating" Command="{Binding OverrideUrlCommand}" EventArgsConverter="{StaticResource webNavigatingEventArgs}" />
+            </WebView.Behaviors>
+        </WebView>
+        <ProgressBar x:Name="ProgressBar" VerticalOptions="Start" />
+        <Button
+            Grid.Row="1" 
+            ef:ToFlatButton.On="true" 
+            Margin="20, 10" 
+            Text="{Binding ActiveCommandName.Value}" 
+            Command="{Binding ActiveCommand.Value}"
+            TextColor="{StaticResource PrimaryColor}"
+            BorderColor="{StaticResource PrimaryColor}"
+            BackgroundColor="White" />
+        <Button 
+            Grid.Row="2" 
+            ef:ToFlatButton.On="true" 
+            Text="アプリの使用を取りやめる" 
+            FontSize="Small"
+            BorderColor="Transparent"
+            BackgroundColor="Transparent"
+            Command="{Binding CancelCommand}" />
+    </Grid>
+</ContentPage>

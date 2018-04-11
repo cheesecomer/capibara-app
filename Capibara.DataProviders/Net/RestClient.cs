@@ -3,6 +3,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+using Capibara.Services;
+
+using Unity.Attributes;
+
 namespace Capibara.Net
 {
     public class RestClient : IRestClient, IDisposable
@@ -12,9 +16,11 @@ namespace Capibara.Net
         Task<HttpResponseMessage> IRestClient.SendAsync(HttpRequestMessage requestMessage)
              => this.httpClient.SendAsync(requestMessage);
 
-        void IRestClient.ApplyRequestHeader(HttpRequestMessage requestMessage)
+        void IRestClient.ApplyRequestHeader(HttpRequestMessage requestMessage, IApplicationService applicationService)
         {
-            // TODO
+            requestMessage.Headers.Add("X-Platform", applicationService.Platform);
+            requestMessage.Headers.Add("X-ApplicationVersion", applicationService.AppVersion);
+            requestMessage.Headers.Add("X-DeviceId", applicationService.UUID);
         }
 
         AuthenticationHeaderValue IRestClient.GenerateAuthenticationHeader(string token)

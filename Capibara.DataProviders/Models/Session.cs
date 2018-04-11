@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Capibara.Net;
-using Capibara.Net.Sessions;
+using Unity;
 
 namespace Capibara.Models
 {
@@ -13,11 +11,11 @@ namespace Capibara.Models
 
         private string password;
 
-        private Error error;
+        private bool isAccepted;
 
-        public event EventHandler SignInSuccess;
+        public virtual event EventHandler SignInSuccess;
 
-        public event EventHandler<Exception> SignInFail;
+        public virtual event EventHandler<FailEventArgs> SignInFail;
 
         /// <summary>
         /// メールアドレスを取得または設定します
@@ -39,49 +37,42 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.password, value);
         }
 
-        /// <summary>
-        /// APIエラー
-        /// </summary>
-        /// <value>The error.</value>
-        public Error Error
+        public virtual bool IsAccepted
         {
-            get => this.error;
-            set => this.SetProperty(ref this.error, value);
+            get => this.isAccepted;
+            set => this.SetProperty(ref this.isAccepted, value);
         }
 
         /// <summary>
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignIn()
+        public virtual async Task<bool> SignIn()
         {
-            var request = new CreateRequest()
-                {
-                    Email = this.Email,
-                    Password = this.Password
-                }.BuildUp(this.Container);
+            var request = this.RequestFactory.SessionsCreateRequest(this.Email, this.Password).BuildUp(this.Container);
 
             try
             {
                 var response = await request.Execute();
 
-                this.Error = null;
+                this.isAccepted = response.IsAccepted;
 
-                this.SecureIsolatedStorage.Email = this.Email;
-                this.SecureIsolatedStorage.AccessToken = response.AccessToken;
-                this.SecureIsolatedStorage.UserId = response.UserId;
-                this.SecureIsolatedStorage.Save();
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserNickname = response.Nickname;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.Save();
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, response);
 
                 this.SignInSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
-                if (e is HttpUnauthorizedException)
-                {
-                    this.Error = (e as HttpUnauthorizedException).Detail;
-                }
-
                 this.SignInFail?.Invoke(this, e);
+
+                return false;
             }
         }
     }

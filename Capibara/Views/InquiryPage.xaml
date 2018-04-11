@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    x:Class="Capibara.Views.InquiryPage"
+    Title="お問い合わせ">
+    <Grid Padding="0, 50, 0, 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <ScrollView Padding="20, 0">
+            <StackLayout>
+                <Entry
+                    ef:Border.Width="2"
+                    ef:Border.Radius="6"
+                    ef:Border.Color="#D1D1D1"
+                    HorizontalOptions="FillAndExpand"
+                    Placeholder="連絡先メールアドレス"
+                    HeightRequest="40"
+                    Text="{Binding Email.Value, Mode=TwoWay}"
+                    Margin="0, 0, 0, 20"
+                    />
+                <Label Text="お問い合わせ内容" />
+                <Editor
+                    ef:Border.Width="2"
+                    ef:Border.Radius="6"
+                    ef:Border.Color="#D1D1D1"
+                    Text="{Binding Message.Value, Mode=TwoWay}"
+                    Margin="10, 10, 0, 0"
+                    HeightRequest="150" />
+            </StackLayout>
+        </ScrollView>
+        <Button 
+            Grid.Row="1"
+            ef:ToFlatButton.On="true" 
+            HeightRequest="50"
+            Text="送信する"
+            TextColor="{StaticResource PrimaryColor}"
+            BorderColor="{StaticResource PrimaryColor}"
+            BackgroundColor="White"
+            Command="{Binding SubmitCommand}"
+            Margin="20"
+            />
+        
+        <forms:AdMobBanner Grid.Row="2" />
+
+        <BoxView Grid.Row="3" BackgroundColor="#EEE" />
+    </Grid>
+</ContentPage>

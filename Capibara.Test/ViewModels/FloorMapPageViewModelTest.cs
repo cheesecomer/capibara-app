@@ -1,169 +1,174 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
-
 using Capibara.Models;
+using Capibara.Net;
+using Capibara.Net.Rooms;
 using Capibara.ViewModels;
-
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
-
 using Prism.Navigation;
-using Prism.Services;
+using SubjectViewModel = Capibara.ViewModels.FloorMapPageViewModel;
 
-namespace Capibara.Test.ViewModels.FloorMapPageViewModelTest
+namespace Capibara.Test.ViewModels.FloorMapPageViewModel
 {
     [TestFixture]
-    public class ItemTappedCommandTest : TestFixtureBase
+    public class ItemTappedCommandTest : ViewModelTestBase
     {
-        protected string NavigatePageName { get; private set; }
-
-        protected NavigationParameters NavigationParameters { get; private set; }
-
-        [SetUp]
-        public void SetUp()
-        {
-            var container = this.GenerateUnityContainer();
-
-            var navigateTaskSource = new TaskCompletionSource<bool>();
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    this.NavigationParameters = parameters;
-                    navigateTaskSource.SetResult(true);
-                });
-
-            var viewModel = new FloorMapPageViewModel(navigationService.Object);
-
-            viewModel.ItemTappedCommand.Execute(new Room());
-
-            while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
-
         [TestCase]
         public void ItShouldNavigateToParticipantsPage()
         {
-            Assert.That(this.NavigatePageName, Is.EqualTo("RoomPage"));
-        }
+            var room = new Room();
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
+            viewModel.ItemTappedCommand.Execute(room);
 
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsRoom()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model] is Room, Is.EqualTo(true));
+            while (!viewModel.ItemTappedCommand.CanExecute()) { }
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "RoomPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == room))
+                , Times.Once());
         }
     }
 
     namespace RefreshCommandTest
     {
-        [TestFixture]
-        public class WhenSuccess : TestFixtureBase
+        public abstract class WhenSuccessBase : ViewModelTestBase
         {
-            protected Task<bool> refreshTask;
+            protected SubjectViewModel Subject { get; private set; }
+
+            protected virtual IndexResponse Response { get; } = new IndexResponse();
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ReturnsAsync(this.Response);
 
-                var viewModel = new FloorMapPageViewModel();
+                this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
 
-                viewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                viewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
+                this.Subject = new SubjectViewModel();
 
-                viewModel.BuildUp(container);
+                this.Subject.BuildUp(this.Container);
 
-                viewModel.RefreshCommand.Execute();
+                this.Subject.RefreshCommand.Execute();
 
-                this.refreshTask.Wait();
-            }
-
-            [TestCase]
-            public void ItShouldRefreshSuccess()
-            {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(true));
-            }
-        }
-
-        [TestFixture]
-        public class WhenUnauthorizedWithService : TestFixtureBase
-        {
-            protected Task<bool> refreshTask;
-
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            protected string NavigatePageName { get; private set; }
-
-            protected bool IsShowDialog { get; private set; }
-
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
-
-                var refreshTaskSource = new TaskCompletionSource<bool>();
-                this.refreshTask = refreshTaskSource.Task;
-
-                var navigateTaskSource = new TaskCompletionSource<bool>();
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns(navigateTaskSource.Task)
-                    .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.NavigatePageName = name;
-                        navigateTaskSource.SetResult(true);
-                    });
-
-
-                var pageDialogService = new Mock<IPageDialogService>();
-                pageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.Run(() => true))
-                    .Callback(() => this.IsShowDialog = true);
-
-                var viewModel = new FloorMapPageViewModel(
-                    navigationService.Object,
-                    pageDialogService.Object);
-
-                viewModel.Model.RefreshSuccess += (sender, e) => refreshTaskSource.SetResult(true);
-                viewModel.Model.RefreshFail += (sender, e) => refreshTaskSource.SetResult(false);
-
-                viewModel.BuildUp(container);
-
-                viewModel.RefreshCommand.Execute();
-
-                this.refreshTask.Wait();
-                navigateTaskSource.Task.Wait();
-            }
-
-            [TestCase]
-            public void ItShouldRefreshFail()
-            {
-                Assert.That(this.refreshTask.Result, Is.EqualTo(false));
+                while(!this.Subject.RefreshCommand.CanExecute()) { }
             }
 
             [TestCase]
             public void ItShouldShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
             }
+        }
+
+        [TestFixture]
+        public class WhenSuccess10 : WhenSuccessBase
+        {
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms = new List<Room>
+                {
+                    new Room { Id = 1, Name ="AAA01", Capacity = 11 },
+                    new Room { Id = 2, Name ="AAA02", Capacity = 12 },
+                    new Room { Id = 3, Name ="AAA03", Capacity = 13 },
+                    new Room { Id = 4, Name ="AAA04", Capacity = 14 },
+                    new Room { Id = 5, Name ="AAA05", Capacity = 15 },
+                    new Room { Id = 6, Name ="AAA06", Capacity = 16 },
+                    new Room { Id = 7, Name ="AAA07", Capacity = 17 },
+                    new Room { Id = 8, Name ="AAA08", Capacity = 18 },
+                    new Room { Id = 9, Name ="AAA09", Capacity = 19 },
+                    new Room { Id = 10, Name ="AAA10", Capacity = 20 },
+                }
+            };
 
             [TestCase]
-            public void ItShouldNavigateToLogin()
+            public void ItShouldRoomsWithExpected()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignInPage"));
+                var comparer = new RoomComparer();
+                var expect = new List<Room>
+                {
+                    new Room { Id = 1, Name ="AAA01", Capacity = 11 },
+                    new Room { Id = 2, Name ="AAA02", Capacity = 12 },
+                    new Room { Id = 3, Name ="AAA03", Capacity = 13 },
+                    new Room { Id = 4, Name ="AAA04", Capacity = 14 },
+                    new Room { Id = 5, Name ="AAA05", Capacity = 15 },
+                    new Room { Id = 6, Name ="AAA06", Capacity = 16 },
+                    new Room { Id = 7, Name ="AAA07", Capacity = 17 },
+                    new Room { Id = 8, Name ="AAA08", Capacity = 18 },
+                    new Room { Id = 9, Name ="AAA09", Capacity = 19 },
+                    new Room { Id = 10, Name ="AAA10", Capacity = 20 },
+                };
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess1 : WhenSuccessBase
+        {
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms = { new Room { Name = "AAA", Capacity = 10 } }
+            };
+
+            [TestCase]
+            public void ItShouldRoomsWithExpected()
+            {
+                var comparer = new RoomComparer();
+                var expect = new List<Room> { new Room { Name = "AAA", Capacity = 10 } };
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
+            }
+        }
+
+        [TestFixture]
+        public class WhenExists : WhenSuccessBase
+        {
+            protected override IndexResponse Response => new IndexResponse
+            {
+                Rooms =
+                {
+                    new Room { Id = 1, Name = "AAA", Capacity = 10 },
+                    new Room { Id = 1, Name = "AAA", Capacity = 10 }
+                }
+            };
+
+            [TestCase]
+            public void ItShouldRoomsWithExpected()
+            {
+                var comparer = new RoomComparer();
+                var expect = new List<Room> { new Room { Id = 1, Name = "AAA", Capacity = 10 } };
+                Assert.That(this.Subject.Rooms, Is.EqualTo(expect).Using(comparer));
+            }
+        }
+
+        [TestFixture]
+        public class WhenUnauthorizedWithService : ViewModelTestBase
+        {
+            [TestCase]
+            public void ItShouldDisplayErrorAlertAsyncCall()
+            {
+                var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                request.Setup(x => x.Execute()).ThrowsAsync(exception);
+
+                this.RequestFactory.Setup(x => x.RoomsIndexRequest()).Returns(request.Object);
+
+                var subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object);
+
+                subject.Object.BuildUp(this.Container);
+
+                subject.Object.RefreshCommand.Execute();
+
+                while (!subject.Object.RefreshCommand.CanExecute()) { }
+
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
             }
         }
     }

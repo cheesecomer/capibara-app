@@ -1,18 +1,26 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
+using Capibara.Net;
 using Capibara.Models;
 using Capibara.ViewModels;
 
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
+
+using Unity;
+using Unity.Extension;
 
 using Prism.Navigation;
 
-namespace Capibara.Test.ViewModels.SignInPageViewModelTest
+using SubjectViewModel = Capibara.ViewModels.SignInPageViewModel;
+
+namespace Capibara.Test.ViewModels.SignInPageViewModel
 {
     [TestFixture]
-    public class SignInCommandCanExecuteTest : TestFixtureBase
+    public class SignInCommandCanExecuteTest : ViewModelTestBase
     {
         [TestCase("", "", false)]
         [TestCase("", "password", false)]
@@ -25,152 +33,184 @@ namespace Capibara.Test.ViewModels.SignInPageViewModelTest
         [TestCase("email@email.com", "password", true)]
         public void ItShouldCanExecuteWithExpected(string email, string password, bool canExecute)
         {
-            var viewModel = new SignInPageViewModel().BuildUp(this.GenerateUnityContainer());
+            var viewModel = new SubjectViewModel().BuildUp(this.Container);
             viewModel.Email.Value = email;
             viewModel.Password.Value = password;
             Assert.That(viewModel.SignInCommand.CanExecute(), Is.EqualTo(canExecute));
         }
     }
 
+    namespace OnSignInSuccessTest
+    {
+        public abstract class TestBase : ViewModelTestBase
+        {
+            public virtual bool IsAccepted { get; }
+
+            protected SubjectViewModel Subject { get; private set; }
+
+            protected User User;
+
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var model = new Mock<Session>();
+                model.SetupGet(x => x.IsAccepted).Returns(IsAccepted);
+
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.User = new User());
+
+                model.Raise(x => x.SignInSuccess += null, EventArgs.Empty);
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndAccepted : TestBase
+        {
+            public override bool IsAccepted => true;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+            }
+        }
+
+        public class WhenAccessTokenIsPresentAndNotAccepted : TestBase
+        {
+            public override bool IsAccepted => false;
+
+            [TestCase]
+            public void ItShouldNavigateAcceptPage()
+            {
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "/NavigationPage/AcceptPage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == this.User))
+                    , Times.Once());
+            }
+        }
+    }
+
+    namespace OnSignInFailTest
+    {
+        public abstract class TestBase : ViewModelTestBase
+        {
+            protected Mock<SubjectViewModel> Subject { get; private set; }
+
+            protected abstract Exception Exception { get; }
+
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var model = new Mock<Session>();
+                this.Subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object, model.Object);
+                this.Subject.Object.BuildUp(this.Container);
+
+                model.Raise(x => x.SignInFail += null, new FailEventArgs(this.Exception));
+            }
+        }
+
+        [TestFixture]
+        public class WhenHttpUnauthorizedException : TestBase
+        {
+            protected override Exception Exception { get; } = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, "{ \"message\": \"m9(^Д^)\"}");
+
+            [TestCase]
+            public void ItShouldErrorMessageExpect()
+            {
+                Assert.That(this.Subject.Object.Error.Value, Is.EqualTo("m9(^Д^)"));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWebException : TestBase
+        {
+            protected override Exception Exception { get; } = new WebException();
+
+            [TestCase]
+            public void ItShouldDisplayErrorAlertAsyncCall()
+            {
+                this.Subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), this.Exception, ItExpr.IsAny<Func<Task>>());
+            }
+        }
+    }
+
     namespace SignInCommandExecuteTest
     {
-        public abstract class ExecuteTestBase : TestFixtureBase
+        public abstract class ExecuteTestBase : ViewModelTestBase
         {
-            protected Task<bool> loginTask;
-
-            protected string navigatePageName;
-
             protected virtual bool NeedSignInWait { get; } = true;
 
-            protected SignInPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
+
+            protected Mock<Session> Model;
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                var container = this.GenerateUnityContainer();
+                base.SetUp();
 
-                var loginCompletionSource = new TaskCompletionSource<bool>();
-                this.loginTask = loginCompletionSource.Task;
+                this.Model = new Mock<Session>();
+                this.Model.SetupAllProperties();
+                this.Model.Setup(x => x.SignIn()).ReturnsAsync(true);
 
-                var navigationService = new Mock<INavigationService>();
-                navigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                    {
-                        this.navigatePageName = name;
-                    });
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+                this.Subject.Email.Value = "user@email.com";
+                this.Subject.Password.Value = "password";
 
-                this.ViewModel = new SignInPageViewModel(navigationService.Object).BuildUp(container);
-                this.ViewModel.Email.Value = "user@email.com";
-                this.ViewModel.Password.Value = "password";
-
-                this.ViewModel.Model.SignInSuccess += (sender, e) => loginCompletionSource.SetResult(true);
-                this.ViewModel.Model.SignInFail += (sender, e) => loginCompletionSource.SetResult(false);
-
-                this.ViewModel.SignInCommand.Execute();
-
-                if (this.NeedSignInWait)
+                if (!this.NeedSignInWait)
                 {
-                    this.loginTask.Wait();
+                    this.Subject.SignInCommand.Subscribe(() => new TaskCompletionSource<bool>().Task);
                 }
+
+                this.Subject.SignInCommand.Execute();
+            }
+
+            [TestCase]
+            public void ItShouldIsSignInCalled()
+            {
+                this.Model.Verify(x => x.SignIn(), Times.Once());
             }
         }
 
         [TestFixture]
         public class WhenWait : ExecuteTestBase
         {
-            protected override bool IsInfiniteWait { get; } = true;
-
             protected override bool NeedSignInWait { get; } = false;
 
             [TestCase]
             public void ItShouldBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
         public class WhenSuccess : ExecuteTestBase
         {
-            protected override string HttpStabResponse => "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\"}";
-
-            [TestCase]
-            public void ItShouldSignInSuccess()
-            {
-                Assert.That(this.loginTask.Result, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigateToFloorMap()
-            {
-                Assert.That(this.navigatePageName, Is.EqualTo("NavigationPage/FloorMapPage"));
-            }
-
             [TestCase]
             public void ItShouldNotBusy()
             {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
-            }
-        }
-
-        [TestFixture]
-        public class WhenFail : ExecuteTestBase
-        {
-            protected override HttpStatusCode HttpStabStatusCode => HttpStatusCode.Unauthorized;
-
-            [TestCase]
-            public void ItShouldSignInFail()
-            {
-                Assert.That(this.loginTask.Result, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldNotNavigate()
-            {
-                Assert.That(this.navigatePageName, Is.Null.Or.EqualTo(string.Empty));
-            }
-
-            [TestCase]
-            public void ItShouldNotBusy()
-            {
-                Assert.That(this.ViewModel.IsBusy.Value, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBusy.Value, Is.EqualTo(false));
             }
         }
     }
 
     [TestFixture]
-    public class SignUpCommandTest : TestFixtureBase
+    public class SignUpCommandTest : ViewModelTestBase
     {
-        protected string NavigatePageName { get; private set; }
-
-        [SetUp]
-        public void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToSignUpPage()
         {
-            var container = this.GenerateUnityContainer();
-
-            var navigateTaskSource = new TaskCompletionSource<bool>();
-            var navigationService = new Mock<INavigationService>();
-            navigationService
-                .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(navigateTaskSource.Task)
-                .Callback((string name, NavigationParameters parameters, bool? useModalNavigation, bool animated) =>
-                {
-                    this.NavigatePageName = name;
-                    navigateTaskSource.SetResult(true);
-                });
-
-            var viewModel = new SignInPageViewModel(navigationService.Object);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object);
 
             viewModel.SignUpCommand.Execute();
 
             while (!viewModel.SignUpCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToSignUpPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("SignUpPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("SignUpPage", null, null, false), Times.Once());
         }
     }
 }

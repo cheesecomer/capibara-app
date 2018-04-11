@@ -4,201 +4,373 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.IO;
 
 using Moq;
-using Microsoft.Practices.Unity;
+using Unity;
 using NUnit.Framework;
 
 using Capibara.Net;
 
-namespace Capibara.Test.Net.RequestBaseTest.ExecuteTest
+namespace Capibara.Test.Net
 {
-    public class GetRequest : RequestBase<object>
+    namespace RequestBaseNonGenericTest.ExecuteTest
     {
-        public override HttpMethod Method { get; } = HttpMethod.Get;
+        public class GetRequest : RequestBase
+        {
+            public override HttpMethod Method { get; } = HttpMethod.Get;
 
-        public override string[] Paths { get; } = new string[] { "rooms" };
+            public override string[] Paths { get; } = new string[] { "rooms" };
+        }
+
+        public class GetWithAuthenticationRequest : RequestBase
+        {
+            public override HttpMethod Method { get; } = HttpMethod.Get;
+
+            public override string[] Paths { get; } = new string[] { "rooms" };
+
+            public override bool NeedAuthentication { get; } = true;
+        }
+
+        [TestFixture]
+        public class WhenGetSuccess : TestFixtureBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                new GetRequest().BuildUp(this.Container).Execute().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            }
+        }
+
+        [TestFixture]
+        public class WhenGetWithAuthenticationSuccess : TestFixtureBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
+
+                new GetWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            }
+
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedScheme()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
+            }
+
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedValue()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Parameter, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            }
+        }
+
+        public class WhenHasntPlatformInitializer : TestFixtureBase
+        {
+            private bool result;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var application = new Mock<ICapibaraApplication>();
+                application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
+
+                var container = this.Container;
+                container.RegisterInstance<ICapibaraApplication>(application.Object);
+
+                // RequestBase のセットアップ
+                var task = new GetRequest().BuildUp(container).Execute();
+                task.Wait();
+                this.result = task.IsCompleted;
+            }
+
+            [TestCase]
+            public void ItShouldThrowException()
+            {
+                Assert.That(this.result, Is.True);
+            }
+        }
+
+        [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
+        [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
+        [TestFixture(HttpStatusCode.Forbidden, "{\"message\": \"Bar\"}", typeof(HttpForbiddenException), "Bar")]
+        [TestFixture(HttpStatusCode.ServiceUnavailable, "{\"message\": \"Bar\"}", typeof(HttpServiceUnavailableException), "Bar")]
+        [TestFixture(HttpStatusCode.UpgradeRequired, "{\"message\": \"Bar\"}", typeof(HttpUpgradeRequiredException), "Bar")]
+        public class WhenGetFail : TestFixtureBase
+        {
+            protected override HttpStatusCode HttpStabStatusCode => httpStatus;
+
+            protected override string HttpStabResponse => response;
+
+            private HttpStatusCode httpStatus;
+
+            private string response;
+
+            private string message;
+
+            private Type exceptionClass;
+
+            private GetRequest request;
+
+            public WhenGetFail(HttpStatusCode httpStatus, string response, Type exceptionClass, string message)
+            {
+                this.httpStatus = httpStatus;
+                this.response = response;
+                this.exceptionClass = exceptionClass;
+                this.message = message;
+            }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                // RequestBase のセットアップ
+                this.request = new GetRequest().BuildUp(this.Container);
+            }
+
+            [TestCase]
+            public void ItShouldThrowException()
+            {
+                Assert.ThrowsAsync(exceptionClass, this.request.Execute);
+            }
+
+            [TestCase]
+            public void ItShouldExtensionMessageWithExpected()
+            {
+                Assert.That(
+                    () => this.request.Execute(),
+                    Throws.TypeOf(exceptionClass).With.Message.EqualTo(this.response));
+            }
+
+            [TestCase]
+            public void ItShouldErrorMessageWithExpected()
+            {
+                Assert.That(
+                    () => this.request.Execute(),
+                    Throws.TypeOf(exceptionClass).With.Property("Detail").Property("Message").EqualTo(this.message));
+            }
+        }
     }
 
-    public class GetWithAuthenticationRequest : RequestBase<object>
+    namespace RequestBaseTest.ExecuteTest
     {
-        public override HttpMethod Method { get; } = HttpMethod.Get;
-
-        public override string[] Paths { get; } = new string[] { "rooms" };
-
-        public override bool NeedAuthentication { get; } = true;
-    }
-
-    [TestFixture]
-    public class WhenGetSuccess : WhenSuccessBase<object>
-    {
-        protected override RequestBase<object> Request
-            => new GetRequest();
-
-        [TestCase]
-        public void ItShouldRequestToExpectedUrl()
+        public class GetRequest : RequestBase<object>
         {
-            Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            public override HttpMethod Method { get; } = HttpMethod.Get;
+            
+            public override string[] Paths { get; } = new string[] { "rooms" };
         }
-    }
-
-    [TestFixture]
-    public class WhenGetWithAuthenticationSuccess : WhenSuccessBase<object>
-    {
-        protected override RequestBase<object> Request
-            => new GetWithAuthenticationRequest();
-
-        protected override string AccessToken { get; } = "1:bGbDyyVxbSQorRhgyt6R";
-
-        [TestCase]
-        public void ItShouldRequestToExpectedUrl()
+        
+        public class GetWithAuthenticationRequest : RequestBase<object>
         {
-            Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            public override HttpMethod Method { get; } = HttpMethod.Get;
+            
+            public override string[] Paths { get; } = new string[] { "rooms" };
+            
+            public override bool NeedAuthentication { get; } = true;
         }
 
-        [TestCase]
-        public void ItShouldAuthenticationHeaderWithExpectedScheme()
+        public class PostWithAuthenticationRequest : RequestBase<object>
         {
-            Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
+            public override HttpMethod Method { get; } = HttpMethod.Post;
+
+            public override string[] Paths { get; } = new string[] { "sessions" };
+
+            public override bool NeedAuthentication { get; } = true;
+
+            public override string StringContent => "{ \"email\": \"example@email.com\" }";
+
+            public override string ContentType => "application/json";
+        }
+        
+        [TestFixture]
+        public class WhenGetSuccess : TestFixtureBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                new GetRequest().BuildUp(this.Container).Execute().Wait();
+            }
+            
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            }
+        }
+        
+        [TestFixture]
+        public class WhenGetWithAuthenticationSuccess : TestFixtureBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
+                
+                new GetWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
+            }
+            
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            }
+            
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedScheme()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
+            }
+            
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedValue()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Parameter, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            }
         }
 
-        [TestCase]
-        public void ItShouldAuthenticationHeaderWithExpectedValue()
+        [TestFixture]
+        public class WhenPostWithAuthenticationSuccess : TestFixtureBase
         {
-            Assert.That(this.RequestMessage.Headers.Authorization?.Parameter, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.IsolatedStorage.AccessToken = "1:bGbDyyVxbSQorRhgyt6R";
+
+                new PostWithAuthenticationRequest().BuildUp(this.Container).Execute().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/sessions"));
+            }
+
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedScheme()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Scheme, Is.EqualTo("Token"));
+            }
+
+            [TestCase]
+            public void ItShouldAuthenticationHeaderWithExpectedValue()
+            {
+                Assert.That(this.RequestMessage.Headers.Authorization?.Parameter, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+            }
         }
-    }
-
-    public class WhenHasntPlatformInitializer
-    {
-        private object result;
-
-        [SetUp]
-        public void SetUp()
+        
+        public class WhenHasntPlatformInitializer : TestFixtureBase
         {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
+            private object result;
+            
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
 
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-            restClient
-                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                .ReturnsAsync(new HttpResponseMessage());
-
-            // ISecureIsolatedStorage のセットアップ
-            var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-            secureIsolatedStorage.SetupAllProperties();
-
-            var application = new Mock<ICapibaraApplication>();
-            application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
-
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-            // RequestBase のセットアップ
-            var task = new GetRequest().BuildUp(container).Execute();
-            task.Wait();
-            this.result = task.Result;
+                var application = new Mock<ICapibaraApplication>();
+                application.SetupGet(x => x.HasPlatformInitializer).Returns(false);
+                this.Container.RegisterInstance<ICapibaraApplication>(application.Object);
+                
+                // RequestBase のセットアップ
+                var task = new GetRequest().BuildUp(this.Container).Execute();
+                task.Wait();
+                this.result = task.Result;
+            }
+            
+            [TestCase]
+            public void ItShouldThrowException()
+            {
+                Assert.That(this.result, Is.Null);
+            }
         }
-
-        [TestCase]
-        public void ItShouldThrowException()
+        
+        [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
+        [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
+        [TestFixture(HttpStatusCode.Forbidden, "{\"message\": \"Bar\"}", typeof(HttpForbiddenException), "Bar")]
+        [TestFixture(HttpStatusCode.ServiceUnavailable, "{\"message\": \"Bar\"}", typeof(HttpServiceUnavailableException), "Bar")]
+        [TestFixture(HttpStatusCode.UpgradeRequired, "{\"message\": \"Bar\"}", typeof(HttpUpgradeRequiredException), "Bar")]
+        public class WhenGetFail : TestFixtureBase
         {
-            Assert.That(this.result, Is.Null);
-        }
-    }
+            protected override HttpStatusCode HttpStabStatusCode => httpStatus;
+            
+            protected override string HttpStabResponse => response;
+            
+            private HttpStatusCode httpStatus;
+            
+            private string response;
+            
+            private string message;
+            
+            private Type exceptionClass;
+            
+            private GetRequest request;
+            
+            public WhenGetFail(HttpStatusCode httpStatus, string response, Type exceptionClass, string message)
+            {
+                this.httpStatus = httpStatus;
+                this.response = response;
+                this.exceptionClass = exceptionClass;
+                this.message = message;
+            }
+            
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
 
-    [TestFixture(HttpStatusCode.NotFound, "{\"message\": \"Foo\"}", typeof(HttpNotFoundException), "Foo")]
-    [TestFixture(HttpStatusCode.Unauthorized, "{\"message\": \"Bar\"}", typeof(HttpUnauthorizedException), "Bar")]
-    public class WhenGetFail
-    {
-        private HttpStatusCode httpStatus;
-
-        private string response;
-
-        private string message;
-
-        private Type exceptionClass;
-
-        private GetRequest request;
-
-        public WhenGetFail(HttpStatusCode httpStatus, string response, Type exceptionClass, string message)
-        {
-            this.httpStatus = httpStatus;
-            this.response = response;
-            this.exceptionClass = exceptionClass;
-            this.message = message;
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            // Environment のセットアップ
-            var environment = new Mock<IEnvironment>();
-            environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-            var responseMessage =
-                new HttpResponseMessage()
-                {
-                    StatusCode = httpStatus,
-                    Content = new HttpContentHandler()
-                    {
-                        ResultOfString = this.response
-                    }
-                };
-
-            // RestClient のセットアップ
-            var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-            restClient
-                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                .ReturnsAsync(responseMessage);
-
-            // ISecureIsolatedStorage のセットアップ
-            var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-            secureIsolatedStorage.SetupAllProperties();
-
-            var application = new Mock<ICapibaraApplication>();
-            application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-            var container = new UnityContainer();
-            container.RegisterInstance<IUnityContainer>(container);
-            container.RegisterInstance<IEnvironment>(environment.Object);
-            container.RegisterInstance<IRestClient>(restClient.Object);
-            container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-            container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-            // RequestBase のセットアップ
-            this.request = new GetRequest().BuildUp(container);
-        }
-
-        [TestCase]
-        public void ItShouldThrowException()
-        {
-            Assert.ThrowsAsync(exceptionClass, this.request.Execute);
-        }
-
-        [TestCase]
-        public void ItShouldExtensionMessageWithExpected()
-        {
-            Assert.That(
-                () => this.request.Execute(),
-                Throws.TypeOf(exceptionClass).With.Message.EqualTo(this.response));
-        }
-
-        [TestCase]
-        public void ItShouldErrorMessageWithExpected()
-        {
-            Assert.That(
-                () => this.request.Execute(),
-                Throws.TypeOf(exceptionClass).With.Property("Detail").Property("Message").EqualTo(this.message));
+                // RequestBase のセットアップ
+                this.request = new GetRequest().BuildUp(this.Container);
+            }
+            
+            [TestCase]
+            public void ItShouldThrowException()
+            {
+                Assert.ThrowsAsync(exceptionClass, this.request.Execute);
+            }
+            
+            [TestCase]
+            public void ItShouldExtensionMessageWithExpected()
+            {
+                Assert.That(
+                    () => this.request.Execute(),
+                    Throws.TypeOf(exceptionClass).With.Message.EqualTo(this.response));
+            }
+            
+            [TestCase]
+            public void ItShouldErrorMessageWithExpected()
+            {
+                Assert.That(
+                    () => this.request.Execute(),
+                    Throws.TypeOf(exceptionClass).With.Property("Detail").Property("Message").EqualTo(this.message));
+            }
         }
     }
 }

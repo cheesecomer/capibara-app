@@ -8,12 +8,15 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+using Capibara.Services;
+
 using Newtonsoft.Json;
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 namespace Capibara.Net
 {
-    public abstract class RequestBase<TResponse> : IRequest<TResponse> where TResponse : class, new()
+    public abstract class RequestBaseCore
     {
         /// <summary>
         /// HTTP メソッドを取得します。
@@ -66,21 +69,23 @@ namespace Capibara.Net
         /// <value>The secure isolated storage.</value>
         [JsonIgnore]
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
         [JsonIgnore]
         [Dependency]
         public ICapibaraApplication Application { get; set; }
 
-        protected virtual string StringContent => string.Empty;
+        [JsonIgnore]
+        [Dependency]
+        public IApplicationService ApplicationService { get; set; }
 
-        protected virtual string ContentType => string.Empty;
+        [JsonIgnore]
+        public virtual string StringContent => string.Empty;
 
-        /// <summary>
-        /// Execute this instance.
-        /// </summary>
-        /// <returns>The execute.</returns>
-        public async Task<TResponse> Execute()
+        [JsonIgnore]
+        public virtual string ContentType => string.Empty;
+
+        internal async Task<HttpResponseMessage> ExecuteInternal()
         {
             if (!this.Application.HasPlatformInitializer)
             {
@@ -92,12 +97,12 @@ namespace Capibara.Net
 
             var requestMessage = new HttpRequestMessage(this.Method, url);
 
-            this.RestClient.ApplyRequestHeader(requestMessage);
+            this.RestClient.BuildUp(this.Container).ApplyRequestHeader(requestMessage, this.ApplicationService);
 
-            if (this.NeedAuthentication && this.SecureIsolatedStorage.AccessToken.IsPresent())
+            if (this.NeedAuthentication && this.IsolatedStorage.AccessToken.IsPresent())
             {
                 requestMessage.Headers.Authorization
-                      = this.RestClient.GenerateAuthenticationHeader(this.SecureIsolatedStorage.AccessToken);
+                      = this.RestClient.GenerateAuthenticationHeader(this.IsolatedStorage.AccessToken);
             }
 
             if (new HttpMethod[] { HttpMethod.Post, HttpMethod.Put }.Any(x => x == this.Method))
@@ -107,6 +112,7 @@ namespace Capibara.Net
             }
 
             var responseMessage = await this.RestClient.SendAsync(requestMessage);
+            requestMessage.Dispose();
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
@@ -114,23 +120,73 @@ namespace Capibara.Net
             }
             else if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                this.SecureIsolatedStorage.Email = string.Empty;
-                this.SecureIsolatedStorage.AccessToken = string.Empty;
-                this.SecureIsolatedStorage.Save();
+                this.IsolatedStorage.UserId = 0;
+                this.IsolatedStorage.UserNickname = string.Empty;
+                this.IsolatedStorage.AccessToken = string.Empty;
+                this.IsolatedStorage.Save();
 
                 throw new HttpUnauthorizedException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
             }
-
-            using (var stream = await responseMessage.Content.ReadAsStreamAsync())
-            using (var reader = new StreamReader(stream))
+            else if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
             {
-                var response = reader.ReadToEnd();
-                if (response.IsNullOrEmpty())
-                {
-                    return new TResponse().BuildUp(this.Container);
-                }
+                throw new HttpForbiddenException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+            else if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                throw new HttpServiceUnavailableException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
+            else if (responseMessage.StatusCode == HttpStatusCode.UpgradeRequired)
+            {
+                throw new HttpUpgradeRequiredException(responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
+            }
 
-                return JsonConvert.DeserializeObject<TResponse>(response).BuildUp(this.Container);
+            return responseMessage;
+        }
+    }
+
+    public abstract class RequestBase : RequestBaseCore, IRequest
+    {
+        /// <summary>
+        /// Execute this instance.
+        /// </summary>
+        /// <returns>The execute.</returns>
+        public virtual async Task Execute()
+        {
+            (await this.ExecuteInternal())?.Dispose();
+        }
+    }
+
+    public abstract class RequestBase<TResponse> : RequestBaseCore, IRequest<TResponse> where TResponse : class, new()
+    {
+        /// <summary>
+        /// Execute this instance.
+        /// </summary>
+        /// <returns>The execute.</returns>
+        public virtual async Task<TResponse> Execute()
+        {
+            var responseMessage = await this.ExecuteInternal();
+            if (responseMessage == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var stream = await responseMessage.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                {
+                    var response = reader.ReadToEnd();
+                    if (response.IsNullOrEmpty())
+                    {
+                        return new TResponse().BuildUp(this.Container);
+                    }
+
+                    return JsonConvert.DeserializeObject<TResponse>(response).BuildUp(this.Container);
+                }
+            }
+            finally
+            {
+                responseMessage.Dispose();
             }
         }
     }

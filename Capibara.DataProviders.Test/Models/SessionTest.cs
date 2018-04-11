@@ -1,383 +1,200 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Linq;
 
 using Capibara.Models;
 using Capibara.Net;
+using Capibara.Net.Sessions;
 
 using Moq;
-using Microsoft.Practices.Unity;
 using NUnit.Framework;
 
 namespace Capibara.Test.Models.SessionTest
 {
     namespace SignInTest
     {
-        [TestFixture]
-        public class WhenSuccess
+        public class TestBase: TestFixtureBase
         {
-            bool isSucceed;
+            protected bool IsSucceed { get; private set; }
 
-            bool isFailed;
+            protected bool IsFailed { get; private set; }
 
-            protected Session model;
+            protected Session Subject { get; private set; }
+
+            protected virtual bool WithEventHandler { get; } = true;
+
+            protected virtual CreateResponse Response { get; }
+
+            protected virtual Exception Exception { get; }
+
+            protected bool Result { get; private set; }
 
             [SetUp]
-            public void Setup()
+            public override void SetUp()
             {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
+                base.SetUp();
 
-                var responseMessage =
-                    new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new Net.HttpContentHandler()
-                        {
-                            ResultOfString = "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\", \"user_id\": 999}"
-                        }
-                    };
+                this.Subject = new Session { Email = "user@email.com", Password = "password" }.BuildUp(this.Container);
 
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
+                var request = new Mock<RequestBase<CreateResponse>>();
 
-                // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.Setup(x => x.Save());
+                var methodMock = request.Setup(x => x.Execute());
 
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
 
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
+                this.RequestFactory.Setup(x => x.SessionsCreateRequest("user@email.com", "password")).Returns(request.Object);
 
-                this.model = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(container);
+                if (this.WithEventHandler)
+                {
+                    this.Subject.SignInFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.SignInSuccess += (sender, e) => this.IsSucceed = true;
+                }
 
-                this.model.SignInFail += (sender, e) => this.isFailed = true;
-                this.model.SignInSuccess += (sender, e) => this.isSucceed = true;
+                this.Result = this.Subject.SignIn().Result;
+            }
+        }
 
-                this.model.SignIn().Wait();
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override CreateResponse Response => new CreateResponse
+            {
+                AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
+                Id = 999,
+                Nickname = "Foo.Bar"
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
             }
 
             [TestCase]
-            public void IsShouldSaveTokenInSecureStorage()
+            public void ItShouldSaveTokenInStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.EqualTo("1:bGbDyyVxbSQorRhgyt6R"));
             }
 
             [TestCase]
-            public void IsShouldSaveEmailInSecureStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.EqualTo("user@email.com"));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.EqualTo("Foo.Bar"));
             }
 
             [TestCase]
-            public void IsShouldSaveUserIdInSecureStorage()
+            public void ItShouldSaveUserIdInStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.UserId, Is.EqualTo(999));
+                Assert.That(this.Subject.IsolatedStorage.UserId, Is.EqualTo(999));
             }
 
             [TestCase]
-            public void ItShouldNotBeError()
+            public void ItShouldRegisterUserInDIContainer()
             {
-                Assert.That(this.model.Error, Is.Null);
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(true));
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.isSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.isFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
 
         [TestFixture]
-        public class WhenFail
+        public class WhenFail : TestBase
         {
-            protected Session model;
+            protected override Exception Exception => new WebException();
 
-            bool isSucceed;
-
-            bool isFailed;
-
-            [SetUp]
-            public void Setup()
+            [TestCase]
+            public void ItShouldFail()
             {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-                var responseMessage =
-                    new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.Unauthorized,
-                        Content = new Net.HttpContentHandler()
-                        {
-                            ResultOfString = "{ \"message\": \"booo...\"}"
-                        }
-                    };
-
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
-
-                // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-                this.model = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(container);
-
-                this.model.SignInFail += (sender, e) => this.isFailed = true;
-                this.model.SignInSuccess += (sender, e) => this.isSucceed = true;
-
-                this.model.SignIn().Wait();
+                Assert.That(this.Result, Is.EqualTo(false));
             }
 
             [TestCase]
-            public void IsShouldDontSaveTokenInSecureStorage()
+            public void ItShouldDontSaveTokenInStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void IsShouldDontSaveEmailInSecureStorage()
+            public void ItShouldDontSaveUserNicknameInStorage()
             {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.Null.Or.EqualTo(string.Empty));
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
             }
 
             [TestCase]
-            public void ItShouldBeError()
+            public void ItShouldNotRegisterUserInDIContainer()
             {
-                Assert.That(this.model.Error, Is.Not.Null);
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.isSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.isFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.EqualTo(true));
             }
         }
 
         [TestFixture]
-        public class WhenSuccessWithoutEventHandler
+        public class WhenSuccessWithoutEventHandler : TestBase
         {
-            protected Session model;
+            protected override bool WithEventHandler { get; } = false;
 
-            [SetUp]
-            public void Setup()
+            protected override CreateResponse Response => new CreateResponse
             {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
+                AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
+                Id = 999,
+                Nickname = "Foo.Bar"
+            };
 
-                var responseMessage =
-                    new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new Net.HttpContentHandler()
-                        {
-                            ResultOfString = "{ \"access_token\": \"1:bGbDyyVxbSQorRhgyt6R\"}"
-                        }
-                    };
-
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
-
-                // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-                secureIsolatedStorage.Setup(x => x.Save());
-
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-                this.model = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(container);
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
             }
 
             [TestCase]
-            public void IsShouldNotException()
+            public void ItShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.model.SignIn);
+                Assert.DoesNotThrowAsync(this.Subject.SignIn);
             }
         }
 
         [TestFixture]
-        public class WhenFailWithoutEventHandler
+        public class WhenFailWithoutEventHandler : TestBase
         {
-            protected Session model;
+            protected override bool WithEventHandler { get; } = false;
 
-            bool isSucceed;
+            protected override Exception Exception => new WebException();
 
-            bool isFailed;
-
-            [SetUp]
-            public void Setup()
+            [TestCase]
+            public void ItShouldFail()
             {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-                var responseMessage =
-                    new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.Unauthorized,
-                        Content = new Net.HttpContentHandler()
-                        {
-                            ResultOfString = "{ \"message\": \"booo...\"}"
-                        }
-                    };
-
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ReturnsAsync(responseMessage);
-
-                // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-                this.model = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(container);
+                Assert.That(this.Result, Is.EqualTo(false));
             }
 
             [TestCase]
-            public void IsShouldNotException()
+            public void ItShouldNotException()
             {
-                Assert.DoesNotThrowAsync(this.model.SignIn);
-            }
-        }
-
-        [TestFixture]
-        public class WhenTimeout
-        {
-            protected Session model;
-
-            bool isSucceed;
-
-            bool isFailed;
-
-            [SetUp]
-            public void Setup()
-            {
-                // Environment のセットアップ
-                var environment = new Mock<IEnvironment>();
-                environment.SetupGet(x => x.ApiBaseUrl).Returns("http://localhost:3000/");
-
-                // RestClient のセットアップ
-                var restClient = new Mock<IRestClient>();
-                restClient.Setup(x => x.ApplyRequestHeader(It.IsAny<HttpRequestMessage>()));
-                restClient
-                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>()))
-                    .ThrowsAsync(new WebException());
-
-                // ISecureIsolatedStorage のセットアップ
-                var secureIsolatedStorage = new Mock<ISecureIsolatedStorage>();
-                secureIsolatedStorage.SetupAllProperties();
-
-                var application = new Mock<ICapibaraApplication>();
-                application.SetupGet(x => x.HasPlatformInitializer).Returns(true);
-
-                var container = new UnityContainer();
-                container.RegisterInstance<IUnityContainer>(container);
-                container.RegisterInstance<IEnvironment>(environment.Object);
-                container.RegisterInstance<IRestClient>(restClient.Object);
-                container.RegisterInstance<ISecureIsolatedStorage>(secureIsolatedStorage.Object);
-                container.RegisterInstance<ICapibaraApplication>(application.Object);
-
-                this.model = new Session() { Email = "user@email.com", Password = "password" }.BuildUp(container);
-
-                this.model.SignInFail += (sender, e) => this.isFailed = true;
-                this.model.SignInSuccess += (sender, e) => this.isSucceed = true;
-
-                this.model.SignIn().Wait();
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveTokenInSecureStorage()
-            {
-                Assert.That(this.model.SecureIsolatedStorage.AccessToken, Is.Null);
-            }
-
-            [TestCase]
-            public void IsShouldDontSaveEmailInSecureStorage()
-            {
-                Assert.That(this.model.SecureIsolatedStorage.Email, Is.Null);
-            }
-
-            [TestCase]
-            public void ItShouldBeError()
-            {
-                Assert.That(this.model.Error, Is.Null);
-            }
-
-            [TestCase]
-            public void ItShouldSignInSuccessEventToNotOccur()
-            {
-                Assert.That(this.isSucceed, Is.EqualTo(false));
-            }
-
-            [TestCase]
-            public void ItShouldSignInFailEventToOccur()
-            {
-                Assert.That(this.isFailed, Is.EqualTo(true));
+                Assert.DoesNotThrowAsync(this.Subject.SignIn);
             }
         }
     }

@@ -1,29 +1,81 @@
-﻿using System;
-
-using Capibara.Models;
+﻿using Capibara.Models;
 using Capibara.ViewModels;
-
 using NUnit.Framework;
-namespace Capibara.Test.ViewModels.ParticipantsPageViewModelTest
+using Moq;
+using Prism.Navigation;
+using SubjectViewModel = Capibara.ViewModels.ParticipantsPageViewModel;
+
+namespace Capibara.Test.ViewModels.ParticipantsPageViewModel
 {
+    namespace ItemTappedCommand
+    {
+        [TestFixture]
+        public class WhenOther : ViewModelTestBase
+        {
+            [TestCase]
+            public void ItShouldNavigateToUserProfilePage()
+            {
+                var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
+                var model = new User { Id = 1 };
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: model));
+
+                while (!viewModel.ItemTappedCommand.CanExecute()) { }
+
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "UserProfilePage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == model))
+                    , Times.Once());
+            }
+        }
+
+        [TestFixture]
+        public class WhenOwn : ViewModelTestBase
+        {
+            [TestCase]
+            public void ItShouldNavigateToMyProfilePage()
+            {
+                base.SetUp();
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
+
+                this.IsolatedStorage.UserId = 1;
+
+                var model = new User { Id = 1 };
+                viewModel.ItemTappedCommand.Execute(new UserViewModel(model: model));
+
+                while (!viewModel.ItemTappedCommand.CanExecute()) { }
+
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "MyProfilePage",
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.CurrentUser))
+                    , Times.Once());
+            }
+        }
+    }
+
+
     namespace ParticipantsPropertyTest
     {
         [TestFixture]
-        public class WhenUpdate : TestFixtureBase
+        public class WhenUpdate : ViewModelTestBase
         {
-            protected ParticipantsPageViewModel ViewModel { get; private set; }
+            protected SubjectViewModel Subject { get; private set; }
 
             [SetUp]
-            public void SetUp()
+            public override void SetUp()
             {
-                this.ViewModel = new ParticipantsPageViewModel().BuildUp(this.GenerateUnityContainer());
+                base.SetUp();
+
+                this.Subject = new SubjectViewModel().BuildUp(this.Container);
             }
 
             [TestCase]
             public void ItShouldValueToExpect()
             {
-                this.ViewModel.Model.Participants.Add(new User());
-                Assert.That(this.ViewModel.Participants.Count, Is.EqualTo(1));
+                this.Subject.Model.Participants.Add(new User());
+                Assert.That(this.Subject.Participants.Count, Is.EqualTo(1));
             }
         }
     }

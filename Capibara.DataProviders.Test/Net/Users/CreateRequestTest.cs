@@ -1,42 +1,39 @@
 ﻿using System.Net.Http;
 
-using Capibara.Net;
 using Capibara.Net.Users;
 
 using NUnit.Framework;
 
-using CreateResponse = Capibara.Net.Sessions.CreateResponse;
-
-namespace Capibara.Test.Net.Users.CreateRequestTest.ExecuteTest
+namespace Capibara.Test.Net.Users
 {
     [TestFixture]
-    public class WhenSuccess : WhenSuccessBase<CreateResponse>
+    public class CreateRequestTest
     {
-        protected override RequestBase<CreateResponse> Request
-            => new CreateRequest { Nickname = "Foo.BAR" };
+        private CreateRequest Subject { get; set; }
 
-        protected override string ResultOfString
-            => "{ \"id\": 1, \"nickname\": \"Test User\", \"gender\": 0 }";
+        [SetUp]
+        public void SetUp()
+        {
+            this.Subject = new CreateRequest("Foo.BAR");
+        }
 
         [TestCase]
         public void ItShouldRequestWithHttpMethodPost()
         {
-            Assert.That(this.RequestMessage.Method, Is.EqualTo(HttpMethod.Post));
+            Assert.That(this.Subject.Method, Is.EqualTo(HttpMethod.Post));
         }
 
         [TestCase]
-        public void ItShouldRequestToExpectedUrl()
+        public void ItShouldPathsWithExpect()
         {
-            Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/users"));
+            Assert.That(this.Subject.Paths, Is.EqualTo(new[] { "users" }));
         }
 
         [TestCase]
-        public void ItShouldRequestWithExpectedJson()
+        public void ItShouldStringContentWithExpected()
         {
             var expected = "{\"nickname\":\"Foo.BAR\"}".ToSlim();
-            var task = this.RequestMessage.Content?.ReadAsStringAsync();
-            task?.Wait();
-            Assert.That(task?.Result?.ToSlim(), Is.EqualTo(expected));
+            Assert.That(Subject.StringContent.ToSlim(), Is.EqualTo(expected));
         }
     }
 }

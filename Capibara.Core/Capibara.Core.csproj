@@ -31,13 +31,28 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
-    <Compile Include="ISecureIsolatedStorage.cs" />
+    <Compile Include="IIsolatedStorage.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="ICapibaraApplication.cs" />
+    <Compile Include="UnityInstanceNames.cs" />
+    <Compile Include="FailEventArgs.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="Services\ITaskService.cs" />
+    <Compile Include="Attributes\DisplayNameAttribute.cs" />
+    <Compile Include="Services\IApplicationService.cs" />
+    <Compile Include="Services\IPickupPhotoService.cs" />
+    <Compile Include="Services\IProgressDialogService.cs" />
+    <Compile Include="Services\IBalloonService.cs" />
+    <Compile Include="Services\ISnsLoginService.cs" />
+    <Compile Include="Services\IRewardedVideoService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Attributes\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

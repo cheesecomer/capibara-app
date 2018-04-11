@@ -13,11 +13,16 @@ namespace Capibara.Net.Users
         public override string[] Paths { get; } = new string[] { "users" };
 
         [JsonProperty("nickname")]
-        public string Nickname { get; set; }
+        public string Nickname { get; }
 
-        protected override string StringContent
+        public override string StringContent
             => JsonConvert.SerializeObject(this);
 
-        protected override string ContentType { get; } = "application/json";
+        public override string ContentType { get; } = "application/json";
+
+        public CreateRequest(string nickname)
+        {
+            this.Nickname = nickname;
+        }
     }
 }

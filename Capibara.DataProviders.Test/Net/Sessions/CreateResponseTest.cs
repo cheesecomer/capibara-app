@@ -12,25 +12,37 @@ namespace Capibara.Test.Net.Sessions.CreateResponseTest
         [TestFixture]
         public class WhenSuccess
         {
-            private CreateResponse actual;
+            private CreateResponse Subject;
 
             [SetUp]
             public void Setup()
             {
-                var json = "{ \"access_token\": \"AAA\", \"user_id\": 999 }";
-                this.actual = JsonConvert.DeserializeObject<CreateResponse>(json);
+                var json = "{ \"access_token\": \"AAA\", \"id\": 999, \"nickname\": \"xxxxx!\", \"biography\":\"...\" }";
+                this.Subject = JsonConvert.DeserializeObject<CreateResponse>(json);
+            }
+
+            [TestCase]
+            public void ItShouldNicknameWithExpect()
+            {
+                Assert.That(this.Subject.Nickname, Is.EqualTo("xxxxx!"));
+            }
+
+            [TestCase]
+            public void ItShouldBiographyWithExpect()
+            {
+                Assert.That(this.Subject.Biography, Is.EqualTo("..."));
             }
 
             [TestCase]
             public void ItShouldAccessTokenWithExpected()
             {
-                Assert.That(this.actual.AccessToken, Is.EqualTo("AAA"));
+                Assert.That(this.Subject.AccessToken, Is.EqualTo("AAA"));
             }
 
             [TestCase]
             public void ItShouldUserIdWithExpected()
             {
-                Assert.That(this.actual.UserId, Is.EqualTo(999));
+                Assert.That(this.Subject.Id, Is.EqualTo(999));
             }
         }
     }

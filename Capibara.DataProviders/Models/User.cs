@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Capibara.Net;
-using Capibara.Net.Users;
+using Newtonsoft.Json;
+
+using Unity;
 
 namespace Capibara.Models
 {
@@ -12,62 +13,321 @@ namespace Capibara.Models
 
         private string nickname;
 
-        private Error error;
+        private string biography;
 
-        public event EventHandler SignUpSuccess;
+        private string iconUrl;
 
-        public event EventHandler<Exception> SignUpFail;
+        private string iconThumbnailUrl;
 
-        public int Id
+        private string iconBase64;
+
+        private bool isBlock;
+
+        private bool isAccepted;
+
+        public virtual event EventHandler SignUpSuccess;
+
+        public virtual event EventHandler<FailEventArgs> SignUpFail;
+
+        public virtual event EventHandler RefreshSuccess;
+
+        public virtual event EventHandler<FailEventArgs> RefreshFail;
+
+        public virtual event EventHandler CommitSuccess;
+
+        public virtual event EventHandler<FailEventArgs> CommitFail;
+
+        public virtual event EventHandler AcceptSuccess;
+
+        public virtual event EventHandler<FailEventArgs> AcceptFail;
+
+        public virtual event EventHandler BlockSuccess;
+
+        public virtual event EventHandler<FailEventArgs> BlockFail;
+
+        public virtual event EventHandler DestroySuccess;
+
+        public virtual event EventHandler<FailEventArgs> DestroyFail;
+
+        public virtual event EventHandler ReportSuccess;
+
+        public virtual event EventHandler<FailEventArgs> ReportFail;
+
+        public virtual int Id
         {
             get => this.id;
             set => this.SetProperty(ref this.id, value);
         }
 
-        public string Nickname
+        public virtual string Nickname
         {
             get => this.nickname;
             set => this.SetProperty(ref this.nickname, value);
         }
 
-        /// <summary>
-        /// APIエラー
-        /// </summary>
-        /// <value>The error.</value>
-        public Error Error
+        public virtual string Biography
         {
-            get => this.error;
-            set => this.SetProperty(ref this.error, value);
+            get => this.biography;
+            set => this.SetProperty(ref this.biography, value);
+        }
+
+        [JsonProperty("icon_url")]
+        public virtual string IconUrl
+        {
+            get => this.iconUrl;
+            set => this.SetProperty(ref this.iconUrl, value);
+        }
+
+        [JsonProperty("icon_thumb_url")]
+        public virtual string IconThumbnailUrl
+        {
+            get => this.iconThumbnailUrl;
+            set => this.SetProperty(ref this.iconThumbnailUrl, value);
+        }
+
+        public virtual string IconBase64
+        {
+            get => this.iconBase64;
+            set => this.SetProperty(ref this.iconBase64, value);
+        }
+
+        [JsonProperty("is_block")]
+        public virtual bool IsBlock
+        {
+            get => this.isBlock;
+            set => this.SetProperty(ref this.isBlock, value);
+        }
+
+        [JsonProperty("accepted")]
+        public  virtual bool IsAccepted
+        {
+            get => this.isAccepted;
+            set => this.SetProperty(ref this.isAccepted, value);
+        }
+
+        public virtual bool IsOwn => this.IsolatedStorage.UserId == this.Id;
+
+        public override void Restore(User model)
+        {
+            base.Restore(model);
+
+            this.Id = model.Id;
+            this.Nickname = model.Nickname;
+            this.Biography = model.Biography;
+            this.IconUrl = model.IconUrl;
+            this.IconThumbnailUrl = model.IconThumbnailUrl;
+            this.IsBlock = model.IsBlock;
+            this.IsAccepted = model.IsAccepted;
         }
 
         /// <summary>
         /// メールアドレスとパスワードでログインを行います
         /// </summary>
         /// <returns>The login.</returns>
-        public async Task SignUp()
+        public virtual async Task<bool> Refresh()
         {
-            var request = new CreateRequest { Nickname = this.Nickname }.BuildUp(this.Container);
+            var request = this.RequestFactory.UsersShowRequest(this).BuildUp(this.Container);
 
             try
             {
                 var response = await request.Execute();
 
-                this.Error = null;
+                this.Restore(response);
 
-                this.SecureIsolatedStorage.AccessToken = response.AccessToken;
-                this.SecureIsolatedStorage.UserId = response.UserId;
-                this.SecureIsolatedStorage.Save();
+                if (this.IsolatedStorage.UserId == this.Id)
+                {
+                    this.IsolatedStorage.UserNickname = this.Nickname;
+                    this.IsolatedStorage.Save();
 
-                this.SignUpSuccess?.Invoke(this, null);
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
+
+                this.RefreshSuccess?.Invoke(this, null);
+
+                return true;
             }
             catch (Exception e)
             {
-                if (e is HttpUnauthorizedException)
+                this.RefreshFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザ登録を行います
+        /// </summary>
+        /// <returns>The login.</returns>
+        public virtual async Task<bool> SignUp()
+        {
+            var request = this.RequestFactory.UsersCreateRequest(Nickname = this.Nickname).BuildUp(this.Container);
+            try
+            {
+                var response = await request.Execute();
+
+                this.Restore(response as User);
+
+                this.IsolatedStorage.AccessToken = response.AccessToken;
+                this.IsolatedStorage.UserId = response.Id;
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+
+                this.SignUpSuccess?.Invoke(this, null);
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.SignUpFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザー情報を更新します。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public virtual async Task<bool> Commit()
+        {
+            var request = this.RequestFactory.UsersUpdateRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.Restore(response);
+
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                if (this.Container.IsRegistered(typeof(User), UnityInstanceNames.CurrentUser))
                 {
-                    this.Error = (e as HttpUnauthorizedException).Detail;
+                    this.Container.Resolve<User>(UnityInstanceNames.CurrentUser).Restore(this);
+                }
+                else
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
                 }
 
-                this.SignUpFail?.Invoke(this, e);
+                this.CommitSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.CommitFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        public virtual async Task<bool> Accept()
+        {
+            var request = this.RequestFactory.UsersUpdateRequest(true).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.Restore(response);
+
+                this.IsolatedStorage.UserNickname = this.Nickname;
+                this.IsolatedStorage.Save();
+
+                if (this.Container.IsRegistered(typeof(User), UnityInstanceNames.CurrentUser))
+                {
+                    this.Container.Resolve<User>(UnityInstanceNames.CurrentUser).Restore(this);
+                }
+                else
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this);
+                }
+
+                this.AcceptSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.AcceptFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザーをブロックします。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public virtual async Task<bool> Block()
+        {
+            var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.IsBlock = true;
+
+                this.BlockSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.BlockFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ユーザー情報を削除します。
+        /// </summary>
+        /// <returns>The commit.</returns>
+        public virtual async Task<bool> Destroy()
+        {
+            var request = this.RequestFactory.UsersDestroyRequest().BuildUp(this.Container);
+
+            try
+            {
+                await request.Execute();
+
+                this.IsolatedStorage.AccessToken = null;
+                this.IsolatedStorage.UserId = 0;
+                this.IsolatedStorage.UserNickname = null;
+                this.IsolatedStorage.Save();
+
+                this.DestroySuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.DestroyFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Report the specified reason and message.
+        /// </summary>
+        /// <returns>The report.</returns>
+        /// <param name="reason">Reason.</param>
+        /// <param name="message">Message.</param>
+        public virtual async Task<bool> Report(ReportReason reason, string message)
+        {
+            var request = this.RequestFactory.ReportsCreateRequest(this, reason, message).BuildUp(this.Container);
+            try
+            {
+                await request.Execute();
+
+                this.ReportSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ReportFail?.Invoke(this, e);
+
+                return false;
             }
         }
     }

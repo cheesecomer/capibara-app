@@ -14,7 +14,13 @@ namespace Capibara.ViewModels
 {
     public class ParticipantsPageViewModel : ViewModelBase<Room>
     {
-        public ReadOnlyReactiveCollection<User> Participants { get; }
+        public ReadOnlyReactiveCollection<UserViewModel> Participants { get; }
+
+        public AsyncReactiveCommand<UserViewModel> ItemTappedCommand { get; }
+
+        public AsyncReactiveCommand RefreshCommand { get; }
+
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
 
         public ParticipantsPageViewModel(
             INavigationService navigationService = null,
@@ -22,8 +28,35 @@ namespace Capibara.ViewModels
             Room model = null)
             : base(navigationService, pageDialogService, model)
         {
-            this.Participants =
-                    this.Model.Participants.ToReadOnlyReactiveCollection();
+            this.Participants = this.Model
+                .Participants
+                .ToReadOnlyReactiveCollection((x) => new UserViewModel(model: x).BuildUp(this.Container));
+
+            // RefreshCommand
+            this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
+
+            this.ItemTappedCommand = new AsyncReactiveCommand<UserViewModel>();
+            this.ItemTappedCommand.Subscribe(async x =>
+            {
+                if (x.Model.Id == this.IsolatedStorage.UserId)
+                {
+                    var parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
+                    await this.NavigationService.NavigateAsync("MyProfilePage", parameters);
+                }
+                else
+                {
+                    var parameters = new NavigationParameters { { ParameterNames.Model, x.Model } };
+                    await this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+                }
+            });
+        }
+
+        protected override void OnContainerChanged()
+        {
+            base.OnContainerChanged();
+
+            this.Participants.ForEach(x => x.BuildUp(this.Container));
         }
     }
 }

@@ -4,71 +4,88 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.SignInPage">
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness">
-            <OnPlatform.iOS>0, 20, 0, 30</OnPlatform.iOS>
-            <OnPlatform.Android>0, 0, 0, 30</OnPlatform.Android>
-        </OnPlatform>
-    </ContentPage.Padding>
-    <StackLayout
-        HorizontalOptions="FillAndExpand"
-        VerticalOptions="FillAndExpand"
-        Padding="20, 0, 20, 0">
-        <Label
+    x:Class="Capibara.Views.SignInPage"
+    BackgroundColor="#2f8e5b">
+    <Grid Padding="20, 0, 20, 30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <Image 
+            Grid.RowSpan="3"
+            Margin="-20, 0, -20, -30"
+            Source="bg_launch"
+            Aspect="Fill" />
+        <StackLayout
+            Grid.Row="1"
+            Spacing="0"
             HorizontalOptions="FillAndExpand"
-            Text="Capibara"
-            FontSize="70"
-            HorizontalTextAlignment="Center"
-            Margin="0, 20, 0, 60"
-            FontAttributes="Bold"
-            />
-        <Entry
-            HorizontalOptions="FillAndExpand"
-            Placeholder="メールアドレス"
-            HeightRequest="40"
-            Text="{Binding Email.Value, Mode=TwoWay}"
-            Margin="0, 0, 0, 20"
-            />
-        <Entry
-            HorizontalOptions="FillAndExpand"
-            Placeholder="パスワード"
-            HeightRequest="40"
-            IsPassword="true"
-            Text="{Binding Password.Value, Mode=TwoWay}"
-            />
-        <Label
-            Margin="0, 30, 0, 0"
-            HorizontalOptions="FillAndExpand"
-            VerticalOptions="FillAndExpand"
-            Text="{Binding Error.Value, Mode=TwoWay}"
-            FontAttributes="Bold"
-            TextColor="Red"
-            />
-        <Button
-            HorizontalOptions="FillAndExpand"
-            HeightRequest="50"
-            FontSize="20"
-            Text="ログイン"
-            TextColor="White"
-            BackgroundColor="#58CE91"
-            BorderRadius="25"
-            Command="{Binding SignInCommand}"
-            Margin="0, 0, 0, 20"
-            />
-        <Button
-            HorizontalOptions="FillAndExpand"
-            HeightRequest="50"
-            FontSize="20"
-            Text="アカウントを作成する"
-            TextColor="#58CE91"
-            BorderColor="#58CE91"
-            BorderWidth="2"
-            BorderRadius="25"
-            BackgroundColor="White"
-            Command="{Binding SignUpCommand}"
-            Margin="0, 0, 0, 50"
-            />
-    </StackLayout>
+            VerticalOptions="FillAndExpand">
+            <Image
+                Source="logo"
+                Margin="-20, 20, -20, 0"
+                />
+            <Label
+                Margin="0, 50, 0, 30"
+                TextColor="#eee"
+                Text="&#xD;&#xA;アプリを始めよう！"
+                HorizontalTextAlignment="Center"
+                />
+            <Entry
+                ef:Border.Width="2"
+                ef:Border.Radius="6"
+                ef:Border.Color="#D1D1D1"
+                BackgroundColor="#F1F1F1"
+                HorizontalOptions="FillAndExpand"
+                Placeholder="メールアドレス"
+                HeightRequest="40"
+                Text="{Binding Email.Value, Mode=TwoWay}"
+                Margin="0, 0, 0, 20"
+                />
+            <Entry
+                ef:Border.Width="2"
+                ef:Border.Radius="6"
+                ef:Border.Color="#D1D1D1"
+                BackgroundColor="#F1F1F1"
+                HorizontalOptions="FillAndExpand"
+                Placeholder="パスワード"
+                HeightRequest="40"
+                IsPassword="true"
+                Text="{Binding Password.Value, Mode=TwoWay}"
+                />
+            <Label
+                Margin="0, 30, 0, 0"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                Text="{Binding Error.Value, Mode=TwoWay}"
+                FontAttributes="Bold"
+                TextColor="Red"
+                />
+            <Button
+                ef:ToFlatButton.On="true" 
+                HorizontalOptions="FillAndExpand"
+                Text="ログイン"
+                FontSize="Medium"
+                TextColor="{StaticResource PrimaryColor}"
+                BorderColor="{StaticResource PrimaryColor}"
+                BackgroundColor="White"
+                Command="{Binding SignInCommand}"
+                Margin="0, 0, 0, 20"
+                />
+            <Button
+                ef:ToFlatButton.On="true" 
+                HorizontalOptions="FillAndExpand"
+                FontSize="Small"
+                Text="アカウントを作成する"
+                TextColor="White"
+                BorderColor="Transparent"
+                BackgroundColor="Transparent"
+                Command="{Binding SignUpCommand}"
+                Margin="0, 0, 0, 0"
+                />
+        </StackLayout>
+    </Grid>
 </ContentPage>

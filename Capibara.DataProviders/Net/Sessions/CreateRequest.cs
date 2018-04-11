@@ -10,15 +10,21 @@ namespace Capibara.Net.Sessions
 
         public override string[] Paths { get; } = new string[] { "session" };
 
-        [JsonProperty("email")]
-        public string Email { get; set; }
+        [JsonProperty("email", NullValueHandling = NullValueHandling.Ignore)]
+        public string Email { get; }
 
-        [JsonProperty("password")]
-        public string Password { get; set; }
+        [JsonProperty("password", NullValueHandling = NullValueHandling.Ignore)]
+        public string Password { get; }
 
-        protected override string StringContent
+        public override string StringContent
             => JsonConvert.SerializeObject(this);
 
-        protected override string ContentType { get; } = "application/json";
+        public override string ContentType { get; } = "application/json";
+
+        public CreateRequest(string email, string password)
+        {
+            this.Email = email;
+            this.Password = password;
+        }
     }
 }

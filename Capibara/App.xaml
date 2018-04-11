@@ -1,3 +1,58 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:prism="clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms" x:Class="Capibara.App">
+<?xml version="1.0" encoding="utf-8"?>
+<prism:PrismApplication 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:prism="clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms" 
+    xmlns:ioc="clr-namespace:Capibara.Ioc;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    x:Class="Capibara.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="WarningColor">#F0AD4E</Color>
+            <Color x:Key="DangerColor">#D9534F</Color>
+            <Color x:Key="PrimaryColor">#58CE91</Color>
+            <Style TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="#FEFEFE" />
+            </Style>
+            <Style TargetType="Grid">
+                <Setter Property="RowSpacing" Value="0" />
+                <Setter Property="ColumnSpacing" Value="0" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="FontSize" Value="Medium" />
+                <Setter Property="BorderWidth" Value="2" />
+                <Setter Property="BorderRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+            <Style TargetType="forms:RoundImage">
+                <Setter Property="HasShadow" Value="true" />
+                <Setter Property="BorderColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="BorderWidth" Value="5" />
+                <Setter Property="Aspect" Value="AspectFill" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+            <ioc:ContainerProvider x:TypeArguments="converters:TopMarginConverter" x:Key="topMargin" />
+            <ioc:ContainerProvider x:TypeArguments="converters:BottomMarginConverter" x:Key="bottomMargin" />
+            <converters:DoubleMultiplierConverter x:Key="doubleMultiplier" />
+            <converters:FloatMultiplierConverter x:Key="floatMultiplier" />
+            <converters:WebNavigatingEventArgsConverter x:Key="webNavigatingEventArgs" />
+            <ControlTemplate x:Key="WithAdBannerControlTemplate">
+                <Grid BackgroundColor="#FEFEFE">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+                    </Grid.RowDefinitions>
+
+                    <ContentPresenter   />
+
+                    <forms:AdMobBanner Grid.Row="1" />
+
+                    <BoxView Grid.Row="2" BackgroundColor="#EEE" />
+                </Grid> 
+            </ControlTemplate>
+
+        </ResourceDictionary>
+    </Application.Resources>
 </prism:PrismApplication>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
+    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    x:Class="Capibara.Views.UnsubscribePage"
+    Title="退会する"
+    ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout
+            Padding="20"
+            VerticalOptions="End"
+            HorizontalOptions="FillAndExpand">
+            <Label
+                Margin="0, 0, 0, 5"
+                Text="本当に退会しますか？"
+                HorizontalTextAlignment="Center"
+                />
+            <Label
+                Margin="0, 0, 0, 20"
+                FontSize="Small"
+                TextColor="{StaticResource DangerColor}"
+                Text="この操作は取り消せません"
+                HorizontalTextAlignment="Center"
+                />
+        </StackLayout>
+        <Button 
+            ef:ToFlatButton.On="true"
+            Grid.Row="1"
+            x:Name="UnsubscribeButton"
+            Text="退会する"
+            BackgroundColor="{StaticResource DangerColor}"
+            BorderWidth="0"
+            TextColor="White"
+            Command="{Binding UnsubscribeCommand}"
+            />
+    </Grid>
+</ContentPage>

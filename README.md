@@ -4,3 +4,8 @@
 [![codecov](https://codecov.io/gh/cheesecomer/capibara-app/branch/develop/graph/badge.svg)](https://codecov.io/gh/cheesecomer/capibara-app)
 
 ## プロジェクト構成
+
+
+## Topic
+
+`git update-index --skip-worktree Capibara.Droid/Resources/Resource.designer.cs`

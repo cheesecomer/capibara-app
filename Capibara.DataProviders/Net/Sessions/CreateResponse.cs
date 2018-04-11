@@ -4,12 +4,9 @@ using Newtonsoft.Json;
 
 namespace Capibara.Net.Sessions
 {
-    public class CreateResponse
+    public class CreateResponse : Models.User
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }
-
-        [JsonProperty("user_id")]
-        public int UserId { get; set; }
     }
 }

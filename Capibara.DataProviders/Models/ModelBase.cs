@@ -1,6 +1,7 @@
 ﻿using System;
 
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Attributes;
 
 using Prism.Mvvm;
 
@@ -16,11 +17,14 @@ namespace Capibara.Models
         public IUnityContainer Container { get; set; }
 
         [Dependency]
-        public ISecureIsolatedStorage SecureIsolatedStorage { get; set; }
+        public IIsolatedStorage IsolatedStorage { get; set; }
 
-        public virtual void Restore(TModel model)
-        {
+        [Dependency]
+        public Net.IRequestFactory RequestFactory { get; set; }
 
-        }
+        [Dependency]
+        public Net.IChannelFactory ChannelFactory { get; set; }
+
+        public virtual void Restore(TModel model) { }
     }
 }

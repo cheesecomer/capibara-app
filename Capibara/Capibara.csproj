@@ -41,7 +41,6 @@
     <Compile Include="Views\RoomPage.xaml.cs">
       <DependentUpon>RoomPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DeviceUtil.cs" />
     <Compile Include="ViewModels\SignInPageViewModel.cs" />
     <Compile Include="Views\SignInPage.xaml.cs">
       <DependentUpon>SignInPage.xaml</DependentUpon>
@@ -59,6 +58,80 @@
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\SignUpPageViewModel.cs" />
+    <Compile Include="Views\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="Views\SettingPage.xaml.cs">
+      <DependentUpon>SettingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\SettingPageViewModel.cs" />
+    <Compile Include="Views\MyProfilePage.xaml.cs">
+      <DependentUpon>MyProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\DoubleMultiplierConverter.cs" />
+    <Compile Include="Converters\FloatMultiplierConverter.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
+    <Compile Include="Views\UserProfilePage.xaml.cs">
+      <DependentUpon>UserProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditProfilePage.xaml.cs">
+      <DependentUpon>EditProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RoundImage.cs" />
+    <Compile Include="ImageSourceExtensions.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
+    <Compile Include="ViewModels\BlockUsersPageViewModel.cs" />
+    <Compile Include="Views\BlockUsersPage.xaml.cs">
+      <DependentUpon>BlockUsersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\InformationsPageViewModel.cs" />
+    <Compile Include="Views\InformationsPage.xaml.cs">
+      <DependentUpon>InformationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IContainerProviderExtensions.cs" />
+    <Compile Include="Views\UnsubscribePage.xaml.cs">
+      <DependentUpon>UnsubscribePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\UnsubscribePageViewModel.cs" />
+    <Compile Include="ViewModels\ReportPageViewModel.cs" />
+    <Compile Include="Views\ReportPage.xaml.cs">
+      <DependentUpon>ReportPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\WebViewPageViewModel.cs" />
+    <Compile Include="Views\WebViewPage.xaml.cs">
+      <DependentUpon>WebViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NavigationParametersExtensions.cs" />
+    <Compile Include="ViewModels\AcceptPageViewModal.cs" />
+    <Compile Include="Views\AcceptPage.xaml.cs">
+      <DependentUpon>AcceptPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AdMobBanner.cs" />
+    <Compile Include="Converters\BottomMarginConverter.cs" />
+    <Compile Include="Converters\TopMarginConverter.cs" />
+    <Compile Include="Converters\WebNavigatingEventArgsConverter.cs" />
+    <Compile Include="ViewModels\OverrideUrlCommandParameters.cs" />
+    <Compile Include="Ioc\ContainerProvider.cs" />
+    <Compile Include="Converters\EnumToStringConverter.cs" />
+    <Compile Include="ViewModels\InquiryPageViewModel.cs" />
+    <Compile Include="Views\InquiryPage.xaml.cs">
+      <DependentUpon>InquiryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\IOverrideUrlService.cs" />
+    <Compile Include="Services\IScreenService.cs" />
+    <Compile Include="Forms\LinkableLabel.cs" />
+    <Compile Include="Effects\ToFlatButton.cs" />
+    <Compile Include="Effects\Border.cs" />
+    <Compile Include="ViewModels\AboutPageViewModel.cs" />
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LicensePage.xaml.cs">
+      <DependentUpon>LicensePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Effects\Reverse.cs" />
+    <Compile Include="Effects\CustomFont.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -82,6 +155,57 @@
     <EmbeddedResource Include="Views\SignUpPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\MainPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SettingPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MyProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\EditProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\BlockUsersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\InformationsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UnsubscribePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\WebViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AcceptPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\InquiryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\LicensePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -98,7 +222,31 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Selectors\" />
+    <Folder Include="Services\" />
+    <Folder Include="Converters\" />
+    <Folder Include="Effects\" />
+    <Folder Include="Forms\" />
+    <Folder Include="Ioc\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PreBuildEvent>
+      copy /Y $(ProjectDir)Environment.cs $(ProjectDir)Environment.cs.bak
+      call $(ProjectDir)..\replace.bat $(ProjectDir)Environment.cs ${TWITTER_CONSUMER_KEY} $(TWITTER_CONSUMER_KEY)
+      call $(ProjectDir)..\replace.bat $(ProjectDir)Environment.cs ${TWITTER_CONSUMER_SECRET_KEY} $(TWITTER_CONSUMER_SECRET_KEY)
+      git diff $(ProjectDir)\Environment.cs
+    </PreBuildEvent>
+    <PostBuildEvent>move /Y $(ProjectDir)\Environment.cs.bak $(ProjectDir)\Environment.cs</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <PreBuildEvent>
+      source ~/.bash_profile
+      cp $(ProjectDir)\Environment.cs $(ProjectDir)\Environment.cs.bak
+      sed -i '' 's/${TWITTER_CONSUMER_KEY}/'$TWITTER_CONSUMER_KEY'/g' $(ProjectDir)\Environment.cs
+      sed -i '' 's/${TWITTER_CONSUMER_SECRET_KEY}/'$TWITTER_CONSUMER_SECRET_KEY'/g' $(ProjectDir)\Environment.cs
+      git diff $(ProjectDir)\Environment.cs
+    </PreBuildEvent>
+    <PostBuildEvent>mv $(ProjectDir)\Environment.cs.bak $(ProjectDir)\Environment.cs</PostBuildEvent>
+  </PropertyGroup>
 </Project>

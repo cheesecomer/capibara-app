@@ -1,13 +1,13 @@
 ﻿using System;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace Capibara
 {
     public static class ObjectExtensions
     {
         public static T BuildUp<T>(this T source, IUnityContainer container)
-            => container.BuildUp(source);
+            => source == null ? source : container.BuildUp(source);
 
         public static bool IsNull<T>(this T source) where T : class
             => source == null;

@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 
 using Capibara.Models;
-
 
 using Prism.Services;
 using Prism.Navigation;
@@ -15,9 +15,9 @@ using Xamarin.Forms;
 
 namespace Capibara.ViewModels
 {
-    public class FloorMapPageViewModel : ViewModelBase<FloorMap>
+    public class FloorMapPageViewModel : ViewModelBase
     {
-        public ReadOnlyReactiveCollection<Room> Rooms { get; }
+        public ReactiveCollection<Room> Rooms { get; } = new ReactiveCollection<Room>();
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
@@ -25,35 +25,42 @@ namespace Capibara.ViewModels
 
         public FloorMapPageViewModel(
             INavigationService navigationService = null,
-            IPageDialogService pageDialogService = null,
-            FloorMap model = null)
-            : base(navigationService, pageDialogService, model)
+            IPageDialogService pageDialogService = null)
+            : base(navigationService, pageDialogService)
         {
-            this.Rooms =
-                this.Model.Rooms.ToReadOnlyReactiveCollection();
-
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(this.Model.Refresh);
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Refresh()));
 
             this.ItemTappedCommand = new AsyncReactiveCommand<Room>();
             this.ItemTappedCommand.Subscribe(async x =>
             {
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, x);
+                var parameters = new NavigationParameters { { ParameterNames.Model, x } };
                 await this.NavigationService.NavigateAsync("RoomPage", parameters);
             });
-
-            this.Model.RefreshFail += this.OnRefreshFail;
         }
 
-        private async void OnRefreshFail(object sender, Exception exception)
+        private async Task Refresh()
         {
-            if (exception is Net.HttpUnauthorizedException)
+            var request = this.RequestFactory.RoomsIndexRequest().BuildUp(this.Container);
+            try
             {
-                await this.PageDialogService.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる");
+                var response = await request.Execute();
+                response.Rooms?.ForEach(x => {
+                    if (this.Rooms.Any(y => y.Id == x.Id))
+                    {
+                        this.Rooms.First(y => y.Id == x.Id).Restore(x);
+                    }
+                    else
+                    {
+                        this.Rooms.Add(x);
+                    }
+                });
 
-                await this.NavigationService.NavigateAsync("/SignInPage");
+            }
+            catch (Exception e)
+            {
+                await this.DisplayErrorAlertAsync(e, () => this.Refresh());
             }
         }
     }

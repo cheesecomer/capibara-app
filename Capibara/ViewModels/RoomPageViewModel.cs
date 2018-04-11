@@ -16,17 +16,13 @@ namespace Capibara.ViewModels
     {
         private bool needClose = true;
 
-        public AsyncReactiveCommand RefreshCommand { get; }
-
-        public AsyncReactiveCommand ConnectCommand { get; }
-
         public AsyncReactiveCommand CloseCommand { get; }
 
         public AsyncReactiveCommand SpeakCommand { get; }
 
         public AsyncReactiveCommand ShowParticipantsCommand { get; }
 
-        public ReadOnlyReactiveCollection<Message> Messages { get; }
+        public ReadOnlyReactiveCollection<MessageViewModel> Messages { get; }
 
         public ReactiveProperty<string> Message { get; } = new ReactiveProperty<string>();
 
@@ -38,14 +34,29 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<bool> IsConnected { get; }
 
+        protected override string OptionalScreenName => $"/{this.Model.Id}";
+
         public RoomPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
             Room model = null)
             : base(navigationService, pageDialogService, model)
         {
-            this.Messages =
-                    this.Model.Messages.ToReadOnlyReactiveCollection();
+            this.Messages = this.Model
+                .Messages
+                .ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x));
+
+            // プロフィールページ表示時にコネクションをクローズしないようにイベント登録
+            this.Messages
+                .CollectionChangedAsObservable()
+                .Subscribe(
+                    (x) => x.NewItems
+                    .Cast<MessageViewModel>()
+                    .ForEach(
+                        v => v.ShowProfileCommand
+                        .Subscribe(_ => Task.Run(() => this.needClose = false))
+                        .AddTo(this.Disposable)))
+                .AddTo(this.Disposable);
 
             // Name Property
             this.Name = this.Model
@@ -78,26 +89,14 @@ namespace Capibara.ViewModels
             this.IsConnected.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsConnected)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Message)));
 
-            // RefreshCommand
-            this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(this.Model.Refresh);
-
-            // ConnectCommand
-            this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(async () => {
-                this.needClose = true;
-                await this.Model.Refresh();
-                await this.Model.Connect();
-            });
-
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.CloseCommand.Subscribe(async () =>
             {
-                if (this.needClose)
-                {
-                    await this.Model.Close();
-                }
+                this.Model.Disconnected -= this.OnDisconnected;
+
+                if (!this.needClose) return;
+                await this.Model.Close();
             });
 
             // SpeakCommand
@@ -112,12 +111,61 @@ namespace Capibara.ViewModels
             this.ShowParticipantsCommand.Subscribe(() =>
             {
                 this.needClose = false;
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, this.Model);
+                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 return this.NavigationService.NavigateAsync("ParticipantsPage", parameters);
             });
 
             this.Model.SpeakSuccess += (sender, e) => this.Message.Value = string.Empty;
+
+            this.Model.SpeakFail += this.OnFail(
+                () => Task.Run(
+                    () => this.DeviceService.BeginInvokeOnMainThread(
+                        () => this.SpeakCommand.Execute())));
+            
+            this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
+
+            this.Model.RejectSubscription += async (s, e) =>
+            {
+                this.Model.Disconnected -= this.OnDisconnected;
+                await this.Model.Close();
+
+                this.DeviceService.BeginInvokeOnMainThread(async () =>
+                {
+                    await this.PageDialogService.DisplayAlertAsync("入室できませんでした", "もう一度やり直すか、時間を置いてお試し下さい", "閉じる");
+                    
+                    await this.NavigationService.GoBackAsync();
+                });
+            };
+
+            this.Model.JoinUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが入室しました");
+            this.Model.LeaveUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが退室しました");
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+
+            this.ProgressDialogService.DisplayProgressAsync(this.Connect());
+            this.Model.Disconnected += this.OnDisconnected;
+        }
+
+        public override void OnSleep()
+        {
+            base.OnSleep();
+
+            this.Model.Disconnected -= this.OnDisconnected;
+        }
+
+        private void OnDisconnected(object sender, EventArgs args)
+        {
+            this.ProgressDialogService.DisplayProgressAsync(this.Connect());
+        }
+
+        private async Task Connect()
+        {
+            this.needClose = true;
+            if (!await this.Model.Refresh()) return;
+            await this.Model.Connect();
         }
     }
 }

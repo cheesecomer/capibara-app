@@ -39,7 +39,6 @@
     <Compile Include="Net\Rooms\IndexResponse.cs" />
     <Compile Include="Net\Sessions\CreateRequest.cs" />
     <Compile Include="Net\Sessions\CreateResponse.cs" />
-    <Compile Include="Models\FloorMap.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\Error.cs" />
@@ -51,9 +50,28 @@
     <Compile Include="Net\Rooms\ShowRequest.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Net\Channels\IChannel.cs" />
     <Compile Include="Net\Channels\Command.cs" />
     <Compile Include="Net\Users\CreateRequest.cs" />
+    <Compile Include="Net\Users\ShowRequest.cs" />
+    <Compile Include="Net\Users\UpdateRequest.cs" />
+    <Compile Include="Models\Block.cs" />
+    <Compile Include="Net\Blocks\IndexRequest.cs" />
+    <Compile Include="Net\Blocks\CreateRequest.cs" />
+    <Compile Include="Net\Blocks\IndexResponse.cs" />
+    <Compile Include="Net\Blocks\DestroyRequest.cs" />
+    <Compile Include="Models\RoomComparer.cs" />
+    <Compile Include="Models\Information.cs" />
+    <Compile Include="Net\Informations\IndexRequest.cs" />
+    <Compile Include="Net\Informations\IndexResponse.cs" />
+    <Compile Include="Models\OAuthProvider.cs" />
+    <Compile Include="Net\Users\DestroyRequest.cs" />
+    <Compile Include="Models\ReportReason.cs" />
+    <Compile Include="Net\Reports\CreateRequest.cs" />
+    <Compile Include="Net\RequestFactory.cs" />
+    <Compile Include="Net\Inquiries\CreateRequest.cs" />
+    <Compile Include="Net\Sessions\ShowRequest.cs" />
+    <Compile Include="Net\ChannelFactory.cs" />
+    <Compile Include="Net\ChannelCableFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -65,6 +83,10 @@
     <Folder Include="Net\Sessions\" />
     <Folder Include="Net\Channels\" />
     <Folder Include="Net\Users\" />
+    <Folder Include="Net\Blocks\" />
+    <Folder Include="Net\Informations\" />
+    <Folder Include="Net\Reports\" />
+    <Folder Include="Net\Inquiries\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">

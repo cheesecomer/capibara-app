@@ -21,171 +21,120 @@ namespace Capibara.Test.Net.Channels
     {
         public class SerializeTest
         {
-            private Dictionary<string, object> actual;
+            private Dictionary<string, object> Subject;
 
             [SetUp]
             public void Setup()
             {
                 var identifier = new ChatChannelIdentifier(10);
                 var json = JsonConvert.SerializeObject(identifier);
-                this.actual = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                this.Subject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
             }
 
             [TestCase]
             public void ItShouldChannelWithExpected()
             {
-                Assert.That(this.actual.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
+                Assert.That(this.Subject.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
             }
 
             [TestCase]
             public void ItShouldRoomIdWithExpected()
             {
-                Assert.That(this.actual.ValueOrDefault("room_id"), Is.EqualTo(10));
+                Assert.That(this.Subject.ValueOrDefault("room_id"), Is.EqualTo(10));
             }
 
             [TestCase]
             public void ItShouldKeysWithExpected()
             {
-                Assert.That(this.actual.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
+                Assert.That(this.Subject.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
+            }
+        }
+    }
+
+    namespace SpeakActionContextTest
+    {
+        public class SerializeTest
+        {
+            private Dictionary<string, object> Subject;
+
+            [SetUp]
+            public void Setup()
+            {
+                var context = new SpeakActionContext { Message = "Hello!" };
+                var json = JsonConvert.SerializeObject(context);
+                this.Subject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            }
+
+            [TestCase]
+            public void ItShouldActionWithExpected()
+            {
+                Assert.That(this.Subject.ValueOrDefault("action"), Is.EqualTo("speak"));
+            }
+
+            [TestCase]
+            public void ItShouldMessageWithExpected()
+            {
+                Assert.That(this.Subject.ValueOrDefault("message"), Is.EqualTo("Hello!"));
             }
         }
     }
 
     namespace ChatChannelTest
     {
-        public class SpeakTest : TestFixtureBase
+        public class ChannelIdentifierPropertyTest
         {
-            private ChatChannel channel;
-
-            protected Dictionary<string, string> command;
-
-            protected Dictionary<string, object> identifier;
-
-            protected Dictionary<string, object> context;
+            private ChatChannel Subject;
 
             [SetUp]
             public void SetUp()
             {
-                var container = this.GenerateUnityContainer();
-
-                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(container).Connect();
-
-                // 接続処理終了を待機
-                ConnectTaskSource.Task.Wait();
-
-                // 受信完了を待機
-                Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
-
-                // 送信完了を待機
-                SendAsyncSource.Task.Wait();
-
-                ResetSendAsync();
-
-                this.channel.Speak("Foo. Bar!");
-
-                // 送信完了を待機
-                SendAsyncSource.Task.Wait();
-
-                var message = SendAsyncSource.Task.Result;
-                this.command = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
-                this.identifier = JsonConvert.DeserializeObject<Dictionary<string, object>>(command.ValueOrDefault("identifier"));
-                this.context = JsonConvert.DeserializeObject<Dictionary<string, object>>(command.ValueOrDefault("data"));
+                this.Subject = new ChatChannel(new Capibara.Models.Room { Id = 1 });
             }
 
             [TestCase]
-            public void ItShouldCommandWithExpect()
+            public void ItShouldChatChannelIdentifier()
             {
-                Assert.That(this.command.ValueOrDefault("command"), Is.EqualTo("message"));
+                Assert.That(this.Subject.ChannelIdentifier, Is.TypeOf<ChatChannelIdentifier>());
             }
 
             [TestCase]
-            public void ItShouldIdentifierChannelWithExpected()
+            public void ItShouldRoomIdExpect()
             {
-                Assert.That(this.identifier.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
+                Assert.That((this.Subject.ChannelIdentifier as ChatChannelIdentifier)?.RoomId, Is.EqualTo(1));
             }
 
             [TestCase]
-            public void ItShouldIdentifierRoomIdWithExpected()
+            public void ItShouldCreateOnce()
             {
-                Assert.That(this.identifier.ValueOrDefault("room_id"), Is.EqualTo(1));
-            }
-
-            [TestCase]
-            public void ItShouldIdentifierKeysWithExpected()
-            {
-                Assert.That(this.identifier.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
-            }
-
-            [TestCase]
-            public void ItShouldContextActionWithExpected()
-            {
-                Assert.That(this.context.ValueOrDefault("action"), Is.EqualTo("speak"));
-            }
-
-            [TestCase]
-            public void ItShouldContextRoomIdWithExpected()
-            {
-                Assert.That(this.context.ValueOrDefault("message"), Is.EqualTo("Foo. Bar!"));
-            }
-
-            [TestCase]
-            public void ItShouldContextKeysWithExpected()
-            {
-                Assert.That(this.context.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "action", "message" }));
+                var origin = this.Subject.ChannelIdentifier;
+                Assert.That(this.Subject.ChannelIdentifier, Is.EqualTo(origin));
             }
         }
 
-        public class OnConnectedTest : TestFixtureBase
+        public class SpeakTest : TestFixtureBase
         {
-            private ChatChannel channel;
-
-            protected Dictionary<string, string> command;
-
-            protected Dictionary<string, object> identifier;
-
-            [SetUp]
-            public void SetUp()
-            {
-                var container = this.GenerateUnityContainer();
-
-                (this.channel = new ChatChannel(new Capibara.Models.Room { Id = 1 })).BuildUp(container).Connect();
-
-                // 接続処理終了を待機
-                ConnectTaskSource.Task.Wait();
-
-                // 受信完了を待機
-                Task.WaitAll(this.ReceiveMessages.Select(x => x.TaskCompletionSource.Task).ToArray());
-
-                // 送信完了を待機
-                SendAsyncSource.Task.Wait();
-
-                var message = SendAsyncSource.Task.Result;
-                this.command = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
-                this.identifier = JsonConvert.DeserializeObject<Dictionary<string, object>>(command.ValueOrDefault("identifier"));
-            }
+            private ChatChannel Subject;
 
             [TestCase]
-            public void ItShouldCommandWithExpect()
+            public void ItShouldSendCommandCalled()
             {
-                Assert.That(this.command.ValueOrDefault("command"), Is.EqualTo("subscribe"));
-            }
+                var isSendCommandCalled = false;
+                this.Subject = new ChatChannel(new Capibara.Models.Room { Id = 1 }).BuildUp(this.Container);
 
-            [TestCase]
-            public void ItShouldChannelWithExpected()
-            {
-                Assert.That(this.identifier.ValueOrDefault("channel"), Is.EqualTo("ChatChannel"));
-            }
+                var cable = new Mock<ChannelCableBase>();
+                cable
+                    .Setup(x => x.SendCommand(It.IsAny<MessageCommand<SpeakActionContext>>()))
+                    .Returns(Task.CompletedTask);
 
-            [TestCase]
-            public void ItShouldRoomIdWithExpected()
-            {
-                Assert.That(this.identifier.ValueOrDefault("room_id"), Is.EqualTo(1));
-            }
+                this.ChannelCableFactory.Setup(x => x.Create()).Returns(cable.Object);
 
-            [TestCase]
-            public void ItShouldKeysWithExpected()
-            {
-                Assert.That(this.identifier.Keys.Select(x => x).ToList(), Is.EqualTo(new List<string> { "channel", "room_id" }));
+                this.Subject.Connect();
+                this.Subject.Speak("Hello!");
+
+                cable.Verify(
+                    x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
+                        v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message == "Hello!")),
+                    Times.Once());
             }
         }
     }
