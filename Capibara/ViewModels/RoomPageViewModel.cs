@@ -44,7 +44,7 @@ namespace Capibara.ViewModels
         {
             this.Messages = this.Model
                 .Messages
-                .ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x));
+                .ToReadOnlyReactiveCollection(x => new MessageViewModel(navigationService, pageDialogService, x).BuildUp(this.Container));
 
             // プロフィールページ表示時にコネクションをクローズしないようにイベント登録
             this.Messages
