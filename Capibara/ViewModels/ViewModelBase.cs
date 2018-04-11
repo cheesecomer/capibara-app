@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Reactive.Disposables;
 
+using Capibara.Forms;
 using Capibara.Services;
 using Capibara.Models;
 
@@ -83,6 +84,9 @@ namespace Capibara.ViewModels
 
         [Dependency]
         public IRewardedVideoService RewardedVideoService { get; set; }
+
+        [Dependency]
+        public IImageSourceFactory ImageSourceFactory { get; set; }
 
         /// <summary>
         /// DIコンテナ

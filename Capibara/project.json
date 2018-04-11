@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "AngleSharp": "0.9.9.2",
     "Com.Airbnb.Xamarin.Forms.Lottie": "2.5.1",
     "CommonServiceLocator": "2.0.3",
     "ksemenenko.GoogleAnalytics": "1.0.3.2",

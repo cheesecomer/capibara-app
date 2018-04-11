@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Capibara.Forms;
 using Capibara.Services;
 
 using Unity;
@@ -28,6 +29,10 @@ namespace Capibara.Test.ViewModels
         protected Mock<ISnsLoginService> SnsLoginService { get; set; }
 
         protected Mock<IRewardedVideoService> RewardedVideoService { get; set; }
+
+        protected Mock<IBrowsingContextFactory> BrowsingContextFactory { get; set; }
+
+        protected Mock<IImageSourceFactory> ImageSourceFactory { get; set; }
 
         protected Mock<Plugin.GoogleAnalytics.Abstractions.ITracker> Tracker { get; set; }
 
@@ -82,6 +87,12 @@ namespace Capibara.Test.ViewModels
 
             var balloonService = new Mock<IBalloonService>();
 
+            this.BrowsingContextFactory = new Mock<IBrowsingContextFactory>();
+
+            this.ImageSourceFactory = new Mock<IImageSourceFactory>();
+            this.ImageSourceFactory.Setup(x => x.FromUri(It.IsAny<Uri>()));
+            this.ImageSourceFactory.Setup(x => x.FromStream(It.IsAny<Func<System.IO.Stream>>()));
+
             this.Container.RegisterInstance(this.ProgressDialogService.Object);
             this.Container.RegisterInstance(this.PickupPhotoService.Object);
             this.Container.RegisterInstance(this.SnsLoginService.Object);
@@ -89,6 +100,8 @@ namespace Capibara.Test.ViewModels
             this.Container.RegisterInstance(taskService.Object);
             this.Container.RegisterInstance(this.Tracker.Object);
             this.Container.RegisterInstance(balloonService.Object);
+            this.Container.RegisterInstance(this.BrowsingContextFactory.Object);
+            this.Container.RegisterInstance(this.ImageSourceFactory.Object);
         }
     }
 }
