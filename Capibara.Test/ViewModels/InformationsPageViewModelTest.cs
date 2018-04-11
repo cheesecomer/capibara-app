@@ -158,7 +158,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
 
                 while (!subject.Object.RefreshCommand.CanExecute()) { }
 
-                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception);
             }
         }
 

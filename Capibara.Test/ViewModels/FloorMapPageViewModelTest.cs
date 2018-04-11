@@ -168,7 +168,7 @@ namespace Capibara.Test.ViewModels.FloorMapPageViewModel
 
                 while (!subject.Object.RefreshCommand.CanExecute()) { }
 
-                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception);
             }
         }
     }

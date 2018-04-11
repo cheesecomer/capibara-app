@@ -48,9 +48,6 @@ namespace Capibara.ViewModels
 
         protected override string OptionalScreenName => $"/{this.Model.Id}";
 
-        [UnityDependency]
-        public IPickupPhotoService PickupPhotoService { get; set; }
-
         public UserViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,

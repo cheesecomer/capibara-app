@@ -132,7 +132,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             [TestCase]
             public void ItShouldDisplayErrorAlertAsyncCall()
             {
-                this.Subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), this.Exception, ItExpr.IsAny<Func<Task>>());
+                this.Subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), this.Exception);
             }
         }
     }

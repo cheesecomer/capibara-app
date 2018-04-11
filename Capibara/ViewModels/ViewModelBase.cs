@@ -88,6 +88,9 @@ namespace Capibara.ViewModels
         [Dependency]
         public IImageSourceFactory ImageSourceFactory { get; set; }
 
+        [Dependency]
+        public IPickupPhotoService PickupPhotoService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>
@@ -131,7 +134,7 @@ namespace Capibara.ViewModels
 
         protected virtual void OnContainerChanged() { }
 
-        protected EventHandler<FailEventArgs> OnFail(Func<Task> func)
+        protected EventHandler<FailEventArgs> OnFail(Func<Task> retryFunction, Action cancelAction = null)
         {
             return async (s, args) =>
             {
@@ -139,7 +142,17 @@ namespace Capibara.ViewModels
 
                 this.DeviceService.BeginInvokeOnMainThread(async () =>
                 {
-                    await this.DisplayErrorAlertAsync(args.Error, func);
+                    var needRetry = await this.DisplayErrorAlertAsync(args.Error);
+                    if (needRetry)
+                    {
+                        retryFunction?.Invoke();
+                    }
+                    else
+                    {
+                        cancelAction?.Invoke();
+                    }
+
+
                     taskSource.TrySetResult(true);
                 });
 
@@ -147,7 +160,7 @@ namespace Capibara.ViewModels
             };
         }
 
-        protected virtual async Task<bool> DisplayErrorAlertAsync(Exception exception, Func<Task> func)
+        protected virtual async Task<bool> DisplayErrorAlertAsync(Exception exception)
         {
             if (exception is Net.HttpUnauthorizedException)
             {
@@ -182,12 +195,7 @@ namespace Capibara.ViewModels
                         "通信エラーです。リトライしますか？。",
                         "リトライ",
                         "閉じる");
-
-                if (needRetry)
-                {
-                    await func.Invoke();
-                    return true;
-                }
+                return needRetry;
             }
 
             return false;
