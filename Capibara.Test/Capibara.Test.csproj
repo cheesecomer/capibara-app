@@ -152,6 +152,9 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\net45\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="AngleSharp">
+      <HintPath>..\packages\AngleSharp.0.9.9.2\lib\net45\AngleSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
@@ -204,6 +207,7 @@
     <Compile Include="Converters\EnumToStringConverterTest.cs" />
     <Compile Include="ViewModels\InquiryPageViewModelTest.cs" />
     <Compile Include="ViewModels\AboutPageViewModelTest.cs" />
+    <Compile Include="ViewModels\OgpViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

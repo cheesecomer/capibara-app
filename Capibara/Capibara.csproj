@@ -135,6 +135,9 @@
     <Compile Include="Forms\ItemsControl.cs" />
     <Compile Include="Forms\WrapLayout.cs" />
     <Compile Include="Forms\AttachedLayoutProperty.cs" />
+    <Compile Include="ViewModels\OgpViewModel.cs" />
+    <Compile Include="Services\IBrowsingContextFactory.cs" />
+    <Compile Include="Forms\ImageSourceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
