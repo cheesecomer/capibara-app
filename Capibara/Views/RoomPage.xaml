@@ -55,7 +55,46 @@
                             />
                         <Label Grid.Column="0" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
                         <Frame Grid.Column="0" Grid.Row="1" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
-                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <forms:LinkableLabel 
+                                    Grid.Row="0" 
+                                    Text="{Binding Content.Value}" 
+                                    TextColor="#444" 
+                                    LinkTextColor="#0044CC" />
+                                <forms:ItemsControl
+                                    Grid.Row="1"
+                                    ItemsSource="{Binding OgpItems.Value}">
+                                    <forms:ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell>
+                                                <Grid HeightRequest="50" Margin="10, 10, 5, 0" ColumnSpacing="5" RowSpacing="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    <Image Grid.Column="0" Grid.RowSpan="2" BackgroundColor="White" Source="{Binding Image.Value}" Aspect="AspectFill" />
+                                                    <Label Grid.Column="1" Grid.Row="0" FontSize="Small" Text="{Binding Title.Value}" LineBreakMode="TailTruncation" />
+                                                    <Label Grid.Column="1" Grid.Row="1" FontSize="Micro" TextColor="#565d64" Text="{Binding Description.Value}" />
+                                                    <Button 
+                                                        Grid.RowSpan="2" 
+                                                        Grid.ColumnSpan="2" 
+                                                        BackgroundColor="Transparent" 
+                                                        BorderColor="Transparent"
+                                                        Command="{Binding OpenUrlCommand}" />
+                                                </Grid>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </forms:ItemsControl.ItemTemplate>
+                                </forms:ItemsControl>
+                            </Grid>
                         </Frame>
                         <Label Grid.Column="0" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" />
                     </Grid>
@@ -72,6 +111,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <forms:RoundImage
@@ -95,9 +135,47 @@
                             />
                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" Margin="0, 0, 0, 5" />
                         <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" BackgroundColor="White" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
-                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <forms:LinkableLabel 
+                                    Text="{Binding Content.Value}" 
+                                    TextColor="#444" 
+                                    LinkTextColor="#0044CC" />
+                                <forms:ItemsControl
+                                    Grid.Row="1"
+                                    ItemsSource="{Binding OgpItems.Value}">
+                                    <forms:ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell>
+                                                <Grid HeightRequest="50" Margin="10, 10, 5, 0" ColumnSpacing="5" RowSpacing="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    <Image Grid.Column="0" Grid.RowSpan="2" BackgroundColor="White" Source="{Binding Image.Value}" Aspect="AspectFill" />
+                                                    <Label Grid.Column="1" Grid.Row="0" FontSize="Small" Text="{Binding Title.Value}" LineBreakMode="TailTruncation" />
+                                                    <Label Grid.Column="1" Grid.Row="1" FontSize="Micro" TextColor="#565d64" Text="{Binding Description.Value}" />
+                                                    <Button 
+                                                        Grid.RowSpan="2" 
+                                                        Grid.ColumnSpan="2" 
+                                                        BackgroundColor="Transparent" 
+                                                        BorderColor="Transparent"
+                                                        Command="{Binding OpenUrlCommand}" />
+                                                </Grid>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </forms:ItemsControl.ItemTemplate>
+                                </forms:ItemsControl>
+                            </Grid>
                         </Frame>
-                        <Label Grid.Column="2" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" HorizontalTextAlignment="End" TextColor="#6c757d" Margin="0, 5, 10, 0" />
+                        <Label Grid.Column="2" Grid.Row="3" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" HorizontalTextAlignment="End" TextColor="#6c757d" Margin="0, 5, 10, 0" />
                     </Grid>
                 </ViewCell>
             </DataTemplate>
