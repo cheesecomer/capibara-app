@@ -70,7 +70,7 @@ namespace Capibara.ViewModels
 
             this.IconThumbnail = this.Model
                 .ObserveProperty(x => x.IconThumbnailUrl)
-                .Select(x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)))
+                .Select(x => x.IsNullOrEmpty() ? null : this.ImageSourceFactory.FromUri(new Uri(x)))
                 .ToReactiveProperty();
             
             this.IsBlock = this.Model
@@ -131,7 +131,7 @@ namespace Capibara.ViewModels
                     var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
                     if (bytes != null)
                     {
-                        this.Icon.Value = ImageSource.FromStream(() => new MemoryStream(bytes));
+                        this.Icon.Value = this.ImageSourceFactory.FromStream(() => new MemoryStream(bytes));
                         this.Model.IconBase64 = Convert.ToBase64String(bytes);
                     }
                 });
