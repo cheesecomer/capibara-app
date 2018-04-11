@@ -223,6 +223,7 @@
         </ListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition>
                     <ColumnDefinition.Width>
@@ -233,8 +234,16 @@
                     </ColumnDefinition.Width>
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
+            <Button Grid.Column="0" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE710;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Editor Grid.Column="1" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="2" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
                 <Button.FontFamily>
                     <OnPlatform x:TypeArguments="x:String">
                         <On Platform="iOS" Value="Segoe MDL2 Assets" />
