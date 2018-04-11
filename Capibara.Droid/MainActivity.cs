@@ -86,10 +86,10 @@ namespace Capibara.Droid
         {
             base.OnResume();
 
-            var intent = this.Intent;
+            if (this.Intent == null) return;
 
-            var uri = intent.Data;
-            if (Intent.ActionView.Equals(intent.Action))
+            var uri = this.Intent.Data;
+            if (Intent.ActionView.Equals(this.Intent.Action))
             {
                 if (uri.Scheme == "com.cheesecomer.capibara" && uri.Host.StartsWith("oauth", StringComparison.Ordinal))
                 {
@@ -100,8 +100,11 @@ namespace Capibara.Droid
                        .ToDictionary(x => x.First(), x => x.Last());
                     this.IsolatedStorage.AccessToken = query["access_token"];
                     this.IsolatedStorage.UserId = query["id"].ToInt();
+                    this.IsolatedStorage.Save();
                 }
             }
+
+            this.Intent = null;
         }
 
         protected override async void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
@@ -144,8 +147,11 @@ namespace Capibara.Droid
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
+            containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
+            containerRegistry.RegisterInstance<ISnsLoginService>(new SnsLoginService());
+            containerRegistry.RegisterInstance<IRewardedVideoService>(new RewardedVideoService());
             containerRegistry.RegisterInstance(this.applicationService);
-            containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
+            containerRegistry.RegisterInstance(GoogleAnalytics.Current.Tracker);
         }
     }
 }

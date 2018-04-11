@@ -42,6 +42,7 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
     [TestFixture("", "http://example.com/", "http://example.com/", "http://example.com/")]
     [TestFixture(null, "http://example.com/", "http://example.com/", "http://example.com/")]
     [TestFixture("Foo & Bar !!!", "http://example.com/", "Foo & Bar !!!", "http://example.com/")]
+    [TestFixture(null, null, null, null)]
     public class OnNavigatedToTest : ViewModelTestBase
     {
         SubjectViewModel Subject;
@@ -81,7 +82,7 @@ namespace Capibara.Test.ViewModels.WebViewPageViewModel
         [TestCase]
         public void ItShouldUrlExpect()
         {
-            Assert.That(this.Subject.Source.Value.Url, Is.EqualTo(this.expectUrl));
+            Assert.That(this.Subject.Source.Value?.Url, Is.EqualTo(this.expectUrl));
         }
     }
 

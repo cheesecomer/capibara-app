@@ -18,6 +18,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand<UserViewModel> ItemTappedCommand { get; }
 
+        public AsyncReactiveCommand RefreshCommand { get; }
+
         protected override string OptionalScreenName => $"/{this.Model.Id}";
 
         public ParticipantsPageViewModel(
@@ -29,6 +31,10 @@ namespace Capibara.ViewModels
             this.Participants = this.Model
                 .Participants
                 .ToReadOnlyReactiveCollection((x) => new UserViewModel(model: x).BuildUp(this.Container));
+
+            // RefreshCommand
+            this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
             this.ItemTappedCommand = new AsyncReactiveCommand<UserViewModel>();
             this.ItemTappedCommand.Subscribe(async x =>

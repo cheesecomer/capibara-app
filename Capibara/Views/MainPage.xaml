@@ -11,20 +11,51 @@
     x:Class="Capibara.Views.MainPage">
     <MasterDetailPage.Master>
         <ContentPage Title="Menu">
-            <Grid>
+            <Grid BackgroundColor="#EEE">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
-                    <RowDefinition Height="100" />
+                    <RowDefinition Height="55" />
+                    <RowDefinition Height="45" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Image
-                    Source="bg_launch"
-                    Aspect="Fill"
-                    Grid.RowSpan="3"/>
+                <BoxView Grid.Row="0" Grid.RowSpan="2" BackgroundColor="{StaticResource PrimaryColor}" />
+                <Grid Grid.Row="1" Grid.RowSpan="2" Padding="10, 0, 0, 0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45" />
+                        <RowDefinition Height="55" />
+                    </Grid.RowDefinitions>
+                    <Frame Grid.RowSpan="2" BackgroundColor="#EEE" HasShadow="false">
+                        <Frame.CornerRadius>
+                            <OnPlatform x:TypeArguments="x:Single">
+                                <On Platform="iOS" Value="43" />
+                                <On Platform="Android" Value="42" />
+                            </OnPlatform>
+                        </Frame.CornerRadius>
+                        <Frame.Margin>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="iOS" Value="7" />
+                                <On Platform="Android" Value="10" />
+                            </OnPlatform>
+                        </Frame.Margin>
+                    </Frame>
+                    <forms:RoundImage
+                        Grid.RowSpan="2"
+                        Source="{Binding Icon.Value, Mode=TwoWay}"
+                        BorderWidth="3"
+                        Margin="10"
+                        HasShadow="false"
+                        CornerRadius="40"
+                        />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Nickname.Value}" VerticalTextAlignment="Center" TextColor="#444" />
+                </Grid>
                 <ListView
-                    BackgroundColor="#EEE"
-                    ItemsSource="{Binding MenuItems}"
-                    Grid.Row="2">
+                    BackgroundColor="Transparent"
+                    Grid.Row="3"
+                    ItemsSource="{Binding MenuItems}">
                     <ListView.Behaviors>
                         <behaviors:EventToCommandBehavior
                             EventName="ItemTapped" 
@@ -43,21 +74,6 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <Grid Grid.Row="1" Padding="10, 0, 0, 0" ColumnSpacing="20" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <forms:RoundImage
-                        x:Name="image"
-                        Source="{Binding Icon.Value, Mode=TwoWay}"
-                        BorderWidth="3"
-                        Margin="10"
-                        CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
-                        HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
-                        />
-                    <Label Grid.Column="1" Text="{Binding Nickname.Value}" VerticalTextAlignment="Center" TextColor="White" />
-                </Grid>
             </Grid>
         </ContentPage>
     </MasterDetailPage.Master>

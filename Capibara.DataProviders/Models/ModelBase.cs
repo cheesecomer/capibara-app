@@ -22,6 +22,9 @@ namespace Capibara.Models
         [Dependency]
         public Net.IRequestFactory RequestFactory { get; set; }
 
+        [Dependency]
+        public Net.IChannelFactory ChannelFactory { get; set; }
+
         public virtual void Restore(TModel model) { }
     }
 }

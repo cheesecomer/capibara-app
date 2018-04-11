@@ -80,6 +80,7 @@ namespace Capibara.iOS
                    .ToDictionary(x => x.First(), x => x.Last());
                 this.IsolatedStorage.AccessToken = query["access_token"];
                 this.IsolatedStorage.UserId = query["id"].ToInt();
+                this.IsolatedStorage.Save();
             }
 
             return false;
@@ -100,10 +101,14 @@ namespace Capibara.iOS
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance<IIsolatedStorage>(new IsolatedStorage());
+            var isolatedStorage = new IsolatedStorage();
+            containerRegistry.RegisterInstance<IIsolatedStorage>(isolatedStorage);
             containerRegistry.RegisterInstance<IProgressDialogService>(new ProgressDialogService());
             containerRegistry.RegisterInstance<IPickupPhotoService>(new PickupPhotoService());
             containerRegistry.RegisterInstance<IScreenService>(new ScreenService());
+            containerRegistry.RegisterInstance<IBalloonService>(new BalloonService());
+            containerRegistry.RegisterInstance<ISnsLoginService>(new SnsLoginService(isolatedStorage));
+            containerRegistry.RegisterInstance<IRewardedVideoService>(new RewardedVideoService());
             containerRegistry.RegisterInstance(this.applicationService);
             containerRegistry.RegisterInstance(Plugin.GoogleAnalytics.GoogleAnalytics.Current.Tracker);
         }

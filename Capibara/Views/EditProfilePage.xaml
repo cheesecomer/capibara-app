@@ -60,6 +60,14 @@
                 Text="{Binding Biography.Value, Mode=TwoWay}"
                 Margin="10, 10, 0, 10"
                 HeightRequest="150" />
+            <Button 
+                ef:ToFlatButton.On="true" 
+                Text="SNSと連携する"
+                BorderWidth="0"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White"
+                Command="{Binding CooperationSnsCommand}"
+                />
           </StackLayout>
         </ScrollView>
 

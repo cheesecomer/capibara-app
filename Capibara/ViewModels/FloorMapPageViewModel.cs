@@ -35,7 +35,7 @@ namespace Capibara.ViewModels
             this.ItemTappedCommand = new AsyncReactiveCommand<Room>();
             this.ItemTappedCommand.Subscribe(async x =>
             {
-                var parameters = new NavigationParameters() { { ParameterNames.Model, x } };
+                var parameters = new NavigationParameters { { ParameterNames.Model, x } };
                 await this.NavigationService.NavigateAsync("RoomPage", parameters);
             });
         }

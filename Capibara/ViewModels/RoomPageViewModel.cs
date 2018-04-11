@@ -16,8 +16,6 @@ namespace Capibara.ViewModels
     {
         private bool needClose = true;
 
-        public AsyncReactiveCommand ConnectCommand { get; }
-
         public AsyncReactiveCommand CloseCommand { get; }
 
         public AsyncReactiveCommand SpeakCommand { get; }
@@ -91,14 +89,12 @@ namespace Capibara.ViewModels
             this.IsConnected.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsConnected)));
             this.Message.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Message)));
 
-            // ConnectCommand
-            this.ConnectCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ConnectCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
-
             // CloseCommand
             this.CloseCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.CloseCommand.Subscribe(async () =>
             {
+                this.Model.Disconnected -= this.OnDisconnected;
+
                 if (!this.needClose) return;
                 await this.Model.Close();
             });
@@ -127,6 +123,42 @@ namespace Capibara.ViewModels
                         () => this.SpeakCommand.Execute())));
             
             this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
+
+            this.Model.RejectSubscription += async (s, e) =>
+            {
+                this.Model.Disconnected -= this.OnDisconnected;
+                await this.Model.Close();
+
+                this.DeviceService.BeginInvokeOnMainThread(async () =>
+                {
+                    await this.PageDialogService.DisplayAlertAsync("入室できませんでした", "もう一度やり直すか、時間を置いてお試し下さい", "閉じる");
+                    
+                    await this.NavigationService.GoBackAsync();
+                });
+            };
+
+            this.Model.JoinUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが入室しました");
+            this.Model.LeaveUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが退室しました");
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+
+            this.ProgressDialogService.DisplayProgressAsync(this.Connect());
+            this.Model.Disconnected += this.OnDisconnected;
+        }
+
+        public override void OnSleep()
+        {
+            base.OnSleep();
+
+            this.Model.Disconnected -= this.OnDisconnected;
+        }
+
+        private void OnDisconnected(object sender, EventArgs args)
+        {
+            this.ProgressDialogService.DisplayProgressAsync(this.Connect());
         }
 
         private async Task Connect()

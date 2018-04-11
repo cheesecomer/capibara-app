@@ -75,6 +75,15 @@ namespace Capibara.ViewModels
         [Dependency]
         public ITracker Tracker { get; set; }
 
+        [Dependency]
+        public IBalloonService BalloonService { get; set; }
+
+        [Dependency]
+        public ISnsLoginService SnsLoginService { get; set; }
+
+        [Dependency]
+        public IRewardedVideoService RewardedVideoService { get; set; }
+
         /// <summary>
         /// DIコンテナ
         /// </summary>
@@ -118,11 +127,19 @@ namespace Capibara.ViewModels
 
         protected virtual void OnContainerChanged() { }
 
-        protected virtual EventHandler<FailEventArgs> OnFail(Func<Task> func)
+        protected EventHandler<FailEventArgs> OnFail(Func<Task> func)
         {
             return async (s, args) =>
             {
-                await this.DisplayErrorAlertAsync(args.Error, func);
+                var taskSource = new TaskCompletionSource<bool>();
+
+                this.DeviceService.BeginInvokeOnMainThread(async () =>
+                {
+                    await this.DisplayErrorAlertAsync(args.Error, func);
+                    taskSource.TrySetResult(true);
+                });
+
+                await taskSource.Task;
             };
         }
 

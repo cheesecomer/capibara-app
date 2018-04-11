@@ -25,7 +25,7 @@ namespace Capibara.Models
 
         private int numberOfParticipants;
 
-        private ChatChannel channel;
+        private ChatChannelBase channel;
 
         public virtual event EventHandler RefreshSuccess;
 
@@ -40,6 +40,8 @@ namespace Capibara.Models
         public virtual event EventHandler<User> JoinUser;
 
         public virtual event EventHandler<User> LeaveUser;
+
+        public virtual event EventHandler RejectSubscription;
 
         public virtual bool IsConnected
         {
@@ -103,17 +105,27 @@ namespace Capibara.Models
 
         public virtual async Task<bool> Connect()
         {
-            if (this.channel != null)
+            if (this.channel != null && this.channel.IsOpen)
             {
                 return true;
             }
 
-            this.channel = new ChatChannel(this).BuildUp(this.Container);
+            if (this.channel != null)
+            {
+                await this.channel.Close();
+            }
+
+            this.channel = this.ChannelFactory.CreateChantChannel(this).BuildUp(this.Container);
 
             this.channel.Connected += (sender, e) => this.IsConnected = true;
             this.channel.MessageReceive += this.OnMessageReceive;
-            this.channel.Disconnected += (sender, e) => this.Disconnected?.Invoke(this, null);
-            this.channel.Disconnected += (sender, e) => this.IsConnected = false;
+            this.channel.Disconnected += async (sender, e) =>
+            {
+                await this.Close(); 
+                this.Disconnected?.Invoke(this, null);
+            };
+
+            this.channel.RejectSubscription += (sender, e) => this.RejectSubscription?.Invoke(this, null);
 
             return await this.channel.Connect();
         }
@@ -123,8 +135,8 @@ namespace Capibara.Models
             this.IsConnected = false;
             if (this.channel != null)
             {
-                await this.channel.Close();
-                this.channel.Dispose();
+                await this.channel?.Close();
+                this.channel?.Dispose();
             }
 
             this.channel = null;
@@ -137,8 +149,18 @@ namespace Capibara.Models
             this.Name = model.Name;
             this.Capacity = model.Capacity;
             this.NumberOfParticipants = model.NumberOfParticipants;
-            this.Participants.Clear();
-            model.Participants?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
+
+            // 差分を追加
+            model.Participants
+                ?.Where(x => this.Participants.All(v => v.Id != x.Id))
+                ?.ToList()
+                ?.ForEach(x => this.Participants.Add(x.BuildUp(this.Container)));
+
+            // 差分を削除
+            this.Participants
+                ?.Where(x => model.Participants.All(v => v.Id != x.Id))
+                ?.ToList()
+                ?.ForEach(x => this.Participants.Remove(x));
         }
 
         public virtual async Task<bool> Speak(string message)
@@ -159,15 +181,15 @@ namespace Capibara.Models
             }
         }
 
-        private void OnMessageReceive(object sender, Message message)
+        private void OnMessageReceive(object sender, EventArgs<Message> args)
         {
-            if (message.Id != 0)
+            if (args.Value.Id != 0)
             {
-                this.Messages.Insert(0, message.BuildUp(this.Container));
+                this.Messages.Insert(0, args.Value.BuildUp(this.Container));
             }
             else
             {
-                this.OnSystemMessageReceive(message);
+                this.OnSystemMessageReceive(args.Value);
             }
         }
 

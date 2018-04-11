@@ -42,6 +42,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ReportCommand { get; }
 
+        public AsyncReactiveCommand CooperationSnsCommand { get; }
+
         protected override bool NeedTrackingView => !this.Model.IsOwn;
 
         protected override string OptionalScreenName => $"/{this.Model.Id}";
@@ -66,11 +68,10 @@ namespace Capibara.ViewModels
             this.Icon = new ReactiveProperty<ImageSource>();
             this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x => this.Icon.Value = x);
 
-            this.IconThumbnail = 
-                this.Model.ToReactivePropertyAsSynchronized(
-                    x => x.IconThumbnailUrl, 
-                    x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)),
-                    x => (x as UriImageSource)?.Uri.AbsoluteUri);
+            this.IconThumbnail = this.Model
+                .ObserveProperty(x => x.IconThumbnailUrl)
+                .Select(x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)))
+                .ToReactiveProperty();
             
             this.IsBlock = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsBlock)
@@ -96,7 +97,23 @@ namespace Capibara.ViewModels
 
             // CommitCommand
             this.CommitCommand = this.Nickname.Select(x => x.ToSlim().IsPresent()).ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.CommitCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
+            this.CommitCommand.Subscribe(async () => {
+                if (!this.Model.IconBase64.IsNullOrEmpty())
+                {
+                    var canReward = await this.PageDialogService.DisplayAlertAsync(
+                        string.Empty, 
+                        "動画広告を視聴して\r\n" +
+                        "プロフィール画像を更新しよう！", 
+                        "視聴する", 
+                        "閉じる");
+                    if (!canReward) return;
+
+                    var completed = await this.RewardedVideoService.DisplayRewardedVideo();
+                    if (!completed) return;
+                }
+
+                await this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit());
+            });
 
             this.Model.CommitSuccess += async (sender, e) => {
                 var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
@@ -136,6 +153,26 @@ namespace Capibara.ViewModels
                 parameters.Add(ParameterNames.Model, this.Model);
                 return this.NavigationService.NavigateAsync("ReportPage", parameters);
             });
+
+            // SignUpWithSnsCommand
+            this.CooperationSnsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.CooperationSnsCommand.Subscribe(async () => {
+                var buttons = new[] {
+                    ActionSheetButton.CreateCancelButton("キャンセル", () => { }),
+                    ActionSheetButton.CreateButton("Google", () => this.OpenOAuthUri(OAuthProvider.Google)),
+                    ActionSheetButton.CreateButton("Twitter", () => this.OpenOAuthUri(OAuthProvider.Twitter)),
+                    ActionSheetButton.CreateButton("LINE", () => this.OpenOAuthUri(OAuthProvider.Line))
+                };
+
+                await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", buttons);
+            });
+        }
+
+        private void OpenOAuthUri(OAuthProvider provider)
+        {
+            var query = $"?user_id={this.Model.Id}&access_token={this.IsolatedStorage.AccessToken}";
+            var url = Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower());
+            this.SnsLoginService.Open(url + query);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace Capibara.iOS
     {
         public const string AdMobUnitIdForBanner = "${IOS_ADMOB_UNIT_ID_FOR_BANNER}";
 
+        public const string AdMobUnitIdForRewardedVideo = "${IOS_ADMOB_UNIT_ID_FOR_REWARDED_VIDEO}";
+
         public const string GoogleAnalyticsTrackingId = "${GA_TRACKING_ID}";
     }
 }

@@ -9,6 +9,9 @@
     x:Class="Capibara.Views.ParticipantsPage"
     Title="参加者"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
+    </ContentView.Behaviors>
     <ListView
         Grid.Row="0"
         HasUnevenRows="true"

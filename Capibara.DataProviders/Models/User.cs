@@ -53,59 +53,59 @@ namespace Capibara.Models
 
         public virtual event EventHandler<FailEventArgs> ReportFail;
 
-        public int Id
+        public virtual int Id
         {
             get => this.id;
             set => this.SetProperty(ref this.id, value);
         }
 
-        public string Nickname
+        public virtual string Nickname
         {
             get => this.nickname;
             set => this.SetProperty(ref this.nickname, value);
         }
 
-        public string Biography
+        public virtual string Biography
         {
             get => this.biography;
             set => this.SetProperty(ref this.biography, value);
         }
 
         [JsonProperty("icon_url")]
-        public string IconUrl
+        public virtual string IconUrl
         {
             get => this.iconUrl;
             set => this.SetProperty(ref this.iconUrl, value);
         }
 
         [JsonProperty("icon_thumb_url")]
-        public string IconThumbnailUrl
+        public virtual string IconThumbnailUrl
         {
             get => this.iconThumbnailUrl;
             set => this.SetProperty(ref this.iconThumbnailUrl, value);
         }
 
-        public string IconBase64
+        public virtual string IconBase64
         {
             get => this.iconBase64;
             set => this.SetProperty(ref this.iconBase64, value);
         }
 
         [JsonProperty("is_block")]
-        public bool IsBlock
+        public virtual bool IsBlock
         {
             get => this.isBlock;
             set => this.SetProperty(ref this.isBlock, value);
         }
 
         [JsonProperty("accepted")]
-        public virtual bool IsAccepted
+        public  virtual bool IsAccepted
         {
             get => this.isAccepted;
             set => this.SetProperty(ref this.isAccepted, value);
         }
 
-        public bool IsOwn => this.IsolatedStorage.UserId == this.Id;
+        public virtual bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
         public override void Restore(User model)
         {

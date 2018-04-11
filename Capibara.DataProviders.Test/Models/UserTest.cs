@@ -583,12 +583,6 @@ namespace Capibara.Test.Models.UserTest
                 Assert.That(this.IsFailed, Is.EqualTo(false));
             }
         }
-
-        [TestFixture]
-        public class WhenTimeout : WhenFail
-        {
-            protected override Exception RestException => new WebException();
-        }
     }
 
     namespace CommitTest
@@ -1361,6 +1355,294 @@ namespace Capibara.Test.Models.UserTest
         public class WhenFailWithoutEventHandler : TestBase
         {
             protected override bool NeedEventHandler => false;
+
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception Exception => new WebException();
+        }
+    }
+
+
+    namespace AcceptTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool Result { get; private set; }
+
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Subject { get; private set; }
+
+            protected User CurrentUser { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected abstract bool NeedCurrentUserRegistration { get; }
+
+            protected virtual User Response { get; }
+
+            protected virtual Exception Exception { get; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
+
+                var request = new Mock<RequestBase<User>>();
+
+                var methodMock = request.Setup(x => x.Execute());
+
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
+
+                this.RequestFactory.Setup(x => x.UsersUpdateRequest(true)).Returns(request.Object);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Subject.AcceptFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.AcceptSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                if (this.NeedCurrentUserRegistration)
+                {
+                    this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, this.CurrentUser = new User());
+                }
+
+                this.Result = this.Subject.Accept().Result;
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override bool NeedCurrentUserRegistration => true;
+
+            protected override User Response => new User
+            {
+                Id = 1,
+                Nickname = "xxxxx!",
+                Biography = "...",
+                IconUrl = "http://xxxxxx.com/xxxx.png",
+                IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png"
+            };
+
+            [TestCase]
+            public void ItShouldIconThumbnailUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldNameWithExpected()
+            {
+                Assert.That(this.Subject.Nickname, Is.EqualTo("xxxxx!"));
+            }
+
+            [TestCase]
+            public void ItShouldIdWithExpected()
+            {
+                Assert.That(this.Subject.Id, Is.EqualTo(1));
+            }
+
+            [TestCase]
+            public void ItShouldBiographyWithExpected()
+            {
+                Assert.That(this.Subject.Biography, Is.EqualTo("..."));
+            }
+
+            [TestCase]
+            public void ItShouldIconUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+
+        [TestFixture]
+        public class WhenSuccessWithCurrentUser : WhenSuccess
+        {
+            protected override bool NeedCurrentUserRegistration => true;
+
+            [TestCase]
+            public void ItShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.CurrentUser));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserNameWithExpected()
+            {
+                Assert.That(this.CurrentUser.Nickname, Is.EqualTo("xxxxx!"));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserIdWithExpected()
+            {
+                Assert.That(this.CurrentUser.Id, Is.EqualTo(1));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserBiographyWithExpected()
+            {
+                Assert.That(this.CurrentUser.Biography, Is.EqualTo("..."));
+            }
+
+            [TestCase]
+            public void ItShouldCurrentUserIconUrlWithExpected()
+            {
+                Assert.That(this.CurrentUser.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+        }
+
+
+        [TestFixture]
+        public class WhenSuccessWithoutCurrentUser : WhenSuccess
+        {
+            protected override bool NeedCurrentUserRegistration => false;
+
+            [TestCase]
+            public void ItShouldRegisterUserInDIContainer()
+            {
+                Assert.That(this.Subject.Container.Resolve(typeof(User), "CurrentUser"), Is.EqualTo(this.Subject));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override bool NeedCurrentUserRegistration => false;
+
+            protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldDontSaveTokenInStorage()
+            {
+                Assert.That(this.Subject.IsolatedStorage.AccessToken, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldDontSaveUserNicknameInStorage()
+            {
+                Assert.That(this.Subject.IsolatedStorage.UserNickname, Is.Null.Or.EqualTo(string.Empty));
+            }
+
+            [TestCase]
+            public void ItShouldDontRegisterUserInDIContainer()
+            {
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override bool NeedCurrentUserRegistration => true;
+
+            protected override User Response => new User
+            {
+                Id = 1,
+                Nickname = "xxxxx!",
+                Biography = "...",
+                IconUrl = "http://xxxxxx.com/xxxx.png"
+            };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override bool NeedCurrentUserRegistration => true;
 
             protected override Exception Exception => new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 

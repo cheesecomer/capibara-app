@@ -75,6 +75,8 @@
     <Compile Include="DictionaryExtensionsTest.cs" />
     <Compile Include="ObjectExtensionsTest.cs" />
     <Compile Include="IEnumerableExtensionsTest.cs" />
+    <Compile Include="EventArgsTest.cs" />
+    <Compile Include="FailEventArgsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

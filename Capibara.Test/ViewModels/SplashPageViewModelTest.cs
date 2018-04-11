@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Net;
 
-using Capibara.Models;
+using Capibara.ViewModels;
 using Capibara.Net;
 using Capibara.Net.Sessions;
 
 using Moq;
 using NUnit.Framework;
+
+using Prism.Navigation;
 
 using SubjectViewModel = Capibara.ViewModels.SplashPageViewModel;
 
@@ -89,7 +91,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             {
                 base.SetUp();
 
-                this.Subject = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object).BuildUp(this.Container);
+                this.Subject = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object).BuildUp(this.Container);
 
                 var request = new Mock<RequestBase<CreateResponse>>();
                 if (this.Response.IsPresent())
@@ -132,7 +134,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             [TestCase]
             public void ItShouldNavigateToSignUpPage()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("SignUpPage"));
+                this.NavigationService.Verify(x => x.NavigateAsync("SignUpPage", null, null, false), Times.Once());
             }
         }
 
@@ -140,7 +142,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
         {
             protected override string AccessToken => Guid.NewGuid().ToString();
 
-            protected override CreateResponse Response => new CreateResponse();
+            protected override CreateResponse Response { get; } = new CreateResponse();
 
             [TestCase]
             public void ItShouldLogoScaleWithExpect()
@@ -163,10 +165,15 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             [TestCase]
             public void ItShouldNavigateToAcceptPage()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/NavigationPage/AcceptPage"));
+                this.NavigationService.Verify(
+                    x => x.NavigateAsync(
+                        "/NavigationPage/AcceptPage", 
+                        It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == this.Response),
+                        null,
+                        false),
+                    Times.Once());
             }
         }
-
 
         public class WhenHasValidAccessTokenAndAccepted : TestBase
         {
@@ -195,7 +202,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             [TestCase]
             public void ItShouldNavigateToFloorMapPage()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null, null, false), Times.Once());
             }
         }
 

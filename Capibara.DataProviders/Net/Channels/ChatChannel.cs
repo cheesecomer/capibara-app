@@ -6,6 +6,9 @@ using Capibara.Models;
 
 using Newtonsoft.Json;
 
+using Unity;
+using Unity.Attributes;
+
 namespace Capibara.Net.Channels
 {
     /// <summary>
@@ -34,16 +37,21 @@ namespace Capibara.Net.Channels
         public string Message { get; set; }
     }
 
+    public abstract class ChatChannelBase : ChannelBase<Message>
+    {
+        public abstract Task Speak(string message);
+    }
+
     /// <summary>
     /// チャットチャンネル
     /// </summary>
-    public class ChatChannel : ChannelBase<Message>
+    public class ChatChannel : ChatChannelBase
     {
         private Room room;
 
         private IChannelIdentifier channelIdentifier;
 
-        protected override IChannelIdentifier ChannelIdentifier
+        public override IChannelIdentifier ChannelIdentifier
             => this.channelIdentifier ?? (this.channelIdentifier = new ChatChannelIdentifier(this.room.Id));
 
         public ChatChannel(Room room)
@@ -51,9 +59,9 @@ namespace Capibara.Net.Channels
             this.room = room;
         }
 
-        public Task Speak(string message)
+        public override Task Speak(string message)
         {
-            var command = new MessageCommand<SpeakActionContext>(this.ChannelIdentifier, new SpeakActionContext() { Message = message });
+            var command = new MessageCommand<SpeakActionContext>(this.ChannelIdentifier, new SpeakActionContext { Message = message });
             return this.Cable.SendCommand(command);
         }
     }

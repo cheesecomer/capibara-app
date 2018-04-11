@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Capibara.ViewModels;
 using Capibara.Models;
@@ -98,7 +99,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
             var model = new Mock<User>();
             model.SetupAllProperties();
 
-            this.Subject = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            this.Subject = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             this.Subject.Source.Value.Url = "http://localhost:9999/terms";
             this.Subject.IsLoaded.Value = true;
 
@@ -159,18 +160,18 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
 
     public class AgreeCommandTest : ViewModelTestBase
     {
-        private bool IsAcceptCalled;
+        private Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Accept()).ReturnsAsync(true).Callback(() => this.IsAcceptCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Accept()).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
             viewModel.Source.Value.Url = "http://localhost:9999/privacy_policy";
             viewModel.IsLoaded.Value = true;
 
@@ -182,30 +183,30 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
         public void ItShouldCommitCalled()
         {
-            Assert.That(this.IsAcceptCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Accept(), Times.Once());
         }
     }
 
     public class CancelCommandTest : ViewModelTestBase
     {
-        private bool IsDestroyCalled;
+        private Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Destroy()).ReturnsAsync(true).Callback(() => this.IsDestroyCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Destroy()).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
 
             viewModel.CancelCommand.Execute();
 
@@ -215,13 +216,13 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
         public void ItShouldDestroyCalled()
         {
-            Assert.That(this.IsDestroyCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Destroy(), Times.Once());
         }
     }
 
@@ -232,11 +233,11 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.AcceptSuccess += null, EventArgs.Empty);
 
-            Assert.That(this.NavigatePageName, Is.EqualTo("/MainPage/NavigationPage/FloorMapPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage"), Times.Once());
         }
     }
 
@@ -247,11 +248,11 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         {
             var model = new Mock<User>();
 
-            new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
 
             model.Raise(x => x.DestroySuccess += null, EventArgs.Empty);
 
-            Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+            this.NavigationService.Verify(x => x.NavigateAsync("/SignUpPage"), Times.Once());
         }
     }
 
@@ -274,16 +275,14 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
         [TestCase]
         public void ItShouldAccepted()
         {
-            bool isSetAcceptedTrue = false;
-
             var model = new Mock<User>();
             model.SetupAllProperties();
-            model.SetupSet(x => x.IsAccepted = true).Callback(() => isSetAcceptedTrue = true);
 
             var subject = new SubjectViewModel(model: model.Object);
             subject.BuildUp(this.Container);
             subject.OnNavigatedTo(null);
-            Assert.That(isSetAcceptedTrue, Is.EqualTo(true));
+
+            model.VerifySet(x => x.IsAccepted = true);
         }
     }
 

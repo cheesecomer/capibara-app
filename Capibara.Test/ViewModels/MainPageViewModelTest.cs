@@ -2,39 +2,29 @@
 using Capibara.Models;
 using NUnit.Framework;
 using Unity;
+using Moq;
+using Prism.Navigation;
 using MenuItem = Capibara.ViewModels.MainPageViewModel.MenuItem;
 using SubjectViewModel = Capibara.ViewModels.MainPageViewModel;
 
 namespace Capibara.Test.ViewModels.MainPageViewModel
 {
-    [TestFixture("FloorMapPage")]
-    [TestFixture("MyProfilePage")]
-    [TestFixture("SettingPage")]
     public class ItemTappedCommandTest : ViewModelTestBase
     {
-        private string pagePath;
-
-        public ItemTappedCommandTest(string pagePath)
-        {
-            this.pagePath = pagePath;
-        }
-
-        [SetUp]
-        public override void SetUp()
+        [TestCase("FloorMapPage")]
+        [TestCase("MyProfilePage")]
+        [TestCase("SettingPage")]
+        public void ItShouldNavigateToExpet(string pagePath)
         {
             base.SetUp();
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
-            viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = this.pagePath} );
+            viewModel.ItemTappedCommand.Execute(new MenuItem { PagePath = pagePath });
 
             while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo(this.pagePath));
+            this.NavigationService.Verify(x => x.NavigateAsync(pagePath, null), Times.Once());
         }
     }
 
@@ -47,7 +37,7 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         {
             base.SetUp();
 
-            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User() { Nickname = "xxxx"});
+            this.Container.RegisterInstance(typeof(User), UnityInstanceNames.CurrentUser, new User { Nickname = "xxxx"});
 
             this.Subject = new SubjectViewModel().BuildUp(this.Container);
         }
@@ -93,17 +83,17 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
     {
         protected SubjectViewModel Subject;
 
-        private int index;
+        private int Index { get; }
 
-        private string name;
+        private string Name { get; }
 
-        private string pagePath;
+        private string PagePath { get; }
 
         public MenuItemsItemPropertyTest(int index, string name, string pagePath)
         {
-            this.index = index;
-            this.name = name;
-            this.pagePath = pagePath;
+            this.Index = index;
+            this.Name = name;
+            this.PagePath = pagePath;
         }
 
         [SetUp]
@@ -117,13 +107,13 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         [TestCase]
         public void ItShouldFirstItemNameWithExpect()
         {
-            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.Name, Is.EqualTo(name));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(Index)?.Name, Is.EqualTo(Name));
         }
 
         [TestCase]
         public void ItShouldFirstItemPagePathWithExpect()
         {
-            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(index)?.PagePath, Is.EqualTo(pagePath));
+            Assert.That(this.Subject.MenuItems.ElementAtOrDefault(Index)?.PagePath, Is.EqualTo(PagePath));
         }
     }
 }

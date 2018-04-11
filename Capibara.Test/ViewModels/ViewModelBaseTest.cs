@@ -35,6 +35,14 @@ namespace Capibara.Test.ViewModels.ViewModelBase
         }
     }
 
+    public class OnSleepTest
+    {
+        public void ItShouldDoseNotThrow()
+        {
+            Assert.DoesNotThrow(new StabViewModel().OnSleep);
+        }
+    }
+
     namespace ModelTest
     {
         [TestFixture]
@@ -157,8 +165,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 var model = new StabModel();
                 var viewModel = new StabViewModel();
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, model);
+                var parameters = new NavigationParameters { { ParameterNames.Model, model } };
 
                 viewModel.OnNavigatingTo(parameters);
 
@@ -178,7 +185,7 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             {
                 base.SetUp();
 
-                this.Subject = new StabViewModel(this.NavigationService, this.PageDialogService.Object);
+                this.Subject = new StabViewModel(this.NavigationService.Object, this.PageDialogService.Object);
             }
         }
 
@@ -195,13 +202,13 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "再度ログインしてください", "閉じる"), Times.Once());
             }
 
             [TestCase]
             public void ItShoulGoToSignIn()
             {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+                this.NavigationService.Verify(x => x.NavigateAsync("/SignUpPage", null), Times.Once());
             }
         }
 
@@ -218,13 +225,13 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "不正なアクセスです。再度操作をやり直してください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
             public void ItShoulGoBack()
             {
-                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
             }
         }
 
@@ -241,13 +248,13 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "データが見つかりません。再度操作をやり直してください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
             public void ItShoulGoBack()
             {
-                Assert.That(this.IsGoBackCalled, Is.EqualTo(true));
+                this.NavigationService.Verify(x => x.GoBackAsync(), Times.Once());
             }
         }
 
@@ -270,11 +277,11 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("なんてこった！", "最新のアプリが公開されています！アップデートを行ってください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
-            public void ItShoulGoBack()
+            public void ItShoulOpenUriCalled()
             {
                 Assert.That(this.IsOpenUriCalled, Is.EqualTo(true));
             }
@@ -293,13 +300,49 @@ namespace Capibara.Test.ViewModels.ViewModelBase
             [TestCase]
             public void ItShoulShowDialog()
             {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "現在メンテナンス中です。時間を置いて再度お試しください。", "閉じる"), Times.Once());
             }
 
             [TestCase]
             public void ItShoulExit()
             {
-                Assert.That(this.IsExitCalled, Is.EqualTo(true));
+                this.ApplicationService.Verify(x => x.Exit());
+            }
+        }
+
+        public class WhenExceptionToFinish : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
+            }
+        }
+
+        public class WhenExceptionToRetry : ViewModelTestBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+                this.Subject.BuildUp(this.Container).Fail(new Exception());
+            }
+
+            [TestCase]
+            public void ItShoulShowDialog()
+            {
+                this.PageDialogService.Verify(x => x.DisplayAlertAsync("申し訳ございません！", "通信エラーです。リトライしますか？。", "リトライ", "閉じる"), Times.Once());
             }
         }
     }

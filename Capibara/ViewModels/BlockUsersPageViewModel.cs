@@ -17,8 +17,6 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
-        public AsyncReactiveCommand<Block> ItemTappedCommand { get; }
-
         public BlockUsersPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null)
@@ -27,8 +25,6 @@ namespace Capibara.ViewModels
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Refresh()));
-
-            this.ItemTappedCommand = new AsyncReactiveCommand<Block>();
         }
 
         private async Task Refresh()

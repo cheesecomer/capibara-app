@@ -5,38 +5,52 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
-    ControlTemplate="{StaticResource WithAdBannerControlTemplate}"
     x:Class="Capibara.Views.FloorMapPage"
     Title="チャットルーム">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="更新" Priority="1" Command="{Binding RefreshCommand}" />
+    </ContentPage.ToolbarItems>
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
     </ContentView.Behaviors>
-    <ListView ItemsSource="{Binding Rooms}" HasUnevenRows="true">
-        <ListView.Header>
-            <BoxView HeightRequest="0" />
-        </ListView.Header>
-        <ListView.Footer>
-            <BoxView HeightRequest="0" />
-        </ListView.Footer>
-        <ListView.Behaviors>
-            <behaviors:EventToCommandBehavior
-                EventName="ItemTapped" 
-                EventArgsParameterPath="Item"
-                Command="{Binding ItemTappedCommand}" />
-        </ListView.Behaviors>
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <ViewCell>
-                    <Grid Padding="15, 10, 0, 10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Text="{Binding Name}" FontSize="Large" />
-                        <Label Grid.Row="1" Text="{Binding NumberOfParticipants, StringFormat='現在の入室者{0}人'}" Margin="10, 0, 0, 0" />
-                    </Grid>
-                </ViewCell>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <ListView ItemsSource="{Binding Rooms}" HasUnevenRows="true">
+            <ListView.Header>
+                <BoxView HeightRequest="0" />
+            </ListView.Header>
+            <ListView.Footer>
+                <BoxView HeightRequest="0" />
+            </ListView.Footer>
+            <ListView.Behaviors>
+                <behaviors:EventToCommandBehavior
+                    EventName="ItemTapped" 
+                    EventArgsParameterPath="Item"
+                    Command="{Binding ItemTappedCommand}" />
+            </ListView.Behaviors>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="15, 10, 0, 10" ColumnSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Large" />
+                            <Label Grid.Row="1" Grid.Column="0" FontSize="Small" Text="{Binding NumberOfParticipants, StringFormat='現在の入室者 {0}'}" Margin="10, 0, 0, 0" />
+                            <Label Grid.Row="1" Grid.Column="1" FontSize="Small" Text="{Binding Capacity, StringFormat=' / {0}人'}" Margin="0, 0, 0, 0" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid> 
 </ContentPage>

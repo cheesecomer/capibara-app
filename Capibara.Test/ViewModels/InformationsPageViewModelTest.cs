@@ -9,9 +9,10 @@ using Capibara.Net;
 using Capibara.Net.Informations;
 
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 
-using Prism.Services;
+using Prism.Navigation;
 
 using SubjectViewModel = Capibara.ViewModels.InformationsPageViewModel;
 
@@ -47,7 +48,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
             [TestCase]
             public void ItShouldShowDialog()
             {
-                Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
             }
         }
 
@@ -56,7 +57,7 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         {
             protected override IndexResponse Response => new IndexResponse
             {
-                Informations = 
+                Informations =
                 {
                     new Information { Id = 01, Title = "Title0001", Message = "Message0001", PublishedAt = new DateTimeOffset(2017, 01, 28, 20, 25, 20, TimeSpan.FromHours(9)) },
                     new Information { Id = 02, Title = "Title0002", Message = "Message0002", PublishedAt = new DateTimeOffset(2017, 02, 28, 20, 25, 20, TimeSpan.FromHours(9)) },
@@ -139,35 +140,25 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         [TestFixture]
         public class WhenUnauthorizedWithService : ViewModelTestBase
         {
-            [SetUp]
-            public override void SetUp()
+            [TestCase]
+            public void ItShouldDisplayErrorAlertAsyncCall()
             {
-                base.SetUp();
+                var exception = new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
 
                 var request = new Mock<RequestBase<IndexResponse>>();
-                request.Setup(x => x.Execute()).ThrowsAsync(new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty));
+                request.Setup(x => x.Execute()).ThrowsAsync(exception);
 
                 this.RequestFactory.Setup(x => x.InformationsIndexRequest()).Returns(request.Object);
 
-                var viewModel = new SubjectViewModel(this.NavigationService, this.PageDialogService.Object);
+                var subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object);
 
-                viewModel.BuildUp(this.Container);
+                subject.Object.BuildUp(this.Container);
 
-                viewModel.RefreshCommand.Execute();
+                subject.Object.RefreshCommand.Execute();
 
-                while (!viewModel.RefreshCommand.CanExecute()) { }
-            }
+                while (!subject.Object.RefreshCommand.CanExecute()) { }
 
-            [TestCase]
-            public void ItShouldShowDialog()
-            {
-                Assert.That(this.IsShowDialog, Is.EqualTo(true));
-            }
-
-            [TestCase]
-            public void ItShouldNavigateToLogin()
-            {
-                Assert.That(this.NavigatePageName, Is.EqualTo("/SignUpPage"));
+                subject.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
             }
         }
 
@@ -180,10 +171,10 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
                 else if (x == null | y == null)
                     return false;
                 else
-                    return 
-                        x.Id == y.Id 
-                     && x.Title == y.Title 
-                     && x.Message == y.Message 
+                    return
+                        x.Id == y.Id
+                     && x.Title == y.Title
+                     && x.Message == y.Message
                      && x.PublishedAt == y.PublishedAt;
             }
 
@@ -201,24 +192,22 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
         public override void SetUp()
         {
             base.SetUp();
+        }
 
-            var viewModel = new SubjectViewModel(this.NavigationService);
+        [TestCase]
+        public void ItShouldNavigateToWebViewPage()
+        {
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.ItemTappedCommand.Execute(new Information { Url = "http://example.com/informations/1" });
 
             while (!viewModel.ItemTappedCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("WebViewPage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterUrlIsExpect()
-        {
-            Assert.That(this.NavigationParameters.TryGetValue<string>(ParameterNames.Url), Is.EqualTo("http://example.com/informations/1"));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "WebViewPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Url) as string == "http://example.com/informations/1"))
+                , Times.Once());
         }
     }
 }

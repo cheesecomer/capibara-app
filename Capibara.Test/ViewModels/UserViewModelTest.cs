@@ -8,6 +8,7 @@ using Capibara.ViewModels;
 using Moq;
 using NUnit.Framework;
 using Prism.Services;
+using Prism.Navigation;
 
 using Xamarin.Forms;
 
@@ -15,6 +16,37 @@ using SubjectViewModel = Capibara.ViewModels.UserViewModel;
 
 namespace Capibara.Test.ViewModels.UserViewModelTest
 {
+    namespace OnResumeTest
+    {
+        public class WhenOther : ViewModelTestBase
+        {
+            public void ItShouldSendView()
+            {
+                this.IsolatedStorage.UserId = 2;
+
+                var subject = new SubjectViewModel(model: new User { Id = 1 }).BuildUp(this.Container);
+
+                subject.OnResume();
+
+                this.Tracker.Verify(x => x.SendView(It.Is<string>(v => v == "/User/1")), Times.Once());
+            }
+        }
+
+        public class WhenOwn : ViewModelTestBase
+        {
+            public void ItShouldSendView()
+            {
+                this.IsolatedStorage.UserId = 1;
+
+                var subject = new SubjectViewModel(model: new User { Id = 1 }).BuildUp(this.Container);
+
+                subject.OnResume();
+
+                this.Tracker.Verify(x => x.SendView(It.IsAny<string>()), Times.Never());
+            }
+        }
+    }
+
     public class NicknamePropertyTest : ViewModelTestBase
     {
         protected SubjectViewModel Subject;
@@ -74,18 +106,18 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class RefreshCommandTest : ViewModelTestBase
     {
-        private bool IsRefreshCalled;
+        private Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Refresh()).ReturnsAsync(true).Callback(() => this.IsRefreshCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Refresh()).ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(model: this.Model.Object).BuildUp(this.Container);
 
             viewModel.RefreshCommand.Execute();
 
@@ -95,13 +127,13 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
 
         [TestCase]
         public void ItShouldRefreshCalled()
         {
-            Assert.That(this.IsRefreshCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Refresh(), Times.Once());
         }
     }
 
@@ -181,7 +213,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             [TestCase]
             public void ItShouldShowPhotoPicker()
             {
-                Assert.That(this.IsDisplayedPhotoPicker, Is.EqualTo(true));
+                this.PickupPhotoService.Verify(x => x.DisplayAlbumAsync(), Times.Once());
             }
         }
     }
@@ -189,34 +221,20 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class EditCommandTest : ViewModelTestBase
     {
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToEditProfilePage()
         {
-            base.SetUp();
-
-            var viewModel = new SubjectViewModel(this.NavigationService);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
 
             viewModel.EditCommand.Execute();
 
             while (!viewModel.EditCommand.CanExecute()) { }
-        }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("EditProfilePage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsUser()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model] is User, Is.EqualTo(true));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "EditProfilePage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model)),
+                Times.Once());
         }
     }
 
@@ -231,47 +249,259 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.Nickname.Value = nickname;
 
             Assert.That(viewModel.CommitCommand.CanExecute(), Is.EqualTo(canExecute));
         }
     }
 
-    [TestFixture]
-    public class CommitCommandTest : ViewModelTestBase
+    namespace CommitCommandTest
     {
-        private bool IsCommitCalled;
-
-        [SetUp]
-        public override void SetUp()
+        [TestFixture]
+        public class WhenIconBase64IsEmpty : ViewModelTestBase
         {
-            base.SetUp();
+            protected Mock<User> Model;
+            
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Commit()).ReturnsAsync(true).Callback(() => this.IsCommitCalled = true);
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(true);
 
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
-            viewModel.Nickname.Value = "FooBar";
+                this.RewardedVideoService
+                    .Setup(x => x.DisplayRewardedVideo())
+                    .ReturnsAsync(true);
+                
+                this.Model = new Mock<User>();
+                this.Model.SetupAllProperties();
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+                
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+                viewModel.Nickname.Value = "FooBar";
+                
+                viewModel.CommitCommand.Execute();
+                
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
 
-            viewModel.CommitCommand.Execute();
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService.Verify(
+                    x => x.DisplayAlertAsync(
+                        string.Empty,
+                        "動画広告を視聴して\r\nプロフィール画像を更新しよう！", 
+                        "視聴する", 
+                        "閉じる"), 
+                    Times.Never());
+            }
 
-            while (!viewModel.CommitCommand.CanExecute()) { }
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Never());
+            }
+            
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
+            }
+            
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Once());
+            }
         }
 
-        [TestCase]
-        public void ItShouldShowDialog()
+        [TestFixture]
+        public class WhenIconBase64IsPresent : ViewModelTestBase
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                //this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
+                    .ReturnsAsync(true);
+
+                this.RewardedVideoService
+                    .Setup(x => x.DisplayRewardedVideo())
+                    .ReturnsAsync(true);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Once());
+            }
         }
 
-        [TestCase]
-        public void ItShouldCommitCalled()
+        [TestFixture]
+        public class WhenIconBase64IsPresentDialogCancel : ViewModelTestBase
         {
-            Assert.That(this.IsCommitCalled, Is.EqualTo(true));
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(false);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Never());
+            }
+        }
+
+        [TestFixture]
+        public class WhenIconBase64IsPresentRewardVideoCancel : ViewModelTestBase
+        {
+            protected Mock<User> Model;
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.PageDialogService.Reset();
+                this.PageDialogService
+                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(true);
+
+                this.Model = new Mock<User>();
+                this.Model.SetupGet(x => x.IconBase64).Returns("abcdefg");
+                this.Model.SetupGet(x => x.Nickname).Returns("FooBar");
+                this.Model.Setup(x => x.Commit()).ReturnsAsync(true);
+
+                var viewModel = new SubjectViewModel(this.NavigationService.Object, this.PageDialogService.Object, this.Model.Object).BuildUp(this.Container);
+
+                viewModel.CommitCommand.Execute();
+
+                while (!viewModel.CommitCommand.CanExecute()) { }
+            }
+
+            [TestCase]
+            public void ItShouldNotShowDialog()
+            {
+                this.PageDialogService
+                    .Verify(
+                        x => x.DisplayAlertAsync(
+                            string.Empty,
+                            "動画広告を視聴して\r\nプロフィール画像を更新しよう！",
+                            "視聴する",
+                            "閉じる"),
+                        Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldNotShowRewardVideo()
+            {
+                this.RewardedVideoService.Verify(x => x.DisplayRewardedVideo(), Times.Once());
+            }
+
+            [TestCase]
+            public void ItShouldShowProgressDialog()
+            {
+                this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()), Times.Never());
+            }
+
+            [TestCase]
+            public void ItShouldCommitCalled()
+            {
+                this.Model.Verify(x => x.Commit(), Times.Never());
+            }
         }
     }
+
 
     [TestFixture]
     public class BlockCommandCanExecuteTest : ViewModelTestBase
@@ -282,7 +512,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
             viewModel.IsBlock.Value = isBlock;
 
             Assert.That(viewModel.BlockCommand.CanExecute(), Is.EqualTo(canExecute));
@@ -295,18 +525,18 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     {
         private SubjectViewModel ViewModel;
 
-        protected bool IsBlockCalled;
+        protected Mock<User> Model;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            model.Setup(x => x.Block()).ReturnsAsync(true).Callback(() => this.IsBlockCalled = true);
+            this.Model = new Mock<User>();
+            this.Model.SetupAllProperties();
+            this.Model.Setup(x => x.Block()).ReturnsAsync(true);
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService, model: model.Object).BuildUp(this.Container);
+            this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
             this.ViewModel.IsBlock.Value = false;
             this.ViewModel.BlockCommand.Execute();
         }
@@ -314,13 +544,13 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         [TestCase]
         public void ItShouldIsBlockCalled()
         {
-            Assert.That(this.IsBlockCalled, Is.EqualTo(true));
+            this.Model.Verify(x => x.Block(), Times.Once());
         }
 
         [TestCase]
         public void ItShouldShowDialog()
         {
-            Assert.That(this.IsDisplayedProgressDialog, Is.EqualTo(true));
+            this.ProgressDialogService.Verify(x => x.DisplayProgressAsync(It.IsAny<Task>(), It.IsAny<string>()));
         }
     }
 
@@ -328,6 +558,22 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
     [TestFixture]
     public class ReportCommandTest : ViewModelTestBase
     {
+        [TestCase]
+        public void ItShouldNavigateToEditProfilePage()
+        {
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
+
+            viewModel.ReportCommand.Execute();
+
+            while (!viewModel.ReportCommand.CanExecute()) { }
+
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "ReportPage",
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == viewModel.Model)),
+                Times.Once());
+        }
+
         private SubjectViewModel ViewModel;
 
         [SetUp]
@@ -335,29 +581,67 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
         {
             base.SetUp();
 
-            this.ViewModel = new SubjectViewModel(this.NavigationService);
+            this.ViewModel = new SubjectViewModel(this.NavigationService.Object);
 
             this.ViewModel.ReportCommand.Execute();
 
             while (!this.ViewModel.ReportCommand.CanExecute()) { }
         }
+    }
 
-        [TestCase]
-        public void ItShouldNavigateToParticipantsPage()
+    [TestFixture]
+    public class CooperationSnsCommandTest : ViewModelTestBase
+    {
+        private ActionSheetButton[] buttons;
+
+        [SetUp]
+        public override void SetUp()
         {
-            Assert.That(this.NavigatePageName, Is.EqualTo("ReportPage"));
+            base.SetUp();
+
+            this.IsolatedStorage.AccessToken = "abcdefg";
+
+            this.PageDialogService
+                .Setup(x => x.DisplayActionSheetAsync(It.IsAny<string>(), It.IsAny<IActionSheetButton[]>()))
+                .Returns((string name, IActionSheetButton[] buttons) =>
+                {
+                    this.buttons = buttons.Select(x => x as ActionSheetButton).ToArray();
+                    return Task.Run(() => { });
+                });
+
+            var viewModel = new SubjectViewModel(pageDialogService: this.PageDialogService.Object);
+
+            viewModel.Model.Id = 1;
+
+            viewModel.BuildUp(this.Container);
+
+            viewModel.CooperationSnsCommand.Execute();
+
+            while (!viewModel.CooperationSnsCommand.CanExecute()) { }
         }
 
         [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
+        public void ItShouldHasFourButtons()
         {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
+            Assert.That(this.buttons?.Length, Is.EqualTo(4));
         }
 
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsExpect()
+        [TestCase(0, "キャンセル")]
+        [TestCase(1, "Google")]
+        [TestCase(2, "Twitter")]
+        [TestCase(3, "LINE")]
+        public void ItShouldButtontTextExpected(int index, string expect)
         {
-            Assert.That(this.NavigationParameters[ParameterNames.Model], Is.EqualTo(this.ViewModel.Model));
+            Assert.That(this.buttons.ElementAtOrDefault(index).Text, Is.EqualTo(expect));
+        }
+
+        [TestCase(1, "http://localhost:9999/api/oauth/google?user_id=1&access_token=abcdefg")]
+        [TestCase(2, "http://localhost:9999/api/oauth/twitter?user_id=1&access_token=abcdefg")]
+        [TestCase(3, "http://localhost:9999/api/oauth/line?user_id=1&access_token=abcdefg")]
+        public void ItShouldOpenUrl(int index, string url)
+        {
+            this.buttons.ElementAtOrDefault(index)?.Action?.Invoke();
+            this.SnsLoginService.Verify(x => x.Open(It.Is<string>(v => new Uri(v).AbsoluteUri == url)), Times.Once());
         }
     }
 }

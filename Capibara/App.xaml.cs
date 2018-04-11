@@ -35,7 +35,11 @@ namespace Capibara
         /// 環境設定
         /// </summary>
         /// <value>The environment.</value>
-        public IEnvironment Environment { get; } = new EnvironmentLocal();
+#if DEBUG
+        public IEnvironment Environment { get; } = new EnvironmentStaging();
+#else
+        public IEnvironment Environment { get; } = new EnvironmentProduction();
+#endif
 
         protected override void OnInitialized()
         {
@@ -52,6 +56,8 @@ namespace Capibara
             containerRegistry.RegisterInstance(this.Environment);
             containerRegistry.RegisterInstance<IWebSocketClientFactory>(new WebSocketClientFactory());
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
+            containerRegistry.RegisterInstance<IChannelFactory>(new ChannelFactory());
+            containerRegistry.RegisterInstance<IChannelCableFactory>(new ChannelCableFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
             containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
 
@@ -104,12 +110,15 @@ namespace Capibara
 
             string IApplicationService.AppVersion { get; } = string.Empty;
 
+            string IApplicationService.UUID { get; } = string.Empty;
+
             void IApplicationService.Exit()
                 => throw new NotImplementedException();
         }
 
         private class IsolatedStorageStub : IIsolatedStorage
         {
+            public event EventHandler Saved;
             public string UserNickname { get; set; }
             public string AccessToken { get; set; }
             public int UserId { get; set; }

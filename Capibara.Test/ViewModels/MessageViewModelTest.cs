@@ -1,48 +1,32 @@
 ﻿
 using Capibara.Models;
 using Capibara.ViewModels;
+using Moq;
+using Prism.Navigation;
 using NUnit.Framework;
 using SubjectViewModel = Capibara.ViewModels.MessageViewModel;
 
 namespace Capibara.Test.ViewModels.MessageViewModel
 {
-
     [TestFixture]
     public class ShowProfileCommandTest : ViewModelTestBase
     {
-        private Message model;
-
-        [SetUp]
-        public override void SetUp()
+        [TestCase]
+        public void ItShouldNavigateToUserProfilePage()
         {
-            base.SetUp();
+            var model = new Message { Sender = new User().BuildUp(this.Container) }.BuildUp(this.Container);
 
-            this.model = new Message { Sender = new User().BuildUp(this.Container) }.BuildUp(this.Container);
-
-            var viewModel = new SubjectViewModel(this.NavigationService, model: this.model);
+            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model);
             viewModel.BuildUp(this.Container);
 
             viewModel.ShowProfileCommand.Execute();
 
             while (!viewModel.ShowProfileCommand.CanExecute()) { }
-        }
-
-        [TestCase]
-        public void ItShouldNavigateToUserProfilePage()
-        {
-            Assert.That(this.NavigatePageName, Is.EqualTo("UserProfilePage"));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParametersHsaModel()
-        {
-            Assert.That(this.NavigationParameters.ContainsKey(ParameterNames.Model), Is.EqualTo(true));
-        }
-
-        [TestCase]
-        public void ItShouldNavigationParameterModelIsExpect()
-        {
-            Assert.That(this.NavigationParameters[ParameterNames.Model], Is.EqualTo(this.model.Sender));
+            this.NavigationService.Verify(
+                x => x.NavigateAsync(
+                    "UserProfilePage", 
+                    It.Is<NavigationParameters>(v => v.GetValueOrDefault(ParameterNames.Model) == model.Sender))
+                , Times.Once());
         }
     }
 }
