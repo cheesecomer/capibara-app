@@ -12,11 +12,22 @@ namespace Capibara.Selectors
 
         public DataTemplate OthersMessageTemplate { get; set; }
 
+        public DataTemplate OwnImageTemplate { get; set; }
+        
+        public DataTemplate OthersImageTemplate { get; set; }
+
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             var message = item as MessageViewModel;
-            
-            return message.IsOwn.Value ? this.OwnMessageTemplate : this.OthersMessageTemplate;
+
+            var hasImage = message.Model.ImageThumbnailUrl.IsNullOrEmpty();
+
+            var othersTemplate = hasImage ? this.OthersMessageTemplate : this.OthersImageTemplate;
+
+            var ownTemplate = hasImage ? this.OwnMessageTemplate : this.OwnImageTemplate;
+
+            return message.IsOwn.Value ? ownTemplate : othersTemplate;
+
         }
     }
 }

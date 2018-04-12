@@ -15,6 +15,8 @@ namespace Capibara.Models
 
         private string imageUrl;
 
+        private string imageThumbnailUrl;
+
         public int Id
         {
             get => this.id;
@@ -39,11 +41,18 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.sender, value);
         }
 
-        [JsonProperty("image")]
+        [JsonProperty("image_url")]
         public string ImageUrl
         {
             get => this.imageUrl;
             set => this.SetProperty(ref this.imageUrl, value);
+        }
+
+        [JsonProperty("image_thumb_url")]
+        public string ImageThumbnailUrl
+        {
+            get => this.imageThumbnailUrl;
+            set => this.SetProperty(ref this.imageThumbnailUrl, value);
         }
 
         public bool IsOwn => this.IsolatedStorage.UserId == this.Sender?.Id;

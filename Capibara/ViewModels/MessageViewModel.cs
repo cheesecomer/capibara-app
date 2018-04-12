@@ -25,6 +25,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> Image { get; }
 
+        public ReactiveProperty<ImageSource> ImageThumbnail { get; }
+
         public ReactiveProperty<DateTimeOffset> At { get; }
 
         public ReactiveProperty<UserViewModel> Sender { get; }
@@ -67,6 +69,9 @@ namespace Capibara.ViewModels
 
             this.Image = new ReactiveProperty<ImageSource>();
             this.Model.ObserveProperty(x => x.ImageUrl).Subscribe(x => this.Image.Value = x);
+
+            this.ImageThumbnail = new ReactiveProperty<ImageSource>();
+            this.Model.ObserveProperty(x => x.ImageThumbnailUrl).Subscribe(x => this.ImageThumbnail.Value = x);
 
             // ShowProfileCommand
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
