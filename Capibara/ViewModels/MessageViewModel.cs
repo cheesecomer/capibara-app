@@ -11,6 +11,8 @@ using Prism.Services;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
+using Xamarin.Forms;
+
 namespace Capibara.ViewModels
 {
     public class MessageViewModel : ViewModelBase<Message>
@@ -21,6 +23,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<bool> IsOwn { get; }
 
+        public ReactiveProperty<ImageSource> ImageThumbnail { get; } = new ReactiveProperty<ImageSource>();
+
         public ReactiveProperty<DateTimeOffset> At { get; }
 
         public ReactiveProperty<UserViewModel> Sender { get; }
@@ -28,6 +32,8 @@ namespace Capibara.ViewModels
         public ReactiveProperty<IEnumerable<OgpViewModel>> OgpItems { get; }
 
         public AsyncReactiveCommand ShowProfileCommand { get; }
+
+        public AsyncReactiveCommand ShowImageCommand { get; }
 
         public MessageViewModel(
             INavigationService navigationService = null,
@@ -61,6 +67,8 @@ namespace Capibara.ViewModels
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
+            this.Model.ObserveProperty(x => x.ImageThumbnailUrl).Subscribe(x => this.ImageThumbnail.Value = x);
+
             // ShowProfileCommand
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.ShowProfileCommand.Subscribe(() =>
@@ -68,6 +76,26 @@ namespace Capibara.ViewModels
                 var parameters = new NavigationParameters();
                 parameters.Add(ParameterNames.Model, this.Sender.Value.Model);
                 return this.NavigationService.NavigateAsync("UserProfilePage", parameters);
+            });
+
+            this.ShowImageCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.ShowImageCommand.Subscribe(async () =>
+            {
+                var canReward = await this.PageDialogService.DisplayAlertAsync(
+                    string.Empty,
+                    "動画広告を視聴して\r\n" +
+                    "画像を見よう！",
+                    "視聴する",
+                    "閉じる");
+                
+                if (!canReward) return;
+
+                var completed = await this.RewardedVideoService.DisplayRewardedVideo();
+                if (!completed) return;
+
+                var parameters = new NavigationParameters();
+                parameters.Add(ParameterNames.Url, this.Model.ImageUrl);
+                await this.NavigationService.NavigateAsync("ImagePage", parameters);
             });
 
             var pattern = @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";

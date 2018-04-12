@@ -163,11 +163,11 @@ namespace Capibara.Models
                 ?.ForEach(x => this.Participants.Remove(x));
         }
 
-        public virtual async Task<bool> Speak(string message)
+        public virtual async Task<bool> Speak(string message, string image)
         {
             try
             {
-                await this.channel.Speak(message);
+                await this.channel.Speak(message, image);
 
                 this.SpeakSuccess?.Invoke(this, null);
 

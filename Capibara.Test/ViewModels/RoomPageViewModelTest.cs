@@ -96,7 +96,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             this.Model = new Mock<Room>();
             this.Model.SetupGet(x => x.IsConnected).Returns(true);
-            this.Model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true);
+            this.Model.Setup(x => x.Speak(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
             viewModel = new SubjectViewModel(model: this.Model.Object).BuildUp(this.Container);
 
@@ -105,7 +105,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
             viewModel.Message.Value = "Foo.Bar!";
             viewModel.SpeakCommand.Execute();
 
-            this.Model.Verify(x => x.Speak("Foo.Bar!"), Times.Once());
+            this.Model.Verify(x => x.Speak("Foo.Bar!", string.Empty), Times.Once());
         }
     }
 
@@ -117,7 +117,7 @@ namespace Capibara.Test.ViewModels.RoomPageViewModel
         {
             var model = new Mock<Room>();
             model.SetupGet(x => x.IsConnected).Returns(true);
-            model.Setup(x => x.Speak(It.IsAny<string>())).ReturnsAsync(true);
+            model.Setup(x => x.Speak(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
             var viewModel = new SubjectViewModel(model: model.Object).BuildUp(this.Container);
 

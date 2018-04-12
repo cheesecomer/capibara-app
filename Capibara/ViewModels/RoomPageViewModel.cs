@@ -16,9 +16,13 @@ namespace Capibara.ViewModels
     {
         private bool needClose = true;
 
+        private string imageBase64;
+
         public AsyncReactiveCommand CloseCommand { get; }
 
         public AsyncReactiveCommand SpeakCommand { get; }
+
+        public AsyncReactiveCommand AttachmentImageCommand { get; }
 
         public AsyncReactiveCommand ShowParticipantsCommand { get; }
 
@@ -51,11 +55,13 @@ namespace Capibara.ViewModels
                 .CollectionChangedAsObservable()
                 .Subscribe(
                     (x) => x.NewItems
-                    .Cast<MessageViewModel>()
+                    ?.Cast<MessageViewModel>()
                     .ForEach(
-                        v => v.ShowProfileCommand
-                        .Subscribe(_ => Task.Run(() => this.needClose = false))
-                        .AddTo(this.Disposable)))
+                        v =>
+                        {
+                            v.ShowProfileCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
+                            v.ShowImageCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
+                        }))
                 .AddTo(this.Disposable);
 
             // Name Property
@@ -104,7 +110,7 @@ namespace Capibara.ViewModels
                 .Select(x => this.Message.Value.ToSlim().IsPresent() && this.IsConnected.Value)
                 .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
-            this.SpeakCommand.Subscribe(() => this.Model.Speak(this.Message.Value));
+            this.SpeakCommand.Subscribe(() => this.Model.Speak(this.Message.Value, string.Empty));
 
             // ShowParticipantsCommand
             this.ShowParticipantsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -115,12 +121,24 @@ namespace Capibara.ViewModels
                 return this.NavigationService.NavigateAsync("ParticipantsPage", parameters);
             });
 
-            this.Model.SpeakSuccess += (sender, e) => this.Message.Value = string.Empty;
+            this.Model.SpeakSuccess += (sender, e) =>
+            {
+                this.Message.Value = string.Empty;
+                this.imageBase64 = string.Empty;
+            };
 
-            this.Model.SpeakFail += this.OnFail(
-                () => Task.Run(
-                    () => this.DeviceService.BeginInvokeOnMainThread(
-                        () => this.SpeakCommand.Execute())));
+            this.Model.SpeakFail += this.OnFail(() => Task.Run(async () =>
+            {
+                if (this.imageBase64.IsNullOrEmpty())
+                {
+                    this.SpeakCommand.Execute();
+                }
+                else
+                {
+                    await this.ProgressDialogService.DisplayProgressAsync(
+                        this.Model.Speak(string.Empty, this.imageBase64));
+                }
+            }), () => this.imageBase64 = string.Empty);
             
             this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Connect()));
 
@@ -136,6 +154,25 @@ namespace Capibara.ViewModels
                     await this.NavigationService.GoBackAsync();
                 });
             };
+
+            this.AttachmentImageCommand = new AsyncReactiveCommand();
+            this.AttachmentImageCommand.Subscribe(async () => {
+                var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
+                var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
+                    this.needClose = false;
+                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
+
+                    if (bytes == null) return;
+
+                    this.imageBase64 = $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
+
+                    await this.ProgressDialogService.DisplayProgressAsync(
+                        this.Model.Speak(string.Empty, this.imageBase64));
+                });
+
+                await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, pickupButton);
+            });
+
 
             this.Model.JoinUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが入室しました");
             this.Model.LeaveUser += (s, user) => this.BalloonService.DisplayBalloon($"{user.Nickname} さんが退室しました");
