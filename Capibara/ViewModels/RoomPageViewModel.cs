@@ -55,11 +55,13 @@ namespace Capibara.ViewModels
                 .CollectionChangedAsObservable()
                 .Subscribe(
                     (x) => x.NewItems
-                    .Cast<MessageViewModel>()
+                    ?.Cast<MessageViewModel>()
                     .ForEach(
-                        v => v.ShowProfileCommand
-                        .Subscribe(_ => Task.Run(() => this.needClose = false))
-                        .AddTo(this.Disposable)))
+                        v =>
+                        {
+                            v.ShowProfileCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
+                            v.ShowImageCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
+                        }))
                 .AddTo(this.Disposable);
 
             // Name Property
