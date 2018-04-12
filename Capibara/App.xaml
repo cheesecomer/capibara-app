@@ -159,7 +159,11 @@
                                 </forms:ItemsControl>
                             </Grid>
                         </Frame>
-                        <Image Grid.Column="1" Grid.Row="1" WidthRequest="75" HeightRequest="75" Source="{Binding ImageThumbnail.Value}" />
+                        <Image Grid.Column="1" Grid.Row="1" WidthRequest="75" HeightRequest="75" Source="{Binding ImageThumbnail.Value}" >
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShowImageCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
                         <Label Grid.Column="1" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" />
                     </Grid>
                 </ViewCell>
