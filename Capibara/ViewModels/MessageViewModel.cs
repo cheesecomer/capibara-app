@@ -11,6 +11,8 @@ using Prism.Services;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
+using Xamarin.Forms;
+
 namespace Capibara.ViewModels
 {
     public class MessageViewModel : ViewModelBase<Message>
@@ -20,6 +22,8 @@ namespace Capibara.ViewModels
         public ReactiveProperty<string> Content { get; }
 
         public ReactiveProperty<bool> IsOwn { get; }
+
+        public ReactiveProperty<ImageSource> Image { get; }
 
         public ReactiveProperty<DateTimeOffset> At { get; }
 
@@ -60,6 +64,9 @@ namespace Capibara.ViewModels
                 .ObserveProperty(x => x.IsOwn)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
+
+            this.Image = new ReactiveProperty<ImageSource>();
+            this.Model.ObserveProperty(x => x.ImageUrl).Subscribe(x => this.Image.Value = x);
 
             // ShowProfileCommand
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

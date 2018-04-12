@@ -1,4 +1,6 @@
 ﻿using System;
+
+using Newtonsoft.Json;
 namespace Capibara.Models
 {
     public class Message : ModelBase<Message>
@@ -10,6 +12,8 @@ namespace Capibara.Models
         private DateTimeOffset at;
 
         private User sender;
+
+        private string imageUrl;
 
         public int Id
         {
@@ -33,6 +37,13 @@ namespace Capibara.Models
         {
             get => this.sender;
             set => this.SetProperty(ref this.sender, value);
+        }
+
+        [JsonProperty("image")]
+        public string ImageUrl
+        {
+            get => this.imageUrl;
+            set => this.SetProperty(ref this.imageUrl, value);
         }
 
         public bool IsOwn => this.IsolatedStorage.UserId == this.Sender?.Id;
