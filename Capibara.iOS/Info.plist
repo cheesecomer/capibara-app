@@ -61,5 +61,7 @@
 	<array>
 		<string>Fonts/segoe-mdl2-assets.ttf</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
