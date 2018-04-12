@@ -100,6 +100,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<InquiryPage>();
             containerRegistry.RegisterForNavigation<AboutPage>();
             containerRegistry.RegisterForNavigation<LicensePage>();
+            containerRegistry.RegisterForNavigation<ImagePage>();
             containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
