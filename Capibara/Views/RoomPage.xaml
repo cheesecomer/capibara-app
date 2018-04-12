@@ -234,7 +234,7 @@
                     </ColumnDefinition.Width>
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE710;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1">
+            <Button Grid.Column="0" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE710;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding AttachmentImageCommand}">
                 <Button.FontFamily>
                     <OnPlatform x:TypeArguments="x:String">
                         <On Platform="iOS" Value="Segoe MDL2 Assets" />
