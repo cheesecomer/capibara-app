@@ -37,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentStaging();
+        public IEnvironment Environment { get; } = new EnvironmentLocal();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif

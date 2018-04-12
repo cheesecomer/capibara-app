@@ -5,7 +5,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
-    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.UserProfilePage"
@@ -16,7 +16,7 @@
     </ContentView.Behaviors>
     <ScrollView>
       <StackLayout Padding="20">
-        <fomrs:RoundImage
+        <forms:RoundImage
             x:Name="image"
             Source="{Binding Icon.Value, Mode=TwoWay}"
             HasShadow="true"
