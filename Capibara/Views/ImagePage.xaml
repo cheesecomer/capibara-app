@@ -5,9 +5,9 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
-    xmlns:fomrs="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     BackgroundColor="Black"
     x:Class="Capibara.Views.ImagePage">
-    <Image Source="{Binding Image.Value}" />
+    <forms:ZoomableImage Source="{Binding Image.Value}" />
 </ContentPage>
