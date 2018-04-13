@@ -48,6 +48,8 @@ namespace Capibara.Droid
 
             IApplicationService applicationService = new ApplicationService();
 
+            Android.Gms.Ads.MobileAds.Initialize(this, PlatformVariable.AdMobApplicationId);
+
             GoogleAnalytics.Current.Config.TrackingId = PlatformVariable.GoogleAnalyticsTrackingId;
             GoogleAnalytics.Current.Config.AppId = "Capibara";
             GoogleAnalytics.Current.Config.AppName = "Capibara";

@@ -50,6 +50,8 @@ namespace Capibara.iOS
             GoogleAnalytics.Current.Config.ReportUncaughtExceptions = true;
             GoogleAnalytics.Current.InitTracker();
 
+            Google.MobileAds.MobileAds.Configure(PlatformVariable.AdMobApplicationId);
+
             global::Xamarin.Forms.Forms.Init();
 
             var application = new App(new iOSInitializer(applicationService));
