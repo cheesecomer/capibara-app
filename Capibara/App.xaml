@@ -55,7 +55,7 @@
 
             <DataTemplate x:Key="ownMessageTemplate">
                 <ViewCell>
-                    <Grid Padding="75, 10, 10, 10" Rotation="180" RotationY="180">
+                    <Grid Padding="125, 10, 10, 10" Rotation="180" RotationY="180">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -126,7 +126,7 @@
             </DataTemplate>
             <DataTemplate x:Key="ownImageTemplate">
                 <ViewCell>
-                    <Grid Padding="75, 10, 10, 10" Rotation="180" RotationY="180">
+                    <Grid Padding="125, 10, 10, 10" Rotation="180" RotationY="180">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
