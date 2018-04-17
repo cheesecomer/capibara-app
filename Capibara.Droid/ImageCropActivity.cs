@@ -18,7 +18,6 @@ using Com.Isseiaoki.Simplecropview;
 using Com.Isseiaoki.Simplecropview.Callback;
 
 using AndroidUri = Android.Net.Uri;
-using Android.Net;
 using Android.Graphics;
 
 namespace Capibara.Droid
@@ -29,6 +28,8 @@ namespace Capibara.Droid
         public class Arguments
         {
             public const string Data = "ARGUMENT_DATA";
+
+            public const string IsSquare = "ARGUMENT_IS_SQUARE";
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -38,33 +39,33 @@ namespace Capibara.Droid
             this.SetContentView(Resource.Layout.activity_image_crop);
 
             var cropImageView = this.FindViewById<CropImageView>(Resource.Id.crop_image);
-            //var myCallBack = new CallBack().OnErrorDo(() => Console.WriteLine("oh no!")).OnSuccessDo(obj => Console.WriteLine("yeah!");
 
-            cropImageView.SetCustomRatio(1, 1);
+            var isSquare = this.Intent.GetBooleanExtra(Arguments.IsSquare, false);
+            if (isSquare)
+            {
+                cropImageView.SetCropMode(CropImageView.CropMode.CircleSquare);
+            }
+            else
+            {
+                cropImageView.SetCropMode(CropImageView.CropMode.Free);
+            }
 
             var cropButton = this.FindViewById<Button>(Resource.Id.crop_button);
             cropButton.Click += (s, e) =>
             {
-                var filename = DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_cropped.jpg";
-                var dir = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures);
-                var file = new File(dir, filename);
-                file.CreateNewFile();
-                file.SetWritable(true);
-
-                var uri = AndroidUri.FromFile(file);
-
                 var cropCallback = new CropCallback()
-                    .OnSuccessDo(x => { })
-                    .OnErrorDo(() => { });
-                var saveCallback = new SaveCallback()
-                    .OnSuccessDo(x =>
-                    {
-                        this.SetResult(Result.Ok, new Intent().SetData(uri));
+                    .OnSuccessDo(x => 
+                    { 
+                        var intent = new Intent();
+                        intent.PutExtra("bitmap", x);
+
+                        this.SetResult(Result.Ok, intent);
                         this.Finish();
                     })
                     .OnErrorDo(() => { });
-
-                cropImageView.StartCrop(uri, cropCallback, saveCallback);
+                
+                cropImageView.SaveEnabled = false;
+                cropImageView.StartCrop(null, cropCallback, null);
             };
 
             cropButton.Enabled = false;
@@ -74,30 +75,17 @@ namespace Capibara.Droid
             var loadCallback = new LoadCallback()
                 .OnSuccessDo(() => cropButton.Enabled = true)
                 .OnErrorDo(() => { });
+
             cropImageView.StartLoad(origin, loadCallback);
         }
 
-        public static Intent GetIntent(Context context, AndroidUri uri)
+        public static Intent GetIntent(Context context, AndroidUri uri, bool isSquare)
         {
             var intent = new Intent(context, typeof(ImageCropActivity));
             intent.PutExtra(Arguments.Data, uri);
+            intent.PutExtra(Arguments.IsSquare, isSquare);
 
             return intent;
-        }
-
-        private AndroidUri CreateTmpFile()
-        {
-            var origin = this.Intent.GetParcelableExtra(Arguments.Data) as AndroidUri;
-            var cacheFile = File.CreateTempFile(System.IO.Path.GetFileName(origin.Path), ".jpg", this.CacheDir);
-
-
-            var bitmap = Android.Provider.MediaStore.Images.Media.GetBitmap(this.ContentResolver, origin);
-            using (var stream = new System.IO.FileStream(cacheFile.AbsolutePath, System.IO.FileMode.Truncate))
-            {
-                bitmap.Compress(Bitmap.CompressFormat.Jpeg, 100, stream);
-            }
-
-            return AndroidUri.FromFile(cacheFile);
         }
     }
 

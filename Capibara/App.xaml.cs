@@ -37,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentLocal();
+        public IEnvironment Environment { get; } = new EnvironmentProduction();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
@@ -139,7 +139,7 @@ namespace Capibara
 
         private class PickupPhotoServiceStub : IPickupPhotoService
         {
-            public Task<byte[]> DisplayAlbumAsync()
+            public Task<byte[]> DisplayAlbumAsync(CropMode cropMode)
                 => throw new NotImplementedException();
         }
 
