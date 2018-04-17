@@ -123,7 +123,7 @@ namespace Capibara.ViewModels
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
                 var deleteButton = ActionSheetButton.CreateDestroyButton("削除", () => this.Icon.Value = null);
                 var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
-                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
+                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync(Services.CropMode.Square);
                     if (bytes != null)
                     {
                         this.Icon.Value = this.ImageSourceFactory.FromStream(() => new MemoryStream(bytes));

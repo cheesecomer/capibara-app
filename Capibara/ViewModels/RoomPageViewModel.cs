@@ -160,7 +160,7 @@ namespace Capibara.ViewModels
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
                 var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
                     this.needClose = false;
-                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
+                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync(Services.CropMode.Free);
 
                     if (bytes == null) return;
 
