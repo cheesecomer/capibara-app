@@ -201,6 +201,10 @@
       <Project>{8E17A920-62A9-4D18-9D2D-C591EBE2963F}</Project>
       <Name>RSKImageCropper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PhotoTweaks\PhotoTweaks.csproj">
+      <Project>{48F310DF-A93C-4C76-A6F7-8916E2B0995D}</Project>
+      <Name>PhotoTweaks</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
