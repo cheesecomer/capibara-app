@@ -124,13 +124,15 @@ namespace Capibara.Droid
             }
             else if (resultCode == Result.Ok && requestCode == (int)RequestCodes.CropPhoto)
             {
-                using (var bitmap = data.GetParcelableExtra("bitmap") as Bitmap)
+                using (var bitmap = Android.Provider.MediaStore.Images.Media.GetBitmap(this.ContentResolver, data.Data))
                 using (var memory = new MemoryStream())
                 {
                     await bitmap.CompressAsync(Bitmap.CompressFormat.Png, 100, memory);
 
                     PickupPhotoService.ActiveTaskCompletionSource.SetResult(memory.ToArray());
                 }
+
+                new Java.IO.File(data.Data.Path).Delete();
             }
             else if (requestCode == (int)RequestCodes.PickupPhotoForSquare && requestCode == (int)RequestCodes.PickupPhotoForFree && requestCode == (int)RequestCodes.CropPhoto)
             {
