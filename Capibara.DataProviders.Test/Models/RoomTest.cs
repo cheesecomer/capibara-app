@@ -227,7 +227,7 @@ namespace Capibara.Test.Models.RoomTest
 
                 this.Channel = new Mock<ChatChannelBase>();
                 this.Channel.Setup(x => x.Connect()).ReturnsAsync(true);
-                var speak = this.Channel.Setup(x => x.Speak(It.IsAny<string>()));
+                var speak = this.Channel.Setup(x => x.Speak(It.IsAny<string>(), It.IsAny<string>()));
                 if (this.Exception.IsNull())
                 {
                     speak.Returns(Task.CompletedTask);
@@ -254,19 +254,19 @@ namespace Capibara.Test.Models.RoomTest
                 // 接続の完了を待機
                 this.Subject.Connect().Wait();
 
-                this.Subject.Speak("Foo. Bar!").Wait();
+                this.Subject.Speak("Foo. Bar!", string.Empty).Wait();
             }
 
             [TestCase]
             public void ItShouldDoesNotThrow()
             {
-                Assert.DoesNotThrowAsync(() => this.Subject.Speak("Foo. Bar!"));
+                Assert.DoesNotThrowAsync(() => this.Subject.Speak("Foo. Bar!", string.Empty));
             }
 
             [TestCase]
             public void ItShouldSpeakCalled()
             {
-                this.Channel.Verify(x => x.Speak(It.Is<string>(v => v == "Foo. Bar!")), Times.Once());
+                this.Channel.Verify(x => x.Speak("Foo. Bar!", string.Empty), Times.Once());
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Capibara.Forms;
 using Capibara.Net;
 using Capibara.Services;
 using Capibara.ViewModels;
@@ -36,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentStaging();
+        public IEnvironment Environment { get; } = new EnvironmentProduction();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
@@ -58,8 +59,10 @@ namespace Capibara
             containerRegistry.RegisterInstance<IRequestFactory>(new RequestFactory());
             containerRegistry.RegisterInstance<IChannelFactory>(new ChannelFactory());
             containerRegistry.RegisterInstance<IChannelCableFactory>(new ChannelCableFactory());
+            containerRegistry.RegisterInstance<IBrowsingContextFactory>(new BrowsingContextFactory());
             containerRegistry.RegisterInstance<ITaskService>(new TaskService());
             containerRegistry.RegisterInstance<IOverrideUrlService>(new OverrideUrlService());
+            containerRegistry.RegisterInstance<IImageSourceFactory>(new ImageSourceFactory());
 
             if (this.Container.TryResolve<ITracker>() == null)
                 containerRegistry.RegisterInstance<ITracker>(new TrackerStub());
@@ -97,6 +100,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<InquiryPage>();
             containerRegistry.RegisterForNavigation<AboutPage>();
             containerRegistry.RegisterForNavigation<LicensePage>();
+            containerRegistry.RegisterForNavigation<ImagePage>();
             containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
             containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
@@ -124,8 +128,7 @@ namespace Capibara
             public int UserId { get; set; }
             public Uri OAuthCallbackUrl { get; set; }
 
-            public void Save()
-                => throw new NotImplementedException();
+            public void Save() { this.Saved?.Invoke(this, null); }
         }
 
         private class ProgressDialogServiceStub : IProgressDialogService
@@ -136,7 +139,7 @@ namespace Capibara
 
         private class PickupPhotoServiceStub : IPickupPhotoService
         {
-            public Task<byte[]> DisplayAlbumAsync()
+            public Task<byte[]> DisplayAlbumAsync(CropMode cropMode)
                 => throw new NotImplementedException();
         }
 

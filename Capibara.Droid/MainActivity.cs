@@ -31,8 +31,9 @@ namespace Capibara.Droid
     {
         public enum RequestCodes
         {
-            PickupPhoto = 1,
-            CropPhoto = 2
+            PickupPhotoForSquare = 1,
+            PickupPhotoForFree = 2,
+            CropPhoto = 3
         }
 
         [Dependency]
@@ -113,13 +114,17 @@ namespace Capibara.Droid
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if (resultCode == Result.Ok && requestCode == (int)RequestCodes.PickupPhoto)
+            if (resultCode == Result.Ok && requestCode == (int)RequestCodes.PickupPhotoForFree)
             {
-                this.StartActivityForResult(ImageCropActivity.GetIntent(this.ApplicationContext, data.Data), (int)RequestCodes.CropPhoto);
+                this.StartActivityForResult(ImageCropActivity.GetIntent(this.ApplicationContext, data.Data, false), (int)RequestCodes.CropPhoto);
+            }
+            else if (resultCode == Result.Ok && requestCode == (int)RequestCodes.PickupPhotoForSquare)
+            {
+                this.StartActivityForResult(ImageCropActivity.GetIntent(this.ApplicationContext, data.Data, true), (int)RequestCodes.CropPhoto);
             }
             else if (resultCode == Result.Ok && requestCode == (int)RequestCodes.CropPhoto)
             {
-                using (var bitmap = Android.Provider.MediaStore.Images.Media.GetBitmap(this.ContentResolver, data.Data))
+                using (var bitmap = data.GetParcelableExtra("bitmap") as Bitmap)
                 using (var memory = new MemoryStream())
                 {
                     await bitmap.CompressAsync(Bitmap.CompressFormat.Png, 100, memory);
@@ -127,7 +132,7 @@ namespace Capibara.Droid
                     PickupPhotoService.ActiveTaskCompletionSource.SetResult(memory.ToArray());
                 }
             }
-            else if (requestCode == (int)RequestCodes.PickupPhoto && requestCode == (int)RequestCodes.CropPhoto)
+            else if (requestCode == (int)RequestCodes.PickupPhotoForSquare && requestCode == (int)RequestCodes.PickupPhotoForFree && requestCode == (int)RequestCodes.CropPhoto)
             {
                 PickupPhotoService.ActiveTaskCompletionSource.SetResult(null);
             }

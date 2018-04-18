@@ -111,30 +111,58 @@ namespace Capibara.Test.Net.Channels
             }
         }
 
-        public class SpeakTest : TestFixtureBase
+        namespace SpeakTest
         {
-            private ChatChannel Subject;
-
-            [TestCase]
-            public void ItShouldSendCommandCalled()
+            public class WhenMessageOnly : TestFixtureBase
             {
-                var isSendCommandCalled = false;
-                this.Subject = new ChatChannel(new Capibara.Models.Room { Id = 1 }).BuildUp(this.Container);
+                private ChatChannel Subject;
+                
+                [TestCase]
+                public void ItShouldSendCommandCalled()
+                {
+                    this.Subject = new ChatChannel(new Capibara.Models.Room { Id = 1 }).BuildUp(this.Container);
+                    
+                    var cable = new Mock<ChannelCableBase>();
+                    cable
+                        .Setup(x => x.SendCommand(It.IsAny<MessageCommand<SpeakActionContext>>()))
+                        .Returns(Task.CompletedTask);
+                    
+                    this.ChannelCableFactory.Setup(x => x.Create()).Returns(cable.Object);
+                    
+                    this.Subject.Connect();
+                    this.Subject.Speak("Hello!", string.Empty);
+                    
+                    cable.Verify(
+                        x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
+                            v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message == "Hello!" && v.Context.Image.IsNullOrEmpty())),
+                        Times.Once());
+                }
+            }
 
-                var cable = new Mock<ChannelCableBase>();
-                cable
-                    .Setup(x => x.SendCommand(It.IsAny<MessageCommand<SpeakActionContext>>()))
-                    .Returns(Task.CompletedTask);
+            public class WhenImageOnly : TestFixtureBase
+            {
+                private ChatChannel Subject;
 
-                this.ChannelCableFactory.Setup(x => x.Create()).Returns(cable.Object);
+                [TestCase]
+                public void ItShouldSendCommandCalled()
+                {
+                    this.Subject = new ChatChannel(new Capibara.Models.Room { Id = 1 }).BuildUp(this.Container);
 
-                this.Subject.Connect();
-                this.Subject.Speak("Hello!");
+                    var cable = new Mock<ChannelCableBase>();
+                    cable
+                        .Setup(x => x.SendCommand(It.IsAny<MessageCommand<SpeakActionContext>>()))
+                        .Returns(Task.CompletedTask);
 
-                cable.Verify(
-                    x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
-                        v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message == "Hello!")),
-                    Times.Once());
+                    this.ChannelCableFactory.Setup(x => x.Create()).Returns(cable.Object);
+
+                    this.Subject.Connect();
+                    this.Subject.Speak(string.Empty, "data:image/png;base64,abcdefg");
+
+                    cable.Verify(
+                        x => x.SendCommand(It.Is<MessageCommand<SpeakActionContext>>(
+                            v => v.Identifier == this.Subject.ChannelIdentifier && v.Context.Message.IsNullOrEmpty() && v.Context.Image == "data:image/png;base64,abcdefg")),
+                        Times.Once());
+                }
             }
         }
     }

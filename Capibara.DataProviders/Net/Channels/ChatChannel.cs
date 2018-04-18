@@ -35,11 +35,14 @@ namespace Capibara.Net.Channels
 
         [JsonProperty("message")]
         public string Message { get; set; }
+
+        [JsonProperty("image")]
+        public string Image { get; set; }
     }
 
     public abstract class ChatChannelBase : ChannelBase<Message>
     {
-        public abstract Task Speak(string message);
+        public abstract Task Speak(string message, string image);
     }
 
     /// <summary>
@@ -59,9 +62,9 @@ namespace Capibara.Net.Channels
             this.room = room;
         }
 
-        public override Task Speak(string message)
+        public override Task Speak(string message, string image)
         {
-            var command = new MessageCommand<SpeakActionContext>(this.ChannelIdentifier, new SpeakActionContext { Message = message });
+            var command = new MessageCommand<SpeakActionContext>(this.ChannelIdentifier, new SpeakActionContext { Message = message, Image = image });
             return this.Cable.SendCommand(command);
         }
     }

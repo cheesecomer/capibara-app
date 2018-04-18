@@ -11,14 +11,17 @@ namespace Capibara.Droid.Services
     {
         public static TaskCompletionSource<byte[]> ActiveTaskCompletionSource { get; set; }
 
-        Task<byte[]> IPickupPhotoService.DisplayAlbumAsync()
+        Task<byte[]> IPickupPhotoService.DisplayAlbumAsync(CropMode cropMode)
         {
+            var requestCode = cropMode == CropMode.Free 
+                ? MainActivity.RequestCodes.PickupPhotoForFree 
+                : MainActivity.RequestCodes.PickupPhotoForSquare;
             var imageIntent = new Intent();
             imageIntent.SetType("image/*");
             imageIntent.SetAction(Intent.ActionGetContent);
             MainActivity.Instance.StartActivityForResult(
                 Intent.CreateChooser(imageIntent, "Select photo"),
-                (int)MainActivity.RequestCodes.PickupPhoto);
+                (int)requestCode);
 
             return (ActiveTaskCompletionSource = new TaskCompletionSource<byte[]>()).Task;
         }

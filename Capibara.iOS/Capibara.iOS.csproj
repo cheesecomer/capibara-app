@@ -180,6 +180,9 @@
     <Reference Include="Plugin.GoogleAnalytics">
       <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="AngleSharp">
+      <HintPath>..\packages\AngleSharp.0.9.9.2\lib\portable-windows8+net45+windowsphone8+wpa+monoandroid+monotouch\AngleSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
@@ -197,6 +200,10 @@
     <ProjectReference Include="..\RSKImageCropper\RSKImageCropper.csproj">
       <Project>{8E17A920-62A9-4D18-9D2D-C591EBE2963F}</Project>
       <Name>RSKImageCropper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhotoTweaks\PhotoTweaks.csproj">
+      <Project>{48F310DF-A93C-4C76-A6F7-8916E2B0995D}</Project>
+      <Name>PhotoTweaks</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

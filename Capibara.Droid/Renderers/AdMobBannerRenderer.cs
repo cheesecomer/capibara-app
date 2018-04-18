@@ -27,7 +27,6 @@ namespace Capibara.Droid.Renderers
                     AdSize = AdSize.Banner,
                 };
 
-                adMobBanner.AdListener = new AdListener(adMobBanner);
                 adMobBanner.LoadAd(new AdRequest.Builder().Build());
 
                 this.SetNativeControl(adMobBanner);

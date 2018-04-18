@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Droid", "Capibara.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSKImageCropper", "RSKImageCropper\RSKImageCropper.csproj", "{8E17A920-62A9-4D18-9D2D-C591EBE2963F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoTweaks", "PhotoTweaks\PhotoTweaks.csproj", "{48F310DF-A93C-4C76-A6F7-8916E2B0995D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,5 +139,17 @@ Global
 		{8E17A920-62A9-4D18-9D2D-C591EBE2963F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{8E17A920-62A9-4D18-9D2D-C591EBE2963F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{8E17A920-62A9-4D18-9D2D-C591EBE2963F}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|iPhone.Build.0 = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{48F310DF-A93C-4C76-A6F7-8916E2B0995D}.Debug|iPhone.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

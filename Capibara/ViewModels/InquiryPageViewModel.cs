@@ -45,7 +45,10 @@ namespace Capibara.ViewModels
             }
             catch (Exception e)
             {
-                await this.DisplayErrorAlertAsync(e, () => this.Submit());
+                if (await this.DisplayErrorAlertAsync(e))
+                {
+                    await this.Submit();
+                }
             }
         }
     }

@@ -105,7 +105,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
 
             model.Raise(x => x.SignUpFail += null, new FailEventArgs(exception));
 
-            viewModel.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception, ItExpr.IsAny<Func<Task>>());
+            viewModel.Protected().Verify<Task<bool>>("DisplayErrorAlertAsync", Times.Once(), exception);
         }
     }
 

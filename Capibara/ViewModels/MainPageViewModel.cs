@@ -49,7 +49,7 @@ namespace Capibara.ViewModels
             this.MenuItems[1].Parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
             this.CurrentUser
                 .ObserveProperty(x => x.IconThumbnailUrl)
-                .Subscribe(x => this.Icon.Value = x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)));
+                .Subscribe(x => this.Icon.Value = x.IsNullOrEmpty() ? null : this.ImageSourceFactory.FromUri(new Uri(x)));
         }
 
         public class MenuItem

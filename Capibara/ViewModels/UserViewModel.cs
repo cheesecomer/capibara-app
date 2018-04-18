@@ -48,9 +48,6 @@ namespace Capibara.ViewModels
 
         protected override string OptionalScreenName => $"/{this.Model.Id}";
 
-        [UnityDependency]
-        public IPickupPhotoService PickupPhotoService { get; set; }
-
         public UserViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -68,10 +65,8 @@ namespace Capibara.ViewModels
             this.Icon = new ReactiveProperty<ImageSource>();
             this.Model.ObserveProperty(x => x.IconUrl).Subscribe(x => this.Icon.Value = x);
 
-            this.IconThumbnail = this.Model
-                .ObserveProperty(x => x.IconThumbnailUrl)
-                .Select(x => x.IsNullOrEmpty() ? null : ImageSource.FromUri(new Uri(x)))
-                .ToReactiveProperty();
+            this.IconThumbnail = new ReactiveProperty<ImageSource>();
+            this.Model.ObserveProperty(x => x.IconThumbnailUrl).Subscribe(x => this.IconThumbnail.Value = x);
             
             this.IsBlock = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsBlock)
@@ -128,10 +123,10 @@ namespace Capibara.ViewModels
                 var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
                 var deleteButton = ActionSheetButton.CreateDestroyButton("削除", () => this.Icon.Value = null);
                 var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
-                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync();
+                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync(Services.CropMode.Square);
                     if (bytes != null)
                     {
-                        this.Icon.Value = ImageSource.FromStream(() => new MemoryStream(bytes));
+                        this.Icon.Value = this.ImageSourceFactory.FromStream(() => new MemoryStream(bytes));
                         this.Model.IconBase64 = Convert.ToBase64String(bytes);
                     }
                 });

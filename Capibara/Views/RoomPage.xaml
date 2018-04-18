@@ -19,91 +19,11 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="ownMessageTemplate">
-                <ViewCell>
-                    <Grid Padding="75, 10, 10, 10" Rotation="180" RotationY="180">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="0" />
-                            <ColumnDefinition Width="0" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="0" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <forms:RoundImage
-                            Grid.RowSpan="3"
-                            Grid.Column="2"
-                            Source="{Binding Sender.Value.IconThumbnail.Value}"
-                            BorderWidth="2"
-                            HeightRequest="60"
-                            VerticalOptions="Start"
-                            CornerRadius="30"
-                            HasShadow="false"
-                            />
-                        <Button
-                            Grid.RowSpan="3"
-                            Grid.Column="2"
-                            HeightRequest="60"
-                            VerticalOptions="Start"
-                            WidthRequest="60"
-                            BorderWidth="0"
-                            BorderRadius="30"
-                            BackgroundColor="Transparent"
-                            Command="{Binding ShowProfileCommand}"
-                            />
-                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
-                        <Frame Grid.Column="0" Grid.Row="1" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
-                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
-                        </Frame>
-                        <Label Grid.Column="0" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" />
-                    </Grid>
-                </ViewCell>
-            </DataTemplate>
-            <DataTemplate x:Key="othersMessageTemplate">
-                <ViewCell>
-                    <Grid Padding="10, 10, 50, 10" Rotation="180" RotationY="180">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="5" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <forms:RoundImage
-                            Grid.RowSpan="3"
-                            Source="{Binding Sender.Value.IconThumbnail.Value}"
-                            BorderWidth="2"
-                            HeightRequest="60"
-                            VerticalOptions="Start"
-                            CornerRadius="30"
-                            HasShadow="false"
-                            />
-                        <Button
-                            Grid.RowSpan="3"
-                            HeightRequest="60"
-                            VerticalOptions="Start"
-                            WidthRequest="60"
-                            BorderWidth="0"
-                            BorderRadius="30"
-                            BackgroundColor="Transparent"
-                            Command="{Binding ShowProfileCommand}"
-                            />
-                        <Label Grid.Column="2" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" Margin="0, 0, 0, 5" />
-                        <Frame Grid.Column="2" Grid.Row="1" OutlineColor="#999999" BackgroundColor="White" CornerRadius="5" HasShadow="false" Padding="20, 10, 20, 10">
-                            <forms:LinkableLabel Text="{Binding Content.Value}" TextColor="#444" LinkTextColor="#0044CC" />
-                        </Frame>
-                        <Label Grid.Column="2" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" HorizontalTextAlignment="End" TextColor="#6c757d" Margin="0, 5, 10, 0" />
-                    </Grid>
-                </ViewCell>
-            </DataTemplate>
             <selectors:MessageDataTemplateSelector x:Key="messageDataTemplateSelector"
                 OwnMessageTemplate="{StaticResource ownMessageTemplate}"
-                OthersMessageTemplate="{StaticResource othersMessageTemplate}" />
+                OthersMessageTemplate="{StaticResource othersMessageTemplate}" 
+                OwnImageTemplate="{StaticResource ownImageTemplate}"
+                OthersImageTemplate="{StaticResource othersImageTemplate}" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid>
@@ -145,6 +65,7 @@
         </ListView>
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition>
                     <ColumnDefinition.Width>
@@ -155,8 +76,16 @@
                     </ColumnDefinition.Width>
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
-            <Button Grid.Column="1" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
+            <Button Grid.Column="0" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE710;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding AttachmentImageCommand}">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Editor Grid.Column="1" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="2" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
                 <Button.FontFamily>
                     <OnPlatform x:TypeArguments="x:String">
                         <On Platform="iOS" Value="Segoe MDL2 Assets" />
