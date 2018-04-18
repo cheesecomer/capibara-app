@@ -29,7 +29,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<UserViewModel> Sender { get; }
 
-        public ReactiveProperty<IEnumerable<OgpViewModel>> OgpItems { get; }
+        public ReactiveProperty<List<OgpViewModel>> OgpItems { get; }
 
         public AsyncReactiveCommand ShowProfileCommand { get; }
 
@@ -102,7 +102,7 @@ namespace Capibara.ViewModels
             this.OgpItems = this.Content
                 .Select(x => Regex.Matches(x, pattern, RegexOptions.IgnoreCase).Cast<Match>())
                 .Select(x => x.Select(v => new OgpViewModel(navigationService, pageDialogService, v.Value)))
-                .Select(x => x.Select(v => this.Container.IsNull() ? v : v.BuildUp(this.Container)))
+                .Select(x => x.Select(v => this.Container.IsNull() ? v : v.BuildUp(this.Container)).ToList())
                 .ToReactiveProperty();
 
             // OGP が変更された場合は読み込みコマンドを実行する
