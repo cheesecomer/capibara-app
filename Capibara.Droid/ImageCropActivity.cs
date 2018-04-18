@@ -53,19 +53,26 @@ namespace Capibara.Droid
             var cropButton = this.FindViewById<Button>(Resource.Id.crop_button);
             cropButton.Click += (s, e) =>
             {
-                var cropCallback = new CropCallback()
-                    .OnSuccessDo(x => 
-                    { 
-                        var intent = new Intent();
-                        intent.PutExtra("bitmap", x);
+                var filename = DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_cropped.jpg";
+                var file = new File(this.ExternalCacheDir, filename);
+                file.CreateNewFile();
+                file.SetWritable(true);
 
-                        this.SetResult(Result.Ok, intent);
+                var uri = AndroidUri.FromFile(file);
+               
+                var cropCallback = 
+                    new CropCallback()
+                        .OnSuccessDo(x => { })
+                        .OnErrorDo(() => { });
+                var saveCallback = new SaveCallback()
+                    .OnSuccessDo(x =>
+                    {
+                        this.SetResult(Result.Ok, new Intent().SetData(uri));
                         this.Finish();
                     })
                     .OnErrorDo(() => { });
-                
-                cropImageView.SaveEnabled = false;
-                cropImageView.StartCrop(null, cropCallback, null);
+
+                cropImageView.StartCrop(uri, cropCallback, saveCallback);
             };
 
             cropButton.Enabled = false;
