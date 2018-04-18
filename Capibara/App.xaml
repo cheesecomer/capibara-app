@@ -90,6 +90,7 @@
                                     LinkTextColor="#0044CC" />
                                 <forms:ItemsControl
                                     Grid.Row="1"
+                                    Opacity="{Binding OgpItems.Value.Count, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
                                     ItemsSource="{Binding OgpItems.Value}">
                                     <forms:ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -209,6 +210,7 @@
                                     LinkTextColor="#0044CC" />
                                 <forms:ItemsControl
                                     Grid.Row="1"
+                                    Opacity="{Binding OgpItems.Value.Count, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
                                     ItemsSource="{Binding OgpItems.Value}">
                                     <forms:ItemsControl.ItemTemplate>
                                         <DataTemplate>
