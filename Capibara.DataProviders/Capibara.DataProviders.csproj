@@ -72,6 +72,7 @@
     <Compile Include="Net\Sessions\ShowRequest.cs" />
     <Compile Include="Net\ChannelFactory.cs" />
     <Compile Include="Net\ChannelCableFactory.cs" />
+    <Compile Include="Net\Channels\DirectMessageChannel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

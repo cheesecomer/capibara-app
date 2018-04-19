@@ -152,6 +152,7 @@
     <Compile Include="Net\Reports\CreateRequestTest.cs" />
     <Compile Include="Net\Inquiries\CreateRequestTest.cs" />
     <Compile Include="Net\Sessions\ShowRequestTest.cs" />
+    <Compile Include="Net\Channels\DirectMessageChannelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />

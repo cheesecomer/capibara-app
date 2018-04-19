@@ -15,6 +15,8 @@ using Microsoft.Practices.Unity;
 using NUnit.Framework;
 using Newtonsoft.Json;
 
+using SpeakActionContext = Capibara.Net.Channels.ChatChannel.SpeakActionContext;
+
 namespace Capibara.Test.Net.Channels
 {
     namespace ChatChannelIdentifierTest
@@ -51,36 +53,36 @@ namespace Capibara.Test.Net.Channels
         }
     }
 
-    namespace SpeakActionContextTest
-    {
-        public class SerializeTest
-        {
-            private Dictionary<string, object> Subject;
-
-            [SetUp]
-            public void Setup()
-            {
-                var context = new SpeakActionContext { Message = "Hello!" };
-                var json = JsonConvert.SerializeObject(context);
-                this.Subject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-            }
-
-            [TestCase]
-            public void ItShouldActionWithExpected()
-            {
-                Assert.That(this.Subject.ValueOrDefault("action"), Is.EqualTo("speak"));
-            }
-
-            [TestCase]
-            public void ItShouldMessageWithExpected()
-            {
-                Assert.That(this.Subject.ValueOrDefault("message"), Is.EqualTo("Hello!"));
-            }
-        }
-    }
-
     namespace ChatChannelTest
     {
+        namespace SpeakActionContextTest
+        {
+            public class SerializeTest
+            {
+                private Dictionary<string, object> Subject;
+
+                [SetUp]
+                public void Setup()
+                {
+                    var context = new SpeakActionContext { Message = "Hello!" };
+                    var json = JsonConvert.SerializeObject(context);
+                    this.Subject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                }
+
+                [TestCase]
+                public void ItShouldActionWithExpected()
+                {
+                    Assert.That(this.Subject.ValueOrDefault("action"), Is.EqualTo("speak"));
+                }
+
+                [TestCase]
+                public void ItShouldMessageWithExpected()
+                {
+                    Assert.That(this.Subject.ValueOrDefault("message"), Is.EqualTo("Hello!"));
+                }
+            }
+        }
+
         public class ChannelIdentifierPropertyTest
         {
             private ChatChannel Subject;
