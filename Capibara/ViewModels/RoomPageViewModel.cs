@@ -170,7 +170,7 @@ namespace Capibara.ViewModels
                         this.Model.Speak(string.Empty, this.imageBase64));
                 });
 
-                await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, pickupButton);
+                await this.PageDialogService.DisplayActionSheetAsync("画像を貼り付ける", cancelButton, pickupButton);
             });
 
 
