@@ -28,7 +28,7 @@ namespace Capibara.Net.Channels
         }
     }
 
-    public abstract class DirectMessageChannelBase : ChannelBase<Message>
+    public abstract class DirectMessageChannelBase : ChannelBase<DirectMessage>
     {
         public abstract Task Speak(string message);
     }

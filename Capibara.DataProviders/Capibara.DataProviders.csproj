@@ -73,6 +73,7 @@
     <Compile Include="Net\ChannelFactory.cs" />
     <Compile Include="Net\ChannelCableFactory.cs" />
     <Compile Include="Net\Channels\DirectMessageChannel.cs" />
+    <Compile Include="Models\DirectMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
