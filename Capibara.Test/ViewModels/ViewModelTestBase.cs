@@ -68,7 +68,7 @@ namespace Capibara.Test.ViewModels
             this.PickupPhotoService = new Mock<IPickupPhotoService>();
             this.PickupPhotoService.SetupAllProperties();
             this.PickupPhotoService
-                .Setup(x => x.DisplayAlbumAsync())
+                .Setup(x => x.DisplayAlbumAsync(It.IsAny<CropMode>()))
                 .Returns(Task.FromResult(new byte[0]));
 
             this.DeviceService = new Mock<IDeviceService>();
