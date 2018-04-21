@@ -10,6 +10,6 @@ namespace Capibara.Net.DirectMessages
     public class ShowResponse
     {
         [JsonProperty("direct_messages")]
-        List<DirectMessage> DirectMessages { get; set; }
+        public List<DirectMessage> DirectMessages { get; set; }
     }
 }
