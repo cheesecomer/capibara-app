@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +32,12 @@ namespace Capibara.Net
         /// <value>The end point.</value>
         [JsonIgnore]
         public abstract string[] Paths { get; }
+
+        /// <summary>
+        /// URL クエリ
+        /// </summary>
+        [JsonIgnore]
+        public virtual IDictionary<string, string> Query { get; } = null;
 
         /// <summary>
         /// Authentication Header を付与する必要があるか
@@ -94,8 +101,15 @@ namespace Capibara.Net
 
             var path = Path.Combine(this.Paths);
             var url = Path.Combine(this.Environment.ApiBaseUrl, path);
+            var query = this
+                .Query?
+                .Select(x => $"{x.Key}={WebUtility.UrlEncode(x.Value)}")
+                .Aggregate((x, y) => $"{x}&{y}");
 
-            var requestMessage = new HttpRequestMessage(this.Method, url);
+            var builder = new UriBuilder(url);
+            builder.Query = query.IsNullOrEmpty() ? string.Empty : $"?{query}";
+
+            var requestMessage = new HttpRequestMessage(this.Method, builder.Uri);
 
             this.RestClient.BuildUp(this.Container).ApplyRequestHeader(requestMessage, this.ApplicationService);
 
