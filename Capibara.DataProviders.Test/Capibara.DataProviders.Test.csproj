@@ -156,6 +156,9 @@
     <Compile Include="Models\DirectMessageTest.cs" />
     <Compile Include="Net\DirectMessages\IndexRequestTest.cs" />
     <Compile Include="Net\DirectMessages\ShowRequestTest.cs" />
+    <Compile Include="Net\Informations\IndexResponseTest.cs" />
+    <Compile Include="Net\Rooms\IndexResponseTest.cs" />
+    <Compile Include="Models\RoomComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />
