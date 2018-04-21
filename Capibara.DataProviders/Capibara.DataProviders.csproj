@@ -74,6 +74,11 @@
     <Compile Include="Net\ChannelCableFactory.cs" />
     <Compile Include="Net\Channels\DirectMessageChannel.cs" />
     <Compile Include="Models\DirectMessage.cs" />
+    <Compile Include="Net\DirectMessages\IndexRequest.cs" />
+    <Compile Include="Net\DirectMessages\IndexResponse.cs" />
+    <Compile Include="Net\DirectMessages\ShowResponse.cs" />
+    <Compile Include="Net\DirectMessages\ShowRequest.cs" />
+    <Compile Include="Models\DirectMessageThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -89,6 +94,7 @@
     <Folder Include="Net\Informations\" />
     <Folder Include="Net\Reports\" />
     <Folder Include="Net\Inquiries\" />
+    <Folder Include="Net\DirectMessages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
