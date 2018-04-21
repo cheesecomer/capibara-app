@@ -213,7 +213,7 @@ namespace Capibara.Test.ViewModels.UserViewModelTest
             [TestCase]
             public void ItShouldShowPhotoPicker()
             {
-                this.PickupPhotoService.Verify(x => x.DisplayAlbumAsync(), Times.Once());
+                this.PickupPhotoService.Verify(x => x.DisplayAlbumAsync(Services.CropMode.Square), Times.Once());
             }
         }
     }

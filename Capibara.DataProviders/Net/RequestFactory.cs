@@ -15,6 +15,10 @@ namespace Capibara.Net
 
         RequestBase<Blocks.IndexResponse> BlocksIndexRequest();
 
+        RequestBase<DirectMessages.IndexResponse> DirectMessagesIndexRequest();
+
+        RequestBase<DirectMessages.ShowResponse> DirectMessagesShowRequest(User user, int lastId = 0);
+
         RequestBase<Informations.IndexResponse> InformationsIndexRequest();
 
         RequestBase ReportsCreateRequest(User target, ReportReason reason, string message = null);
@@ -50,6 +54,12 @@ namespace Capibara.Net
 
         RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksIndexRequest()
             => new Blocks.IndexRequest();
+
+        RequestBase<DirectMessages.IndexResponse> IRequestFactory.DirectMessagesIndexRequest()
+            => new DirectMessages.IndexRequest();
+
+        RequestBase<DirectMessages.ShowResponse> IRequestFactory.DirectMessagesShowRequest(User user, int lastId)
+            => new DirectMessages.ShowRequest(user, lastId);
 
         RequestBase<Informations.IndexResponse> IRequestFactory.InformationsIndexRequest()
             => new Informations.IndexRequest();
