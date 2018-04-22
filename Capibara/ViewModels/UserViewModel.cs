@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 using Capibara.Models;
-using Capibara.Services;
 
 using Prism.Navigation;
 using Prism.Services;
@@ -13,8 +11,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
 using Xamarin.Forms;
-
-using UnityDependency = Unity.Attributes.DependencyAttribute;
 
 namespace Capibara.ViewModels
 {
