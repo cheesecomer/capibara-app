@@ -78,6 +78,8 @@
     <Compile Include="Net\DirectMessages\ShowResponse.cs" />
     <Compile Include="Net\DirectMessages\ShowRequest.cs" />
     <Compile Include="Models\DirectMessageThread.cs" />
+    <Compile Include="Net\Follows\CreateRequest.cs" />
+    <Compile Include="Net\Follows\DestroyRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -94,6 +96,7 @@
     <Folder Include="Net\Reports\" />
     <Folder Include="Net\Inquiries\" />
     <Folder Include="Net\DirectMessages\" />
+    <Folder Include="Net\Follows\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
