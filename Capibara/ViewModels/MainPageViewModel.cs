@@ -17,6 +17,7 @@ namespace Capibara.ViewModels
             new ReactiveCollection<MenuItem>
         {
             new MenuItem { Name = "ホーム", PagePath = "NavigationPage/FloorMapPage" },
+            new MenuItem { Name = "ダイレクトメッセージ", PagePath = "NavigationPage/InboxPage" },
             new MenuItem { Name = "プロフィール", PagePath = "NavigationPage/MyProfilePage" },
             new MenuItem { Name = "お知らせ", PagePath = "NavigationPage/InformationsPage" },
             new MenuItem { Name = "設定", PagePath = "NavigationPage/SettingPage" }

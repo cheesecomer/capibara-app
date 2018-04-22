@@ -17,11 +17,12 @@ namespace Capibara.ViewModels
 {
     public class InboxPageViewModel: ViewModelBase
     {
-        public ReactiveCollection<DirectMessageThread> Threads { get; } = new ReactiveCollection<DirectMessageThread>();
+        public ReactiveCollection<DirectMessageThreadViewModel> Threads { get; } =
+            new ReactiveCollection<DirectMessageThreadViewModel>();
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
-        public AsyncReactiveCommand<DirectMessageThread> ItemTappedCommand { get; }
+        public AsyncReactiveCommand<DirectMessageThreadViewModel> ItemTappedCommand { get; }
 
         public InboxPageViewModel(
             INavigationService navigationService = null,
@@ -32,10 +33,10 @@ namespace Capibara.ViewModels
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Refresh()));
 
-            this.ItemTappedCommand = new AsyncReactiveCommand<DirectMessageThread>();
+            this.ItemTappedCommand = new AsyncReactiveCommand<DirectMessageThreadViewModel>();
             this.ItemTappedCommand.Subscribe(async x =>
             {
-                var parameters = new NavigationParameters { { ParameterNames.Model, x.User } };
+                var parameters = new NavigationParameters { { ParameterNames.Model, x.Model } };
                 await this.NavigationService.NavigateAsync("DirectMessagePage", parameters);
             });
         }
@@ -46,7 +47,13 @@ namespace Capibara.ViewModels
             try
             {
                 var response = await request.Execute();
-                response.Threads?.ForEach(x => this.Threads.Add(x));
+                this.Threads.Clear();
+                response.Threads?.ForEach(
+                    x => this.Threads.Add(
+                        new DirectMessageThreadViewModel(
+                            this.NavigationService, 
+                            this.PageDialogService, 
+                            x)));
 
             }
             catch (Exception e)
