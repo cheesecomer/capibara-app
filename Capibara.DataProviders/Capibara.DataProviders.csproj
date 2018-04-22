@@ -80,6 +80,8 @@
     <Compile Include="Models\DirectMessageThread.cs" />
     <Compile Include="Net\Follows\CreateRequest.cs" />
     <Compile Include="Net\Follows\DestroyRequest.cs" />
+    <Compile Include="Net\Follows\ShowResponse.cs" />
+    <Compile Include="Models\Follow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

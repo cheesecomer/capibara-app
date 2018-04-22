@@ -43,7 +43,7 @@ namespace Capibara.Net
 
         RequestBase InquiriesCreateRequest(string email, string content);
 
-        RequestBase FollowsCreateRequest(User target);
+        RequestBase<Follows.ShowResponse> FollowsCreateRequest(User target);
 
         RequestBase FollowsDestroyRequest(int followId);
     }
@@ -101,7 +101,7 @@ namespace Capibara.Net
         RequestBase IRequestFactory.InquiriesCreateRequest(string email, string content)
             => new Inquiries.CreateRequest(email, content);
         
-        RequestBase IRequestFactory.FollowsCreateRequest(User target)
+        RequestBase<Follows.ShowResponse> IRequestFactory.FollowsCreateRequest(User target)
             => new Follows.CreateRequest(target);
 
         RequestBase IRequestFactory.FollowsDestroyRequest(int followId)
