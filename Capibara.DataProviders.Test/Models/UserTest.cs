@@ -30,7 +30,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 base.SetUp();
 
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": null }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -69,6 +69,81 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIsAcceptedWithExpected()
             {
                 Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFollowIdWithExpected()
+            {
+                Assert.That(this.Subject.FollowId, Is.Null);
+            }
+        }
+
+        [TestFixture]
+        public class WhenIsFollow : TestFixtureBase
+        {
+            protected User Subject { get; private set; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": 10 }";
+                this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
+            }
+
+            [TestCase]
+            public void ItShouldNameWithExpected()
+            {
+                Assert.That(this.Subject.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+            }
+
+            [TestCase]
+            public void ItShouldIdWithExpected()
+            {
+                Assert.That(this.Subject.Id, Is.EqualTo(99999));
+            }
+
+            [TestCase]
+            public void ItShouldIconUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIconThumbnaiUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsAcceptedWithExpected()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldFollowIdWithExpected()
+            {
+                Assert.That(this.Subject.FollowId, Is.EqualTo(10));
             }
         }
 

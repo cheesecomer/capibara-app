@@ -25,6 +25,8 @@ namespace Capibara.Models
 
         private bool isAccepted;
 
+        private int? followId;
+
         public virtual event EventHandler SignUpSuccess;
 
         public virtual event EventHandler<FailEventArgs> SignUpFail;
@@ -104,6 +106,15 @@ namespace Capibara.Models
             get => this.isAccepted;
             set => this.SetProperty(ref this.isAccepted, value);
         }
+
+        [JsonProperty("follow")]
+        public virtual int? FollowId
+        {
+            get => this.followId;
+            set => this.SetProperty(ref this.followId, value);
+        }
+
+        public virtual bool IsFollow => this.FollowId.HasValue;
 
         public virtual bool IsOwn => this.IsolatedStorage.UserId == this.Id;
 
