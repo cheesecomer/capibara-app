@@ -55,6 +55,10 @@ namespace Capibara.Models
 
         public virtual event EventHandler<FailEventArgs> ReportFail;
 
+        public virtual event EventHandler ToggleFollowSuccess;
+
+        public virtual event EventHandler<FailEventArgs> ToggleFollowFail;
+
         public virtual int Id
         {
             get => this.id;
@@ -338,6 +342,61 @@ namespace Capibara.Models
             {
                 this.ReportFail?.Invoke(this, e);
 
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// フォロー状態を切り替えます
+        /// </summary>
+        /// <returns>成否</returns>
+        public virtual Task<bool> ToggleFollow()
+        {
+            Func<Task<bool>> func = null;
+            if (this.IsFollow)
+                func = this.Unfollow;
+            else
+                func = this.Follow;
+
+            return func.Invoke();
+        }
+
+        private async Task<bool> Follow()
+        {
+            var request = this.RequestFactory.FollowsCreateRequest(this).BuildUp(this.Container);
+            try
+            {
+                var response = await request.Execute();
+
+                this.FollowId = response.Follow.Id;
+
+                this.ToggleFollowSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ToggleFollowFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        private async Task<bool> Unfollow()
+        {
+            var request = this.RequestFactory.FollowsDestroyRequest(this.FollowId.Value).BuildUp(this.Container);
+            try
+            {
+                await request.Execute();
+
+                this.FollowId = null;
+
+                this.ToggleFollowSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ToggleFollowFail?.Invoke(this, e);
                 return false;
             }
         }
