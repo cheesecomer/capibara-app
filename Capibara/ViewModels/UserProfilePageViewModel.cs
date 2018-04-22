@@ -24,6 +24,8 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ToggleFollowCommand { get; }
 
+        public AsyncReactiveCommand ShowDirectMessageCommand { get; }
+
         public UserProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -61,6 +63,14 @@ namespace Capibara.ViewModels
             this.ToggleFollowCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
             this.ToggleFollowCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleFollow()));
             this.Model.ToggleFollowFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleFollow()));
+
+            // ShowDirectMessageCommand
+            this.ShowDirectMessageCommand = this.Model.ObserveProperty(x => x.IsFollow).ToAsyncReactiveCommand().AddTo(this.Disposable);
+            this.ShowDirectMessageCommand.Subscribe(async () =>
+            {
+                var parameters = new NavigationParameters { { ParameterNames.Model, new DirectMessageThread { User = this.Model } } };
+                await this.NavigationService.NavigateAsync("DirectMessagePage", parameters);
+            });
         }
     }
 }
