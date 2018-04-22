@@ -147,6 +147,8 @@
     <Compile Include="ViewModels\UserProfilePageViewModel.cs" />
     <Compile Include="ViewModels\MyProfilePageViewModel.cs" />
     <Compile Include="ViewModels\EditProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\DirectMessagePageViewModel.cs" />
+    <Compile Include="ViewModels\DirectMessageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

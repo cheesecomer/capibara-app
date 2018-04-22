@@ -17,7 +17,7 @@ namespace Capibara.Models
 
         private DirectMessage latestDirectMessage;
 
-        private User user;
+        private User user = new User();
 
         private DirectMessageChannelBase channel;
 
