@@ -115,7 +115,11 @@ namespace Capibara.Models
         public virtual int? FollowId
         {
             get => this.followId;
-            set => this.SetProperty(ref this.followId, value);
+            set
+            {
+                this.SetProperty(ref this.followId, value);
+                this.RaisePropertyChanged(nameof(IsFollow));
+            }
         }
 
         public virtual bool IsFollow => this.FollowId.HasValue;
