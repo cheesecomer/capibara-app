@@ -105,6 +105,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<MyProfilePage>();
             containerRegistry.RegisterForNavigation<EditProfilePage>();
             containerRegistry.RegisterForNavigation<InboxPage>();
+            containerRegistry.RegisterForNavigation<DirectMessagePage>();
         }
 
         private class ApplicationServiceStub : IApplicationService

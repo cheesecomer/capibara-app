@@ -104,6 +104,7 @@ namespace Capibara.Net
             var query = this
                 .Query?
                 .Select(x => $"{x.Key}={WebUtility.UrlEncode(x.Value)}")
+                .DefaultIfEmpty("")
                 .Aggregate((x, y) => $"{x}&{y}");
 
             var builder = new UriBuilder(url);

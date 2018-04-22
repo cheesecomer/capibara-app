@@ -15,7 +15,7 @@ namespace Capibara.Models
     {
         private bool isConnected;
 
-        private DirectMessage latestDirectMessage;
+        private DirectMessage latestDirectMessage = new DirectMessage();
 
         private User user = new User();
 
@@ -52,6 +52,12 @@ namespace Capibara.Models
 
         public ObservableCollection<DirectMessage> DirectMessages { get; }
             = new ObservableCollection<DirectMessage>();
+
+        public override void Restore(DirectMessageThread model)
+        {
+            this.User.Restore(model.User);
+            this.LatestDirectMessage.Restore(model.LatestDirectMessage);
+        }
 
         public virtual async Task<bool> Refresh()
         {
