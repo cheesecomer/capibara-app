@@ -71,14 +71,15 @@ namespace Capibara.Test.ViewModels.MainPageViewModel
         [TestCase]
         public void ItShouldCountExpected()
         {
-            Assert.That(this.Subject.MenuItems.Count, Is.EqualTo(4));
+            Assert.That(this.Subject.MenuItems.Count, Is.EqualTo(5));
         }
     }
 
     [TestFixture(0, "ホーム", "NavigationPage/FloorMapPage")]
-    [TestFixture(1, "プロフィール", "NavigationPage/MyProfilePage")]
-    [TestFixture(2, "お知らせ", "NavigationPage/InformationsPage")]
-    [TestFixture(3, "設定", "NavigationPage/SettingPage")]
+    [TestFixture(1, "ダイレクトメッセージ", "NavigationPage/InboxPage")]
+    [TestFixture(2, "プロフィール", "NavigationPage/MyProfilePage")]
+    [TestFixture(3, "お知らせ", "NavigationPage/InformationsPage")]
+    [TestFixture(4, "設定", "NavigationPage/SettingPage")]
     public class MenuItemsItemPropertyTest : ViewModelTestBase
     {
         protected SubjectViewModel Subject;

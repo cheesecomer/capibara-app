@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
+using Capibara.ViewModels;
 using Capibara.Models;
 using Capibara.Net;
 using Capibara.Net.DirectMessages;
@@ -80,17 +81,17 @@ namespace Capibara.Test.ViewModels.InboxPageViewModel
             public void ItShouldRoomsWithExpected()
             {
                 var comparer = new DirectMessageThreadComparer();
-                var expect = new List<DirectMessageThread>
+                var expect = new List<DirectMessageThreadViewModel>
                 {
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 1 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 2 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 3 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 4 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 5 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 6 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 7 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 8 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
-                    new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 9 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } },
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 1 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 2 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 3 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 4 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 5 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 6 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 7 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 8 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
+                    new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 9 , Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }),
                 };
                 Assert.That(this.Subject.Threads, Is.EqualTo(expect).Using(comparer));
             }
@@ -108,7 +109,7 @@ namespace Capibara.Test.ViewModels.InboxPageViewModel
             public void ItShouldRoomsWithExpected()
             {
                 var comparer = new DirectMessageThreadComparer();
-                var expect = new List<DirectMessageThread> { new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 1, Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } } };
+                var expect = new List<DirectMessageThreadViewModel> { new DirectMessageThreadViewModel(model: new DirectMessageThread { LatestDirectMessage = new DirectMessage { Id = 1, Content = "Message!!!!", At = new DateTimeOffset(2017, 10, 28, 20, 25, 20, TimeSpan.FromHours(9)), Sender = new User { Id = 1, Nickname = "smith" } }, User = new User { Id = 1, Nickname = "smith" } }) };
                 Assert.That(this.Subject.Threads, Is.EqualTo(expect).Using(comparer));
             }
         }
@@ -173,26 +174,21 @@ namespace Capibara.Test.ViewModels.InboxPageViewModel
         }
     }
 
-    public class DirectMessageThreadComparer : IEqualityComparer<DirectMessageThread>
+    public class DirectMessageThreadComparer : IEqualityComparer<DirectMessageThreadViewModel>
     {
-        public bool Equals(DirectMessageThread x, DirectMessageThread y)
+        public bool Equals(DirectMessageThreadViewModel x, DirectMessageThreadViewModel y)
         {
             if (x == null && y == null)
                 return true;
             else if (x == null | y == null)
                 return false;
             else
-                return x.User.Id == y.User.Id
-                        && x.User.Nickname == y.User.Nickname
-                        && x.User.IconThumbnailUrl == y.User.IconThumbnailUrl
-                        && x.LatestDirectMessage.Content == y.LatestDirectMessage.Content
-                        && x.LatestDirectMessage.At == y.LatestDirectMessage.At
-                        && x.LatestDirectMessage.Sender.Id == y.LatestDirectMessage.Sender.Id
-                        && x.LatestDirectMessage.Sender.Nickname == y.LatestDirectMessage.Sender.Nickname
-                        && x.LatestDirectMessage.Sender.IconThumbnailUrl == y.LatestDirectMessage.Sender.IconThumbnailUrl;
+                return x.At.Value == y.At.Value
+                        && x.Content.Value == y.Content.Value
+                        && x.Nickname.Value == y.Nickname.Value;
         }
 
-        public int GetHashCode(DirectMessageThread room)
+        public int GetHashCode(DirectMessageThreadViewModel room)
         {
             return room.GetHashCode();
         }
