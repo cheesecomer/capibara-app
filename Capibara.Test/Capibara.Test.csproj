@@ -208,6 +208,7 @@
     <Compile Include="ViewModels\InquiryPageViewModelTest.cs" />
     <Compile Include="ViewModels\AboutPageViewModelTest.cs" />
     <Compile Include="ViewModels\OgpViewModelTest.cs" />
+    <Compile Include="ViewModels\InboxPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

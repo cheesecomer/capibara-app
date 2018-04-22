@@ -143,6 +143,7 @@
     </Compile>
     <Compile Include="ViewModels\ImagePageViewModel.cs" />
     <Compile Include="Forms\ZoomableImage.cs" />
+    <Compile Include="ViewModels\InboxViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

@@ -7,6 +7,6 @@ namespace Capibara.Net.DirectMessages
 {
     public class IndexResponse
     {
-        public List<DirectMessageThread> Threads { get; set; }
+        public List<DirectMessageThread> Threads { get; set; } = new List<DirectMessageThread>();
     }
 }
