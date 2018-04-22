@@ -162,6 +162,40 @@ namespace Capibara.Test.ViewModels.InformationsPageViewModel
             }
         }
 
+        [TestFixture]
+        public class WhenRequestTimeout : ViewModelTestBase
+        {
+            [TestCase]
+            public void ItShouldDisplayErrorAlertAsyncCall()
+            {
+                var exception = new HttpUnauthorizedException(HttpStatusCode.RequestTimeout, string.Empty);
+
+                var request = new Mock<RequestBase<IndexResponse>>();
+                bool isCalled = false;
+                request.Setup(x => x.Execute()).Returns(() => {
+                    if (isCalled)
+                        return Task.FromResult(new IndexResponse());
+
+                    isCalled = true;
+                    throw exception;
+                });
+
+                this.RequestFactory.Setup(x => x.InformationsIndexRequest()).Returns(request.Object);
+
+                var subject = new Mock<SubjectViewModel>(this.NavigationService.Object, this.PageDialogService.Object);
+
+                subject.Object.BuildUp(this.Container);
+
+                subject.Protected().Setup<Task<bool>>("DisplayErrorAlertAsync", exception).ReturnsAsync(true);
+
+                subject.Object.RefreshCommand.Execute();
+
+                while (!subject.Object.RefreshCommand.CanExecute()) { }
+
+                request.Verify(x => x.Execute(), Times.AtLeast(2));
+            }
+        }
+
         public class InformationComparer : IEqualityComparer<Information>
         {
             public bool Equals(Information x, Information y)

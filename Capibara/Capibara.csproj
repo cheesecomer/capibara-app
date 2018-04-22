@@ -143,6 +143,20 @@
     </Compile>
     <Compile Include="ViewModels\ImagePageViewModel.cs" />
     <Compile Include="Forms\ZoomableImage.cs" />
+    <Compile Include="ViewModels\InboxViewModel.cs" />
+    <Compile Include="ViewModels\UserProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\MyProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\EditProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\DirectMessagePageViewModel.cs" />
+    <Compile Include="ViewModels\DirectMessageViewModel.cs" />
+    <Compile Include="Views\InboxPage.xaml.cs">
+      <DependentUpon>InboxPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\DirectMessageThreadViewModel.cs" />
+    <Compile Include="Views\DirectMessagePage.xaml.cs">
+      <DependentUpon>DirectMessagePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Selectors\DirectMessageDataTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -218,6 +232,14 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\InboxPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\DirectMessagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

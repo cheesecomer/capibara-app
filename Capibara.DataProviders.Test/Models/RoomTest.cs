@@ -95,6 +95,7 @@ namespace Capibara.Test.Models.RoomTest
             }
         }
     }
+
     [TestFixture]
     public class ConnectTest : TestFixtureBase
     {

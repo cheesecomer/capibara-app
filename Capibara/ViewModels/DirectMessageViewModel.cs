@@ -15,15 +15,13 @@ using Xamarin.Forms;
 
 namespace Capibara.ViewModels
 {
-    public class MessageViewModel : ViewModelBase<Message>
+    public class DirectMessageViewModel : ViewModelBase<DirectMessage>
     {
         public ReactiveProperty<int> Id { get; }
 
         public ReactiveProperty<string> Content { get; }
 
         public ReactiveProperty<bool> IsOwn { get; }
-
-        public ReactiveProperty<ImageSource> ImageThumbnail { get; } = new ReactiveProperty<ImageSource>();
 
         public ReactiveProperty<DateTimeOffset> At { get; }
 
@@ -35,12 +33,10 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand ShowProfileCommand { get; }
 
-        public AsyncReactiveCommand ShowImageCommand { get; }
-
-        public MessageViewModel(
+        public DirectMessageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
-            Message model = null)
+            DirectMessage model = null)
             : base(navigationService, pageDialogService, model)
         {
             this.Id = this.Model
@@ -69,12 +65,10 @@ namespace Capibara.ViewModels
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.Model.ObserveProperty(x => x.ImageThumbnailUrl).Subscribe(x => this.ImageThumbnail.Value = x);
-
             this.Model.Sender
                 .ObserveProperty(x => x.IconThumbnailUrl)
                 .Subscribe(x => this.IconThumbnail.Value = x);
-
+            
             // ShowProfileCommand
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.ShowProfileCommand.Subscribe(() =>
@@ -82,26 +76,6 @@ namespace Capibara.ViewModels
                 var parameters = new NavigationParameters();
                 parameters.Add(ParameterNames.Model, this.Sender.Value.Model);
                 return this.NavigationService.NavigateAsync("UserProfilePage", parameters);
-            });
-
-            this.ShowImageCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ShowImageCommand.Subscribe(async () =>
-            {
-                var canReward = await this.PageDialogService.DisplayAlertAsync(
-                    string.Empty,
-                    "動画広告を視聴して\r\n" +
-                    "画像を見よう！",
-                    "視聴する",
-                    "閉じる");
-                
-                if (!canReward) return;
-
-                var completed = await this.RewardedVideoService.DisplayRewardedVideo();
-                if (!completed) return;
-
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Url, this.Model.ImageUrl);
-                await this.NavigationService.NavigateAsync("ImagePage", parameters);
             });
 
             var pattern = @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
