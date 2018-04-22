@@ -42,6 +42,15 @@
             />
         <Button 
             ef:ToFlatButton.On="true" 
+            Text="メッセージ"
+            BorderWidth="0"
+            BackgroundColor="{StaticResource PrimaryColor}"
+            TextColor="White"
+            Command="{Binding ShowDirectMessageCommand}"
+            Margin="0, 0, 0, 10"
+            />
+        <Button 
+            ef:ToFlatButton.On="true" 
             Text="ブロック"
             BorderWidth="0"
             BackgroundColor="{StaticResource WarningColor}"

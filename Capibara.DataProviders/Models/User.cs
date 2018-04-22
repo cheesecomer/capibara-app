@@ -137,6 +137,7 @@ namespace Capibara.Models
             this.IconThumbnailUrl = model.IconThumbnailUrl;
             this.IsBlock = model.IsBlock;
             this.IsAccepted = model.IsAccepted;
+            this.FollowId = model.FollowId;
         }
 
         /// <summary>
