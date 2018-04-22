@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reactive.Linq;
 
 using Capibara.Models;
@@ -24,21 +23,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> IconThumbnail { get; }
 
-        public ReactiveProperty<bool> IsBlock { get; }
-
         public AsyncReactiveCommand RefreshCommand { get; }
-
-        public AsyncReactiveCommand EditCommand { get; }
-
-        public AsyncReactiveCommand CommitCommand { get; }
-
-        public AsyncReactiveCommand BlockCommand { get; }
-
-        public AsyncReactiveCommand ChangePhotoCommand { get; }
-
-        public AsyncReactiveCommand ReportCommand { get; }
-
-        public AsyncReactiveCommand CooperationSnsCommand { get; }
 
         protected override bool NeedTrackingView => !this.Model.IsOwn;
 
@@ -63,107 +48,16 @@ namespace Capibara.ViewModels
 
             this.IconThumbnail = new ReactiveProperty<ImageSource>();
             this.Model.ObserveProperty(x => x.IconThumbnailUrl).Subscribe(x => this.IconThumbnail.Value = x);
-            
-            this.IsBlock = this.Model
-                .ToReactivePropertyAsSynchronized(x => x.IsBlock)
-                .AddTo(this.Disposable);
 
             this.Nickname.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Nickname)));
             this.Biography.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Biography)));
             this.Icon.Subscribe(_ => this.RaisePropertyChanged(nameof(this.Icon)));
-            this.IsBlock.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsBlock)));
 
             // RefreshCommand
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.RefreshCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
 
             this.Model.RefreshFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Refresh()));
-
-            // EditCommand
-            this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.EditCommand.Subscribe(async () => {
-                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
-                await this.NavigationService.NavigateAsync("EditProfilePage", parameters);
-            });
-
-            // CommitCommand
-            this.CommitCommand = this.Nickname.Select(x => x.ToSlim().IsPresent()).ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.CommitCommand.Subscribe(async () => {
-                if (!this.Model.IconBase64.IsNullOrEmpty())
-                {
-                    var canReward = await this.PageDialogService.DisplayAlertAsync(
-                        string.Empty, 
-                        "動画広告を視聴して\r\n" +
-                        "プロフィール画像を更新しよう！", 
-                        "視聴する", 
-                        "閉じる");
-                    if (!canReward) return;
-
-                    var completed = await this.RewardedVideoService.DisplayRewardedVideo();
-                    if (!completed) return;
-                }
-
-                await this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit());
-            });
-
-            this.Model.CommitSuccess += async (sender, e) => {
-                var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
-                await this.NavigationService.GoBackAsync(parameters);
-            };
-
-            this.Model.CommitFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Commit()));
-
-            // ChangePhotoCommand
-            this.ChangePhotoCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ChangePhotoCommand.Subscribe(async () => {
-                var cancelButton = ActionSheetButton.CreateCancelButton("キャンセル", () => { });
-                var deleteButton = ActionSheetButton.CreateDestroyButton("削除", () => this.Icon.Value = null);
-                var pickupButton = ActionSheetButton.CreateButton("アルバムから選択", async () => {
-                    var bytes = await this.PickupPhotoService.DisplayAlbumAsync(Services.CropMode.Square);
-                    if (bytes != null)
-                    {
-                        this.Icon.Value = this.ImageSourceFactory.FromStream(() => new MemoryStream(bytes));
-                        this.Model.IconBase64 = Convert.ToBase64String(bytes);
-                    }
-                });
-                var takeButton = ActionSheetButton.CreateButton("カメラで撮影", () => { });
-                await this.PageDialogService.DisplayActionSheetAsync("プロフィール画像変更", cancelButton, pickupButton);
-            });
-
-            // BlockCommand
-            this.BlockCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
-
-            this.Model.BlockFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
-
-            // ReportCommand
-            this.ReportCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.ReportCommand.Subscribe(() =>
-            {
-                var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, this.Model);
-                return this.NavigationService.NavigateAsync("ReportPage", parameters);
-            });
-
-            // SignUpWithSnsCommand
-            this.CooperationSnsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.CooperationSnsCommand.Subscribe(async () => {
-                var buttons = new[] {
-                    ActionSheetButton.CreateCancelButton("キャンセル", () => { }),
-                    ActionSheetButton.CreateButton("Google", () => this.OpenOAuthUri(OAuthProvider.Google)),
-                    ActionSheetButton.CreateButton("Twitter", () => this.OpenOAuthUri(OAuthProvider.Twitter)),
-                    ActionSheetButton.CreateButton("LINE", () => this.OpenOAuthUri(OAuthProvider.Line))
-                };
-
-                await this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", buttons);
-            });
-        }
-
-        private void OpenOAuthUri(OAuthProvider provider)
-        {
-            var query = $"?user_id={this.Model.Id}&access_token={this.IsolatedStorage.AccessToken}";
-            var url = Path.Combine(this.Environment.OAuthBaseUrl, provider.ToString().ToLower());
-            this.SnsLoginService.Open(url + query);
         }
     }
 }

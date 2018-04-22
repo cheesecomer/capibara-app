@@ -144,6 +144,9 @@
     <Compile Include="ViewModels\ImagePageViewModel.cs" />
     <Compile Include="Forms\ZoomableImage.cs" />
     <Compile Include="ViewModels\InboxViewModel.cs" />
+    <Compile Include="ViewModels\UserProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\MyProfilePageViewModel.cs" />
+    <Compile Include="ViewModels\EditProfilePageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

@@ -101,9 +101,9 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<AboutPage>();
             containerRegistry.RegisterForNavigation<LicensePage>();
             containerRegistry.RegisterForNavigation<ImagePage>();
-            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigation<UserProfilePage>();
+            containerRegistry.RegisterForNavigation<MyProfilePage>();
+            containerRegistry.RegisterForNavigation<EditProfilePage>();
         }
 
         private class ApplicationServiceStub : IApplicationService
