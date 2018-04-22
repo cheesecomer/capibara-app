@@ -65,7 +65,8 @@ namespace Capibara.Test.Models.SessionTest
             {
                 AccessToken = "1:bGbDyyVxbSQorRhgyt6R",
                 Id = 999,
-                Nickname = "Foo.Bar"
+                Nickname = "Foo.Bar",
+                IsAccepted = false
             };
 
             [TestCase]
@@ -96,6 +97,12 @@ namespace Capibara.Test.Models.SessionTest
             public void ItShouldRegisterUserInDIContainer()
             {
                 Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldNotAccepted()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(false));
             }
 
             [TestCase]

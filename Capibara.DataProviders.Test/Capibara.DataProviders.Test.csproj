@@ -162,6 +162,11 @@
     <Compile Include="Net\DirectMessages\IndexResponseTest.cs" />
     <Compile Include="Net\DirectMessages\ShowResponseTest.cs" />
     <Compile Include="Models\DirectMessageThreadTest.cs" />
+    <Compile Include="Net\Follows\DestroyRequestTest.cs" />
+    <Compile Include="Net\Follows\CreateRequestTest.cs" />
+    <Compile Include="Net\Follows\ShowResponseTest.cs" />
+    <Compile Include="Models\FollowComparer.cs" />
+    <Compile Include="Models\FollowTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />
@@ -172,6 +177,7 @@
     <Folder Include="Net\Reports\" />
     <Folder Include="Net\Inquiries\" />
     <Folder Include="Net\DirectMessages\" />
+    <Folder Include="Net\Follows\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.NET.Test.Sdk.15.6.1\build\net45\Microsoft.Net.Test.Sdk.targets" Condition="Exists('..\packages\Microsoft.NET.Test.Sdk.15.6.1\build\net45\Microsoft.Net.Test.Sdk.targets')" />

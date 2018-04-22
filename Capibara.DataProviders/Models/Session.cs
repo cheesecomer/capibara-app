@@ -55,7 +55,7 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                this.isAccepted = response.IsAccepted;
+                this.IsAccepted = response.IsAccepted;
 
                 this.IsolatedStorage.AccessToken = response.AccessToken;
                 this.IsolatedStorage.UserNickname = response.Nickname;

@@ -33,6 +33,24 @@
         <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 30"  />
         <Button 
             ef:ToFlatButton.On="true" 
+            Text="{Binding ToggleFollowDescription.Value}"
+            BorderWidth="0"
+            BackgroundColor="{StaticResource PrimaryColor}"
+            TextColor="White"
+            Command="{Binding ToggleFollowCommand}"
+            Margin="0, 0, 0, 10"
+            />
+        <Button 
+            ef:ToFlatButton.On="true" 
+            Text="メッセージ"
+            BorderWidth="0"
+            BackgroundColor="{StaticResource PrimaryColor}"
+            TextColor="White"
+            Command="{Binding ShowDirectMessageCommand}"
+            Margin="0, 0, 0, 10"
+            />
+        <Button 
+            ef:ToFlatButton.On="true" 
             Text="ブロック"
             BorderWidth="0"
             BackgroundColor="{StaticResource WarningColor}"
