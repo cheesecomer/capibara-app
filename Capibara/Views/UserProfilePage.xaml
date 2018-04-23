@@ -14,6 +14,12 @@
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
     </ContentView.Behaviors>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToStringConverter x:Key="toggleFollowIconConverter" TruthyText="&#xE735;" FalsyText="&#xE734;" />
+            <converters:BoolToColorConverter x:Key="toggleFollowColorConverter" TruthyColor="#FFA500" FalsyColor="#6C757D" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ScrollView>
       <StackLayout Padding="20">
         <forms:RoundImage
@@ -40,8 +46,8 @@
                 Grid.Column="0"
                 Command="{Binding ToggleFollowCommand}"
                 FontSize="Large" 
-                TextColor="#6C757D"
-                Text="&#xE734;"
+                TextColor="{Binding IsFollow.Value, Converter={StaticResource toggleFollowColorConverter}}"
+                Text="{Binding IsFollow.Value, Converter={StaticResource toggleFollowIconConverter}}"
                 BorderColor="Transparent"
                 BorderWidth="0"
                 BorderRadius="0">
