@@ -28,44 +28,145 @@
             CornerRadius="{Binding Width, Source={x:Reference image}, Converter={StaticResource floatMultiplier}, ConverterParameter=0.5}"
             HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
             />
-        <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 20" />
-        <Label Text="自己紹介" />
+        <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 0" />
+        <Grid HeightRequest="20" ColumnSpacing="10" HorizontalOptions="Center" Margin="0, 0, 0, 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="0"
+                Command="{Binding ToggleFollowCommand}"
+                FontSize="Large" 
+                TextColor="#6C757D"
+                Text="&#xE734;"
+                BorderColor="Transparent"
+                BorderWidth="0"
+                BorderRadius="0">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="1"
+                Command="{Binding ToggleFollowCommand}"
+                FontSize="Micro" 
+                TextColor="#6C757D"
+                Text="{Binding ToggleFollowDescription.Value}"
+                BorderColor="Transparent"
+                BorderWidth="0"
+                BorderRadius="0">
+            </Button>
+        </Grid>
+        <Grid ColumnSpacing="20" RowSpacing="5" HorizontalOptions="Center" Margin="0, 0, 0, 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="0"
+                Command="{Binding ShowDirectMessageCommand}"
+                FontSize="Large" 
+                TextColor="#6C757D"
+                Text="&#xE8F2;"
+                BorderColor="#6C757D">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="0"
+                Grid.Row="1"
+                Command="{Binding ShowDirectMessageCommand}"
+                FontSize="Micro" 
+                TextColor="#6C757D"
+                Text="DM"
+                BorderColor="Transparent"
+                BorderWidth="0"
+                BorderRadius="0">
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true"
+                Command="{Binding BlockCommand}"
+                Grid.Column="1"
+                FontSize="Large" 
+                TextColor="#6C757D"
+                Text="&#xE8F8;"
+                BorderColor="#6C757D">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="1"
+                Grid.Row="1"
+                Command="{Binding BlockCommand}"
+                Margin="0"
+                FontSize="Micro" 
+                TextColor="#6C757D"
+                Text="ブロック"
+                BorderColor="Transparent"
+                BorderWidth="0"
+                BorderRadius="0">
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="2"
+                Command="{Binding ReportCommand}"
+                FontSize="Large" 
+                TextColor="#6C757D"
+                Text="&#xE730;"
+                BorderColor="#6C757D">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+            <Button 
+                ef:CustomFont.On="true" 
+                ef:ToFlatButton.On="true" 
+                Grid.Column="2"
+                Grid.Row="1"
+                Margin="0"
+                Command="{Binding ReportCommand}"
+                FontSize="Micro" 
+                TextColor="#6C757D"
+                Text="通報"
+                BorderColor="Transparent"
+                BorderWidth="0"
+                BorderRadius="0">
+            </Button>
+        </Grid>
+        <Label Text="自己紹介" TextColor="#6C757D" />
         <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 30"  />
-        <Button 
-            ef:ToFlatButton.On="true" 
-            Text="{Binding ToggleFollowDescription.Value}"
-            BorderWidth="0"
-            BackgroundColor="{StaticResource PrimaryColor}"
-            TextColor="White"
-            Command="{Binding ToggleFollowCommand}"
-            Margin="0, 0, 0, 10"
-            />
-        <Button 
-            ef:ToFlatButton.On="true" 
-            Text="メッセージ"
-            BorderWidth="0"
-            BackgroundColor="{StaticResource PrimaryColor}"
-            TextColor="White"
-            Command="{Binding ShowDirectMessageCommand}"
-            Margin="0, 0, 0, 10"
-            />
-        <Button 
-            ef:ToFlatButton.On="true" 
-            Text="ブロック"
-            BorderWidth="0"
-            BackgroundColor="{StaticResource WarningColor}"
-            TextColor="White"
-            Command="{Binding BlockCommand}"
-            Margin="0, 0, 0, 10"
-            />
-        <Button 
-            ef:ToFlatButton.On="true" 
-            Text="通報"
-            BorderWidth="0"
-            BackgroundColor="{StaticResource DangerColor}"
-            TextColor="White"
-            Command="{Binding ReportCommand}"
-            />
       </StackLayout>
     </ScrollView>
 </ContentPage>
