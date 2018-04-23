@@ -158,6 +158,7 @@
     </Compile>
     <Compile Include="Selectors\DirectMessageDataTemplateSelector.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\BoolToColorConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

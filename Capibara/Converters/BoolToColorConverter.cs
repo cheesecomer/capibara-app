@@ -4,20 +4,20 @@ using Xamarin.Forms;
 
 namespace Capibara.Converters
 {
-    public class BoolToStringConverter : IValueConverter
+    public class BoolToColorConverter : IValueConverter
     {
-        public string TruthyText { get; set; }
+        public Color TruthyColor { get; set; }
 
-        public string FalsyText { get; set; }
+        public Color FalsyColor { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((bool)value) ? this.TruthyText : this.FalsyText;
+            return ((bool)value) ? this.TruthyColor : this.FalsyColor;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return this.TruthyText == (value as string);
+            return this.TruthyColor == ((Color)value);
         }
     }
 }
