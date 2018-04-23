@@ -112,7 +112,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
                 var viewModel = new SubjectViewModel(model: model);
                 model.FollowId = 1;
 
-                Assert.That(viewModel.ToggleFollowDescription.Value, Is.EqualTo("DM を拒否する"));
+                Assert.That(viewModel.ToggleFollowDescription.Value, Is.EqualTo("DM を受け付けています"));
             }
         }
 

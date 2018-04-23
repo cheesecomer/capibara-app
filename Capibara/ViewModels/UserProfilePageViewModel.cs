@@ -34,7 +34,7 @@ namespace Capibara.ViewModels
         {
             this.ToggleFollowDescription = this.Model
                 .ObserveProperty(x => x.IsFollow)
-                .Select((x) => x ? "DM を拒否する" : "DM を受け付ける")
+                .Select((x) => x ? "DM を受け付けています" : "DM を受け付ける")
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
