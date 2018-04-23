@@ -287,6 +287,8 @@ namespace Capibara.Models
 
                 this.IsBlock = true;
 
+                this.FollowId = null;
+
                 this.BlockSuccess?.Invoke(this, null);
 
                 return true;
