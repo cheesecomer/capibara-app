@@ -16,6 +16,8 @@ namespace Capibara.ViewModels
     {
         public ReactiveProperty<bool> IsBlock { get; }
 
+        public ReadOnlyReactiveProperty<bool> IsFollow { get; }
+
         public ReactiveProperty<string> ToggleFollowDescription { get; }
 
         public AsyncReactiveCommand BlockCommand { get; }
@@ -36,6 +38,11 @@ namespace Capibara.ViewModels
                 .ObserveProperty(x => x.IsFollow)
                 .Select((x) => x ? "DM を受け付けています" : "DM を受け付ける")
                 .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsFollow = this.Model
+                .ObserveProperty(x => x.IsFollow)
+                .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposable);
 
             this.IsBlock = this.Model

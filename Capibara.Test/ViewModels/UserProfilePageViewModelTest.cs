@@ -16,6 +16,34 @@ using SubjectViewModel = Capibara.ViewModels.UserProfilePageViewModel;
 
 namespace Capibara.Test.ViewModels.UserProfilePageViewModel
 {
+    public class IsFollowPropertyTest : ViewModelTestBase
+    {
+        protected SubjectViewModel Subject;
+
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            var model = new User { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(this.Container);
+
+            this.Subject = new SubjectViewModel(model: model).BuildUp(this.Container);
+        }
+
+        [TestCase]
+        public void ItShouldValueWithExpect()
+        {
+            Assert.That(this.Subject.IsFollow.Value, Is.EqualTo(false));
+        }
+
+        [TestCase]
+        public void ItShouldUpdate()
+        {
+            this.Subject.Model.FollowId = 1;
+            Assert.That(this.Subject.IsFollow.Value, Is.EqualTo(true));
+        }
+    }
+
     [TestFixture]
     public class BlockCommandCanExecuteTest : ViewModelTestBase
     {
