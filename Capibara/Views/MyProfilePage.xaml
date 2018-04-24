@@ -8,6 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MyProfilePage"
+    NavigationPage.BackButtonTitle=""
     Title="プロフィール">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="編集" Priority="1" Command="{Binding EditCommand}" />

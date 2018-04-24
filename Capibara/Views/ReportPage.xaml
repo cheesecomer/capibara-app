@@ -9,6 +9,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.ReportPage"
+    NavigationPage.BackButtonTitle=""
     Title="通報">
     <ContentPage.Resources>
         <ResourceDictionary>

@@ -8,7 +8,8 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.EditProfilePage">
+    x:Class="Capibara.Views.EditProfilePage"
+    NavigationPage.BackButtonTitle="">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="保存" Priority="1" Command="{Binding CommitCommand}" />
     </ContentPage.ToolbarItems>

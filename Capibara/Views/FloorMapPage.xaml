@@ -7,6 +7,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.FloorMapPage"
+    NavigationPage.BackButtonTitle=""
     Title="チャットルーム">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="更新" Priority="1" Command="{Binding RefreshCommand}" />

@@ -9,6 +9,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MainPage"
+    NavigationPage.BackButtonTitle=""
     x:Name="Page" 
     Title="{Binding CurrentPage.Title, Source={x:Reference Page}}">
     <views:FloorMapPage />

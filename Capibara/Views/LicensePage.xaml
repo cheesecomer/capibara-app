@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     x:Class="Capibara.Views.LicensePage"
+    NavigationPage.BackButtonTitle=""
     BackgroundColor="#F1F1F1"
     Title="ライセンス">
     <ScrollView>

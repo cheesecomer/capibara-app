@@ -10,6 +10,7 @@
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.AcceptPage"
+    NavigationPage.BackButtonTitle=""
     Title="{Binding Title.Value}">
     <Grid BackgroundColor="#EEE">
         <Grid.RowDefinitions>

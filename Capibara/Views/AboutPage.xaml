@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.AboutPage"
+    NavigationPage.BackButtonTitle=""
     Title="バージョン情報">
     <Grid RowSpacing="0">
         <Grid.RowDefinitions>

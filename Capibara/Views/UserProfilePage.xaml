@@ -9,6 +9,7 @@
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.UserProfilePage"
+    NavigationPage.BackButtonTitle=""
     Title="プロフィール"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>
