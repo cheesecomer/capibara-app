@@ -47,7 +47,7 @@ namespace Capibara.ViewModels
 
             this.CurrentUser.ObserveProperty(x => x.Nickname).Subscribe(x => this.Nickname.Value = x);
 
-            this.MenuItems[1].Parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
+            this.MenuItems[2].Parameters = new NavigationParameters { { ParameterNames.Model, this.CurrentUser } };
             this.CurrentUser
                 .ObserveProperty(x => x.IconThumbnailUrl)
                 .Subscribe(x => this.Icon.Value = x.IsNullOrEmpty() ? null : this.ImageSourceFactory.FromUri(new Uri(x)));
