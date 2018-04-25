@@ -8,6 +8,7 @@ using Capibara.Models;
 using Capibara.Net;
 using BlockIndexResponse = Capibara.Net.Blocks.IndexResponse;
 using SessionCreateResponse = Capibara.Net.Sessions.CreateResponse;
+using FollowShowResponse = Capibara.Net.Follows.ShowResponse;
 
 using Moq;
 using Unity;
@@ -30,7 +31,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 base.SetUp();
 
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\" }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": null }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -69,6 +70,81 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldIsAcceptedWithExpected()
             {
                 Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFollowIdWithExpected()
+            {
+                Assert.That(this.Subject.FollowId, Is.Null);
+            }
+        }
+
+        [TestFixture]
+        public class WhenIsFollow : TestFixtureBase
+        {
+            protected User Subject { get; private set; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": 10 }";
+                this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
+            }
+
+            [TestCase]
+            public void ItShouldNameWithExpected()
+            {
+                Assert.That(this.Subject.Nickname, Is.EqualTo("FooBar. Yes!Yes!Yeeeeees!"));
+            }
+
+            [TestCase]
+            public void ItShouldIdWithExpected()
+            {
+                Assert.That(this.Subject.Id, Is.EqualTo(99999));
+            }
+
+            [TestCase]
+            public void ItShouldIconUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconUrl, Is.EqualTo("http://xxxxxx.com/xxxx.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIconThumbnaiUrlWithExpected()
+            {
+                Assert.That(this.Subject.IconThumbnailUrl, Is.EqualTo("http://xxxxxx.com/xxxx_thumbnail.png"));
+            }
+
+            [TestCase]
+            public void ItShouldIsBlockWithExpected()
+            {
+                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsAcceptedWithExpected()
+            {
+                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldFollowIdWithExpected()
+            {
+                Assert.That(this.Subject.FollowId, Is.EqualTo(10));
             }
         }
 
@@ -1650,6 +1726,369 @@ namespace Capibara.Test.Models.UserTest
             public void ItShouldFail()
             {
                 Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception Exception => new WebException();
+        }
+    }
+
+    namespace FollowTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool Result { get; private set; }
+
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Subject { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected virtual FollowShowResponse Response { get; }
+
+            protected virtual Exception Exception { get; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
+
+                var request = new Mock<RequestBase<FollowShowResponse>>();
+
+                var methodMock = request.Setup(x => x.Execute());
+
+                if (this.Response != null)
+                    methodMock.ReturnsAsync(this.Response);
+                else if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    throw new ArgumentException();
+
+                this.RequestFactory.Setup(x => x.FollowsCreateRequest(this.Subject)).Returns(request.Object);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Subject.ToggleFollowFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.ToggleFollowSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                this.Result = this.Subject.ToggleFollow().Result;
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override FollowShowResponse Response =>
+                new FollowShowResponse { Follow = new Capibara.Models.Follow { Id = 1000 } };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override Exception Exception =>
+            new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override FollowShowResponse Response =>
+                new FollowShowResponse { Follow = new Capibara.Models.Follow { Id = 1000 } };
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override Exception Exception =>
+            new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenTimeout : WhenFail
+        {
+            protected override Exception Exception => new WebException();
+        }
+    }
+
+    namespace UnfollowTest
+    {
+        public abstract class TestBase : TestFixtureBase
+        {
+            protected bool Result { get; private set; }
+
+            protected bool IsSucceed { get; private set; }
+
+            protected bool IsFailed { get; private set; }
+
+            protected User Subject { get; private set; }
+
+            protected abstract bool NeedEventHandler { get; }
+
+            protected virtual Exception Exception { get; }
+
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                this.Subject = new User { Id = 1, Nickname = "xxxxx", FollowId = 1 }.BuildUp(this.Container);
+
+                var request = new Mock<RequestBase>();
+
+                var methodMock = request.Setup(x => x.Execute());
+                if (this.Exception != null)
+                    methodMock.ThrowsAsync(this.Exception);
+                else
+                    methodMock.Returns(Task.CompletedTask);
+
+                this.RequestFactory.Setup(x => x.FollowsDestroyRequest(1)).Returns(request.Object);
+
+                if (this.NeedEventHandler)
+                {
+                    this.Subject.ToggleFollowFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.ToggleFollowSuccess += (sender, e) => this.IsSucceed = true;
+                }
+
+                this.Result = this.Subject.ToggleFollow().Result;
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccess : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFail : TestBase
+        {
+            protected override bool NeedEventHandler => true;
+
+            protected override Exception Exception =>
+            new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSignInFailEventToOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(true));
+            }
+        }
+
+        [TestFixture]
+        public class WhenSuccessWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            [TestCase]
+            public void ItShouldSuccess()
+            {
+                Assert.That(this.Result, Is.EqualTo(true));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldSuccessEventToNotOccur()
+            {
+                Assert.That(this.IsSucceed, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldFailEventToNotOccur()
+            {
+                Assert.That(this.IsFailed, Is.EqualTo(false));
+            }
+        }
+
+        [TestFixture]
+        public class WhenFailWithoutEventHandler : TestBase
+        {
+            protected override bool NeedEventHandler => false;
+
+            protected override Exception Exception =>
+            new HttpUnauthorizedException(HttpStatusCode.Unauthorized, string.Empty);
+
+            [TestCase]
+            public void ItShouldFail()
+            {
+                Assert.That(this.Result, Is.EqualTo(false));
+            }
+
+            [TestCase]
+            public void ItShouldIsFollowWithExpected()
+            {
+                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
             }
 
             [TestCase]

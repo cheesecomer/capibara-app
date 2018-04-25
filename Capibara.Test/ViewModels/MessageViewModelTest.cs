@@ -14,7 +14,7 @@ namespace Capibara.Test.ViewModels.MessageViewModel
         [TestCase]
         public void ItShouldNavigateToUserProfilePage()
         {
-            var model = new Message { Sender = new User().BuildUp(this.Container) }.BuildUp(this.Container);
+            var model = new Message { Sender = new User().BuildUp(this.Container), Content = string.Empty }.BuildUp(this.Container);
 
             var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model);
             viewModel.BuildUp(this.Container);

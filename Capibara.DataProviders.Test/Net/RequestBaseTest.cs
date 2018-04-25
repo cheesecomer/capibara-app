@@ -12,6 +12,7 @@ using Unity;
 using NUnit.Framework;
 
 using Capibara.Net;
+using System.Collections.Generic;
 
 namespace Capibara.Test.Net
 {
@@ -22,6 +23,17 @@ namespace Capibara.Test.Net
             public override HttpMethod Method { get; } = HttpMethod.Get;
 
             public override string[] Paths { get; } = new string[] { "rooms" };
+        }
+
+        public class GetWithQueryRequest : RequestBase
+        {
+            public override HttpMethod Method { get; } = HttpMethod.Get;
+
+            public override string[] Paths { get; } = new string[] { "rooms" };
+
+            public override IDictionary<string, string> Query => new Dictionary<string, string> {
+                { "limit", "10" }
+            };
         }
 
         public class GetWithAuthenticationRequest : RequestBase
@@ -48,6 +60,24 @@ namespace Capibara.Test.Net
             public void ItShouldRequestToExpectedUrl()
             {
                 Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms"));
+            }
+        }
+
+        [TestFixture]
+        public class WhenGetWithQuerySuccess : TestFixtureBase
+        {
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+
+                new GetWithQueryRequest().BuildUp(this.Container).Execute().Wait();
+            }
+
+            [TestCase]
+            public void ItShouldRequestToExpectedUrl()
+            {
+                Assert.That(this.RequestMessage.RequestUri.AbsoluteUri, Is.EqualTo("http://localhost:3000/api/rooms?limit=10"));
             }
         }
 

@@ -15,6 +15,10 @@ namespace Capibara.Net
 
         RequestBase<Blocks.IndexResponse> BlocksIndexRequest();
 
+        RequestBase<DirectMessages.IndexResponse> DirectMessagesIndexRequest();
+
+        RequestBase<DirectMessages.ShowResponse> DirectMessagesShowRequest(User user, int lastId = 0);
+
         RequestBase<Informations.IndexResponse> InformationsIndexRequest();
 
         RequestBase ReportsCreateRequest(User target, ReportReason reason, string message = null);
@@ -38,6 +42,10 @@ namespace Capibara.Net
         RequestBase<User> UsersUpdateRequest(bool isAccepted);
 
         RequestBase InquiriesCreateRequest(string email, string content);
+
+        RequestBase<Follows.ShowResponse> FollowsCreateRequest(User target);
+
+        RequestBase FollowsDestroyRequest(int followId);
     }
 
     public class RequestFactory : IRequestFactory
@@ -50,6 +58,12 @@ namespace Capibara.Net
 
         RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksIndexRequest()
             => new Blocks.IndexRequest();
+
+        RequestBase<DirectMessages.IndexResponse> IRequestFactory.DirectMessagesIndexRequest()
+            => new DirectMessages.IndexRequest();
+
+        RequestBase<DirectMessages.ShowResponse> IRequestFactory.DirectMessagesShowRequest(User user, int lastId)
+            => new DirectMessages.ShowRequest(user, lastId);
 
         RequestBase<Informations.IndexResponse> IRequestFactory.InformationsIndexRequest()
             => new Informations.IndexRequest();
@@ -86,6 +100,12 @@ namespace Capibara.Net
 
         RequestBase IRequestFactory.InquiriesCreateRequest(string email, string content)
             => new Inquiries.CreateRequest(email, content);
+        
+        RequestBase<Follows.ShowResponse> IRequestFactory.FollowsCreateRequest(User target)
+            => new Follows.CreateRequest(target);
+
+        RequestBase IRequestFactory.FollowsDestroyRequest(int followId)
+            => new Follows.DestroyRequest(followId);
 
     }
 }

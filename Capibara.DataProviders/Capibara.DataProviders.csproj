@@ -59,7 +59,6 @@
     <Compile Include="Net\Blocks\CreateRequest.cs" />
     <Compile Include="Net\Blocks\IndexResponse.cs" />
     <Compile Include="Net\Blocks\DestroyRequest.cs" />
-    <Compile Include="Models\RoomComparer.cs" />
     <Compile Include="Models\Information.cs" />
     <Compile Include="Net\Informations\IndexRequest.cs" />
     <Compile Include="Net\Informations\IndexResponse.cs" />
@@ -72,6 +71,17 @@
     <Compile Include="Net\Sessions\ShowRequest.cs" />
     <Compile Include="Net\ChannelFactory.cs" />
     <Compile Include="Net\ChannelCableFactory.cs" />
+    <Compile Include="Net\Channels\DirectMessageChannel.cs" />
+    <Compile Include="Models\DirectMessage.cs" />
+    <Compile Include="Net\DirectMessages\IndexRequest.cs" />
+    <Compile Include="Net\DirectMessages\IndexResponse.cs" />
+    <Compile Include="Net\DirectMessages\ShowResponse.cs" />
+    <Compile Include="Net\DirectMessages\ShowRequest.cs" />
+    <Compile Include="Models\DirectMessageThread.cs" />
+    <Compile Include="Net\Follows\CreateRequest.cs" />
+    <Compile Include="Net\Follows\DestroyRequest.cs" />
+    <Compile Include="Net\Follows\ShowResponse.cs" />
+    <Compile Include="Models\Follow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -87,6 +97,8 @@
     <Folder Include="Net\Informations\" />
     <Folder Include="Net\Reports\" />
     <Folder Include="Net\Inquiries\" />
+    <Folder Include="Net\DirectMessages\" />
+    <Folder Include="Net\Follows\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">

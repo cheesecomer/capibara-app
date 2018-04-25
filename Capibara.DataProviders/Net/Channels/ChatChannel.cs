@@ -28,18 +28,6 @@ namespace Capibara.Net.Channels
         }
     }
 
-    public class SpeakActionContext : IActionContext
-    {
-        [JsonProperty("action")]
-        public string Action { get; } = "speak";
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
-
-        [JsonProperty("image")]
-        public string Image { get; set; }
-    }
-
     public abstract class ChatChannelBase : ChannelBase<Message>
     {
         public abstract Task Speak(string message, string image);
@@ -66,6 +54,18 @@ namespace Capibara.Net.Channels
         {
             var command = new MessageCommand<SpeakActionContext>(this.ChannelIdentifier, new SpeakActionContext { Message = message, Image = image });
             return this.Cable.SendCommand(command);
+        }
+
+        public class SpeakActionContext : IActionContext
+        {
+            [JsonProperty("action")]
+            public string Action { get; } = "speak";
+
+            [JsonProperty("message")]
+            public string Message { get; set; }
+
+            [JsonProperty("image")]
+            public string Image { get; set; }
         }
     }
 }

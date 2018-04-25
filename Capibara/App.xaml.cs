@@ -37,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentProduction();
+        public IEnvironment Environment { get; } = new EnvironmentLocal();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
@@ -101,9 +101,11 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<AboutPage>();
             containerRegistry.RegisterForNavigation<LicensePage>();
             containerRegistry.RegisterForNavigation<ImagePage>();
-            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePage, UserViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<UserProfilePage, UserViewModel>();
-            containerRegistry.RegisterForNavigationOnIdiom<EditProfilePage, UserViewModel>();
+            containerRegistry.RegisterForNavigation<UserProfilePage>();
+            containerRegistry.RegisterForNavigation<MyProfilePage>();
+            containerRegistry.RegisterForNavigation<EditProfilePage>();
+            containerRegistry.RegisterForNavigation<InboxPage>();
+            containerRegistry.RegisterForNavigation<DirectMessagePage>();
         }
 
         private class ApplicationServiceStub : IApplicationService

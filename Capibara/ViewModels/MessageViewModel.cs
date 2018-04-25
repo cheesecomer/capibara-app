@@ -31,6 +31,8 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<List<OgpViewModel>> OgpItems { get; }
 
+        public ReactiveProperty<ImageSource> IconThumbnail { get; } = new ReactiveProperty<ImageSource>();
+
         public AsyncReactiveCommand ShowProfileCommand { get; }
 
         public AsyncReactiveCommand ShowImageCommand { get; }
@@ -68,6 +70,10 @@ namespace Capibara.ViewModels
                 .AddTo(this.Disposable);
 
             this.Model.ObserveProperty(x => x.ImageThumbnailUrl).Subscribe(x => this.ImageThumbnail.Value = x);
+
+            this.Model.Sender
+                .ObserveProperty(x => x.IconThumbnailUrl)
+                .Subscribe(x => this.IconThumbnail.Value = x);
 
             // ShowProfileCommand
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.FloorMapPage"
     Title="チャットルーム">
@@ -52,5 +53,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <forms:AdMobBanner Grid.Row="1" />
     </Grid> 
 </ContentPage>

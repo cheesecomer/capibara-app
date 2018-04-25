@@ -152,6 +152,21 @@
     <Compile Include="Net\Reports\CreateRequestTest.cs" />
     <Compile Include="Net\Inquiries\CreateRequestTest.cs" />
     <Compile Include="Net\Sessions\ShowRequestTest.cs" />
+    <Compile Include="Net\Channels\DirectMessageChannelTest.cs" />
+    <Compile Include="Models\DirectMessageTest.cs" />
+    <Compile Include="Net\DirectMessages\IndexRequestTest.cs" />
+    <Compile Include="Net\DirectMessages\ShowRequestTest.cs" />
+    <Compile Include="Net\Informations\IndexResponseTest.cs" />
+    <Compile Include="Net\Rooms\IndexResponseTest.cs" />
+    <Compile Include="Models\RoomComparer.cs" />
+    <Compile Include="Net\DirectMessages\IndexResponseTest.cs" />
+    <Compile Include="Net\DirectMessages\ShowResponseTest.cs" />
+    <Compile Include="Models\DirectMessageThreadTest.cs" />
+    <Compile Include="Net\Follows\DestroyRequestTest.cs" />
+    <Compile Include="Net\Follows\CreateRequestTest.cs" />
+    <Compile Include="Net\Follows\ShowResponseTest.cs" />
+    <Compile Include="Models\FollowComparer.cs" />
+    <Compile Include="Models\FollowTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />
@@ -161,6 +176,8 @@
     <Folder Include="Net\Informations\" />
     <Folder Include="Net\Reports\" />
     <Folder Include="Net\Inquiries\" />
+    <Folder Include="Net\DirectMessages\" />
+    <Folder Include="Net\Follows\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.NET.Test.Sdk.15.6.1\build\net45\Microsoft.Net.Test.Sdk.targets" Condition="Exists('..\packages\Microsoft.NET.Test.Sdk.15.6.1\build\net45\Microsoft.Net.Test.Sdk.targets')" />

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+    xmlns:selectors="clr-namespace:Capibara.Selectors;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    BackgroundColor="#F1F1F1"
+    x:Class="Capibara.Views.DirectMessagePage"
+    Title="{Binding Name.Value}">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
+    </ContentView.Behaviors>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding NumberOfParticipants.Value}" Priority="1" Command="{Binding ShowParticipantsCommand}" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <selectors:DirectMessageDataTemplateSelector x:Key="messageDataTemplateSelector"
+                OwnMessageTemplate="{StaticResource ownMessageTemplate}"
+                OthersMessageTemplate="{StaticResource othersMessageTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+        </Grid.RowDefinitions>
+        <ListView
+            x:Name="ListView"
+            Grid.Row="0"
+            BackgroundColor="#F1F1F1"
+            HasUnevenRows="true"
+            VerticalOptions="FillAndExpand"
+            SeparatorColor="Transparent"
+            ItemsSource="{Binding Messages}"
+            ItemTemplate="{StaticResource messageDataTemplateSelector}"
+            ef:Reverse.On="true"
+            >
+            <ListView.Rotation>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.Rotation>
+            <ListView.RotationY>
+                <OnPlatform x:TypeArguments="x:Double">
+                    <On Platform="iOS" Value="0" />
+                    <On Platform="Android" Value="180" />
+                </OnPlatform>
+            </ListView.RotationY>
+            <ListView.Header>
+                <BoxView HeightRequest="0" />
+            </ListView.Header>
+            <ListView.Footer>
+                <BoxView HeightRequest="0" />
+            </ListView.Footer>
+        </ListView>
+        <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition>
+                    <ColumnDefinition.Width>
+                        <OnPlatform x:TypeArguments="GridLength">
+                            <On Platform="iOS" Value="60" />
+                            <On Platform="Android" Value="Auto" />
+                        </OnPlatform>
+                    </ColumnDefinition.Width>
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
+            <Button Grid.Column="1" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">
+                <Button.FontFamily>
+                    <OnPlatform x:TypeArguments="x:String">
+                        <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                        <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                    </OnPlatform>
+                </Button.FontFamily>
+            </Button>
+        </Grid>
+        <forms:AdMobBanner Grid.Row="2" />
+
+        <BoxView Grid.Row="3" BackgroundColor="#EEE" />
+    </Grid>
+</ContentPage>
