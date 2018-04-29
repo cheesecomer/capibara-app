@@ -25,5 +25,12 @@ namespace Capibara.ViewModels
                 await this.NavigationService.NavigateAsync("EditProfilePage", parameters);
             });
         }
+
+        protected override void OnContainerChanged()
+        {
+            base.OnContainerChanged();
+
+            this.Model.Restore(this.CurrentUser);
+        }
     }
 }
