@@ -16,6 +16,8 @@ namespace Capibara.ViewModels
     {
         public ReadOnlyReactiveProperty<bool> IsFollow { get; }
 
+        public ReactiveProperty<bool> IsFollower { get; }
+
         public ReactiveProperty<string> ToggleFollowDescription { get; }
 
         public ReactiveProperty<string> ToggleBlockDescription { get; }
@@ -49,6 +51,10 @@ namespace Capibara.ViewModels
             this.IsFollow = this.Model
                 .ObserveProperty(x => x.IsFollow)
                 .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsFollower = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.IsFollower)
                 .AddTo(this.Disposable);
             
             // ToggleBlockCommand

@@ -18,11 +18,13 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToStringConverter x:Key="toggleFollowIconConverter" TruthyText="&#xE735;" FalsyText="&#xE734;" />
+            <converters:BoolToStringConverter x:Key="followerConverter" TruthyText="あなたからのDMを待ちわびています！" FalsyText="あなたからのDMは届きません" />
             <converters:BoolToColorConverter x:Key="toggleFollowColorConverter" TruthyColor="#FFA500" FalsyColor="#6C757D" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ScrollView>
       <StackLayout Padding="20">
+        <Label Text="{Binding IsFollower.Value, Converter={StaticResource followerConverter}}" HorizontalOptions="End" FontSize="Micro" Margin="0, 0, 0, 0" TextColor="#6C757D" />
         <forms:RoundImage
             x:Name="image"
             Source="{Binding Icon.Value, Mode=TwoWay}"
