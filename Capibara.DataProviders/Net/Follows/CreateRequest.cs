@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Capibara.Net.Follows
 {
-    public class CreateRequest : RequestBase<ShowResponse>
+    public class CreateRequest : RequestBase<Follow>
     {
         private User target;
 
