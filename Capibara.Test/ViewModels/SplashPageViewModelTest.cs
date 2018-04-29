@@ -202,7 +202,7 @@ namespace Capibara.Test.ViewModels.SplashPageViewModel
             [TestCase]
             public void ItShouldNavigateToFloorMapPage()
             {
-                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null, null, false), Times.Once());
+                this.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage", null, null, false), Times.Once());
             }
         }
 
