@@ -7,6 +7,8 @@ namespace Capibara.Views
 {
     public partial class InboxPage : ContentPage
     {
+        public string TabbedPageTitle { get; } = "ダイレクトメッセージ";
+
         public InboxPage()
         {
             InitializeComponent();
