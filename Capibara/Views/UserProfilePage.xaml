@@ -36,7 +36,7 @@
             HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
             />
         <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 0" />
-        <Grid HeightRequest="20" ColumnSpacing="10" HorizontalOptions="Center" Margin="0, 0, 0, 20">
+        <Grid ColumnSpacing="10" HorizontalOptions="Center" Margin="0, 0, 0, 20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="Auto" />
@@ -80,7 +80,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
-                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button 
                 ef:CustomFont.On="true" 
