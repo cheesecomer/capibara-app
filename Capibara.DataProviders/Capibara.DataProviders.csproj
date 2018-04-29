@@ -81,6 +81,8 @@
     <Compile Include="Net\Follows\CreateRequest.cs" />
     <Compile Include="Net\Follows\DestroyRequest.cs" />
     <Compile Include="Models\Follow.cs" />
+    <Compile Include="Net\Follows\IndexRequest.cs" />
+    <Compile Include="Net\Follows\IndexResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
