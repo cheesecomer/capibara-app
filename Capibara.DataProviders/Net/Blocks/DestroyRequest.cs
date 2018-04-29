@@ -8,19 +8,19 @@ namespace Capibara.Net.Blocks
 {
     public class DestroyRequest: RequestBase
     {
-        private Block block;
+        private int blockId;
 
         public override HttpMethod Method => HttpMethod.Delete;
 
-        public override string[] Paths => new string[] { "blocks", $"{block.Id}" };
+        public override string[] Paths => new string[] { "blocks", $"{blockId}" };
 
         public override bool NeedAuthentication { get; } = true;
 
         public override string ContentType { get; } = "application/json";
 
-        public DestroyRequest(Block block)
+        public DestroyRequest(int blockId)
         {
-            this.block = block;
+            this.blockId = blockId;
         }
     }
 }
