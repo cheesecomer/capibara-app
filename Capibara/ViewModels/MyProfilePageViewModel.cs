@@ -12,6 +12,8 @@ namespace Capibara.ViewModels
     {
         public AsyncReactiveCommand EditCommand { get; }
 
+        public AsyncReactiveCommand SettingCommand { get; }
+
         public MyProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -24,6 +26,9 @@ namespace Capibara.ViewModels
                 var parameters = new NavigationParameters { { ParameterNames.Model, this.Model } };
                 await this.NavigationService.NavigateAsync("EditProfilePage", parameters);
             });
+
+            this.SettingCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.SettingCommand.Subscribe(() => this.NavigationService.NavigateAsync("SettingPage"));
         }
 
         protected override void OnContainerChanged()

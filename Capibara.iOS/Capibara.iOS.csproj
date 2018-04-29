@@ -243,6 +243,8 @@
     <ImageAsset Include="Resources\Images.xcassets\ic_mail.imageset\ic_mail.pdf" />
     <ImageAsset Include="Resources\Images.xcassets\ic_message.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\ic_message.imageset\ic_message.pdf" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_setting.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\ic_setting.imageset\ic_setting.pdf" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -285,6 +287,7 @@
     <Folder Include="Resources\Images.xcassets\ic_contact.imageset\" />
     <Folder Include="Resources\Images.xcassets\ic_mail.imageset\" />
     <Folder Include="Resources\Images.xcassets\ic_message.imageset\" />
+    <Folder Include="Resources\Images.xcassets\ic_setting.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\LottieResources\loading.json">

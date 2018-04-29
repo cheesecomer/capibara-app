@@ -63,7 +63,7 @@
                 HeightRequest="150" />
             <Button 
                 ef:ToFlatButton.On="true" 
-                Text="SNSと連携する"
+                Text="SNSログインを有効にする"
                 BorderWidth="0"
                 BackgroundColor="{StaticResource PrimaryColor}"
                 TextColor="White"

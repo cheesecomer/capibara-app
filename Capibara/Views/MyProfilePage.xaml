@@ -12,7 +12,7 @@
     NavigationPage.BackButtonTitle=""
     Title="プロフィール">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="編集" Priority="1" Command="{Binding EditCommand}" />
+        <ToolbarItem Icon="ic_setting" Command="{Binding SettingCommand}" />
     </ContentPage.ToolbarItems>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,6 +32,7 @@
             <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" />
             <Button
                 ef:ToFlatButton.On="true" 
+                BorderWidth="1"
                 HeightRequest="30"
                 BorderRadius="15"
                 FontSize="Small"
