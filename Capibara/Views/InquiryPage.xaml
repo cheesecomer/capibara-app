@@ -8,6 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.InquiryPage"
+    NavigationPage.BackButtonTitle=""
     Title="お問い合わせ">
     <Grid Padding="0, 50, 0, 0">
         <Grid.RowDefinitions>

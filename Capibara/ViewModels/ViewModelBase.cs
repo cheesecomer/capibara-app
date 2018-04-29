@@ -124,10 +124,7 @@ namespace Capibara.ViewModels
 
         public virtual void OnNavigatedTo(NavigationParameters parameters)
         {
-            if (!(this is MainPageViewModel))
-            {
-                this.OnResume();
-            }
+            this.OnResume();
         }
 
         public virtual void OnNavigatingTo(NavigationParameters parameters) { }

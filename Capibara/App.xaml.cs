@@ -37,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentLocal();
+        public IEnvironment Environment { get; } = new EnvironmentProduction();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
@@ -81,6 +81,9 @@ namespace Capibara
 
             if (this.Container.TryResolve<IApplicationService>() == null)
                 containerRegistry.RegisterInstance<IApplicationService>(new ApplicationServiceStub());
+
+            if (this.Container.TryResolve<IBalloonService>() == null)
+                containerRegistry.RegisterInstance<IBalloonService>(new BalloonServiceStub());
 
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<NavigationPage>();
@@ -236,6 +239,14 @@ namespace Capibara
 
             void ITracker.SetStartSession(bool value)
                 => throw new NotImplementedException();
+        }
+
+        private class BalloonServiceStub : IBalloonService
+        {
+            void IBalloonService.DisplayBalloon(string message)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

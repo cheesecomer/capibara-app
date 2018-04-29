@@ -2,7 +2,7 @@
 
 namespace Capibara.Views
 {
-    public partial class MainPage : MasterDetailPage
+    public partial class MainPage : TabbedPage
     {
         public MainPage()
         {

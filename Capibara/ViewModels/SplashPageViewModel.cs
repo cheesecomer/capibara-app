@@ -79,7 +79,7 @@ namespace Capibara.ViewModels
 
                 var pageName =
                     response.IsAccepted
-                        ? "/MainPage/NavigationPage/FloorMapPage"
+                        ? "/NavigationPage/MainPage"
                         : "/NavigationPage/AcceptPage";
                 var parameters =
                     response.IsAccepted

@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.InformationsPage"
+    NavigationPage.BackButtonTitle=""
     Title="お知らせ"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>

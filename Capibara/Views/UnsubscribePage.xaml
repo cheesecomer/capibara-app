@@ -9,6 +9,7 @@
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.UnsubscribePage"
+    NavigationPage.BackButtonTitle=""
     Title="退会する"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <Grid Padding="20">

@@ -8,8 +8,9 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    BackgroundColor="#F1F1F1"
     x:Class="Capibara.Views.RoomPage"
+    NavigationPage.BackButtonTitle=""
+    BackgroundColor="#F1F1F1"
     Title="{Binding Name.Value}">
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />

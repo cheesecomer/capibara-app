@@ -7,6 +7,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.ParticipantsPage"
+    NavigationPage.BackButtonTitle=""
     Title="参加者"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>

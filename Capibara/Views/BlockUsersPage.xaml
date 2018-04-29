@@ -6,6 +6,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.BlockUsersPage"
+    NavigationPage.BackButtonTitle=""
     Title="ブロック中のユーザー"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>

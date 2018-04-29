@@ -107,7 +107,7 @@ namespace Capibara.ViewModels
 
         private async void OnAcceptSuccess(object sender, EventArgs args)
         {
-            await this.NavigationService.NavigateAsync("/MainPage/NavigationPage/FloorMapPage");
+            await this.NavigationService.NavigateAsync("/NavigationPage/MainPage");
         }
 
         private async void OnDestroySuccess(object sender, EventArgs args)

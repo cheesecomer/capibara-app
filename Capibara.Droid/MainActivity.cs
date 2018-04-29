@@ -27,7 +27,7 @@ namespace Capibara.Droid
 {
     [Activity(Label = "Capibara", Icon = "@drawable/icon", Theme = "@style/Theme.Main", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "com.cheesecomer.capibara", DataHost = "oauth")]
-    public class MainActivity : FormsApplicationActivity
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public enum RequestCodes
         {
@@ -74,6 +74,9 @@ namespace Capibara.Droid
             var application = new App(new AndroidInitializer(applicationService));
 
             this.BuildUp(application.Container.Resolve<IUnityContainer>());
+
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
 
             LoadApplication(application);
 

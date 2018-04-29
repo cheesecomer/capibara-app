@@ -8,6 +8,7 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.WebViewPage"
+    NavigationPage.BackButtonTitle=""
     Title="{Binding Title.Value}">
     <Grid BackgroundColor="#EEE">
         <WebView

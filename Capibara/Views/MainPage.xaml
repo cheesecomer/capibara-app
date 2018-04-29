@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MasterDetailPage
+<TabbedPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Capibara.Views;assembly=Capibara"
@@ -8,76 +8,11 @@
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    x:Class="Capibara.Views.MainPage">
-    <MasterDetailPage.Master>
-        <ContentPage Title="Menu">
-            <Grid BackgroundColor="#EEE">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
-                    <RowDefinition Height="55" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <BoxView Grid.Row="0" Grid.RowSpan="2" BackgroundColor="{StaticResource PrimaryColor}" />
-                <Grid Grid.Row="1" Grid.RowSpan="2" Padding="10, 0, 0, 0" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="45" />
-                        <RowDefinition Height="55" />
-                    </Grid.RowDefinitions>
-                    <Frame Grid.RowSpan="2" BackgroundColor="#EEE" HasShadow="false">
-                        <Frame.CornerRadius>
-                            <OnPlatform x:TypeArguments="x:Single">
-                                <On Platform="iOS" Value="43" />
-                                <On Platform="Android" Value="42" />
-                            </OnPlatform>
-                        </Frame.CornerRadius>
-                        <Frame.Margin>
-                            <OnPlatform x:TypeArguments="Thickness">
-                                <On Platform="iOS" Value="7" />
-                                <On Platform="Android" Value="10" />
-                            </OnPlatform>
-                        </Frame.Margin>
-                    </Frame>
-                    <forms:RoundImage
-                        Grid.RowSpan="2"
-                        Source="{Binding Icon.Value, Mode=TwoWay}"
-                        BorderWidth="3"
-                        Margin="10"
-                        HasShadow="false"
-                        CornerRadius="40"
-                        />
-                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Nickname.Value}" VerticalTextAlignment="Center" TextColor="#444" />
-                </Grid>
-                <ListView
-                    BackgroundColor="Transparent"
-                    Grid.Row="3"
-                    ItemsSource="{Binding MenuItems}">
-                    <ListView.Behaviors>
-                        <behaviors:EventToCommandBehavior
-                            EventName="ItemTapped" 
-                            EventArgsParameterPath="Item"
-                            Command="{Binding ItemTappedCommand}" />
-                    </ListView.Behaviors>
-                    <ListView.Header>
-                        <BoxView HeightRequest="10" />
-                    </ListView.Header>
-                    <ListView.Footer>
-                        <BoxView />
-                    </ListView.Footer>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextCell Text="{Binding Name}"></TextCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </ContentPage>
-    </MasterDetailPage.Master>
-    <MasterDetailPage.Detail>
-        <ContentPage Title="Dummy" />
-    </MasterDetailPage.Detail>
-</MasterDetailPage>
+    x:Class="Capibara.Views.MainPage"
+    NavigationPage.BackButtonTitle=""
+    x:Name="Page" 
+    Title="{Binding CurrentPage.TabbedPageTitle, Source={x:Reference Page}}">
+    <views:FloorMapPage Title="Home" Icon="ic_message" />
+    <views:InboxPage Title="DM" Icon="ic_mail" />
+    <views:MyProfilePage Title="Profile" Icon="ic_contact" />
+</TabbedPage>
