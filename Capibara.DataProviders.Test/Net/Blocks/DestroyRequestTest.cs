@@ -15,7 +15,7 @@ namespace Capibara.Test.Net.Blocks
         [SetUp]
         public void SetUp()
         {
-            this.Subject = new DestroyRequest(new Block { Id = 1 });
+            this.Subject = new DestroyRequest(1);
         }
 
         [TestCase]

@@ -288,6 +288,7 @@
     <AndroidResource Include="Resources\drawable\ic_mail.xml" />
     <AndroidResource Include="Resources\drawable\ic_message.xml" />
     <AndroidResource Include="Resources\drawable\ic_setting.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\LottieResources\loading.json">

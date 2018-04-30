@@ -9,9 +9,9 @@ namespace Capibara.Net
     /// </summary>
     public interface IRequestFactory
     {
-        RequestBase<Blocks.IndexResponse> BlocksCreateRequest(User target);
+        RequestBase<Block> BlocksCreateRequest(User target);
 
-        RequestBase BlocksDestroyRequest(Block target);
+        RequestBase BlocksDestroyRequest(int blockId);
 
         RequestBase<Blocks.IndexResponse> BlocksIndexRequest();
 
@@ -43,18 +43,18 @@ namespace Capibara.Net
 
         RequestBase InquiriesCreateRequest(string email, string content);
 
-        RequestBase<Follows.ShowResponse> FollowsCreateRequest(User target);
+        RequestBase<Follow> FollowsCreateRequest(User target);
 
         RequestBase FollowsDestroyRequest(int followId);
     }
 
     public class RequestFactory : IRequestFactory
     {
-        RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksCreateRequest(User target)
+        RequestBase<Block> IRequestFactory.BlocksCreateRequest(User target)
             => new Blocks.CreateRequest(target);
 
-        RequestBase IRequestFactory.BlocksDestroyRequest(Block target)
-            => new Blocks.DestroyRequest(target);
+        RequestBase IRequestFactory.BlocksDestroyRequest(int blockId)
+            => new Blocks.DestroyRequest(blockId);
 
         RequestBase<Blocks.IndexResponse> IRequestFactory.BlocksIndexRequest()
             => new Blocks.IndexRequest();
@@ -101,7 +101,7 @@ namespace Capibara.Net
         RequestBase IRequestFactory.InquiriesCreateRequest(string email, string content)
             => new Inquiries.CreateRequest(email, content);
         
-        RequestBase<Follows.ShowResponse> IRequestFactory.FollowsCreateRequest(User target)
+        RequestBase<Follow> IRequestFactory.FollowsCreateRequest(User target)
             => new Follows.CreateRequest(target);
 
         RequestBase IRequestFactory.FollowsDestroyRequest(int followId)

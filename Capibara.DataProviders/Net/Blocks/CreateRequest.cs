@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Capibara.Net.Blocks
 {
-    public class CreateRequest : RequestBase<IndexResponse>
+    public class CreateRequest : RequestBase<Block>
     {
         private User target;
 

@@ -164,9 +164,10 @@
     <Compile Include="Models\DirectMessageThreadTest.cs" />
     <Compile Include="Net\Follows\DestroyRequestTest.cs" />
     <Compile Include="Net\Follows\CreateRequestTest.cs" />
-    <Compile Include="Net\Follows\ShowResponseTest.cs" />
     <Compile Include="Models\FollowComparer.cs" />
     <Compile Include="Models\FollowTest.cs" />
+    <Compile Include="Net\Follows\IndexRequestTest.cs" />
+    <Compile Include="Net\Follows\IndexResponseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\Channels\" />
