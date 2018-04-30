@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage 
+<ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
@@ -14,6 +14,7 @@
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
     </ContentView.Behaviors>
     <ListView
+        x:Name="ListView"
         Grid.Row="0"
         HasUnevenRows="true"
         VerticalOptions="FillAndExpand"
@@ -21,7 +22,7 @@
         ItemsSource="{Binding Participants}">
         <ListView.Behaviors>
             <behaviors:EventToCommandBehavior
-                EventName="ItemTapped" 
+                EventName="ItemTapped"
                 EventArgsParameterPath="Item"
                 Command="{Binding ItemTappedCommand}" />
         </ListView.Behaviors>
@@ -41,10 +42,10 @@
                             VerticalOptions="Start"
                             CornerRadius="20"
                             />
-                        <Label 
-                            Grid.Column="1" 
-                            Margin="15, 0, 0, 0" 
-                            Text="{Binding Nickname.Value}" 
+                        <Label
+                            Grid.Column="1"
+                            Margin="15, 0, 0, 0"
+                            Text="{Binding Nickname.Value}"
                             VerticalTextAlignment="Center" />
                     </Grid>
                 </ViewCell>

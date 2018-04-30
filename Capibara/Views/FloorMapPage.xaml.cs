@@ -9,6 +9,8 @@ namespace Capibara.Views
         public FloorMapPage()
         {
             InitializeComponent();
+
+            this.ListView.ItemSelected += (s, e) => this.ListView.SelectedItem = null;
         }
     }
 }
