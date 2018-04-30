@@ -20,7 +20,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding Rooms}" HasUnevenRows="true">
+        <ListView x:Name="ListView" ItemsSource="{Binding Rooms}" HasUnevenRows="true">
             <ListView.Header>
                 <BoxView HeightRequest="0" />
             </ListView.Header>
@@ -29,7 +29,7 @@
             </ListView.Footer>
             <ListView.Behaviors>
                 <behaviors:EventToCommandBehavior
-                    EventName="ItemTapped" 
+                    EventName="ItemTapped"
                     EventArgsParameterPath="Item"
                     Command="{Binding ItemTappedCommand}" />
             </ListView.Behaviors>
@@ -54,5 +54,5 @@
             </ListView.ItemTemplate>
         </ListView>
         <forms:AdMobBanner Grid.Row="1" />
-    </Grid> 
+    </Grid>
 </ContentPage>

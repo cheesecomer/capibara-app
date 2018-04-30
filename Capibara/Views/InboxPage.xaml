@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage 
+<ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
@@ -23,7 +23,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding Threads}" HasUnevenRows="true">
+        <ListView x:Name="ListView" ItemsSource="{Binding Threads}" HasUnevenRows="true">
             <ListView.Header>
                 <BoxView HeightRequest="0" />
             </ListView.Header>
@@ -32,7 +32,7 @@
             </ListView.Footer>
             <ListView.Behaviors>
                 <behaviors:EventToCommandBehavior
-                    EventName="ItemTapped" 
+                    EventName="ItemTapped"
                     EventArgsParameterPath="Item"
                     Command="{Binding ItemTappedCommand}" />
             </ListView.Behaviors>
@@ -68,5 +68,5 @@
             </ListView.ItemTemplate>
         </ListView>
         <forms:AdMobBanner Grid.Row="1" />
-    </Grid> 
+    </Grid>
 </ContentPage>

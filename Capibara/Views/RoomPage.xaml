@@ -22,7 +22,7 @@
         <ResourceDictionary>
             <selectors:MessageDataTemplateSelector x:Key="messageDataTemplateSelector"
                 OwnMessageTemplate="{StaticResource ownMessageTemplate}"
-                OthersMessageTemplate="{StaticResource othersMessageTemplate}" 
+                OthersMessageTemplate="{StaticResource othersMessageTemplate}"
                 OwnImageTemplate="{StaticResource ownImageTemplate}"
                 OthersImageTemplate="{StaticResource othersImageTemplate}" />
         </ResourceDictionary>

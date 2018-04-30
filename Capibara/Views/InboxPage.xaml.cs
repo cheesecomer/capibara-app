@@ -12,6 +12,8 @@ namespace Capibara.Views
         public InboxPage()
         {
             InitializeComponent();
+
+            this.ListView.ItemSelected += (s, e) => this.ListView.SelectedItem = null;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace Capibara.Views
         public RoomPage()
         {
             InitializeComponent();
+
+            this.ListView.ItemSelected += (s, e) => this.ListView.SelectedItem = null;
         }
     }
 }
