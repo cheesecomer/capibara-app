@@ -65,14 +65,7 @@
         <Grid Grid.Row="1" BackgroundColor="#DDDDDD" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition>
-                    <ColumnDefinition.Width>
-                        <OnPlatform x:TypeArguments="GridLength">
-                            <On Platform="iOS" Value="60" />
-                            <On Platform="Android" Value="Auto" />
-                        </OnPlatform>
-                    </ColumnDefinition.Width>
-                </ColumnDefinition>
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <Editor Grid.Column="0" ef:Border.Width="0" ef:Border.Radius="0" Text="{Binding Message.Value, Mode=TwoWay}" Margin="0, 1, 0, 1" BackgroundColor="White"/>
             <Button Grid.Column="1" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE725;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding SpeakCommand}">

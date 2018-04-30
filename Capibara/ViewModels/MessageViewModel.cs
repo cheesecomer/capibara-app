@@ -33,7 +33,11 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> IconThumbnail { get; } = new ReactiveProperty<ImageSource>();
 
+        public Action<MessageViewModel> ShowProfileCommandBefore { get; set; }
+
         public AsyncReactiveCommand ShowProfileCommand { get; }
+
+        public Action<MessageViewModel> ShowImageCommandBefore { get; set; }
 
         public AsyncReactiveCommand ShowImageCommand { get; }
 
@@ -79,6 +83,7 @@ namespace Capibara.ViewModels
             this.ShowProfileCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.ShowProfileCommand.Subscribe(() =>
             {
+                this.ShowProfileCommandBefore?.Invoke(this);
                 var parameters = new NavigationParameters();
                 parameters.Add(ParameterNames.Model, this.Sender.Value.Model);
                 return this.NavigationService.NavigateAsync("UserProfilePage", parameters);
@@ -99,6 +104,7 @@ namespace Capibara.ViewModels
                 var completed = await this.RewardedVideoService.DisplayRewardedVideo();
                 if (!completed) return;
 
+                this.ShowImageCommandBefore?.Invoke(this);
                 var parameters = new NavigationParameters();
                 parameters.Add(ParameterNames.Url, this.Model.ImageUrl);
                 await this.NavigationService.NavigateAsync("ImagePage", parameters);
