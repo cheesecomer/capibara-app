@@ -14,5 +14,5 @@
     Title="{Binding CurrentPage.TabbedPageTitle, Source={x:Reference Page}}">
     <views:FloorMapPage Title="Home" Icon="ic_message" />
     <views:InboxPage Title="DM" Icon="ic_mail" />
-    <views:MyProfilePage Title="Profile" Icon="ic_contact" />
+    <views:MyProfilePageWithOuthBottomMargin Title="Profile" Icon="ic_contact" />
 </TabbedPage>

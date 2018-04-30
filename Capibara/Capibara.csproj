@@ -158,6 +158,9 @@
     <Compile Include="Selectors\DirectMessageDataTemplateSelector.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
     <Compile Include="Converters\BoolToColorConverter.cs" />
+    <Compile Include="Views\MyProfilePageWithOuthBottomMargin.xaml.cs">
+      <DependentUpon>MyProfilePageWithOuthBottomMargin.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -241,6 +244,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\DirectMessagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MyProfilePageWithOuthBottomMargin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
