@@ -77,7 +77,7 @@
                             HasShadow="false"
                             />
                         <Label Grid.Column="0" Grid.Row="0" Text="{Binding Sender.Value.Nickname.Value}" FontSize="Small" />
-                        <Frame Grid.Column="1" Grid.Row="1" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false" Padding="10, 5, 10, 5">
+                        <Frame Grid.Column="1" Grid.Row="1" OutlineColor="#999999" BackgroundColor="#DFF5EA" CornerRadius="5" HasShadow="false" Padding="10, 5, 10, 5" HorizontalOptions="End">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -121,7 +121,7 @@
                             </Grid>
                         </Frame>
                         <Image Grid.Column="0" Grid.Row="1" Opacity="0" HeightRequest="0" WidthRequest="0"/>
-                        <Label Grid.Column="1" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" HorizontalOptions="End" />
+                        <Label Grid.Column="1" Grid.Row="2" Text="{Binding At.Value, StringFormat='{0:HH:mm:ss}'}" FontSize="Micro" TextColor="#6c757d" Margin="10, 5, 0, 0" />
                     </Grid>
                 </ViewCell>
             </DataTemplate>
