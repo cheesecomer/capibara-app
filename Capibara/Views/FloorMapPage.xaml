@@ -19,7 +19,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
-            <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
         </Grid.RowDefinitions>
         <ListView ItemsSource="{Binding Rooms}" HasUnevenRows="true">
             <ListView.Header>

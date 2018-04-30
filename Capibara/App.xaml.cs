@@ -37,7 +37,7 @@ namespace Capibara
         /// </summary>
         /// <value>The environment.</value>
 #if DEBUG
-        public IEnvironment Environment { get; } = new EnvironmentProduction();
+        public IEnvironment Environment { get; } = new EnvironmentLocal();
 #else
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
@@ -106,6 +106,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<ImagePage>();
             containerRegistry.RegisterForNavigation<UserProfilePage>();
             containerRegistry.RegisterForNavigation<MyProfilePage>();
+            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePageWithOuthBottomMargin, MyProfilePageViewModel>();
             containerRegistry.RegisterForNavigation<EditProfilePage>();
             containerRegistry.RegisterForNavigation<InboxPage>();
             containerRegistry.RegisterForNavigation<DirectMessagePage>();
