@@ -42,6 +42,11 @@ namespace Capibara
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
 
+        public void Sleep()
+        {
+            this.OnSleep();
+        }
+
         protected override void OnInitialized()
         {
             this.InitializeComponent();
