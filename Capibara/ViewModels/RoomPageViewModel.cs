@@ -59,8 +59,8 @@ namespace Capibara.ViewModels
                     .ForEach(
                         v =>
                         {
-                            v.ShowProfileCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
-                            v.ShowImageCommand.Subscribe(_ => Task.Run(() => this.needClose = false)).AddTo(this.Disposable);
+                            v.ShowProfileCommandBefore = (vm) => this.needClose = false;
+                            v.ShowImageCommandBefore = (vm) => this.needClose = false;
                         }))
                 .AddTo(this.Disposable);
 
@@ -189,6 +189,8 @@ namespace Capibara.ViewModels
         public override void OnSleep()
         {
             base.OnSleep();
+
+            this.needClose = false;
 
             this.Model.Disconnected -= this.OnDisconnected;
         }

@@ -14,13 +14,15 @@ namespace Capibara.ViewModels
 {
     public class UserProfilePageViewModel : UserViewModel
     {
-        public ReactiveProperty<bool> IsBlock { get; }
-
         public ReadOnlyReactiveProperty<bool> IsFollow { get; }
+
+        public ReactiveProperty<bool> IsFollower { get; }
 
         public ReactiveProperty<string> ToggleFollowDescription { get; }
 
-        public AsyncReactiveCommand BlockCommand { get; }
+        public ReactiveProperty<string> ToggleBlockDescription { get; }
+
+        public AsyncReactiveCommand ToggleBlockCommand { get; }
 
         public AsyncReactiveCommand ReportCommand { get; }
 
@@ -39,22 +41,26 @@ namespace Capibara.ViewModels
                 .Select((x) => x ? "DM を受け付けています" : "DM を受け付ける")
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
+            
+            this.ToggleBlockDescription = this.Model
+                .ObserveProperty(x => x.IsBlock)
+                .Select((x) => x ? "ブロック中" : "ブロック")
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
 
             this.IsFollow = this.Model
                 .ObserveProperty(x => x.IsFollow)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.IsBlock = this.Model
-                .ToReactivePropertyAsSynchronized(x => x.IsBlock)
+            this.IsFollower = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.IsFollower)
                 .AddTo(this.Disposable);
-            this.IsBlock.Subscribe(_ => this.RaisePropertyChanged(nameof(this.IsBlock)));
-
-            // BlockCommand
-            this.BlockCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
-            this.BlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
-
-            this.Model.BlockFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Block()));
+            
+            // ToggleBlockCommand
+            this.ToggleBlockCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.ToggleBlockCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleBlock()));
+            this.Model.ToggleBlockFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleBlock()));
 
             // ReportCommand
             this.ReportCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -67,7 +73,11 @@ namespace Capibara.ViewModels
 
             // ToggleFollowCommand
             //  ブロックしていない場合に実行可能
-            this.ToggleFollowCommand = this.IsBlock.Select(x => !x).ToAsyncReactiveCommand().AddTo(this.Disposable);
+            this.ToggleFollowCommand = this.Model
+                .ObserveProperty(x => x.IsBlock)
+                .Select(x => !x)
+                .ToAsyncReactiveCommand()
+                .AddTo(this.Disposable);
             this.ToggleFollowCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleFollow()));
             this.Model.ToggleFollowFail += this.OnFail(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.ToggleFollow()));
 

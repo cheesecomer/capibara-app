@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 using Capibara.Models;
 using Capibara.Net;
-using BlockIndexResponse = Capibara.Net.Blocks.IndexResponse;
 using SessionCreateResponse = Capibara.Net.Sessions.CreateResponse;
-using FollowShowResponse = Capibara.Net.Follows.ShowResponse;
+using MFollow = Capibara.Models.Follow;
 
 using Moq;
 using Unity;
 using NUnit.Framework;
 using Newtonsoft.Json;
-using Capibara.Net.Blocks;
 
 namespace Capibara.Test.Models.UserTest
 {
@@ -31,7 +29,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 base.SetUp();
 
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": null }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"block\": 1, \"accepted\": \"true\", \"follow\": null }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -95,7 +93,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 base.SetUp();
 
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"is_block\": \"true\", \"accepted\": \"true\", \"follow\": 10 }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"block\": 1, \"accepted\": \"true\", \"follow\": 10 }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
             }
 
@@ -182,7 +180,7 @@ namespace Capibara.Test.Models.UserTest
         public void Setup()
         {
             this.Subject = new User { Id = 99999 };
-            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png", IsBlock = true, IsAccepted = true });
+            this.Subject.Restore(new User { Nickname = "FooBar. Yes!Yes!Yeeeeees!", Biography = "...", Id = 99999, IconUrl = "...!!!", IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png", IsAccepted = true, BlockId = 1 });
         }
 
         [TestCase]
@@ -294,7 +292,7 @@ namespace Capibara.Test.Models.UserTest
                 Biography = "...",
                 IconUrl = "http://xxxxxx.com/xxxx.png",
                 IconThumbnailUrl = "http://xxxxxx.com/xxxx_thumbnail.png",
-                IsBlock = true,
+                BlockId = 1,
                 IsAccepted = true
             };
 
@@ -964,7 +962,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected abstract bool NeedEventHandler { get; }
 
-            protected virtual BlockIndexResponse Response { get; }
+            protected virtual Block Response { get; }
 
             protected virtual Exception Exception { get; }
 
@@ -975,7 +973,7 @@ namespace Capibara.Test.Models.UserTest
 
                 this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
-                var request = new Mock<RequestBase<BlockIndexResponse>>();
+                var request = new Mock<RequestBase<Block>>();
 
                 var methodMock = request.Setup(x => x.Execute());
 
@@ -990,11 +988,11 @@ namespace Capibara.Test.Models.UserTest
 
                 if (this.NeedEventHandler)
                 {
-                    this.Subject.BlockFail += (sender, e) => this.IsFailed = true;
-                    this.Subject.BlockSuccess += (sender, e) => this.IsSucceed = true;
+                    this.Subject.ToggleBlockFail += (sender, e) => this.IsFailed = true;
+                    this.Subject.ToggleBlockSuccess += (sender, e) => this.IsSucceed = true;
                 }
 
-                this.Result = this.Subject.Block().Result;
+                this.Result = this.Subject.ToggleBlock().Result;
             }
         }
 
@@ -1003,7 +1001,7 @@ namespace Capibara.Test.Models.UserTest
         {
             protected override bool NeedEventHandler => true;
 
-            protected override BlockIndexResponse Response => new BlockIndexResponse();
+            protected override Block Response => new Block();
 
             [TestCase]
             public void ItShouldSuccess()
@@ -1068,7 +1066,7 @@ namespace Capibara.Test.Models.UserTest
         {
             protected override bool NeedEventHandler => false;
 
-            protected override BlockIndexResponse Response => new BlockIndexResponse();
+            protected override Block Response => new Block();
 
             [TestCase]
             public void ItShouldSuccess()
@@ -1762,7 +1760,7 @@ namespace Capibara.Test.Models.UserTest
 
             protected abstract bool NeedEventHandler { get; }
 
-            protected virtual FollowShowResponse Response { get; }
+            protected virtual MFollow Response { get; }
 
             protected virtual Exception Exception { get; }
 
@@ -1773,7 +1771,7 @@ namespace Capibara.Test.Models.UserTest
 
                 this.Subject = new User { Id = 1, Nickname = "xxxxx" }.BuildUp(this.Container);
 
-                var request = new Mock<RequestBase<FollowShowResponse>>();
+                var request = new Mock<RequestBase<MFollow>>();
 
                 var methodMock = request.Setup(x => x.Execute());
 
@@ -1801,8 +1799,7 @@ namespace Capibara.Test.Models.UserTest
         {
             protected override bool NeedEventHandler => true;
 
-            protected override FollowShowResponse Response =>
-                new FollowShowResponse { Follow = new Capibara.Models.Follow { Id = 1000 } };
+            protected override MFollow Response => new MFollow { Id = 1000 };
 
             [TestCase]
             public void ItShouldSuccess()
@@ -1867,8 +1864,7 @@ namespace Capibara.Test.Models.UserTest
         {
             protected override bool NeedEventHandler => false;
 
-            protected override FollowShowResponse Response =>
-                new FollowShowResponse { Follow = new Capibara.Models.Follow { Id = 1000 } };
+            protected override MFollow Response => new MFollow { Id = 1000 };
 
             [TestCase]
             public void ItShouldSuccess()

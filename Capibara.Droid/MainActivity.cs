@@ -27,7 +27,7 @@ namespace Capibara.Droid
 {
     [Activity(Label = "Capibara", Icon = "@drawable/icon", Theme = "@style/Theme.Main", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "com.cheesecomer.capibara", DataHost = "oauth")]
-    public class MainActivity : FormsApplicationActivity
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public enum RequestCodes
         {
@@ -40,6 +40,8 @@ namespace Capibara.Droid
         public IIsolatedStorage IsolatedStorage { get; set; }
 
         internal static MainActivity Instance { get; private set; }
+
+        internal App App;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -71,11 +73,14 @@ namespace Capibara.Droid
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            var application = new App(new AndroidInitializer(applicationService));
+            this.App = new App(new AndroidInitializer(applicationService));
 
-            this.BuildUp(application.Container.Resolve<IUnityContainer>());
+            this.BuildUp(this.App.Container.Resolve<IUnityContainer>());
 
-            LoadApplication(application);
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+
+            LoadApplication(this.App);
 
             Xamarin
                 .Forms
@@ -108,6 +113,13 @@ namespace Capibara.Droid
             }
 
             this.Intent = null;
+        }
+
+        protected override void OnPause()
+        {
+            this.App.Sleep();
+
+            base.OnPause();
         }
 
         protected override async void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)

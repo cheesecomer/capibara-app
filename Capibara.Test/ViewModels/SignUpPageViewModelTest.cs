@@ -64,7 +64,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             [TestCase]
             public void ItShouldNavigateAcceptPage()
             {
-                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+                this.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage", null), Times.Once());
             }
         }
 
@@ -222,7 +222,7 @@ namespace Capibara.Test.ViewModels.SignUpPageViewModel
             [TestCase]
             public void ItShouldNavigateAcceptPage()
             {
-                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+                this.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage", null), Times.Once());
             }
         }
         public class WhenAccessTokenIsPresentAndNotAccepted : WhenAccessTokenIsPresent

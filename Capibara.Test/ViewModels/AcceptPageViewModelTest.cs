@@ -237,7 +237,7 @@ namespace Capibara.Test.ViewModels.AcceptPageViewModel
 
             model.Raise(x => x.AcceptSuccess += null, EventArgs.Empty);
 
-            this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage"), Times.Once());
+            this.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage"), Times.Once());
         }
     }
 

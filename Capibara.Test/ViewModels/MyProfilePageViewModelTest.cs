@@ -27,4 +27,20 @@ namespace Capibara.Test.ViewModels.MyProfilePageViewModel
                 Times.Once());
         }
     }
+
+    [TestFixture]
+    public class SettingCommandTest : ViewModelTestBase
+    {
+        [TestCase]
+        public void ItShouldNavigateToEditProfilePage()
+        {
+            var viewModel = new SubjectViewModel(this.NavigationService.Object);
+
+            viewModel.SettingCommand.Execute();
+
+            while (!viewModel.SettingCommand.CanExecute()) { }
+
+            this.NavigationService.Verify(x => x.NavigateAsync("SettingPage"), Times.Once());
+        }
+    }
 }

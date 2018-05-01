@@ -7,6 +7,7 @@
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.SignUpPage"
+    NavigationPage.BackButtonTitle=""
     BackgroundColor="#2f8e5b">
     <Grid Padding="20, 0, 20, 30">
         <Grid.RowDefinitions>

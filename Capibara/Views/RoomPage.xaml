@@ -8,8 +8,9 @@
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
-    BackgroundColor="#F1F1F1"
     x:Class="Capibara.Views.RoomPage"
+    NavigationPage.BackButtonTitle=""
+    BackgroundColor="#F1F1F1"
     Title="{Binding Name.Value}">
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Disappearing" Command="{Binding CloseCommand}" />
@@ -21,7 +22,7 @@
         <ResourceDictionary>
             <selectors:MessageDataTemplateSelector x:Key="messageDataTemplateSelector"
                 OwnMessageTemplate="{StaticResource ownMessageTemplate}"
-                OthersMessageTemplate="{StaticResource othersMessageTemplate}" 
+                OthersMessageTemplate="{StaticResource othersMessageTemplate}"
                 OwnImageTemplate="{StaticResource ownImageTemplate}"
                 OthersImageTemplate="{StaticResource othersImageTemplate}" />
         </ResourceDictionary>
@@ -67,14 +68,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition>
-                    <ColumnDefinition.Width>
-                        <OnPlatform x:TypeArguments="GridLength">
-                            <On Platform="iOS" Value="60" />
-                            <On Platform="Android" Value="Auto" />
-                        </OnPlatform>
-                    </ColumnDefinition.Width>
-                </ColumnDefinition>
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" ef:CustomFont.On="true" ef:ToFlatButton.On="true" Text="&#xE710;" FontSize="Large" TextColor="White" BackgroundColor="#58CE91" BorderWidth="0" BorderRadius="0" Margin="0, 1, 0, 1" Command="{Binding AttachmentImageCommand}">
                 <Button.FontFamily>

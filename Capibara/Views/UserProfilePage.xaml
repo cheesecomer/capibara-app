@@ -9,6 +9,7 @@
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
     x:Class="Capibara.Views.UserProfilePage"
+    NavigationPage.BackButtonTitle=""
     Title="プロフィール"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
     <ContentView.Behaviors>
@@ -17,11 +18,13 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToStringConverter x:Key="toggleFollowIconConverter" TruthyText="&#xE735;" FalsyText="&#xE734;" />
+            <converters:BoolToStringConverter x:Key="followerConverter" TruthyText="あなたからのDMを待ちわびています！" FalsyText="あなたからのDMは届きません" />
             <converters:BoolToColorConverter x:Key="toggleFollowColorConverter" TruthyColor="#FFA500" FalsyColor="#6C757D" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ScrollView>
       <StackLayout Padding="20">
+        <Label Text="{Binding IsFollower.Value, Converter={StaticResource followerConverter}}" HorizontalOptions="End" FontSize="Micro" Margin="0, 0, 0, 0" TextColor="#6C757D" />
         <forms:RoundImage
             x:Name="image"
             Source="{Binding Icon.Value, Mode=TwoWay}"
@@ -35,56 +38,56 @@
             HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
             />
         <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" Margin="0, 0, 0, 0" />
-        <Grid HeightRequest="20" ColumnSpacing="10" HorizontalOptions="Center" Margin="0, 0, 0, 20">
+        <Grid ColumnSpacing="10" HorizontalOptions="Center" Margin="0, 0, 0, 10" HeightRequest="25">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="25" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button 
+            <Label 
                 ef:CustomFont.On="true" 
-                ef:ToFlatButton.On="true" 
                 Grid.Column="0"
-                Command="{Binding ToggleFollowCommand}"
                 FontSize="Large" 
+                VerticalOptions="Center"
                 TextColor="{Binding IsFollow.Value, Converter={StaticResource toggleFollowColorConverter}}"
-                Text="{Binding IsFollow.Value, Converter={StaticResource toggleFollowIconConverter}}"
-                BorderColor="Transparent"
-                BorderWidth="0"
-                BorderRadius="0">
-                <Button.FontFamily>
+                Text="{Binding IsFollow.Value, Converter={StaticResource toggleFollowIconConverter}}">
+                <Label.FontFamily>
                     <OnPlatform x:TypeArguments="x:String">
                         <On Platform="iOS" Value="Segoe MDL2 Assets" />
                         <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
                     </OnPlatform>
-                </Button.FontFamily>
-            </Button>
-            <Button 
-                ef:CustomFont.On="true" 
-                ef:ToFlatButton.On="true" 
+                </Label.FontFamily>
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFollowCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label
+                ef:CustomFont.On="true"
                 Grid.Column="1"
-                Command="{Binding ToggleFollowCommand}"
                 FontSize="Micro" 
                 TextColor="#6C757D"
-                Text="{Binding ToggleFollowDescription.Value}"
-                BorderColor="Transparent"
-                BorderWidth="0"
-                BorderRadius="0">
-            </Button>
+                VerticalOptions="Center"
+                Text="{Binding ToggleFollowDescription.Value}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFollowCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
         </Grid>
         <Grid ColumnSpacing="20" RowSpacing="5" HorizontalOptions="Center" Margin="0, 0, 0, 20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
-                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button 
                 ef:CustomFont.On="true" 
                 ef:ToFlatButton.On="true" 
                 Grid.Column="0"
+                WidthRequest="50"
+                HorizontalOptions="Center"
                 Command="{Binding ShowDirectMessageCommand}"
                 FontSize="Large" 
                 TextColor="#6C757D"
@@ -97,24 +100,25 @@
                     </OnPlatform>
                 </Button.FontFamily>
             </Button>
-            <Button 
-                ef:CustomFont.On="true" 
-                ef:ToFlatButton.On="true" 
+            <Label
                 Grid.Column="0"
                 Grid.Row="1"
-                Command="{Binding ShowDirectMessageCommand}"
+                Margin="0"
                 FontSize="Micro" 
+                HorizontalTextAlignment="Center"
                 TextColor="#6C757D"
-                Text="DM"
-                BorderColor="Transparent"
-                BorderWidth="0"
-                BorderRadius="0">
-            </Button>
+                Text="DM">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShowDirectMessageCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
             <Button 
                 ef:CustomFont.On="true" 
                 ef:ToFlatButton.On="true"
-                Command="{Binding BlockCommand}"
+                Command="{Binding ToggleBlockCommand}"
                 Grid.Column="1"
+                WidthRequest="50"
+                HorizontalOptions="Center"
                 FontSize="Large" 
                 TextColor="#6C757D"
                 Text="&#xE8F8;"
@@ -126,24 +130,24 @@
                     </OnPlatform>
                 </Button.FontFamily>
             </Button>
-            <Button 
-                ef:CustomFont.On="true" 
-                ef:ToFlatButton.On="true" 
+            <Label
                 Grid.Column="1"
                 Grid.Row="1"
-                Command="{Binding BlockCommand}"
                 Margin="0"
                 FontSize="Micro" 
+                HorizontalTextAlignment="Center"
                 TextColor="#6C757D"
-                Text="ブロック"
-                BorderColor="Transparent"
-                BorderWidth="0"
-                BorderRadius="0">
-            </Button>
+                Text="{Binding ToggleBlockDescription.Value}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleBlockCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
             <Button 
                 ef:CustomFont.On="true" 
                 ef:ToFlatButton.On="true" 
                 Grid.Column="2"
+                WidthRequest="50"
+                HorizontalOptions="Center"
                 Command="{Binding ReportCommand}"
                 FontSize="Large" 
                 TextColor="#6C757D"
@@ -156,20 +160,18 @@
                     </OnPlatform>
                 </Button.FontFamily>
             </Button>
-            <Button 
-                ef:CustomFont.On="true" 
-                ef:ToFlatButton.On="true" 
+            <Label
                 Grid.Column="2"
                 Grid.Row="1"
                 Margin="0"
-                Command="{Binding ReportCommand}"
                 FontSize="Micro" 
+                HorizontalTextAlignment="Center"
                 TextColor="#6C757D"
-                Text="通報"
-                BorderColor="Transparent"
-                BorderWidth="0"
-                BorderRadius="0">
-            </Button>
+                Text="通報">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ReportCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
         </Grid>
         <Label Text="自己紹介" TextColor="#6C757D" />
         <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 30"  />

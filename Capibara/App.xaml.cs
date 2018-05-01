@@ -42,6 +42,11 @@ namespace Capibara
         public IEnvironment Environment { get; } = new EnvironmentProduction();
 #endif
 
+        public void Sleep()
+        {
+            this.OnSleep();
+        }
+
         protected override void OnInitialized()
         {
             this.InitializeComponent();
@@ -82,6 +87,9 @@ namespace Capibara
             if (this.Container.TryResolve<IApplicationService>() == null)
                 containerRegistry.RegisterInstance<IApplicationService>(new ApplicationServiceStub());
 
+            if (this.Container.TryResolve<IBalloonService>() == null)
+                containerRegistry.RegisterInstance<IBalloonService>(new BalloonServiceStub());
+
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<SplashPage>();
@@ -103,6 +111,7 @@ namespace Capibara
             containerRegistry.RegisterForNavigation<ImagePage>();
             containerRegistry.RegisterForNavigation<UserProfilePage>();
             containerRegistry.RegisterForNavigation<MyProfilePage>();
+            containerRegistry.RegisterForNavigationOnIdiom<MyProfilePageWithOuthBottomMargin, MyProfilePageViewModel>();
             containerRegistry.RegisterForNavigation<EditProfilePage>();
             containerRegistry.RegisterForNavigation<InboxPage>();
             containerRegistry.RegisterForNavigation<DirectMessagePage>();
@@ -236,6 +245,14 @@ namespace Capibara
 
             void ITracker.SetStartSession(bool value)
                 => throw new NotImplementedException();
+        }
+
+        private class BalloonServiceStub : IBalloonService
+        {
+            void IBalloonService.DisplayBalloon(string message)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

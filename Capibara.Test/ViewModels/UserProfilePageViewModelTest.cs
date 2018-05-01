@@ -16,52 +16,57 @@ using SubjectViewModel = Capibara.ViewModels.UserProfilePageViewModel;
 
 namespace Capibara.Test.ViewModels.UserProfilePageViewModel
 {
-    public class IsFollowPropertyTest : ViewModelTestBase
+
+    namespace ToggleBlockDescriptionTest
     {
-        protected SubjectViewModel Subject;
-
-        [SetUp]
-        public override void SetUp()
+        public class WhenIsNotBlock
         {
-            base.SetUp();
+            [TestCase]
+            public void ItShouldExpect()
+            {
+                var model = new User();
 
-            var model = new User { Nickname = "xxxx", Id = Guid.NewGuid().ToInt() }.BuildUp(this.Container);
+                var viewModel = new SubjectViewModel(model: model);
+                model.BlockId = null;
 
-            this.Subject = new SubjectViewModel(model: model).BuildUp(this.Container);
+                Assert.That(viewModel.ToggleBlockDescription.Value, Is.EqualTo("ブロックする"));
+            }
         }
 
-        [TestCase]
-        public void ItShouldValueWithExpect()
+        public class WhenIsBlock
         {
-            Assert.That(this.Subject.IsFollow.Value, Is.EqualTo(false));
-        }
+            [TestCase]
+            public void ItShouldExpect()
+            {
+                var model = new User();
 
-        [TestCase]
-        public void ItShouldUpdate()
-        {
-            this.Subject.Model.FollowId = 1;
-            Assert.That(this.Subject.IsFollow.Value, Is.EqualTo(true));
+                var viewModel = new SubjectViewModel(model: model);
+
+                model.BlockId = 1;
+
+                Assert.That(viewModel.ToggleBlockDescription.Value, Is.EqualTo("ブロック中"));
+            }
         }
     }
 
     [TestFixture]
-    public class BlockCommandCanExecuteTest : ViewModelTestBase
+    public class ToggleBlockCommandCanExecuteTest : ViewModelTestBase
     {
         [TestCase(false, true)]
-        [TestCase(true, false)]
+        [TestCase(true, true)]
         public void ItShouldExpected(bool isBlock, bool canExecute)
         {
             var model = new Mock<User>();
             model.SetupAllProperties();
             var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
-            viewModel.IsBlock.Value = isBlock;
+            viewModel.Model.BlockId = isBlock ? (int?)1 : null;
 
-            Assert.That(viewModel.BlockCommand.CanExecute(), Is.EqualTo(canExecute));
+            Assert.That(viewModel.ToggleBlockCommand.CanExecute(), Is.EqualTo(canExecute));
         }
     }
 
     [TestFixture]
-    public class BlockCommandTest : ViewModelTestBase
+    public class ToggleBlockCommandTest : ViewModelTestBase
     {
         private SubjectViewModel ViewModel;
 
@@ -74,17 +79,17 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
 
             this.Model = new Mock<User>();
             this.Model.SetupAllProperties();
-            this.Model.Setup(x => x.Block()).ReturnsAsync(true);
+            this.Model.Setup(x => x.ToggleBlock()).ReturnsAsync(true);
 
             this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
-            this.ViewModel.IsBlock.Value = false;
-            this.ViewModel.BlockCommand.Execute();
+            this.ViewModel.Model.BlockId = null;
+            this.ViewModel.ToggleBlockCommand.Execute();
         }
 
         [TestCase]
         public void ItShouldIsBlockCalled()
         {
-            this.Model.Verify(x => x.Block(), Times.Once());
+            this.Model.Verify(x => x.ToggleBlock(), Times.Once());
         }
 
         [TestCase]
@@ -152,7 +157,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
                 var model = new User();
 
                 var viewModel = new SubjectViewModel(model: model);
-                model.IsBlock = false;
+                model.BlockId = null;
                 model.FollowId = null;
 
                 Assert.That(viewModel.ToggleFollowDescription.Value, Is.EqualTo("DM を受け付ける"));
@@ -168,7 +173,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
 
                 var viewModel = new SubjectViewModel(model: model);
 
-                model.IsBlock = true;
+                model.BlockId = 1;
 
                 Assert.That(viewModel.ToggleFollowDescription.Value, Is.EqualTo("DM を受け付ける"));
             }
@@ -182,10 +187,8 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
         [TestCase(true, false)]
         public void ItShouldExpected(bool isBlock, bool canExecute)
         {
-            var model = new Mock<User>();
-            model.SetupAllProperties();
-            var viewModel = new SubjectViewModel(this.NavigationService.Object, model: model.Object).BuildUp(this.Container);
-            viewModel.IsBlock.Value = isBlock;
+            var viewModel = new SubjectViewModel(this.NavigationService.Object).BuildUp(this.Container);
+            viewModel.Model.BlockId = isBlock ? (int?)1 : null;
 
             Assert.That(viewModel.ToggleFollowCommand.CanExecute(), Is.EqualTo(canExecute));
         }
@@ -205,10 +208,9 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
 
             this.Model = new Mock<User>();
             this.Model.SetupAllProperties();
-            this.Model.Setup(x => x.Block()).ReturnsAsync(true);
+            this.Model.Setup(x => x.ToggleFollow()).ReturnsAsync(true);
 
             this.ViewModel = new SubjectViewModel(this.NavigationService.Object, model: this.Model.Object).BuildUp(this.Container);
-            this.ViewModel.IsBlock.Value = false;
             this.ViewModel.ToggleFollowCommand.Execute();
         }
 

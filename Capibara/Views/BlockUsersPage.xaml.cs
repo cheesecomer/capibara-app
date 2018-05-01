@@ -10,6 +10,8 @@ namespace Capibara.Views
         public BlockUsersPage()
         {
             InitializeComponent();
+
+            this.ListView.ItemSelected += (s, e) => this.ListView.SelectedItem = null;
         }
     }
 }

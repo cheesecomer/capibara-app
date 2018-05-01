@@ -21,11 +21,13 @@ namespace Capibara.Models
 
         private string iconBase64;
 
-        private bool isBlock;
+        private int? blockId;
 
         private bool isAccepted;
 
         private int? followId;
+
+        private bool isFollower;
 
         public virtual event EventHandler SignUpSuccess;
 
@@ -43,9 +45,9 @@ namespace Capibara.Models
 
         public virtual event EventHandler<FailEventArgs> AcceptFail;
 
-        public virtual event EventHandler BlockSuccess;
+        public virtual event EventHandler ToggleBlockSuccess;
 
-        public virtual event EventHandler<FailEventArgs> BlockFail;
+        public virtual event EventHandler<FailEventArgs> ToggleBlockFail;
 
         public virtual event EventHandler DestroySuccess;
 
@@ -97,11 +99,15 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.iconBase64, value);
         }
 
-        [JsonProperty("is_block")]
-        public virtual bool IsBlock
+        [JsonProperty("block")]
+        public virtual int? BlockId
         {
-            get => this.isBlock;
-            set => this.SetProperty(ref this.isBlock, value);
+            get => this.blockId;
+            set
+            {
+                this.SetProperty(ref this.blockId, value);
+                this.RaisePropertyChanged(nameof(IsBlock));
+            }
         }
 
         [JsonProperty("accepted")]
@@ -122,6 +128,15 @@ namespace Capibara.Models
             }
         }
 
+        [JsonProperty("is_follower")]
+        public virtual bool IsFollower
+        {
+            get => this.isFollower;
+            set => this.SetProperty(ref this.isFollower, value);
+        }
+
+        public virtual bool IsBlock => this.BlockId.HasValue;
+
         public virtual bool IsFollow => this.FollowId.HasValue;
 
         public virtual bool IsOwn => this.IsolatedStorage.UserId == this.Id;
@@ -135,9 +150,10 @@ namespace Capibara.Models
             this.Biography = model.Biography;
             this.IconUrl = model.IconUrl;
             this.IconThumbnailUrl = model.IconThumbnailUrl;
-            this.IsBlock = model.IsBlock;
+            this.BlockId = model.BlockId;
             this.IsAccepted = model.IsAccepted;
             this.FollowId = model.FollowId;
+            this.IsFollower = model.IsFollower;
         }
 
         /// <summary>
@@ -274,30 +290,18 @@ namespace Capibara.Models
         }
 
         /// <summary>
-        /// ユーザーをブロックします。
+        /// ブロック状態を切り替えます
         /// </summary>
-        /// <returns>The commit.</returns>
-        public virtual async Task<bool> Block()
+        /// <returns>成否</returns>
+        public virtual Task<bool> ToggleBlock()
         {
-            var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
+            Func<Task<bool>> func = null;
+            if (this.IsBlock)
+                func = this.Unblock;
+            else
+                func = this.Block;
 
-            try
-            {
-                var response = await request.Execute();
-
-                this.IsBlock = true;
-
-                this.FollowId = null;
-
-                this.BlockSuccess?.Invoke(this, null);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.BlockFail?.Invoke(this, e);
-                return false;
-            }
+            return func.Invoke();
         }
 
         /// <summary>
@@ -368,6 +372,50 @@ namespace Capibara.Models
             return func.Invoke();
         }
 
+        private async Task<bool> Block()
+        {
+            var request = this.RequestFactory.BlocksCreateRequest(this).BuildUp(this.Container);
+
+            try
+            {
+                var response = await request.Execute();
+
+                this.BlockId = response.Id;
+
+                this.FollowId = null;
+
+                this.ToggleBlockSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ToggleBlockFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
+        private async Task<bool> Unblock()
+        {
+            var request = this.RequestFactory.BlocksDestroyRequest(this.BlockId.Value).BuildUp(this.Container);
+
+            try
+            {
+                await request.Execute();
+
+                this.BlockId = null;
+
+                this.ToggleBlockSuccess?.Invoke(this, null);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.ToggleBlockFail?.Invoke(this, e);
+                return false;
+            }
+        }
+
         private async Task<bool> Follow()
         {
             var request = this.RequestFactory.FollowsCreateRequest(this).BuildUp(this.Container);
@@ -375,7 +423,7 @@ namespace Capibara.Models
             {
                 var response = await request.Execute();
 
-                this.FollowId = response.Follow.Id;
+                this.FollowId = response.Id;
 
                 this.ToggleFollowSuccess?.Invoke(this, null);
 

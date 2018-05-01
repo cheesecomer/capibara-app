@@ -12,7 +12,7 @@
     "Prism.Unity.Forms": "7.0.0.396",
     "ReactiveProperty": "4.2.0",
     "Unity": "5.7.3",
-    "Xamarin.Forms": "2.5.0.280555"
+    "Xamarin.Forms": "2.5.1.444934"
   },
   "frameworks": {
     "netstandard1.5": {

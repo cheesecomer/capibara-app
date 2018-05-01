@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.TabLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/Tabbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#EEEEEE"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:tabIndicatorColor="?attr/colorPrimary"
+    app:tabSelectedTextColor="?attr/colorPrimary"
+    app:tabTextColor="#6c757d"
+    app:tabTextAppearance="@style/TabText"
+    app:tabGravity="fill"
+    app:tabMode="fixed"
+    android:elevation="4dp" />

@@ -72,7 +72,7 @@ namespace Capibara.Test.ViewModels.SignInPageViewModel
             [TestCase]
             public void ItShouldNavigateAcceptPage()
             {
-                this.NavigationService.Verify(x => x.NavigateAsync("/MainPage/NavigationPage/FloorMapPage", null), Times.Once());
+                this.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage", null), Times.Once());
             }
         }
 
