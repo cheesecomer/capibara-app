@@ -215,6 +215,7 @@
     <Compile Include="ViewModels\DirectMessageViewModel.cs" />
     <Compile Include="Converters\BoolToStringConverterTest.cs" />
     <Compile Include="Converters\BoolToColorConverterTest.cs" />
+    <Compile Include="ViewModels\FollowUsersPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />
