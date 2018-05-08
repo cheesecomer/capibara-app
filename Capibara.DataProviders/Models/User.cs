@@ -163,6 +163,7 @@ namespace Capibara.Models
             this.IsAccepted = model.IsAccepted;
             this.FollowId = model.FollowId;
             this.IsFollower = model.IsFollower;
+            this.FriendsCount = model.FriendsCount;
         }
 
         /// <summary>
