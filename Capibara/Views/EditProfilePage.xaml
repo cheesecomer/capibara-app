@@ -2,10 +2,10 @@
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
     xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:behaviors="clr-namespace:Capibara.Behaviors;assembly=Capibara"
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.EditProfilePage"
@@ -52,7 +52,11 @@
                 ef:Border.Color="#D1D1D1"
                 Text="{Binding Nickname.Value, Mode=TwoWay}" 
                 Placeholder="ニックネーム"
-                Margin="10, 0, 10, 20" />
+                Margin="10, 0, 10, 20">
+                <Entry.Behaviors>
+                    <behaviors:RegexBehavior RegexPattern="^.{0,20}$"/>
+                </Entry.Behaviors>
+            </Entry>
             <Label Text="自己紹介" />
             <Editor
                 ef:Border.Width="2"
