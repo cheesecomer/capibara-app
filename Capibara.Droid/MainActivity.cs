@@ -25,7 +25,7 @@ using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 
 namespace Capibara.Droid
 {
-    [Activity(Label = "Capibara", Icon = "@drawable/icon", Theme = "@style/Theme.Main", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Capibara", Icon = "@drawable/icon", MainLauncher = true, Theme = "@style/Theme.Splash", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, LaunchMode = LaunchMode.SingleTop)]
     [IntentFilter(new[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "com.cheesecomer.capibara", DataHost = "oauth")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -45,6 +45,8 @@ namespace Capibara.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            this.SetTheme(Resource.Style.Theme_Main);
+
             base.OnCreate(savedInstanceState);
 
             MainActivity.Instance = this;
@@ -90,14 +92,12 @@ namespace Capibara.Droid
                 .UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
         }
 
-        protected override void OnResume()
+        protected override void OnNewIntent(Intent intent)
         {
-            base.OnResume();
+            base.OnNewIntent(intent);
 
-            if (this.Intent == null) return;
-
-            var uri = this.Intent.Data;
-            if (Intent.ActionView.Equals(this.Intent.Action))
+            var uri = intent.Data;
+            if (Intent.ActionView.Equals(intent.Action))
             {
                 if (uri.Scheme == "com.cheesecomer.capibara" && uri.Host.StartsWith("oauth", StringComparison.Ordinal))
                 {
@@ -111,8 +111,6 @@ namespace Capibara.Droid
                     this.IsolatedStorage.Save();
                 }
             }
-
-            this.Intent = null;
         }
 
         protected override void OnPause()
