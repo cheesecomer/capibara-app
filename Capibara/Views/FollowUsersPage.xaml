@@ -22,7 +22,7 @@
         HasUnevenRows="true"
         VerticalOptions="FillAndExpand"
         SeparatorColor="Transparent"
-        ItemsSource="{Binding Participants}">
+        ItemsSource="{Binding FollowUsers}">
         <ListView.Behaviors>
             <behaviors:EventToCommandBehavior
                 EventName="ItemTapped"
