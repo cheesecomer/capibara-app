@@ -37,7 +37,7 @@
                         <forms:RoundImage
                             Grid.Column="0"
                             Source="{Binding IconThumbnail.Value}"
-                            BorderWidth="2"
+                            BorderWidth="1"
                             HeightRequest="40"
                             VerticalOptions="Start"
                             CornerRadius="20"

@@ -32,6 +32,9 @@
             <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" />
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FriendsCommand}" />
+                    </StackLayout.GestureRecognizers>
                     <Label 
                         ef:CustomFont.On="true" 
                         FontSize="Large" 
