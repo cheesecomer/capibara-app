@@ -10,9 +10,6 @@
     NavigationPage.BackButtonTitle=""
     Title="DMを受け付けているユーザー"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="更新" Priority="1" Command="{Binding RefreshCommand}" />
-    </ContentPage.ToolbarItems>
     <ContentView.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
     </ContentView.Behaviors>
