@@ -14,12 +14,20 @@ namespace Capibara.ViewModels
 
         public AsyncReactiveCommand SettingCommand { get; }
 
+        public AsyncReactiveCommand FriendsCommand { get; }
+
+        public ReactiveProperty<int> FriendCount { get; }
+
         public MyProfilePageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
             User model = null)
             : base(navigationService, pageDialogService, model)
         {
+            this.FriendCount = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.FriendsCount)
+                .AddTo(this.Disposable);
+
             // EditCommand
             this.EditCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.EditCommand.Subscribe(async () => {
@@ -29,6 +37,9 @@ namespace Capibara.ViewModels
 
             this.SettingCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
             this.SettingCommand.Subscribe(() => this.NavigationService.NavigateAsync("SettingPage"));
+
+            this.FriendsCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
+            this.FriendsCommand.Subscribe(() => this.NavigationService.NavigateAsync("FollowUsersPage"));
         }
 
         protected override void OnContainerChanged()

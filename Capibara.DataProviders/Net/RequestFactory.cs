@@ -46,6 +46,8 @@ namespace Capibara.Net
         RequestBase<Follow> FollowsCreateRequest(User target);
 
         RequestBase FollowsDestroyRequest(int followId);
+
+        RequestBase<Follows.IndexResponse> FollowsIndexRequest();
     }
 
     public class RequestFactory : IRequestFactory
@@ -107,5 +109,7 @@ namespace Capibara.Net
         RequestBase IRequestFactory.FollowsDestroyRequest(int followId)
             => new Follows.DestroyRequest(followId);
 
+        RequestBase<Follows.IndexResponse> IRequestFactory.FollowsIndexRequest()
+            => new Follows.IndexRequest();
     }
 }

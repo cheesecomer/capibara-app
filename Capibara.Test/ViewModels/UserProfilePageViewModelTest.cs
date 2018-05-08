@@ -29,7 +29,7 @@ namespace Capibara.Test.ViewModels.UserProfilePageViewModel
                 var viewModel = new SubjectViewModel(model: model);
                 model.BlockId = null;
 
-                Assert.That(viewModel.ToggleBlockDescription.Value, Is.EqualTo("ブロックする"));
+                Assert.That(viewModel.ToggleBlockDescription.Value, Is.EqualTo("ブロック"));
             }
         }
 
