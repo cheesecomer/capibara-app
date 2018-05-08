@@ -60,6 +60,8 @@
                     BorderColor="#3FA869"
                     BackgroundColor="White" />
             </StackLayout>
+            <Label Text="自己紹介" TextColor="#6C757D"  />
+            <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 0"  />
           </StackLayout>
         </ScrollView>
 
