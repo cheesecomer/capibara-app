@@ -161,6 +161,11 @@
     <Compile Include="Views\MyProfilePageWithOuthBottomMargin.xaml.cs">
       <DependentUpon>MyProfilePageWithOuthBottomMargin.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FollowUsersPage.xaml.cs">
+      <DependentUpon>FollowUsersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\FollowUsersPageViewModel.cs" />
+    <Compile Include="Behaviors\RegexBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -251,6 +256,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\FollowUsersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -272,6 +281,7 @@
     <Folder Include="Effects\" />
     <Folder Include="Forms\" />
     <Folder Include="Ioc\" />
+    <Folder Include="Behaviors\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.270\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />

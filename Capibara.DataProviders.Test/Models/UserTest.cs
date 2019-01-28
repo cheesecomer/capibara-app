@@ -29,7 +29,7 @@ namespace Capibara.Test.Models.UserTest
             {
                 base.SetUp();
 
-                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"block\": 1, \"accepted\": \"true\", \"follow\": null }";
+                var json = "{ \"id\": 99999, \"nickname\": \"FooBar. Yes!Yes!Yeeeeees!\", \"icon_url\": \"http://xxxxxx.com/xxxx.png\", \"icon_thumb_url\": \"http://xxxxxx.com/xxxx_thumbnail.png\", \"block\": 1, \"accepted\": \"true\", \"follow\": null, \"friends_count\": 10 }";
                 this.Subject = JsonConvert.DeserializeObject<User>(json).BuildUp(this.Container);
                 this.IsolatedStorage.UserId = this.LoginUserId;
             }
@@ -61,25 +61,31 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsAcceptedWithExpected()
             {
-                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+                Assert.That(this.Subject.IsAccepted, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+                Assert.That(this.Subject.IsFollow, Is.False);
             }
 
             [TestCase]
             public void ItShouldFollowIdWithExpected()
             {
                 Assert.That(this.Subject.FollowId, Is.Null);
+            }
+
+            [TestCase]
+            public void ItShouldFriendsCountWithExpected()
+            {
+                Assert.That(this.Subject.FriendsCount, Is.EqualTo(10));
             }
         }
 
@@ -124,19 +130,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsAcceptedWithExpected()
             {
-                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+                Assert.That(this.Subject.IsAccepted, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+                Assert.That(this.Subject.IsFollow, Is.True);
             }
 
             [TestCase]
@@ -154,7 +160,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsOwn()
             {
-                Assert.That(this.Subject.IsOwn, Is.EqualTo(true));
+                Assert.That(this.Subject.IsOwn, Is.True);
             }
         }
 
@@ -166,7 +172,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsNotOwn()
             {
-                Assert.That(this.Subject.IsOwn, Is.EqualTo(false));
+                Assert.That(this.Subject.IsOwn, Is.False);
             }
         }
     }
@@ -216,13 +222,13 @@ namespace Capibara.Test.Models.UserTest
         [TestCase]
         public void ItShouldIsBlockWithExpected()
         {
-            Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+            Assert.That(this.Subject.IsBlock, Is.True);
         }
 
         [TestCase]
         public void ItShouldIsAcceptedWithExpected()
         {
-            Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+            Assert.That(this.Subject.IsAccepted, Is.True);
         }
     }
 
@@ -305,7 +311,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
@@ -335,13 +341,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsAcceptedWithExpected()
             {
-                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+                Assert.That(this.Subject.IsAccepted, Is.True);
             }
         }
 
@@ -373,13 +379,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -393,7 +399,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
@@ -423,13 +429,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -511,7 +517,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
@@ -541,19 +547,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsAcceptedWithExpected()
             {
-                Assert.That(this.Subject.IsAccepted, Is.EqualTo(true));
+                Assert.That(this.Subject.IsAccepted, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -567,7 +573,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
@@ -585,19 +591,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -616,19 +622,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -642,19 +648,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
     }
@@ -741,7 +747,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
@@ -771,13 +777,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -843,7 +849,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
@@ -861,19 +867,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -895,19 +901,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -923,19 +929,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1006,25 +1012,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1039,25 +1045,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBlock, Is.False);
             }
 
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -1071,25 +1077,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(true));
+                Assert.That(this.Subject.IsBlock, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1104,25 +1110,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldIsBlockWithExpected()
             {
-                Assert.That(this.Subject.IsBlock, Is.EqualTo(false));
+                Assert.That(this.Subject.IsBlock, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1194,7 +1200,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
@@ -1226,7 +1232,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
@@ -1256,19 +1262,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1282,19 +1288,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1359,19 +1365,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1385,19 +1391,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -1409,19 +1415,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1435,19 +1441,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1541,7 +1547,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
@@ -1571,13 +1577,13 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1643,7 +1649,7 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
@@ -1661,19 +1667,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldDontRegisterUserInDIContainer()
             {
-                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.EqualTo(false));
+                Assert.That(this.Subject.Container.IsRegistered(typeof(User), "CurrentUser"), Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -1695,19 +1701,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1723,19 +1729,19 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1804,25 +1810,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+                Assert.That(this.Subject.IsFollow, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1837,25 +1843,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+                Assert.That(this.Subject.IsFollow, Is.False);
             }
 
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -1869,25 +1875,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+                Assert.That(this.Subject.IsFollow, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1902,25 +1908,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+                Assert.That(this.Subject.IsFollow, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -1982,25 +1988,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+                Assert.That(this.Subject.IsFollow, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(true));
+                Assert.That(this.IsSucceed, Is.True);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -2015,25 +2021,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+                Assert.That(this.Subject.IsFollow, Is.True);
             }
 
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldSignInFailEventToOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(true));
+                Assert.That(this.IsFailed, Is.True);
             }
         }
 
@@ -2045,25 +2051,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldSuccess()
             {
-                Assert.That(this.Result, Is.EqualTo(true));
+                Assert.That(this.Result, Is.True);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(false));
+                Assert.That(this.Subject.IsFollow, Is.False);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 
@@ -2078,25 +2084,25 @@ namespace Capibara.Test.Models.UserTest
             [TestCase]
             public void ItShouldFail()
             {
-                Assert.That(this.Result, Is.EqualTo(false));
+                Assert.That(this.Result, Is.False);
             }
 
             [TestCase]
             public void ItShouldIsFollowWithExpected()
             {
-                Assert.That(this.Subject.IsFollow, Is.EqualTo(true));
+                Assert.That(this.Subject.IsFollow, Is.True);
             }
 
             [TestCase]
             public void ItShouldSuccessEventToNotOccur()
             {
-                Assert.That(this.IsSucceed, Is.EqualTo(false));
+                Assert.That(this.IsSucceed, Is.False);
             }
 
             [TestCase]
             public void ItShouldFailEventToNotOccur()
             {
-                Assert.That(this.IsFailed, Is.EqualTo(false));
+                Assert.That(this.IsFailed, Is.False);
             }
         }
 

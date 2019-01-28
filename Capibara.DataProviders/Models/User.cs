@@ -29,6 +29,8 @@ namespace Capibara.Models
 
         private bool isFollower;
 
+        private int friendsCount;
+
         public virtual event EventHandler SignUpSuccess;
 
         public virtual event EventHandler<FailEventArgs> SignUpFail;
@@ -135,6 +137,13 @@ namespace Capibara.Models
             set => this.SetProperty(ref this.isFollower, value);
         }
 
+        [JsonProperty("friends_count")]
+        public virtual int FriendsCount
+        {
+            get => this.friendsCount;
+            set => this.SetProperty(ref this.friendsCount, value);
+        }
+
         public virtual bool IsBlock => this.BlockId.HasValue;
 
         public virtual bool IsFollow => this.FollowId.HasValue;
@@ -154,6 +163,7 @@ namespace Capibara.Models
             this.IsAccepted = model.IsAccepted;
             this.FollowId = model.FollowId;
             this.IsFollower = model.IsFollower;
+            this.FriendsCount = model.FriendsCount;
         }
 
         /// <summary>

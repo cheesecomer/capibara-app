@@ -227,7 +227,6 @@
     <Compile Include="Services\ProgressDialogService.cs" />
     <Compile Include="PlatformVariable.cs" />
     <Compile Include="Renderers\AdMobBannerRenderer.cs" />
-    <Compile Include="SplashActivity.cs" />
     <Compile Include="Renderers\LinkableLabelRenderer.cs" />
     <Compile Include="Effects\ToFlatButtonPlatformEffect.cs" />
     <Compile Include="Effects\NamespaceInfo.cs" />

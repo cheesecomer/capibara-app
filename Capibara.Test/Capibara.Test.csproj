@@ -184,7 +184,6 @@
     <Compile Include="ViewModels\RoomPageViewModelTest.cs" />
     <Compile Include="ViewModels\ParticipantsPageViewModelTest.cs" />
     <Compile Include="ViewModels\SignUpPageViewModelTest.cs" />
-    <Compile Include="ViewModels\MainPageViewModelTest.cs" />
     <Compile Include="ViewModels\ViewModelTestBase.cs" />
     <Compile Include="ViewModels\SplashPageViewModelTest.cs" />
     <Compile Include="ViewModels\SettingPageViewModelTest.cs" />
@@ -216,6 +215,7 @@
     <Compile Include="ViewModels\DirectMessageViewModel.cs" />
     <Compile Include="Converters\BoolToStringConverterTest.cs" />
     <Compile Include="Converters\BoolToColorConverterTest.cs" />
+    <Compile Include="ViewModels\FollowUsersPageViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

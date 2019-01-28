@@ -4,8 +4,6 @@ namespace Capibara.Views
 {
     public partial class MyProfilePage : ContentPage
     {
-        public string TabbedPageTitle { get; } = "プロフィール";
-
         public MyProfilePage()
         {
             InitializeComponent();  

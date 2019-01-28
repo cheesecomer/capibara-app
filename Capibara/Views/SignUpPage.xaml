@@ -2,7 +2,7 @@
 <ContentPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms" 
+    xmlns:behaviors="clr-namespace:Capibara.Behaviors;assembly=Capibara"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     xmlns:ef="clr-namespace:Capibara.Effects;assembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True" 
@@ -43,8 +43,11 @@
                 HorizontalOptions="FillAndExpand"
                 Placeholder="ニックネーム"
                 Text="{Binding Nickname.Value, Mode=TwoWay}"
-                HeightRequest="40"
-                />
+                HeightRequest="40">
+                <Entry.Behaviors>
+                    <behaviors:RegexBehavior RegexPattern="^.{0,20}$"/>
+                </Entry.Behaviors>
+            </Entry>
             <Label
                 Margin="0, 30, 0, 0"
                 HorizontalOptions="FillAndExpand"

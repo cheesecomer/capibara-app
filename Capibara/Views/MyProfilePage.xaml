@@ -30,18 +30,39 @@
                 HeightRequest="{Binding Width, Source={x:Reference image}, Converter={StaticResource doubleMultiplier}, ConverterParameter=1}"
                 />
             <Label Text="{Binding Nickname.Value}" HorizontalOptions="Center" FontSize="Large" />
-            <Button
-                ef:ToFlatButton.On="true" 
-                BorderWidth="1"
-                HeightRequest="30"
-                BorderRadius="15"
-                FontSize="Small"
-                HorizontalOptions="Center"
-                Text="&#160;&#160;&#160;&#160;プロフィールを編集する&#160;&#160;&#160;&#160;" 
-                Command="{Binding EditCommand}"
-                TextColor="#3FA869"
-                BorderColor="#3FA869"
-                BackgroundColor="White" />
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FriendsCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label 
+                        ef:CustomFont.On="true" 
+                        FontSize="Large" 
+                        VerticalOptions="Center"
+                        TextColor="#FFA500"
+                        Text="&#xE735;">
+                        <Label.FontFamily>
+                            <OnPlatform x:TypeArguments="x:String">
+                                <On Platform="iOS" Value="Segoe MDL2 Assets" />
+                                <On Platform="Android" Value="fonts/segoe-mdl2-assets.ttf" />
+                            </OnPlatform>
+                        </Label.FontFamily>
+                    </Label>
+                    <Label Text="{Binding FriendCount.Value}" FontSize="Large" VerticalOptions="Center" />
+                    <Label Text="人" TextColor="#6C757D" FontSize="Small" VerticalOptions="End" />
+                </StackLayout>
+                <Button
+                    ef:ToFlatButton.On="true" 
+                    BorderWidth="1"
+                    HeightRequest="30"
+                    BorderRadius="15"
+                    FontSize="Small"
+                    Text="&#160;&#160;&#160;&#160;プロフィールを編集する&#160;&#160;&#160;&#160;" 
+                    Command="{Binding EditCommand}"
+                    TextColor="#3FA869"
+                    BorderColor="#3FA869"
+                    BackgroundColor="White" />
+            </StackLayout>
             <Label Text="自己紹介" TextColor="#6C757D"  />
             <Label Text="{Binding Biography.Value}" Margin="10, 10, 0, 0"  />
           </StackLayout>
