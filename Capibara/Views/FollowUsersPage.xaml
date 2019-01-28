@@ -10,13 +10,16 @@
     NavigationPage.BackButtonTitle=""
     Title="DMを受け付けているユーザー"
     ControlTemplate="{StaticResource WithAdBannerControlTemplate}">
+    <ContentView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}" />
+    </ContentView.Behaviors>
     <ListView
         x:Name="ListView"
         Grid.Row="0"
         HasUnevenRows="true"
         VerticalOptions="FillAndExpand"
         SeparatorColor="Transparent"
-        ItemsSource="{Binding Participants}">
+        ItemsSource="{Binding FollowUsers}">
         <ListView.Behaviors>
             <behaviors:EventToCommandBehavior
                 EventName="ItemTapped"
