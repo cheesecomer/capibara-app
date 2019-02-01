@@ -9,7 +9,7 @@ namespace Capibara.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (IOverrideUrlCommandParameters)new OverrideUrlCommandParameters(value as WebNavigatingEventArgs);
+            return new OverrideUrlCommandParameters(value as WebNavigatingEventArgs) as IOverrideUrlCommandParameters;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

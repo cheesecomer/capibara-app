@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Windows.Input;
 using System.Reactive.Linq;
-
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Capibara.Models;
+using Capibara.Services;
 using Prism.Navigation;
 using Prism.Services;
-
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-
 using Xamarin.Forms;
-
-using Capibara.Services;
-using Capibara.Models;
 
 namespace Capibara.ViewModels
 {
     public class AcceptPageViewModel : ViewModelBase<User>
     {
+        public Task NextCommandTask { get; private set; }
+
         [Unity.Attributes.Dependency]
         public IOverrideUrlService OverrideUrlService { get; set; }
 
@@ -27,12 +26,12 @@ namespace Capibara.ViewModels
         public ReactiveProperty<string> ActiveCommandName { get; }
 
         public ReactiveProperty<string> Title { get; }
-        
+
         public ReactiveProperty<ICommand> ActiveCommand { get; } = new ReactiveProperty<ICommand>();
 
         public AsyncReactiveCommand AgreeCommand { get; }
 
-        public ReactiveCommand NextCommand { get; }
+        public AsyncReactiveCommand NextCommand { get; }
 
         public AsyncReactiveCommand CancelCommand { get; } = new AsyncReactiveCommand();
 
@@ -40,7 +39,7 @@ namespace Capibara.ViewModels
 
         public ReactiveCommand<IOverrideUrlCommandParameters> OverrideUrlCommand { get; } =
             new ReactiveCommand<IOverrideUrlCommandParameters>();
-        
+
         public AcceptPageViewModel(
             INavigationService navigationService = null,
             IPageDialogService pageDialogService = null,
@@ -52,18 +51,21 @@ namespace Capibara.ViewModels
 
             this.NextCommand = this.PropertyChangedAsObservable()
                 .Select(_ => this.IsLoaded.Value && this.Source.Value.Url == this.Environment.TermsUrl)
-                .ToReactiveCommand()
+                .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
-            this.NextCommand.Subscribe(() => {
+
+            this.NextCommand.Subscribe(() => this.NextCommandTask = Task.Run(() =>
+            {
                 this.IsLoaded.Value = false;
                 this.Source.Value = new UrlWebViewSource { Url = this.Environment.PrivacyPolicyUrl };
                 this.ActiveCommand.Value = this.AgreeCommand;
-            });
+            }));
 
             this.AgreeCommand = this.PropertyChangedAsObservable()
                 .Select(_ => this.IsLoaded.Value && this.Source.Value.Url == this.Environment.PrivacyPolicyUrl)
                 .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
+
             this.AgreeCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Accept()));
 
             this.CancelCommand.Subscribe(() => this.ProgressDialogService.DisplayProgressAsync(this.Model.Destroy()));
@@ -98,7 +100,7 @@ namespace Capibara.ViewModels
                     this.Environment.PrivacyPolicyUrl));
         }
 
-        public override void OnNavigatedTo(NavigationParameters parameters)
+        public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 

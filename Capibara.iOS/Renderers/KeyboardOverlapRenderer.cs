@@ -27,16 +27,11 @@ namespace Capibara.iOS.Renderers
         {
             base.ViewWillAppear(animated);
 
-            var page = Element as ContentPage;
-
-            if (page != null)
+            if (Element is ContentPage page)
             {
-                var contentScrollView = page.Content as ScrollView;
+                if (page.Content is ScrollView)
+                    RegisterForKeyboardNotifications();
 
-                if (contentScrollView != null)
-                    return;
-
-                RegisterForKeyboardNotifications();
             }
         }
 

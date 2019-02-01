@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Reactive.Disposables;
-
+using System.Threading.Tasks;
 using Capibara.Forms;
-using Capibara.Services;
 using Capibara.Models;
-
-using Unity;
-using Unity.Attributes;
-
+using Capibara.Services;
+using Plugin.GoogleAnalytics.Abstractions;
+using Prism.AppModel;
 using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Services;
-
-using Plugin.GoogleAnalytics.Abstractions;
-
-using Prism.AppModel;
+using Unity;
 
 namespace Capibara.ViewModels
 {
@@ -29,7 +22,7 @@ namespace Capibara.ViewModels
         public const string Url = "ParameterNames.Url";
     }
 
-    public class ViewModelBase : BindableBase, INavigationAware, IApplicationLifecycleAware
+    public class ViewModelBase : BindableBase, INavigationAware, IApplicationLifecycleAware, IDisposable
     {
         private IUnityContainer container;
 
@@ -49,53 +42,53 @@ namespace Capibara.ViewModels
 
         protected virtual string OptionalScreenName { get; } = string.Empty;
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IProgressDialogService ProgressDialogService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IEnvironment Environment { get; set; }
 
-        [Dependency(UnityInstanceNames.CurrentUser)]
+        [Unity.Attributes.Dependency(UnityInstanceNames.CurrentUser)]
         public User CurrentUser { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IDeviceService DeviceService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public Net.IRequestFactory RequestFactory { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public ITaskService TaskService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IApplicationService ApplicationService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public ITracker Tracker { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IBalloonService BalloonService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public ISnsLoginService SnsLoginService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IRewardedVideoService RewardedVideoService { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IImageSourceFactory ImageSourceFactory { get; set; }
 
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IPickupPhotoService PickupPhotoService { get; set; }
 
         /// <summary>
         /// DIコンテナ
         /// </summary>
         /// <value>The container.</value>
-        [Dependency]
+        [Unity.Attributes.Dependency]
         public IUnityContainer Container
         {
             get => this.container;
@@ -120,14 +113,14 @@ namespace Capibara.ViewModels
         {
         }
 
-        public virtual void OnNavigatedFrom(NavigationParameters parameters) { }
+        public virtual void OnNavigatedFrom(INavigationParameters parameters) { }
 
-        public virtual void OnNavigatedTo(NavigationParameters parameters)
+        public virtual void OnNavigatedTo(INavigationParameters parameters)
         {
             this.OnResume();
         }
 
-        public virtual void OnNavigatingTo(NavigationParameters parameters) { }
+        public virtual void OnNavigatingTo(INavigationParameters parameters) { }
 
         protected virtual void OnContainerChanged() { }
 
@@ -197,6 +190,11 @@ namespace Capibara.ViewModels
 
             return false;
         }
+
+        public void Dispose()
+        {
+            this.Disposable.Dispose();
+        }
     }
 
     public class ViewModelBase<TModel> : ViewModelBase where TModel : Models.ModelBase<TModel>, new()
@@ -217,7 +215,7 @@ namespace Capibara.ViewModels
             base.OnContainerChanged();
         }
 
-        public override void OnNavigatingTo(NavigationParameters parameters)
+        public override void OnNavigatingTo(INavigationParameters parameters)
         {
             this.Model.Restore(parameters?.TryGetValue<TModel>(ParameterNames.Model) ?? this.Model);
 

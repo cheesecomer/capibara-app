@@ -60,7 +60,7 @@ namespace Capibara.ViewModels
             this.Model.SignInSuccess += this.OnSignInSuccess;
             this.Model.SignInFail += this.OnSignInFail;
 
-            // IsBusy Command
+            // IsBusy Property
             this.IsBusy = this.SignInCommand
                 .CanExecuteChangedAsObservable()
                 // メールアドレスとパスワードが入力された状態で、ログインコマンド実行不可は、現在処理中

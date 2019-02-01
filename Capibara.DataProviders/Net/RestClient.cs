@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 using Capibara.Services;
 
-using Unity.Attributes;
-
 namespace Capibara.Net
 {
     public class RestClient : IRestClient, IDisposable

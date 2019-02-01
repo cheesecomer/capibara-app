@@ -12,12 +12,14 @@ namespace Capibara.iOS.Effects
     public class BorderPlatformEffect : PlatformEffect
     {
         UIView _view;
-        Type[] hasBorderTypes = new Type[]{
+
+        Type[] hasBorderTypes = {
             typeof(Entry),
             typeof(DatePicker),
             typeof(TimePicker),
             typeof(Picker),
         };
+
         bool _clipsToBounds;
 
         protected override void OnAttached()

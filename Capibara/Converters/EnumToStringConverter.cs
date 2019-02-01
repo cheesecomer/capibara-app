@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using Xamarin.Forms;
-
 using System.Linq;
-
+using System.Reflection;
 using Capibara.Attributes;
+using Xamarin.Forms;
 
 namespace Capibara.Converters
 {
@@ -15,7 +12,7 @@ namespace Capibara.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var result = Enumerable.Cast<Enum>(value as IEnumerable)?.Select(this.DisplayName).ToList() ?? value;
+            var result = (value as IEnumerable)?.Cast<Enum>()?.Select(this.DisplayName)?.ToList() ?? value;
             return result;
         }
 

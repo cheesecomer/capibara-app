@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
-
+using Capibara.Forms;
 using Foundation;
 using UIKit;
-
-using CoreText;
-
-using Capibara.Forms;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
 
 [assembly: ExportRenderer(typeof(LinkableLabel), typeof(Capibara.iOS.Renderers.LinkableLabelRenderer))]
 namespace Capibara.iOS.Renderers
@@ -44,31 +39,32 @@ namespace Capibara.iOS.Renderers
 
         protected void UpdateLinks()
         {
-            var element = Element as LinkableLabel;
-            if (element == null) return;
-            if (Element.Text.IsNullOrEmpty()) return;
-
-            var attributedString = new NSMutableAttributedString(Element.Text, Control.Font, Element.TextColor.ToUIColor());
-
-            attributedString.AddAttribute(
-                UIStringAttributeKey.ForegroundColor,
-                Element.TextColor.Equals(Color.Default) ? Color.Black.ToUIColor() : Element.TextColor.ToUIColor(),
-                new NSRange(0, Element.Text.Length)
-            );
-
-            var matches = Regex.Matches(Element.Text, @"https?://[-_.!~*'a-zA-Z0-9;/?:@&=+$,%#]+", RegexOptions.IgnoreCase);
-
-            foreach (Match match in matches)
+            if (Element is LinkableLabel element)
             {
-                var range = new NSRange(match.Index, match.Length);
-                attributedString.AddAttribute(UIStringAttributeKey.ForegroundColor, element.LinkTextColor.ToUIColor(), range);
-                attributedString.AddAttribute(UIStringAttributeKey.UnderlineColor, element.LinkTextColor.ToUIColor(), range);
-                attributedString.AddAttribute(UIStringAttributeKey.UnderlineStyle, NSNumber.FromInt32((int)NSUnderlineStyle.Single), range);
+                if (Element.Text.IsNullOrEmpty()) return;
 
-                this.Matches.Add(match);
+                var attributedString = new NSMutableAttributedString(Element.Text, Control.Font, Element.TextColor.ToUIColor());
+
+                attributedString.AddAttribute(
+                    UIStringAttributeKey.ForegroundColor,
+                    Element.TextColor.Equals(Color.Default) ? Color.Black.ToUIColor() : Element.TextColor.ToUIColor(),
+                    new NSRange(0, Element.Text.Length)
+                );
+
+                var matches = Regex.Matches(Element.Text, @"https?://[-_.!~*'a-zA-Z0-9;/?:@&=+$,%#]+", RegexOptions.IgnoreCase);
+
+                foreach (Match match in matches)
+                {
+                    var range = new NSRange(match.Index, match.Length);
+                    attributedString.AddAttribute(UIStringAttributeKey.ForegroundColor, element.LinkTextColor.ToUIColor(), range);
+                    attributedString.AddAttribute(UIStringAttributeKey.UnderlineColor, element.LinkTextColor.ToUIColor(), range);
+                    attributedString.AddAttribute(UIStringAttributeKey.UnderlineStyle, NSNumber.FromInt32((int)NSUnderlineStyle.Single), range);
+
+                    this.Matches.Add(match);
+                }
+
+                Control.AttributedText = attributedString;
             }
-
-            Control.AttributedText = attributedString;
         }
 
         protected void OnTapUrl(UIGestureRecognizer tap)
@@ -91,7 +87,14 @@ namespace Capibara.iOS.Renderers
 
             if (url != null)
             {
-                UIApplication.SharedApplication.OpenUrl(new Uri(url.Value));
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                {
+                    UIApplication.SharedApplication.OpenUrl(new Uri(url.Value), new NSDictionary { }, null);
+                }
+                else
+                {
+                    UIApplication.SharedApplication.OpenUrl(new Uri(url.Value));
+                }
             }
         }
     }

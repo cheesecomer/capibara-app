@@ -15,31 +15,6 @@ after_build:
 before_test:
 - ps:
 test_script:
-- ps: >-
-    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
-      -targetargs:"Capibara.Core.Test/bin/Debug/Capibara.Core.Test.dll" `
-      -target:"nunit3-console.exe" `
-      -register:user `
-      -filter:"+[Capibara.Core]* -[Capibara.Core]Capibara.Attributes.DisplayNameAttribute" `
-      -output:"coverage.xml"
-
-- ps: >-
-    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
-      -targetargs:"Capibara.DataProviders.Test/bin/Debug/Capibara.DataProviders.Test.dll" `
-      -target:"nunit3-console.exe" `
-      -register:user `
-      -filter:"+[Capibara.DataProviders]* -[Capibara.DataProviders]Capibara.Net.ChannelCableFactory  -[Capibara.DataProviders]Capibara.Net.ChannelFactory -[Capibara.DataProviders]Capibara.Net.RequestFactory* -[Capibara.DataProviders]Capibara.Net.WebSocket* -[Capibara.DataProviders]Capibara.Models.Error -[Capibara.DataProviders]Capibara.Models.RoomComparer" `
-      -output:"coverage.xml" `
-      -mergeoutput
-
-- ps: >-
-    packages/OpenCover.4.6.519/tools/OpenCover.Console.exe `
-      -targetargs:"Capibara.Test/bin/Debug/Capibara.Test.dll" `
-      -target:"nunit3-console.exe" `
-      -register:user `
-      -filter:"+[Capibara]* -[Capibara]Capibara.Behaviors.* -[Capibara]Capibara.Effects.* -[Capibara]Capibara.Ioc.* -[Capibara]Capibara.Forms.* -[Capibara]Capibara.Views.* -[Capibara]Capibara.Selectors.* -[Capibara]Capibara.App* -[Capibara]Capibara.Environment* -[Capibara]Capibara.IContainerProviderExtensions -[Capibara]Capibara.ImageSourceExtensions" `
-      -output:"coverage.xml" `
-      -mergeoutput
-
+- ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../coverage.xml' /p:Exclude=\"[Capibara.DataProviders]Capibara.Net.ChannelCableFactory%2c[Capibara.DataProviders]Capibara.Net.ChannelFactory%2c[Capibara.DataProviders]Capibara.Net.RequestFactory*%2c[Capibara.DataProviders]Capibara.Net.WebSocket*%2c[Capibara.DataProviders]Capibara.Models.Error%2c[Capibara.DataProviders]Capibara.Models.RoomComparer%2c[Capibara]Capibara.Behaviors.*%2c[Capibara]Capibara.Effects.*%2c[Capibara]Capibara.Ioc.*%2c[Capibara]Capibara.Forms.*%2c[Capibara]Capibara.Views.*%2c[Capibara]Capibara.Selectors.*%2c[Capibara]Capibara.App*%2c[Capibara]Capibara.Environment*%2c[Capibara]Capibara.IContainerProviderExtensions%2c[Capibara]Capibara.ImageSourceExtensions\" Capibara.Test/Capibara.Test.csproj
 after_test:
 - ps: codecov -f "coverage.xml"

@@ -1,200 +1,200 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Xamarin.Forms.2.5.1.444934\build\netstandard1.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.2.5.1.444934\build\netstandard1.0\Xamarin.Forms.props')" />
-  <Import Project="..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.props" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.props')" />
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProjectGuid>{BA7103FB-37D7-43A1-85CC-24EF627A7952}</ProjectGuid>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{70AF572F-9E69-4150-82F5-0EBF566D43DA}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TemplateGuid>{6143fdea-f3c2-4a09-aafa-6e230626515e}</TemplateGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Capibara.iOS</RootNamespace>
-    <AssemblyName>Capibara.iOS</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Capibara.iOS</AssemblyName>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;DEBUG;ENABLE_TEST_CLOUD;USE_USER_DEFAULTS;</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <MtouchFastDev>true</MtouchFastDev>
-    <IOSDebuggerPort>42427</IOSDebuggerPort>
-    <MtouchLink>None</MtouchLink>
+    <ConsolePause>false</ConsolePause>
     <MtouchArch>x86_64</MtouchArch>
-    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\iPhone\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchFloat32>true</MtouchFloat32>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchArch>ARM64</MtouchArch>
-    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <PlatformTarget>x86</PlatformTarget>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
-    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <DeviceSpecificBuild>true</DeviceSpecificBuild>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <MtouchFastDev>true</MtouchFastDev>
-    <MtouchFloat32>true</MtouchFloat32>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <IOSDebuggerPort>28314</IOSDebuggerPort>
-    <MtouchLink>SdkOnly</MtouchLink>
+    <ConsolePause>false</ConsolePause>
     <MtouchArch>ARM64</MtouchArch>
-    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <PlatformTarget>x86</PlatformTarget>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>ARM64</MtouchArch>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchArch>ARM64</MtouchArch>
+    <BuildIpa>True</BuildIpa>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchArch>ARM64</MtouchArch>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <None Include="Entitlements.plist" />
+    <None Include="Info.plist" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Effects\BorderPlatformEffect.cs" />
+    <Compile Include="Effects\NamespaceInfo.cs" />
+    <Compile Include="Effects\ReversePlatformEffect.cs" />
+    <Compile Include="Renderers\AdMobBannerRenderer.cs" />
+    <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
+    <Compile Include="Renderers\LinkableLabelRenderer.cs" />
+    <Compile Include="Renderers\RoundImageRenderer.cs" />
+    <Compile Include="IsolatedStorage.cs" />
+    <Compile Include="PlatformVariable.cs" />
+    <Compile Include="ViewExtensions.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Services\BalloonService.cs" />
+    <Compile Include="Services\PickupPhotoService.cs" />
+    <Compile Include="Services\ProgressDialogService.cs" />
+    <Compile Include="Services\RewardedVideoService.cs" />
+    <Compile Include="Services\ScreenService.cs" />
+    <Compile Include="Services\SnsLoginService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-20%402.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-20%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-29%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-29%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-40%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-40%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-60%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-60%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-20.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-29.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-40.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-76.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-76%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-83.5%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon-1024.png" />
+    <ImageAsset Include="Assets.xcassets\logo.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\logo.imageset\logo.png" />
+    <ImageAsset Include="Assets.xcassets\logo.imageset\logo%40x2.png" />
+    <ImageAsset Include="Assets.xcassets\logo.imageset\logo%40x3.png" />
+    <ImageAsset Include="Assets.xcassets\bg_launch.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\bg_launch.imageset\bg_launch.png" />
+    <ImageAsset Include="Assets.xcassets\bg_launch.imageset\bg_launch%40x2.png" />
+    <ImageAsset Include="Assets.xcassets\bg_launch.imageset\bg_launch%40x3.png" />
+    <ImageAsset Include="Assets.xcassets\bg_header.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\bg_header.imageset\bg_header%40x3.png" />
+    <ImageAsset Include="Assets.xcassets\bg_header.imageset\bg_header%40x2.png" />
+    <ImageAsset Include="Assets.xcassets\bg_header.imageset\bg_header.png" />
+    <ImageAsset Include="Assets.xcassets\ic_home.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ic_home.imageset\ic_home.pdf" />
+    <ImageAsset Include="Assets.xcassets\ic_contact.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ic_contact.imageset\ic_contact.pdf" />
+    <ImageAsset Include="Assets.xcassets\ic_mail.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ic_mail.imageset\ic_mail.pdf" />
+    <ImageAsset Include="Assets.xcassets\ic_message.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ic_message.imageset\ic_message.pdf" />
+    <ImageAsset Include="Assets.xcassets\ic_setting.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ic_setting.imageset\ic_setting.pdf" />
+    <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\LottieResources\loading.json">
+      <Link>Resources\loading.json</Link>
+    </BundleResource>
+    <BundleResource Include="..\segoe-mdl2-assets.ttf">
+      <Link>Resources\Fonts\segoe-mdl2-assets.ttf</Link>
+    </BundleResource>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="PCLCrypto">
-      <HintPath>..\packages\PCLCrypto.2.0.147\lib\xamarinios10\PCLCrypto.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Json" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\netstandard1.0\System.Reactive.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Core">
-      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\netstandard1.3\System.Reactive.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Linq">
-      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\netstandard1.3\System.Reactive.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices">
-      <HintPath>..\packages\System.Reactive.PlatformServices.3.1.1\lib\netstandard1.3\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Auth">
-      <HintPath>..\packages\Xamarin.Auth.1.6.0\lib\Xamarin.iOS10\Xamarin.Auth.dll</HintPath>
-    </Reference>
-    <Reference Include="Lottie.iOS">
-      <HintPath>..\packages\Com.Airbnb.iOS.Lottie.2.5.1\lib\xamarinios\Lottie.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Lottie.Forms">
-      <HintPath>..\packages\Com.Airbnb.Xamarin.Forms.Lottie.2.5.1\lib\xamarinios\Lottie.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Lottie.Forms.iOS">
-      <HintPath>..\packages\Com.Airbnb.Xamarin.Forms.Lottie.2.5.1\lib\xamarinios\Lottie.Forms.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.Windows.Core">
-      <HintPath>..\packages\PInvoke.Windows.Core.0.5.134\lib\portable-net45+win8+wpa81\PInvoke.Windows.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.Kernel32">
-      <HintPath>..\packages\PInvoke.Kernel32.0.5.134\lib\portable-net45+win8+wpa81\PInvoke.Kernel32.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.BCrypt">
-      <HintPath>..\packages\PInvoke.BCrypt.0.5.134\lib\portable-net45+win8+wpa81\PInvoke.BCrypt.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.NCrypt">
-      <HintPath>..\packages\PInvoke.NCrypt.0.5.134\lib\portable-net45+win8+wpa81\PInvoke.NCrypt.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism">
-      <HintPath>..\packages\Prism.Core.7.0.0.396\lib\netstandard2.0\Prism.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveProperty">
-      <HintPath>..\packages\ReactiveProperty.4.2.0\lib\Xamarin.iOS10\ReactiveProperty.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveProperty.iOS">
-      <HintPath>..\packages\ReactiveProperty.4.2.0\lib\Xamarin.iOS10\ReactiveProperty.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonServiceLocator">
-      <HintPath>..\packages\Unity.5.7.3\lib\netstandard2.0\CommonServiceLocator.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Abstractions">
-      <HintPath>..\packages\Unity.5.7.3\lib\netstandard2.0\Unity.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Container">
-      <HintPath>..\packages\Unity.5.7.3\lib\netstandard2.0\Unity.Container.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ServiceLocation">
-      <HintPath>..\packages\Unity.5.7.3\lib\netstandard2.0\Unity.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Validation">
-      <HintPath>..\packages\Validation.2.4.18\lib\netstandard1.3\Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism.Forms">
-      <HintPath>..\packages\Prism.Forms.7.0.0.396\lib\netstandard2.0\Prism.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism.Unity.Forms">
-      <HintPath>..\packages\Prism.Unity.Forms.7.0.0.396\lib\netstandard2.0\Prism.Unity.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.MobileAds">
-      <HintPath>..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\lib\Xamarin.iOS10\Google.MobileAds.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.GoogleAnalytics.Abstractions">
-      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.GoogleAnalytics">
-      <HintPath>..\packages\ksemenenko.GoogleAnalytics.1.0.3.2\lib\XamariniOS10\Plugin.GoogleAnalytics.dll</HintPath>
-    </Reference>
-    <Reference Include="AngleSharp">
-      <HintPath>..\packages\AngleSharp.0.9.9.2\lib\portable-windows8+net45+windowsphone8+wpa+monoandroid+monotouch\AngleSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Core">
-      <HintPath>..\packages\Xamarin.Forms.2.5.1.444934\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform">
-      <HintPath>..\packages\Xamarin.Forms.2.5.1.444934\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform.iOS">
-      <HintPath>..\packages\Xamarin.Forms.2.5.1.444934\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Xaml">
-      <HintPath>..\packages\Xamarin.Forms.2.5.1.444934\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
+    <PackageReference Include="Com.Airbnb.iOS.Lottie">
+      <Version>2.5.6</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Google.iOS.MobileAds">
+      <Version>7.32.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Emit">
+      <Version>4.3.0</Version>
+      <ExcludeAssets>all</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
     <ProjectReference Include="..\Capibara\Capibara.csproj">
-      <Project>{4BAFE42D-1E8C-4CD7-921B-F069E2132A8C}</Project>
+      <Project>{46EEA3AA-8612-49D0-84BB-902AA1BDAAC9}</Project>
       <Name>Capibara</Name>
     </ProjectReference>
     <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
-      <Project>{DD777B11-BCCB-4543-91F5-16F7B679653F}</Project>
+      <Project>{5A8DA176-4793-4F03-8647-18860A608D82}</Project>
       <Name>Capibara.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Capibara.DataProviders\Capibara.DataProviders.csproj">
-      <Project>{6BD9633D-6376-4208-B7DE-DE00159154BF}</Project>
+      <Project>{437540CE-92C4-455D-BF9B-638CF50129F1}</Project>
       <Name>Capibara.DataProviders</Name>
     </ProjectReference>
     <ProjectReference Include="..\RSKImageCropper\RSKImageCropper.csproj">
@@ -207,105 +207,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\logo.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\logo.imageset\logo.png" />
-    <ImageAsset Include="Resources\Images.xcassets\logo.imageset\logo%40x2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\logo.imageset\logo%40x3.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch%40x2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_launch.imageset\bg_launch%40x3.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header%40x3.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header%40x2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\bg_header.imageset\bg_header.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-20%402.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-20%403x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-29%402x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-29%403x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-40%402x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-40%403x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-60%402x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-60%403x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-20.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-29.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-40.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-76.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-76%402x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-83.5%402x.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-1024.png" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_home.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_home.imageset\ic_home.pdf" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_contact.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_contact.imageset\ic_contact.pdf" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_mail.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_mail.imageset\ic_mail.pdf" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_message.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_message.imageset\ic_message.pdf" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_setting.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\ic_setting.imageset\ic_setting.pdf" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Info.plist" />
-    <None Include="Entitlements.plist" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
-    <Compile Include="IsolatedStorage.cs" />
-    <Compile Include="ViewExtensions.cs" />
-    <Compile Include="Services\ProgressDialogService.cs" />
-    <Compile Include="Services\PickupPhotoService.cs" />
-    <Compile Include="Renderers\RoundImageRenderer.cs" />
-    <Compile Include="Renderers\AdMobBannerRenderer.cs" />
-    <Compile Include="PlatformVariable.cs" />
-    <Compile Include="Services\ScreenService.cs" />
-    <Compile Include="Renderers\KeyboardOverlapRenderer.cs" />
-    <Compile Include="Services\ApplicationService.cs" />
-    <Compile Include="Renderers\LinkableLabelRenderer.cs" />
-    <Compile Include="Effects\NamespaceInfo.cs" />
-    <Compile Include="Effects\BorderPlatformEffect.cs" />
-    <Compile Include="Effects\ReversePlatformEffect.cs" />
-    <Compile Include="Services\BalloonService.cs" />
-    <Compile Include="Services\SnsLoginService.cs" />
-    <Compile Include="Services\RewardedVideoService.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\Images.xcassets\logo.imageset\" />
-    <Folder Include="Resources\Images.xcassets\bg_launch.imageset\" />
-    <Folder Include="Resources\Images.xcassets\bg_header.imageset\" />
-    <Folder Include="Services\" />
-    <Folder Include="Effects\" />
-    <Folder Include="Renderers\" />
-    <Folder Include="Resources\Fonts\" />
-    <Folder Include="Resources\Images.xcassets\ic_home.imageset\" />
-    <Folder Include="Resources\Images.xcassets\ic_contact.imageset\" />
-    <Folder Include="Resources\Images.xcassets\ic_mail.imageset\" />
-    <Folder Include="Resources\Images.xcassets\ic_message.imageset\" />
-    <Folder Include="Resources\Images.xcassets\ic_setting.imageset\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="..\LottieResources\loading.json">
-      <Link>Resources\loading.json</Link>
-    </BundleResource>
-    <BundleResource Include="..\segoe-mdl2-assets.ttf">
-      <Link>Resources\Fonts\segoe-mdl2-assets.ttf</Link>
-    </BundleResource>
-  </ItemGroup>
-  <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.6\build\Xamarin.Build.Download.targets')" />
-  <Import Project="..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\build\Xamarin.Google.iOS.MobileAds.targets" Condition="Exists('..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\build\Xamarin.Google.iOS.MobileAds.targets')" />
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <PreBuildEvent>
       copy /Y $(ProjectDir)PlatformVariable.cs $(ProjectDir)PlatformVariable.cs.bak
@@ -325,5 +229,4 @@
     </PreBuildEvent>
     <PostBuildEvent>mv $(ProjectDir)PlatformVariable.cs.bak $(ProjectDir)PlatformVariable.cs</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Xamarin.Forms.2.5.1.444934\build\netstandard1.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.5.1.444934\build\netstandard1.0\Xamarin.Forms.targets')" />
 </Project>
