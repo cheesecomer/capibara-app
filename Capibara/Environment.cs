@@ -41,17 +41,17 @@ namespace Capibara
 
     public class EnvironmentProduction : IEnvironment
     {
-        string IEnvironment.BaseUrl { get; } = "https://capibara-production.herokuapp.com/";
+        string IEnvironment.BaseUrl { get; } = "https://capibara.cheesecomer.com/";
 
-        string IEnvironment.ApiBaseUrl { get; } = "https://capibara-production.herokuapp.com/api";
+        string IEnvironment.ApiBaseUrl { get; } = "https://capibara.cheesecomer.com/api";
 
-        string IEnvironment.WebSocketUrl { get; } = "ws://capibara-production.herokuapp.com/cable";
+        string IEnvironment.WebSocketUrl { get; } = "ws://capibara.cheesecomer.com/cable";
 
-        string IEnvironment.OAuthBaseUrl { get; } = "https://capibara-production.herokuapp.com/api/oauth/";
+        string IEnvironment.OAuthBaseUrl { get; } = "https://capibara.cheesecomer.com/api/oauth/";
 
-        string IEnvironment.PrivacyPolicyUrl { get; } = "https://capibara-production.herokuapp.com/privacy_policy?from_app=1";
+        string IEnvironment.PrivacyPolicyUrl { get; } = "https://capibara.cheesecomer.com/privacy_policy?from_app=1";
 
-        string IEnvironment.TermsUrl { get; } = "https://capibara-production.herokuapp.com/terms";
+        string IEnvironment.TermsUrl { get; } = "https://capibara.cheesecomer.com/terms";
 
         int IEnvironment.WebSocketReceiveBufferSize { get; } = 1024;
 

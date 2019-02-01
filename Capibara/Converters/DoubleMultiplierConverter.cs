@@ -8,10 +8,8 @@ namespace Capibara.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double multiplier;
-
-            if (!Double.TryParse(parameter as string, out multiplier))
-                multiplier = 1;
+            if (!Double.TryParse(parameter as string, out double multiplier))
+                multiplier = 1d;
             
             if (value is float)
             {
@@ -27,7 +25,7 @@ namespace Capibara.Converters
             }
             else
             {
-                return -1;
+                return -1d;
             }
         }
 

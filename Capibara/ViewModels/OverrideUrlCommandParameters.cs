@@ -16,7 +16,7 @@ namespace Capibara.ViewModels
 
     public class OverrideUrlCommandParameters : IOverrideUrlCommandParameters
     {
-        private WebNavigatingEventArgs origin;
+        private readonly WebNavigatingEventArgs origin;
 
         string IOverrideUrlCommandParameters.Url => this.origin.Url;
 

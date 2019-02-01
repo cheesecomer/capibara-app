@@ -7,7 +7,6 @@ using Capibara.Models;
 using Newtonsoft.Json;
 
 using Unity;
-using Unity.Attributes;
 
 namespace Capibara.Net.Channels
 {

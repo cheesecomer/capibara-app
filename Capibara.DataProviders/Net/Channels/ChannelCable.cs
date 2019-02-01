@@ -1,16 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-
+using System.IO;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json;
 using Unity;
 using Unity.Attributes;
-
-using Newtonsoft.Json;
 
 namespace Capibara.Net.Channels
 {
@@ -165,7 +162,7 @@ namespace Capibara.Net.Channels
         {
             if (!this.IsOpen)
                 return;
-                   
+
             try
             {
                 await this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);

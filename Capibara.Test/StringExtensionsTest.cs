@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using NUnit.Framework;
 
 namespace Capibara.Test
@@ -12,7 +11,7 @@ namespace Capibara.Test
         [TestCase("\r\n", "")]
         [TestCase(" ", "")]
         [TestCase(" \r\n ", "")]
-        public void ToSlimTest(string value, string expect)
+        public void ToSlim(string value, string expect)
         {
             Assert.That(value.ToSlim(), Is.EqualTo(expect));
         }
@@ -20,7 +19,7 @@ namespace Capibara.Test
         [TestCase("", true)]
         [TestCase(null, true)]
         [TestCase("Foo", false)]
-        public void IsNullOrEmptyTest(string value, bool expect)
+        public void IsNullOrEmpty(string value, bool expect)
         {
             Assert.That(value.IsNullOrEmpty(), Is.EqualTo(expect));
         }
@@ -28,7 +27,7 @@ namespace Capibara.Test
         [TestCase("", false)]
         [TestCase(null, false)]
         [TestCase("Foo", true)]
-        public void IsPresentTest(string value, bool expect)
+        public void IsPresent(string value, bool expect)
         {
             Assert.That(value.IsPresent(), Is.EqualTo(expect));
         }
@@ -36,7 +35,7 @@ namespace Capibara.Test
         [TestCase("", null)]
         [TestCase(null, null)]
         [TestCase("Foo", "Foo")]
-        public void PresenceTest(string value, string expect)
+        public void Presence(string value, string expect)
         {
             Assert.That(value.Presence(), Is.EqualTo(expect));
         }

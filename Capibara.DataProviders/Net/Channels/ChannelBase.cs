@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json;
 using Unity;
 using Unity.Attributes;
-
-using Newtonsoft.Json;
 
 namespace Capibara.Net.Channels
 {
@@ -21,7 +19,7 @@ namespace Capibara.Net.Channels
         protected ChannelCableBase Cable { get; private set; }
 
         public virtual bool IsOpen => this.Cable?.IsOpen ?? false;
-        
+
         /// <summary>
         /// DIコンテナ
         /// </summary>

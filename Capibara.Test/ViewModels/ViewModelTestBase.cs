@@ -53,11 +53,11 @@ namespace Capibara.Test.ViewModels
             this.NavigationService = new Mock<NavigationService> { CallBase = true };
             this.NavigationService
                 .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<NavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<INavigationResult>(new NavigationResult()));
 
             this.NavigationService
                 .Setup(x => x.GoBackAsync())
-                .ReturnsAsync(true);
+                .Returns(Task.FromResult<INavigationResult>(new NavigationResult()));
 
             this.ProgressDialogService = new Mock<IProgressDialogService>();
             this.ProgressDialogService

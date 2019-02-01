@@ -49,3 +49,6 @@ Thumbs.db
 
 # backup
 *.bak
+
+# coverage report
+coverage.xml

@@ -1,111 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6BD9633D-6376-4208-B7DE-DE00159154BF}</ProjectGuid>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Capibara</RootNamespace>
-    <AssemblyName>Capibara.DataProviders</AssemblyName>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>CS1701</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>CS1701</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\Room.cs" />
-    <Compile Include="Net\Exceptions.cs" />
-    <Compile Include="Net\IRequest.cs" />
-    <Compile Include="Net\IRestClient.cs" />
-    <Compile Include="Net\RequestBase.cs" />
-    <Compile Include="Net\RestClient.cs" />
-    <Compile Include="Net\Rooms\IndexRequest.cs" />
-    <Compile Include="Net\Rooms\IndexResponse.cs" />
-    <Compile Include="Net\Sessions\CreateRequest.cs" />
-    <Compile Include="Net\Sessions\CreateResponse.cs" />
-    <Compile Include="Models\ModelBase.cs" />
-    <Compile Include="Models\Session.cs" />
-    <Compile Include="Models\Error.cs" />
-    <Compile Include="Net\Channels\ChatChannel.cs" />
-    <Compile Include="Net\Channels\ChannelCable.cs" />
-    <Compile Include="Net\Channels\ChannelBase.cs" />
-    <Compile Include="Net\WebSocketClient.cs" />
-    <Compile Include="Net\WebSocketMessageTypeExtensions.cs" />
-    <Compile Include="Net\Rooms\ShowRequest.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Net\Channels\Command.cs" />
-    <Compile Include="Net\Users\CreateRequest.cs" />
-    <Compile Include="Net\Users\ShowRequest.cs" />
-    <Compile Include="Net\Users\UpdateRequest.cs" />
-    <Compile Include="Models\Block.cs" />
-    <Compile Include="Net\Blocks\IndexRequest.cs" />
-    <Compile Include="Net\Blocks\CreateRequest.cs" />
-    <Compile Include="Net\Blocks\IndexResponse.cs" />
-    <Compile Include="Net\Blocks\DestroyRequest.cs" />
-    <Compile Include="Models\Information.cs" />
-    <Compile Include="Net\Informations\IndexRequest.cs" />
-    <Compile Include="Net\Informations\IndexResponse.cs" />
-    <Compile Include="Models\OAuthProvider.cs" />
-    <Compile Include="Net\Users\DestroyRequest.cs" />
-    <Compile Include="Models\ReportReason.cs" />
-    <Compile Include="Net\Reports\CreateRequest.cs" />
-    <Compile Include="Net\RequestFactory.cs" />
-    <Compile Include="Net\Inquiries\CreateRequest.cs" />
-    <Compile Include="Net\Sessions\ShowRequest.cs" />
-    <Compile Include="Net\ChannelFactory.cs" />
-    <Compile Include="Net\ChannelCableFactory.cs" />
-    <Compile Include="Net\Channels\DirectMessageChannel.cs" />
-    <Compile Include="Models\DirectMessage.cs" />
-    <Compile Include="Net\DirectMessages\IndexRequest.cs" />
-    <Compile Include="Net\DirectMessages\IndexResponse.cs" />
-    <Compile Include="Net\DirectMessages\ShowResponse.cs" />
-    <Compile Include="Net\DirectMessages\ShowRequest.cs" />
-    <Compile Include="Models\DirectMessageThread.cs" />
-    <Compile Include="Net\Follows\CreateRequest.cs" />
-    <Compile Include="Net\Follows\DestroyRequest.cs" />
-    <Compile Include="Models\Follow.cs" />
-    <Compile Include="Net\Follows\IndexRequest.cs" />
-    <Compile Include="Net\Follows\IndexResponse.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Prism.Core" Version="7.1.0.431" />
+    <PackageReference Include="Unity" Version="5.8.11" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.json" />
+    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Net\" />
-    <Folder Include="Net\Rooms\" />
-    <Folder Include="Net\Sessions\" />
-    <Folder Include="Net\Channels\" />
-    <Folder Include="Net\Users\" />
-    <Folder Include="Net\Blocks\" />
-    <Folder Include="Net\Informations\" />
-    <Folder Include="Net\Reports\" />
-    <Folder Include="Net\Inquiries\" />
-    <Folder Include="Net\DirectMessages\" />
-    <Folder Include="Net\Follows\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj">
-      <Project>{DD777B11-BCCB-4543-91F5-16F7B679653F}</Project>
-      <Name>Capibara.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
