@@ -7,7 +7,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
-using Android.Views;
 
 using Capibara.Droid.Services;
 using Capibara.Services;

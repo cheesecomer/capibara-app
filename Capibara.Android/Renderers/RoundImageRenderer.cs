@@ -10,9 +10,6 @@ using Android.Runtime;
 using Capibara.Droid.Renderers;
 using Capibara.Forms;
 
-using Reactive.Bindings.Extensions;
-using Reactive.Bindings;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 

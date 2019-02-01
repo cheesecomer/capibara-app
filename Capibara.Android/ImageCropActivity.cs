@@ -1,24 +1,14 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
-using Android.Util;
-using Android.Views;
 using Android.Widget;
-
-using Java.IO;
-
 using Com.Isseiaoki.Simplecropview;
 using Com.Isseiaoki.Simplecropview.Callback;
-
+using Java.IO;
 using AndroidUri = Android.Net.Uri;
-using Android.Graphics;
 
 namespace Capibara.Droid
 {
