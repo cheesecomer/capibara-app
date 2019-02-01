@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using Capibara.Effects;
 using CoreGraphics;
-using Capibara.Effects;
-using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 

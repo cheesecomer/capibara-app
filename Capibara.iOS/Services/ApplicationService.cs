@@ -31,8 +31,7 @@ namespace Capibara.iOS.Services
                     record.Account = NSBundle.MainBundle.BundleIdentifier.ToLower();
                     record.Service = NSBundle.MainBundle.BundleIdentifier.ToLower();
 
-                    SecStatusCode statusCode;
-                    var match = SecKeyChain.QueryAsRecord(record, out statusCode);
+                    var match = SecKeyChain.QueryAsRecord(record, out SecStatusCode statusCode);
                     if (statusCode == SecStatusCode.Success)
                     {
                         this.uuid = match.Generic.ToString();

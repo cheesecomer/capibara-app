@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Capibara.Services;
-
-using UIKit;
 using SafariServices;
-using Foundation;
+using UIKit;
 
 namespace Capibara.iOS.Services
 {

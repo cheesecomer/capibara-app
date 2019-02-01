@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>プロフィール画像をアルバムから選択</string>
 	<key>CFBundleDisplayName</key>
 	<string>Capibara</string>
 	<key>CFBundleIdentifier</key>
@@ -41,7 +39,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>XSAppIconAssets</key>
-	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>CFBundleName</key>
 	<string>Capibara</string>
 	<key>CFBundleURLTypes</key>
@@ -56,6 +54,8 @@
 		</dict>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
+	<string>プロフィール画像をアルバムから選択</string>
+	<key>NSAppleMusicUsageDescription</key>
 	<string>プロフィール画像をアルバムから選択</string>
 	<key>UIAppFonts</key>
 	<array>
