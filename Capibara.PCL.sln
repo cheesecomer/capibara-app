@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain", "Capibara
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Presentation", "Capibara.Presentation\Capibara.Presentation.csproj", "{C0DBBAFF-A2D3-4A86-B11A-368F537FE385}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Data", "Capibara.Data\Capibara.Data.csproj", "{FD69D21E-7941-44FE-9DBA-7C0D4169694D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -43,5 +45,9 @@ Global
 		{C0DBBAFF-A2D3-4A86-B11A-368F537FE385}.Debug|x86.Build.0 = Debug|Any CPU
 		{C0DBBAFF-A2D3-4A86-B11A-368F537FE385}.Release|x86.ActiveCfg = Release|Any CPU
 		{C0DBBAFF-A2D3-4A86-B11A-368F537FE385}.Release|x86.Build.0 = Release|Any CPU
+		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
