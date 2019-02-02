@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="UseCases\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Interactors\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Interactors\.gitkeep" />
+    <None Remove="Models\.gitkeep" />
+    <None Remove="Repositories\.gitkeep" />
+    <None Remove="UseCases\.gitkeep" />
+  </ItemGroup>
+</Project>

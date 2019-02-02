@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara", "Capibara\Capiba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Test", "Capibara.Test\Capibara.Test.csproj", "{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain", "Capibara.Domain\Capibara.Domain.csproj", "{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -31,5 +33,9 @@ Global
 		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Debug|x86.Build.0 = Debug|Any CPU
 		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Release|x86.Build.0 = Release|Any CPU
+		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Debug|x86.Build.0 = Debug|Any CPU
+		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Release|x86.ActiveCfg = Release|Any CPU
+		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
