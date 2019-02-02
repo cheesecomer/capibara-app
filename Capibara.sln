@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.iOS", "Capibara.iO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain", "Capibara.Domain\Capibara.Domain.csproj", "{DA17E671-951B-430D-884D-AB2110B66AA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Presentation", "Capibara.Presentation\Capibara.Presentation.csproj", "{E88E332F-570A-4EEF-A59E-1021C819B261}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,5 +177,21 @@ Global
 		{DA17E671-951B-430D-884D-AB2110B66AA8}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
 		{DA17E671-951B-430D-884D-AB2110B66AA8}.AppStore|iPhone.ActiveCfg = Release|Any CPU
 		{DA17E671-951B-430D-884D-AB2110B66AA8}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Release|iPhone.Build.0 = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{E88E332F-570A-4EEF-A59E-1021C819B261}.AppStore|iPhone.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
