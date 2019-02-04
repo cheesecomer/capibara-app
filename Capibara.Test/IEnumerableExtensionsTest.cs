@@ -6,43 +6,6 @@ using NUnit.Framework;
 
 namespace Capibara.Test
 {
-    public class Pair<TFirst, TSecond>
-    {
-        public TFirst First { get; }
-        public TSecond Second { get; }
-
-        public Pair(TFirst first, TSecond second)
-        {
-            this.First = first;
-            this.Second = second;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == this) return true;
-
-            if (obj is Pair<TFirst, TSecond> target)
-            {
-                if (!target.First.Equals(this.First)) return false;
-                if (!target.Second.Equals(this.Second)) return false;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return $"({this.First} to {this.Second})";
-        }
-    }
-
     [TestFixture]
     public class IEnumerableExtensionsTest
     {
