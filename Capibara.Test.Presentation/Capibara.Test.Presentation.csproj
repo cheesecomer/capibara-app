@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <Folder Include="ViewModels\" />
+    <Folder Include="Forms\" />
+    <Folder Include="Forms\Behaviors\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Presentation\Capibara.Presentation.csproj" />

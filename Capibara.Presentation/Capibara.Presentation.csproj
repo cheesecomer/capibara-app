@@ -7,6 +7,8 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="Forms\" />
+    <Folder Include="Forms\Behaviors\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
