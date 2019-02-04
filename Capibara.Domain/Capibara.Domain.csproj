@@ -16,4 +16,10 @@
     <None Remove="Repositories\.gitkeep" />
     <None Remove="UseCases\.gitkeep" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.Core" Version="7.1.0.431" />
+  </ItemGroup>
 </Project>
