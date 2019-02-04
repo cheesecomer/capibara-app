@@ -9,7 +9,12 @@
     <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="ViewModels\.gitkeep" />
-    <None Remove="Views\.gitkeep" />
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
+    <PackageReference Include="Prism.Forms" Version="7.1.0.431" />
+    <PackageReference Include="ReactiveProperty" Version="5.3.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Capibara.Domain\Capibara.Domain.csproj" />
+    <ProjectReference Include="..\Capibara.Core\Capibara.Core.csproj" />
   </ItemGroup>
 </Project>
