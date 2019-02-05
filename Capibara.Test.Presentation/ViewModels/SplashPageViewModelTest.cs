@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
@@ -67,7 +68,6 @@ namespace Capibara.Presentation.ViewModels
                     .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                     .Returns(Task.CompletedTask);
 
-
                 var retryStack = new Stack<bool>();
                 retryStack.Push(shouldRetry);
                 this.PageDialogService
@@ -85,7 +85,12 @@ namespace Capibara.Presentation.ViewModels
                 this.HasSessionUseCase = new Mock<IHasSessionUseCase>();
                 this.HasSessionUseCase
                     .Setup(x => x.Invoke())
-                    .ReturnsAsync(hasSession);
+                    .Returns(Observable.Create<bool>(
+                        emitter => 
+                        {
+                            emitter.OnNext(hasSession);
+                            return () => { };
+                        }));
 
                 this.RefreshSessionUseCase = new Mock<IRefreshSessionUseCase>();
                 this.RefreshSessionUseCase

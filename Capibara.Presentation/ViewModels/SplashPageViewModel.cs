@@ -46,30 +46,29 @@ namespace Capibara.Presentation.ViewModels
 
         public Task RefreshCommandTask { get; private set; }
 
-        protected async Task RefreshAsync()
+        protected Task RefreshAsync()
         {
-            if (await HasSessionUseCase.Invoke())
-            {
-                await this.ToFloorMapPage();
-            }
-            else
-            {
-                await this.ToSignUpPage();
-            }
+            return this.HasSessionUseCase
+                .Invoke()
+                .FirstAsync()
+                .SelectMany(v => v ? this.ToFloorMapPage() : this.ToSignUpPage())
+                .ToTask()
+                ;
         }
 
-        private async Task ToSignUpPage()
+        private IObservable<Unit> ToSignUpPage()
         {
-            await this.LogoTopMarginChangeAsync();
-            await this.NavigationService.NavigateAsync("SignUpPage", animated: false);
+            return this.LogoTopMarginChangeAsync()
+                .SelectMany(x => this.NavigationService.NavigateAsync("SignUpPage", animated: false))
+                .Select(_ => Unit.Default);
         }
 
-        private Task ToFloorMapPage()
+        private IObservable<Unit> ToFloorMapPage()
         {
             return Observable.FromAsync(this.RefreshSessionUseCase.Invoke)
                 .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
-                .SelectMany(user => Task.WhenAll(this.LogoOpacityChangeAsync(), this.LogoScaleChangeAsync()).ToObservable().Select(_ => user))
+                .SelectMany(user => this.LogoOpacityChangeAsync().Zip(this.LogoScaleChangeAsync(), (x, y) => user))
                 .SelectMany(user =>
                 {
                     var pageName =
@@ -85,21 +84,20 @@ namespace Capibara.Presentation.ViewModels
                     return this.NavigationService.NavigateAsync(pageName, parameters, animated: false).ToObservable();
                 })
                 .Select(_ => Unit.Default)
-                .Catch((UnauthorizedException _) => this.ToSignUpPage().ToObservable())
+                .Catch((UnauthorizedException _) => this.ToSignUpPage())
                 .RetryWhen(x =>
                     x.ObserveOn(this.SchedulerProvider.UI)
-                        .SelectMany(e => 
+                        .SelectMany(e =>
                             this.DisplayErrorAlertAsync(e)
                                 .ToObservable()
                                 .Select(v => new Pair<Exception, bool>(e, v)))
                         .SelectMany(v => v.Second
                             ? Observable.Return(Unit.Default)
                             : Observable.Throw<Unit>(v.First)))
-                .Catch((Exception _) => this.ApplicationExitUseCase.Invoke().ToObservable())
-                .ToTask();
+                .Catch((Exception _) => this.ApplicationExitUseCase.Invoke().ToObservable());
         }
 
-        private Task LogoTopMarginChangeAsync()
+        private IObservable<Unit> LogoTopMarginChangeAsync()
         {
             var initialValue = this.LogoTopMargin.Value;
             var step = (initialValue - 20d) / (500d / millisecondPerFrame);
@@ -110,10 +108,11 @@ namespace Capibara.Presentation.ViewModels
                 .Select(x => initialValue - (x + 1) * step)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(v => { this.LogoTopMargin.Value = v; }, () => { this.LogoTopMargin.Value = 20; })
-                .ToTask();
+                .Aggregate((x, y) => 0d)
+                .Select(_ => Unit.Default);
         }
 
-        private Task LogoScaleChangeAsync()
+        private IObservable<Unit> LogoScaleChangeAsync()
         {
             var initialValue = this.LogoScale.Value;
             var step = 2d / (500d / millisecondPerFrame);
@@ -124,10 +123,11 @@ namespace Capibara.Presentation.ViewModels
                 .Select(x => initialValue + (x + 1) * step)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(v => { this.LogoScale.Value = v; }, () => { this.LogoScale.Value = 3; })
-                .ToTask();
+                .Aggregate((x, y) => 0d)
+                .Select(_ => Unit.Default);
         }
 
-        private Task LogoOpacityChangeAsync()
+        private IObservable<Unit> LogoOpacityChangeAsync()
         {
             var initialValue = this.LogoOpacity.Value;
             var step = 1d / (500d / millisecondPerFrame);
@@ -138,7 +138,8 @@ namespace Capibara.Presentation.ViewModels
                 .Select(x => initialValue - (x + 1) * step)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(v => { this.LogoOpacity.Value = v; }, () => { this.LogoOpacity.Value = 0; })
-                .ToTask();
+                .Aggregate((x, y) => 0d)
+                .Select(_ => Unit.Default);
         }
     }
 }
