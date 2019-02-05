@@ -6,7 +6,8 @@ namespace Capibara
 {
     public static class ObjectExtensions
     {
-        public static T BuildUp<T>(this T source, IUnityContainer container)
+        public static T BuildUp<T>(this T source, IUnityContainer container) 
+            where T : class
             => source == null ? source : container.BuildUp(source);
 
         public static bool IsNull<T>(this T source) where T : class
@@ -17,9 +18,8 @@ namespace Capibara
 
         public static int ToInt<T>(this T source, int defaultValue = 0)
         {
-            int result;
             return 
-                int.TryParse(source?.ToString() ?? string.Empty, out result)
+                int.TryParse(source?.ToString() ?? string.Empty, out int result)
                    ? result
                    : defaultValue;
         }

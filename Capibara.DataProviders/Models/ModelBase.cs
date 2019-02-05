@@ -1,9 +1,6 @@
-﻿using System;
-
+﻿using Prism.Mvvm;
 using Unity;
 using Unity.Attributes;
-
-using Prism.Mvvm;
 
 namespace Capibara.Models
 {

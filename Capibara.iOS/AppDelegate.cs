@@ -1,24 +1,15 @@
 ﻿using System;
-using System.Net;
 using System.Linq;
-using System.Threading.Tasks;
-
 using Capibara.iOS.Services;
 using Capibara.Services;
-
 using Foundation;
-
 using Lottie.Forms.iOS.Renderers;
-
-using Unity;
-using Unity.Attributes;
-
+using Plugin.GoogleAnalytics;
 using Prism;
 using Prism.Ioc;
-
 using UIKit;
-
-using Plugin.GoogleAnalytics;
+using Unity;
+using Unity.Attributes;
 
 namespace Capibara.iOS
 {

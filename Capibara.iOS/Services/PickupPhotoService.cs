@@ -1,15 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-
-using CoreGraphics;
-
 using Capibara.Services;
-
-using UIKit;
-
 using PhotoTweaks;
 using RSKImageCropper;
+using UIKit;
 
 namespace Capibara.iOS.Services
 {
@@ -19,9 +14,12 @@ namespace Capibara.iOS.Services
         {
             var taskSource = new TaskCompletionSource<byte[]>();
 
-            var imagePickerController = new UIImagePickerController();
-            imagePickerController.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
-            imagePickerController.MediaTypes = new [] { "public.image" };
+            var imagePickerController = new UIImagePickerController
+            {
+                SourceType = UIImagePickerControllerSourceType.PhotoLibrary,
+                MediaTypes = new [] { "public.image" }
+            };
+
             imagePickerController.FinishedPickingMedia += this.OnFinishedPickingMedia(taskSource, cropMode);
             imagePickerController.Canceled += this.OnCancel(taskSource);
 

@@ -20,7 +20,7 @@ namespace Capibara.ViewModels
             IPageDialogService pageDialogService = null)
             : base(navigationService, pageDialogService) { }
 
-        public override void OnNavigatedTo(NavigationParameters parameters)
+        public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 

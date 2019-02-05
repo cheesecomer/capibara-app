@@ -1,23 +1,14 @@
 using System;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System.Net;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
 using System.Reactive.Linq;
-
-using System.Net.Http;
-
+using System.Threading.Tasks;
+using AngleSharp;
+using AngleSharp.Dom;
 using Capibara.Services;
-
 using Prism.Navigation;
 using Prism.Services;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
-
-using AngleSharp.Dom;
-using AngleSharp;
-
 using Xamarin.Forms;
 
 namespace Capibara.ViewModels

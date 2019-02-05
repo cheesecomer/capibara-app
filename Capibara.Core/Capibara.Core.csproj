@@ -1,58 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DD777B11-BCCB-4543-91F5-16F7B679653F}</ProjectGuid>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Capibara</RootNamespace>
-    <AssemblyName>Capibara.Core</AssemblyName>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IEnvironment.cs" />
-    <Compile Include="IApplication.cs" />
-    <Compile Include="ObjectExtensions.cs" />
-    <Compile Include="IEnumerableExtensions.cs" />
-    <Compile Include="IIsolatedStorage.cs" />
-    <Compile Include="DictionaryExtensions.cs" />
-    <Compile Include="StringExtensions.cs" />
-    <Compile Include="ICapibaraApplication.cs" />
-    <Compile Include="UnityInstanceNames.cs" />
-    <Compile Include="FailEventArgs.cs" />
-    <Compile Include="EventArgs.cs" />
-    <Compile Include="Services\ITaskService.cs" />
-    <Compile Include="Attributes\DisplayNameAttribute.cs" />
-    <Compile Include="Services\IApplicationService.cs" />
-    <Compile Include="Services\IPickupPhotoService.cs" />
-    <Compile Include="Services\IProgressDialogService.cs" />
-    <Compile Include="Services\IBalloonService.cs" />
-    <Compile Include="Services\ISnsLoginService.cs" />
-    <Compile Include="Services\IRewardedVideoService.cs" />
+    <PackageReference Include="Unity.Abstractions" Version="3.3.1" />
+    <PackageReference Include="Unity" Version="5.8.11" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="Attributes\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

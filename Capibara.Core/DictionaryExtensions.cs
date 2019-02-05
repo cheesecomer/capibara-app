@@ -7,8 +7,7 @@ namespace Capibara
     {
         public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue defaultValue = default(TValue))
         {
-            TValue value;
-            return source.TryGetValue(key, out value) ? value : defaultValue;
+            return source.TryGetValue(key, out TValue value) ? value : defaultValue;
         }
     }
 }
