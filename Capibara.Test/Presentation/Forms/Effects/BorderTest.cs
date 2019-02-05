@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
-using System;
 using System.Linq;
 using NUnit.Framework;
 using Xamarin.Forms;

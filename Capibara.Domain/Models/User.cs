@@ -1,5 +1,4 @@
-﻿using System;
-namespace Capibara.Domain.Models
+﻿namespace Capibara.Domain.Models
 {
     public class User : ModelBase<User>
     {
