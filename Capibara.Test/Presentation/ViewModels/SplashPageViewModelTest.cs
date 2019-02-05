@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
@@ -57,25 +57,8 @@ namespace Capibara.Presentation.ViewModels
                 var schedulerProvider = new SchedulerProvider();
 
                 this.Scheduler = schedulerProvider.Scheduler;
-
-                this.NavigationService = new Mock<NavigationService> { CallBase = true };
-                this.NavigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<INavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns(Task.FromResult<INavigationResult>(new NavigationResult()));
-
-                this.PageDialogService = new Mock<IPageDialogService>();
-                this.PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.CompletedTask);
-
-                var retryStack = new Stack<bool>();
-                retryStack.Push(shouldRetry);
-                this.PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(() =>
-                    {
-                        return Task.FromResult(retryStack.Peek());
-                    });
+                this.NavigationService = Mock.NavigationService();
+                this.PageDialogService = Mock.PageDialogService(shouldRetry);
 
                 this.ApplicationExitUseCase = new Mock<IApplicationExitUseCase>();
                 this.ApplicationExitUseCase
@@ -85,12 +68,7 @@ namespace Capibara.Presentation.ViewModels
                 this.HasSessionUseCase = new Mock<IHasSessionUseCase>();
                 this.HasSessionUseCase
                     .Setup(x => x.Invoke())
-                    .Returns(Observable.Create<bool>(
-                        emitter => 
-                        {
-                            emitter.OnNext(hasSession);
-                            return () => { };
-                        }));
+                    .Returns(new BehaviorSubject<bool>(hasSession));
 
                 this.RefreshSessionUseCase = new Mock<IRefreshSessionUseCase>();
                 this.RefreshSessionUseCase
@@ -171,7 +149,6 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
             subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(511).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
 
             subject.NavigationService.Verify(x => x.NavigateAsync("SignUpPage", null, null, false), Times.Once());
         }
@@ -186,8 +163,7 @@ namespace Capibara.Presentation.ViewModels
             var subject = RefreshCommandSubject.WhenHasSession();
 
             subject.ViewModel.RefreshCommand.Execute();
-            subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(501).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
+            subject.Scheduler.AdvanceBy(1);
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
         }
@@ -242,7 +218,6 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
             subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(511).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
 
             subject.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/MainPage", null, null, false), Times.Once());
         }
@@ -257,8 +232,7 @@ namespace Capibara.Presentation.ViewModels
             var subject = RefreshCommandSubject.WhenHasSessionAndNeedAccept();
 
             subject.ViewModel.RefreshCommand.Execute();
-            subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(501).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
+            subject.Scheduler.AdvanceBy(1);
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
         }
@@ -313,7 +287,6 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
             subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(511).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
 
             subject.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/AcceptPage", It.IsAny<INavigationParameters>(), null, false), Times.Once());
         }
@@ -367,7 +340,6 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
             subject.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(511).Ticks);
-            subject.ViewModel.RefreshCommandTask.Wait(TimeSpan.FromSeconds(1));
 
             subject.NavigationService.Verify(x => x.NavigateAsync("SignUpPage", null, null, false), Times.Once());
         }

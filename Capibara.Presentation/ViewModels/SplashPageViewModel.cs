@@ -22,7 +22,7 @@ namespace Capibara.Presentation.ViewModels
             : base(navigationService, pageDialogService)
         {
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
-            this.RefreshCommand.Subscribe(() => this.RefreshCommandTask = this.RefreshAsync());
+            this.RefreshCommand.Subscribe(this.RefreshAsync);
 
             this.LogoTopMargin.AddTo(this.Disposable);
             this.LogoScale.AddTo(this.Disposable);
@@ -43,8 +43,6 @@ namespace Capibara.Presentation.ViewModels
             = new ReactiveProperty<double>(1);
 
         public AsyncReactiveCommand RefreshCommand { get; }
-
-        public Task RefreshCommandTask { get; private set; }
 
         protected Task RefreshAsync()
         {
@@ -68,7 +66,10 @@ namespace Capibara.Presentation.ViewModels
             return Observable.FromAsync(this.RefreshSessionUseCase.Invoke)
                 .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
-                .SelectMany(user => this.LogoOpacityChangeAsync().Zip(this.LogoScaleChangeAsync(), (x, y) => user))
+                .SelectMany(user => 
+                    this.LogoOpacityChangeAsync()
+                        .Zip(this.LogoScaleChangeAsync(), (x, y) => user)
+                        .SubscribeOn(this.SchedulerProvider.IO))
                 .SelectMany(user =>
                 {
                     var pageName =
