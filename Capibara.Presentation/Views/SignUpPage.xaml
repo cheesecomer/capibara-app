@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:behaviors="clr-namespace:Capibara.Presentation.Forms.Behaviors;assembly=Capibara.Presentation"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
+    xmlns:ef="clr-namespace:Capibara.Presentation.Forms.Effects;assembly=Capibara.Presentation"
+    prism:ViewModelLocator.AutowireViewModel="True" 
+    x:Class="Capibara.Presentation.Views.SignUpPage"
+    NavigationPage.BackButtonTitle=""
+    BackgroundColor="#2f8e5b">
+    <ContentPage.Content>
+        <Grid Padding="20, 0, 20, 30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{Binding Converter={StaticResource topMargin}}" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="{Binding Converter={StaticResource bottomMargin}}" />
+            </Grid.RowDefinitions>
+            <Image 
+                Grid.RowSpan="3"
+                Margin="-20, 0, -20, -30"
+                Source="bg_launch"
+                Aspect="Fill" />
+            <StackLayout
+                Grid.Row="1"
+                Spacing="0"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+                <Image
+                    Source="logo"
+                    Margin="-20, 20, -20, 0"
+                    />
+                <Label
+                    Margin="0, 50, 0, 30"
+                    TextColor="#eee"
+                    Text="ニックネームを登録して&#xD;&#xA;アプリを始めよう！"
+                    HorizontalTextAlignment="Center"
+                    />
+                <Entry
+                    ef:Border.Width="2"
+                    ef:Border.Radius="6"
+                    ef:Border.Color="#D1D1D1"
+                    BackgroundColor="#F1F1F1"
+                    HorizontalOptions="FillAndExpand"
+                    Placeholder="ニックネーム"
+                    Text="{Binding Nickname.Value, Mode=TwoWay}"
+                    HeightRequest="40">
+                    <Entry.Behaviors>
+                        <behaviors:RegexBehavior RegexPattern="^.{0,20}$"/>
+                    </Entry.Behaviors>
+                </Entry>
+                <Label
+                    Margin="0, 30, 0, 0"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
+                    Text="{Binding Error.Value, Mode=TwoWay}"
+                    FontAttributes="Bold"
+                    TextColor="Red"
+                    />
+                <Button
+                    ef:ToFlatButton.On="true" 
+                    HorizontalOptions="FillAndExpand"
+                    Text="登録！"
+                    TextColor="{StaticResource PrimaryColor}"
+                    BorderColor="{StaticResource PrimaryColor}"
+                    BackgroundColor="White"
+                    Command="{Binding SignUpCommand}"
+                    Margin="0, 0, 0, 20"
+                    />
+                <Button
+                    ef:ToFlatButton.On="true" 
+                    HorizontalOptions="FillAndExpand"
+                    Text="SNSアカウントでログイン！"
+                    TextColor="{StaticResource PrimaryColor}"
+                    BorderColor="{StaticResource PrimaryColor}"
+                    BackgroundColor="White"
+                    Command="{Binding SignUpWithSnsCommand}"
+                    Margin="0, 0, 0, 20"
+                    />
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

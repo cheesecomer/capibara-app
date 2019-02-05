@@ -4,6 +4,7 @@ using Xamarin.Forms;
 
 namespace Capibara.Presentation.Forms.Behaviors
 {
+    [TestFixture]
     public class RegexTextBehaviorTest
     {
         [Test]

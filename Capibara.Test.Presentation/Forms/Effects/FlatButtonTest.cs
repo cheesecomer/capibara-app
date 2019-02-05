@@ -5,6 +5,7 @@ using Xamarin.Forms;
 
 namespace Capibara.Presentation.Forms.Effects
 {
+    [TestFixture]
     public class FlatButtonTest
     {
         [Test]
