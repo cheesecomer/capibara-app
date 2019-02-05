@@ -86,5 +86,30 @@ namespace Capibara.Domain.Models
 
             return this;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Room room)
+            {
+                if (room.Id != this.Id) return false;
+                if (room.Name != this.Name) return false;
+                if (room.Capacity != this.Capacity) return false;
+                if (room.NumberOfParticipants != this.NumberOfParticipants) return false;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"{{ Id: {this.Id}, Name: {this.Name}, Capacity: {this.Capacity}, NumberOfParticipants: {this.NumberOfParticipants} }}";
+        }
     }
 }

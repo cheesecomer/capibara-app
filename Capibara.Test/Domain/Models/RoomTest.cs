@@ -44,5 +44,91 @@ namespace Capibara.Domain.Models
         {
             assert.Invoke(new Room(), ModelFixture.Room());
         }
+
+        [Test]
+        public new void ToString()
+        {
+            var subject = ModelFixture.Room();
+            var expect = $"{{ Id: {subject.Id}, Name: {subject.Name}, Capacity: {subject.Capacity}, NumberOfParticipants: {subject.NumberOfParticipants} }}";
+            Assert.That(subject.ToString(), Is.EqualTo(expect));
+        }
+
+        [Test]
+        public new void GetHashCode()
+        {
+            var subject = ModelFixture.Room();
+            Assert.That(subject.GetHashCode(), Is.EqualTo(subject.Id.GetHashCode()));
+        }
+
+        static private IEnumerable EqualsTestCase()
+        {
+            yield return new TestCaseData(
+                new Func<Room, object>(_ => null),
+                false)
+                .SetName("Equals When Null Should Return False");
+
+            yield return new TestCaseData(
+                new Func<Room, object>(_ => new object()),
+                false)
+                .SetName("Equals When Not Room Should Return False");
+
+            yield return new TestCaseData(
+                new Func<Room, object>(v => 
+                    new Room 
+                    {
+                        Id = -1,
+                        Capacity = v.Capacity,
+                        Name = v.Name,
+                        NumberOfParticipants = v.NumberOfParticipants
+                    }),
+                false)
+                .SetName("Equals When Id are not equal Should Return False");
+
+            yield return new TestCaseData(
+                new Func<Room, object>(v =>
+                    new Room
+                    {
+                        Id = v.Id,
+                        Capacity = v.Capacity,
+                        Name = string.Empty,
+                        NumberOfParticipants = v.NumberOfParticipants
+                    }),
+                false)
+                .SetName("Equals When Name are not equal Should Return False");
+
+            yield return new TestCaseData(
+                new Func<Room, object>(v =>
+                    new Room
+                    {
+                        Id = v.Id,
+                        Capacity = -1,
+                        Name = v.Name,
+                        NumberOfParticipants = v.NumberOfParticipants
+                    }),
+                false)
+                .SetName("Equals When Capacity are not equal Should Return False");
+
+            yield return new TestCaseData(
+                new Func<Room, object>(v =>
+                    new Room
+                    {
+                        Id = v.Id,
+                        Capacity = v.Capacity,
+                        Name = v.Name,
+                        NumberOfParticipants = -1
+                    }),
+                false)
+                .SetName("Equals When NumberOfParticipants are not equal Should Return False");
+        }
+
+        [Test]
+        [TestCaseSource("EqualsTestCase")]
+        public void Equals(Func<Room, object> creater, bool expected)
+        {
+            var subject = ModelFixture.Room();
+            var other = creater(subject);
+
+            Assert.That(subject.Equals(other), Is.EqualTo(expected));
+        }
     }
 }

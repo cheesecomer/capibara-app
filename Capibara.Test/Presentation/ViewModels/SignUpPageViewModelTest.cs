@@ -54,7 +54,10 @@ namespace Capibara.Presentation.ViewModels
             public SignUpCommandSubject(Exception exception = null, bool isAccepted = false)
             {
                 var schedulerProvider = new SchedulerProvider();
+                
                 this.Scheduler = schedulerProvider.Scheduler;
+                this.NavigationService = Mock.NavigationService();
+                this.PageDialogService = Mock.PageDialogService();
 
                 this.SignUpUseCase = new Mock<ISignUpUseCase>();
                 this.SignUpUseCase
@@ -64,19 +67,6 @@ namespace Capibara.Presentation.ViewModels
                         : Task.FromException<User>(exception));
 
                 this.OAuthSignIn = new Mock<IOAuthSignIn>();
-
-                this.NavigationService = new Mock<NavigationService> { CallBase = true };
-                this.NavigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<INavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .ReturnsAsync(new NavigationResult());
-
-                this.PageDialogService = new Mock<IPageDialogService>();
-                PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.CompletedTask);
-                PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .ReturnsAsync(false);
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {
@@ -144,7 +134,10 @@ namespace Capibara.Presentation.ViewModels
             public SignUpWithSnsCommandSubject(Exception exception = null, bool isAccepted = false)
             {
                 var schedulerProvider = new SchedulerProvider();
+
                 this.Scheduler = schedulerProvider.Scheduler;
+                this.NavigationService = Mock.NavigationService();
+                this.PageDialogService = Mock.PageDialogService();
 
                 this.SignUpUseCase = new Mock<ISignUpUseCase>();
                 this.SignUpUseCase
@@ -152,19 +145,6 @@ namespace Capibara.Presentation.ViewModels
                     .Returns(exception == null
                         ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
                         : Task.FromException<User>(exception));
-
-                this.NavigationService = new Mock<NavigationService> { CallBase = true };
-                this.NavigationService
-                    .Setup(x => x.NavigateAsync(It.IsAny<string>(), It.IsAny<INavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .ReturnsAsync(new NavigationResult());
-
-                this.PageDialogService = new Mock<IPageDialogService>();
-                PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.CompletedTask);
-                PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .ReturnsAsync(false);
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {
@@ -256,16 +236,8 @@ namespace Capibara.Presentation.ViewModels
                 var schedulerProvider = new SchedulerProvider();
 
                 this.Scheduler = schedulerProvider.Scheduler;
-
-                this.NavigationService = new Mock<NavigationService> { CallBase = true };
-                this.NavigationService
-                    .Setup(x => x.NavigateAsync(It.IsNotNull<string>(), It.IsAny<INavigationParameters>(), It.IsAny<bool?>(), It.IsAny<bool>()))
-                    .Returns(Task.FromResult<INavigationResult>(new NavigationResult()));
-
-                this.PageDialogService = new Mock<IPageDialogService>();
-                this.PageDialogService
-                    .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                    .Returns(Task.CompletedTask);
+                this.NavigationService = Mock.NavigationService();
+                this.PageDialogService = Mock.PageDialogService();
 
                 var retryStack = new Stack<bool>();
                 retryStack.Push(shouldRetry);
@@ -399,7 +371,7 @@ namespace Capibara.Presentation.ViewModels
 
             subject.Scheduler.AdvanceBy(1);
 
-            subject.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/AcceptPage", It.IsAny<INavigationParameters>(), null, false), Times.Once());
+            subject.NavigationService.Verify(x => x.NavigateAsync("/NavigationPage/AcceptPage", It.IsNotNull<INavigationParameters>(), null, false), Times.Once());
         }
 
         #endregion

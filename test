@@ -1,2 +1,1 @@
-dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=\"[Capibara.Domain.Fixture]*%2c[Capibara.Core]*%2c\" Capibara.Test.Domain/Capibara.Test.Domain.csproj
-dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=\"[Capibara.Domain.Fixture]*%2c[Capibara.Core]*%2c[Capibara.Domain]*\" Capibara.Test.Presentation/Capibara.Test.Presentation.csproj
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../coverage.xml' /p:Exclude=\"[Capibara.Domain.Fixture]*%2c[Capibara.Presentation]Capibara.Presentation.Views.*\" Capibara.Test/Capibara.Test.csproj
