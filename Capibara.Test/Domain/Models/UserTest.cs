@@ -11,35 +11,35 @@ namespace Capibara.Domain.Models
         static private IEnumerable RestoreTestCase()
         {
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.Id, Is.EqualTo(expected.Id))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).Id, Is.EqualTo(expected.Id))))
                 .SetName("Restore Should Id is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.Nickname, Is.EqualTo(expected.Nickname))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).Nickname, Is.EqualTo(expected.Nickname))))
                 .SetName("Restore Should Nickname is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.Biography, Is.EqualTo(expected.Biography))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).Biography, Is.EqualTo(expected.Biography))))
                 .SetName("Restore Should Biography is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.IconUrl, Is.EqualTo(expected.IconUrl))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).IconUrl, Is.EqualTo(expected.IconUrl))))
                 .SetName("Restore Should IconUrl is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.IconThumbnailUrl, Is.EqualTo(expected.IconThumbnailUrl))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).IconThumbnailUrl, Is.EqualTo(expected.IconThumbnailUrl))))
                 .SetName("Restore Should IconThumbnailUrl is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.BlockId, Is.EqualTo(expected.BlockId))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).BlockId, Is.EqualTo(expected.BlockId))))
                 .SetName("Restore Should BlockId is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.FollowId, Is.EqualTo(expected.FollowId))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).FollowId, Is.EqualTo(expected.FollowId))))
                 .SetName("Restore Should FollowId is to be restored");
 
             yield return new TestCaseData(
-                new Action<User, User>((actual, expected) => Assert.That(actual.FriendsCount, Is.EqualTo(expected.FriendsCount))))
+                new Action<User, User>((actual, expected) => Assert.That(actual.Restore(expected).FriendsCount, Is.EqualTo(expected.FriendsCount))))
                 .SetName("Restore Should FriendsCount is to be restored");
         }
 
@@ -47,11 +47,7 @@ namespace Capibara.Domain.Models
         [TestCaseSource("RestoreTestCase")]
         public void Restore(Action<User, User> assert)
         {
-            var subject = new User();
-            var expect = ModelFixture.User();
-            subject.Restore(expect);
-
-            assert.Invoke(subject.Restore(expect), expect);
+            assert.Invoke(new User(), ModelFixture.User());
         }
 
         [Test]
@@ -61,10 +57,7 @@ namespace Capibara.Domain.Models
             var subject = new User();
             subject.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == nameof(User.IsBlock))
-                {
-                    isBlockChanged = true;
-                }
+                isBlockChanged |= e.PropertyName == nameof(User.IsBlock);
             };
 
             subject.BlockId = Faker.RandomNumber.Next();
