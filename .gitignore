@@ -52,3 +52,4 @@ Thumbs.db
 
 # coverage report
 coverage.xml
+coverage.opencover.xml
