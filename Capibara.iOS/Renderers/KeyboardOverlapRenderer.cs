@@ -29,9 +29,7 @@ namespace Capibara.iOS.Renderers
 
             if (Element is ContentPage page)
             {
-                if (page.Content is ScrollView)
-                    RegisterForKeyboardNotifications();
-
+                RegisterForKeyboardNotifications();
             }
         }
 
@@ -44,20 +42,18 @@ namespace Capibara.iOS.Renderers
 
         private void RegisterForKeyboardNotifications()
         {
+
             if (this.willChangeFrameObserver == null)
-                this.willChangeFrameObserver = 
-                    NSNotificationCenter.DefaultCenter
-                        .AddObserver(UIKeyboard.WillChangeFrameNotification, this.OnKeyboardWillChangeFrame);
+                this.willChangeFrameObserver =
+                    UIKeyboard.Notifications.ObserveWillChangeFrame(this.OnKeyboardWillChangeFrame);
 
             if (this.willHideObserver == null)
-                this.willHideObserver = 
-                    NSNotificationCenter.DefaultCenter
-                        .AddObserver(UIKeyboard.WillHideNotification, this.OnKeyboardWillHide);
-            
+                this.willHideObserver =
+                    UIKeyboard.Notifications.ObserveWillHide(this.OnKeyboardWillHide);
+
             if (this.willShowObserver == null)
-                this.willShowObserver = 
-                    NSNotificationCenter.DefaultCenter
-                        .AddObserver(UIKeyboard.WillShowNotification, this.OnKeyboardWillShow);
+                this.willShowObserver =
+                    UIKeyboard.Notifications.ObserveWillShow(this.OnKeyboardWillShow);
         }
 
         private void UnregisterForKeyboardNotifications()
@@ -85,27 +81,27 @@ namespace Capibara.iOS.Renderers
             }
         }
 
-        private void OnKeyboardWillChangeFrame(NSNotification notification)
+        private void OnKeyboardWillChangeFrame(object sender, UIKeyboardEventArgs args)
         {
             if (!this.isKeyboardShown)
             {
                 return;
             }
 
-            this.AdjustViewSize(notification);
+            this.AdjustViewSize(args.Notification);
         }
 
-        private void OnKeyboardWillShow(NSNotification notification)
+        private void OnKeyboardWillShow(object sender, UIKeyboardEventArgs args)
         {
             if (!IsViewLoaded || this.isKeyboardShown)
                 return;
 
             this.isKeyboardShown = true;
             this.beforeHeight = this.ContentView.Bounds.Height;
-            this.AdjustViewSize(notification);
+            this.AdjustViewSize(args.Notification);
         }
 
-        private void OnKeyboardWillHide(NSNotification notification)
+        private void OnKeyboardWillHide(object sender, UIKeyboardEventArgs args)
         {
             if (!IsViewLoaded | !this.isKeyboardShown)
                 return;
