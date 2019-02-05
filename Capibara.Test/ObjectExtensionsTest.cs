@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using System.Collections;
 using NUnit.Framework;
 using Unity;
 
@@ -7,25 +8,38 @@ namespace Capibara
     [TestFixture]
     public class ObjectExtensionsTest
     {
-        static readonly object[] IsNullTestCases =
-            {
-                new object[] { null, true },
-                new object[] { new object(), false }
-            };
+        static IEnumerable IsNullTestCases()
+        {
+            yield return new TestCaseData(null, true)
+                .SetName("IsNull When Null Should Return True");
 
-        static readonly object[] IsPresentTestCases =
-            {
-                new object[] { null, false },
-                new object[] { new object(), true }
-            };
+            yield return new TestCaseData(new object(), false)
+                .SetName("IsNull When Present Should Return False");
+        }
 
-        static readonly object[] ToIntTestCases =
-            {
-                new object[] { null, 0 },
-                new object[] { new object(), 0 },
-                new object[] { "1", 1 },
-                new object[] { "1 aaa", 0 }
-            };
+        static IEnumerable IsPresentTestCases()
+        {
+            yield return new TestCaseData(null, false)
+                .SetName("IsPresent When Null Should Return False");
+
+            yield return new TestCaseData(new object(), true)
+                .SetName("IsPresent When Present Should Return True");
+        }
+
+        static IEnumerable ToIntTestCases()
+        {
+            yield return new TestCaseData(null, 0)
+                .SetName("ToInt When Null Should Return 0");
+
+            yield return new TestCaseData(new object(), 0)
+                .SetName("ToInt When  Should Return 0");
+
+            yield return new TestCaseData("1", 1)
+                .SetName("ToInt When Parcelable Should Return 1");
+
+            yield return new TestCaseData("xxxxx", 0)
+                .SetName("ToInt When Not Parcelable Should Return 0");
+        }
 
         [TestCase]
         public void BuildUp()

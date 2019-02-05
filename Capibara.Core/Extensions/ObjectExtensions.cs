@@ -1,6 +1,4 @@
-﻿using System;
-
-using Unity;
+﻿using Unity;
 
 namespace Capibara
 {

@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,21 +10,25 @@ namespace Capibara
     [TestFixture]
     public class IEnumerableExtensionsTest
     {
-        static readonly object[] ForEachTestCases =
-            {
-                new object[] { Enumerable.Range(10, 10), new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 } },
-                new object[] { null, new int [] { } }
-            };
+        static private IEnumerable ForEachTestCases()
+        {
+            yield return new TestCaseData(Enumerable.Range(10, 10), new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 })
+                .SetName("ForEach When Present Should Loop from 1st to last");
 
-        static readonly object[] ForEachHasIndexTestCases =
-            {
-                new object[] { null, new Pair<int, int>[] { } },
-                new object[]
-                {
+            yield return new TestCaseData(null, new int[] { })
+                .SetName("ForEach When Empty Should Not Loop ");
+        }
+
+        static private IEnumerable ForEachHasIndexTestCases()
+        {
+            yield return new TestCaseData(null, new Pair<int, int>[] { })
+                .SetName("ForEachHasIndex When Empty Should Not Loop ");
+
+            yield return new TestCaseData(
                     Enumerable.Range(10, 10),
-                    Enumerable.Range(0, 10).Select(x => new Pair<int, int>(x, x + 10)).ToArray()
-                }
-            };
+                    Enumerable.Range(0, 10).Select(x => new Pair<int, int>(x, x + 10)).ToArray())
+                .SetName("ForEachHasIndex When Present Should Loop from 1st to last");
+        }
 
         [TestCaseSource("ForEachTestCases")]
         public void ForEach(IEnumerable<int> enumerable, int[] expected)
