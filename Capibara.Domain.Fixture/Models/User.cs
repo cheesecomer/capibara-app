@@ -13,9 +13,7 @@ namespace Capibara.Domain.Models
             int? followId = null,
             int? friendsCount = null,
             bool? isAccepted = null,
-            bool? isFollower = null)
-        {
-            var fixture = new User
+            bool? isFollower = null) => new User
             {
                 Id = id ?? Faker.RandomNumber.Next(),
                 Nickname = nickname ?? Faker.Name.FullName(),
@@ -28,8 +26,5 @@ namespace Capibara.Domain.Models
                 IsAccepted = isAccepted ?? true,
                 IsFollower = isFollower ?? false
             };
-
-            return fixture;
-        }
     }
 }
