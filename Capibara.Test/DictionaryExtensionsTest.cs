@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace Capibara.Test
+namespace Capibara
 {
     [TestFixture]
     public class DictionaryExtensionsTest

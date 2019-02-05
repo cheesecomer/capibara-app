@@ -7,17 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.DataProviders", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara", "Capibara\Capibara.csproj", "{70FE4818-E067-4089-BE55-E079A8408E31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Test", "Capibara.Test\Capibara.Test.csproj", "{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Test", "Capibara.Test\Capibara.Test.csproj", "{7AA24429-7CF0-4135-B664-F89AB9A9350D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain", "Capibara.Domain\Capibara.Domain.csproj", "{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Presentation", "Capibara.Presentation\Capibara.Presentation.csproj", "{C0DBBAFF-A2D3-4A86-B11A-368F537FE385}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Data", "Capibara.Data\Capibara.Data.csproj", "{FD69D21E-7941-44FE-9DBA-7C0D4169694D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Test.Presentation", "Capibara.Test.Presentation\Capibara.Test.Presentation.csproj", "{5EDCD6D8-0544-43F5-AFDA-18FFCBB3F7B6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Test.Domain", "Capibara.Test.Domain\Capibara.Test.Domain.csproj", "{33A0E6E9-A7E9-4E59-87A4-6E558AC357EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain.Fixture", "Capibara.Domain.Fixture\Capibara.Domain.Fixture.csproj", "{395AE463-42F9-409E-8AF1-D06543343D1F}"
 EndProject
@@ -39,10 +35,6 @@ Global
 		{70FE4818-E067-4089-BE55-E079A8408E31}.Debug|x86.Build.0 = Debug|Any CPU
 		{70FE4818-E067-4089-BE55-E079A8408E31}.Release|x86.ActiveCfg = Release|Any CPU
 		{70FE4818-E067-4089-BE55-E079A8408E31}.Release|x86.Build.0 = Release|Any CPU
-		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Debug|x86.Build.0 = Debug|Any CPU
-		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Release|x86.ActiveCfg = Release|Any CPU
-		{0A8F7CD0-CA80-4A81-8C7D-86271E6E5257}.Release|x86.Build.0 = Release|Any CPU
 		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Debug|x86.Build.0 = Debug|Any CPU
 		{F527D974-E29D-4A9D-9638-0D6B54DBBCD2}.Release|x86.ActiveCfg = Release|Any CPU
@@ -55,17 +47,13 @@ Global
 		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Debug|x86.Build.0 = Debug|Any CPU
 		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Release|x86.ActiveCfg = Release|Any CPU
 		{FD69D21E-7941-44FE-9DBA-7C0D4169694D}.Release|x86.Build.0 = Release|Any CPU
-		{5EDCD6D8-0544-43F5-AFDA-18FFCBB3F7B6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5EDCD6D8-0544-43F5-AFDA-18FFCBB3F7B6}.Debug|x86.Build.0 = Debug|Any CPU
-		{5EDCD6D8-0544-43F5-AFDA-18FFCBB3F7B6}.Release|x86.ActiveCfg = Release|Any CPU
-		{5EDCD6D8-0544-43F5-AFDA-18FFCBB3F7B6}.Release|x86.Build.0 = Release|Any CPU
-		{33A0E6E9-A7E9-4E59-87A4-6E558AC357EA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{33A0E6E9-A7E9-4E59-87A4-6E558AC357EA}.Debug|x86.Build.0 = Debug|Any CPU
-		{33A0E6E9-A7E9-4E59-87A4-6E558AC357EA}.Release|x86.ActiveCfg = Release|Any CPU
-		{33A0E6E9-A7E9-4E59-87A4-6E558AC357EA}.Release|x86.Build.0 = Release|Any CPU
 		{395AE463-42F9-409E-8AF1-D06543343D1F}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{395AE463-42F9-409E-8AF1-D06543343D1F}.Debug|x86.Build.0 = Debug|Any CPU
 		{395AE463-42F9-409E-8AF1-D06543343D1F}.Release|x86.ActiveCfg = Release|Any CPU
 		{395AE463-42F9-409E-8AF1-D06543343D1F}.Release|x86.Build.0 = Release|Any CPU
+		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Debug|x86.Build.0 = Debug|Any CPU
+		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Release|x86.ActiveCfg = Release|Any CPU
+		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

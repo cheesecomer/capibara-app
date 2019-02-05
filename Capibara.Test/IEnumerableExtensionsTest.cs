@@ -4,7 +4,7 @@ using System.Linq;
 
 using NUnit.Framework;
 
-namespace Capibara.Test
+namespace Capibara
 {
     [TestFixture]
     public class IEnumerableExtensionsTest

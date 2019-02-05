@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using NUnit.Framework;
 
-namespace Capibara.Test
+namespace Capibara
 {
     [TestFixture]
     public class StringExtensionsTest

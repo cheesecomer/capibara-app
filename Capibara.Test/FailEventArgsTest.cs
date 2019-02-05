@@ -2,7 +2,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Capibara.Test
+namespace Capibara
 {
     public class FailEventArgsTest
     {

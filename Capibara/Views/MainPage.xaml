@@ -6,7 +6,7 @@
     xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     xmlns:converters="clr-namespace:Capibara.Converters;assembly=Capibara"
-    xmlns:forms="clr-namespace:Capibara.Forms;assembly=Capibara"
+    xmlns:forms="clr-namespace:Capibara.Formsassembly=Capibara"
     prism:ViewModelLocator.AutowireViewModel="True"
     x:Class="Capibara.Views.MainPage"
     NavigationPage.BackButtonTitle=""

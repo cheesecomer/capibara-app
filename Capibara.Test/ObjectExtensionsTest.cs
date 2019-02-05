@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Unity;
 
-namespace Capibara.Test
+namespace Capibara
 {
     [TestFixture]
     public class ObjectExtensionsTest
