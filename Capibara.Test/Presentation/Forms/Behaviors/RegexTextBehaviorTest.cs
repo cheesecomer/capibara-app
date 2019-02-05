@@ -27,6 +27,12 @@ namespace Capibara.Presentation.Forms.Behaviors
         }
 
         [Test]
+        public void RegexPatternProperty()
+        {
+            Assert.That(new RegexTextBehavior { RegexPattern = "^[0-9]*$" }.RegexPattern, Is.EqualTo("^[0-9]*$"));
+        }
+
+        [Test]
         [TestCase(null, "1234567890", "1234567890", TestName = "OnTextChange WhenNullToValid ShouldChange")]
         [TestCase(null, "ABCDEFGHIJ", "", TestName = "OnTextChange WhenNullToInvalid ShouldEmpty")]
         [TestCase(null, "", "", TestName = "OnTextChange WhenNullToEmpty ShouldEmpty")]
