@@ -20,8 +20,12 @@
     <ProjectReference Include="..\Capibara.Domain.Fixture\Capibara.Domain.Fixture.csproj" />
     <ProjectReference Include="..\Capibara.Domain\Capibara.Domain.csproj" />
     <ProjectReference Include="..\Capibara.Presentation\Capibara.Presentation.csproj" />
+    <ProjectReference Include="..\Faker.Extension\Faker.Extension.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove=".DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Presentation\ViewModels\Parts\" />
   </ItemGroup>
 </Project>
