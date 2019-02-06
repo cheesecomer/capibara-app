@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Capibara.Domain\Capibara.Domain.csproj" />
+    <ProjectReference Include="..\Faker.Extension\Faker.Extension.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Faker.Net" Version="1.1.1" />

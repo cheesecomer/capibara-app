@@ -16,8 +16,8 @@ namespace Capibara.Domain.Models
                 Content = content ?? Faker.Lorem.Sentence(),
                 Sender = sender ?? ModelFixture.User(),
                 At = at ?? DateTimeOffset.Now,
-                ImageUrl = imageUrl ?? $"http://${Faker.Internet.DomainName()}.com/images/${Faker.RandomNumber.Next()}.png",
-                ImageThumbnailUrl = imageThumbnailUrl ?? $"http://${Faker.Internet.DomainName()}.com/images/${Faker.RandomNumber.Next()}.png",
+                ImageUrl = imageUrl ?? Faker.Url.Image(),
+                ImageThumbnailUrl = imageThumbnailUrl ?? Faker.Url.Image()
             };
     }
 }
