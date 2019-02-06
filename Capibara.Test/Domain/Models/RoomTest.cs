@@ -1,7 +1,11 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Collections;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using Microsoft.Reactive.Testing;
 using NUnit.Framework;
+using Reactive.Bindings.Extensions;
 
 namespace Capibara.Domain.Models
 {
@@ -129,6 +133,90 @@ namespace Capibara.Domain.Models
             var other = creater(subject);
 
             Assert.That(subject.Equals(other), Is.EqualTo(expected));
+        }
+
+
+        static private IEnumerable PropertyChangedTestCase()
+        {
+            yield return new TestCaseData(
+                "Id", new Action<Room>(x => { }), 0)
+                .SetName("Id Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Id", new Action<Room>(x => x.Id = Faker.RandomNumber.Next()), 1)
+                .SetName("Id Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Name", new Action<Room>(x => { }), 0)
+                .SetName("Name Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Name", new Action<Room>(x => x.Name = Faker.Name.FullName()), 1)
+                .SetName("Name Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Capacity", new Action<Room>(x => { }), 0)
+                .SetName("Capacity Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Capacity", new Action<Room>(x => x.Capacity = Faker.RandomNumber.Next(10, 50)), 1)
+                .SetName("Capacity Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "NumberOfParticipants", new Action<Room>(x => { }), 0)
+                .SetName("NumberOfParticipants Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "NumberOfParticipants", new Action<Room>(x => x.NumberOfParticipants = Faker.RandomNumber.Next(10, 50)), 1)
+                .SetName("NumberOfParticipants Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsConnected", new Action<Room>(x => { }), 0)
+                .SetName("IsConnected Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsConnected", new Action<Room>(x => x.IsConnected = !x.IsConnected), 1)
+                .SetName("IsConnected Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Messages", new Action<Room>(x => { }), 0)
+                .SetName("Messages Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Messages", new Action<Room>(x => x.Messages.Add(ModelFixture.Message())), 1)
+                .SetName("Messages Property When add Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Messages", new Action<Room>(x => x.Messages.RemoveAt(0)), 1)
+                .SetName("Messages Property When remove Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Participants", new Action<Room>(x => { }), 0)
+                .SetName("Participants Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Participants", new Action<Room>(x => x.Participants.Add(ModelFixture.User())), 1)
+                .SetName("Participants Property When add Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Participants", new Action<Room>(x => x.Participants.RemoveAt(0)), 1)
+                .SetName("Participants Property When remove Should raise PropertyChanged");
+        }
+
+        [Test]
+        [TestCaseSource("PropertyChangedTestCase")]
+        public void PropertyChanged(string propertyName, Action<Room> setter, int expected)
+        {
+            var scheduler = new TestScheduler();
+            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
+            var subject = ModelFixture.Room();
+            subject.PropertyChangedAsObservable()
+                .Where(x => x.PropertyName == propertyName)
+                .Subscribe(observer);
+
+            setter.Invoke(subject);
+
+            Assert.That(observer.Messages.Count, Is.EqualTo(expected));
         }
     }
 }

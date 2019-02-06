@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Data", "Capibara.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara.Domain.Fixture", "Capibara.Domain.Fixture\Capibara.Domain.Fixture.csproj", "{395AE463-42F9-409E-8AF1-D06543343D1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faker.Extension", "Faker.Extension\Faker.Extension.csproj", "{09E59597-192B-4487-B6ED-7DF51312633C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -55,5 +57,9 @@ Global
 		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Debug|x86.Build.0 = Debug|Any CPU
 		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Release|x86.ActiveCfg = Release|Any CPU
 		{7AA24429-7CF0-4135-B664-F89AB9A9350D}.Release|x86.Build.0 = Release|Any CPU
+		{09E59597-192B-4487-B6ED-7DF51312633C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{09E59597-192B-4487-B6ED-7DF51312633C}.Debug|x86.Build.0 = Debug|Any CPU
+		{09E59597-192B-4487-B6ED-7DF51312633C}.Release|x86.ActiveCfg = Release|Any CPU
+		{09E59597-192B-4487-B6ED-7DF51312633C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

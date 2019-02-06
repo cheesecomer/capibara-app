@@ -1,7 +1,11 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Collections;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using Microsoft.Reactive.Testing;
 using NUnit.Framework;
+using Reactive.Bindings.Extensions;
 
 namespace Capibara.Domain.Models
 {
@@ -53,16 +57,16 @@ namespace Capibara.Domain.Models
         [Test]
         public void BlockId_WhenUpdate_ShouldRisedIsBlockPropertyChanged()
         {
-            var isBlockChanged = false;
+            var scheduler = new TestScheduler();
+            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
             var subject = new User();
-            subject.PropertyChanged += (sender, e) =>
-            {
-                isBlockChanged |= e.PropertyName == nameof(User.IsBlock);
-            };
+            subject.PropertyChangedAsObservable()
+                .Where(x => x.PropertyName == nameof(User.IsBlock))
+                .Subscribe(observer);
 
             subject.BlockId = Faker.RandomNumber.Next();
 
-            Assert.IsTrue(isBlockChanged);
+            Assert.That(observer.Messages.Count, Is.EqualTo(1));
         }
 
         [TestCase(false, TestName = "BlockId WhenEmpty ShouldIsNotBlock")]
@@ -76,19 +80,16 @@ namespace Capibara.Domain.Models
         [Test]
         public void FollowId_WhenUpdate_ShouldRisedIsFollowPropertyChanged()
         {
-            var isFollowChanged = false;
+            var scheduler = new TestScheduler();
+            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
             var subject = new User();
-            subject.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == nameof(User.IsFollow))
-                {
-                    isFollowChanged = true;
-                }
-            };
+            subject.PropertyChangedAsObservable()
+                .Where(x => x.PropertyName == nameof(User.IsFollow))
+                .Subscribe(observer);
 
             subject.FollowId = Faker.RandomNumber.Next();
 
-            Assert.IsTrue(isFollowChanged);
+            Assert.That(observer.Messages.Count, Is.EqualTo(1));
         }
 
         [TestCase(false, TestName = "FollowId WhenEmpty ShouldIsNotFollow")]
@@ -97,6 +98,105 @@ namespace Capibara.Domain.Models
         {
             var subject = new User { FollowId = hasFollowId ? (int?)Faker.RandomNumber.Next() : null };
             Assert.That(subject.IsFollow, Is.EqualTo(hasFollowId));
+        }
+
+        static private IEnumerable PropertyChangedTestCase()
+        {
+            yield return new TestCaseData(
+                "Id", new Action<User>(x => { }), 0)
+                .SetName("Id Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Id", new Action<User>(x => x.Id = Faker.RandomNumber.Next()), 1)
+                .SetName("Id Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Nickname", new Action<User>(x => { }), 0)
+                .SetName("Name Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Nickname", new Action<User>(x => x.Nickname = Faker.Name.FullName()), 1)
+                .SetName("Name Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Biography", new Action<User>(x => { }), 0)
+                .SetName("Biography Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "Biography", new Action<User>(x => x.Biography = Faker.Lorem.Paragraph()), 1)
+                .SetName("Biography Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IconUrl", new Action<User>(x => { }), 0)
+                .SetName("IconUrl Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IconUrl", new Action<User>(x => x.IconUrl = Faker.Url.Image()), 1)
+                .SetName("IconUrl Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IconThumbnailUrl", new Action<User>(x => { }), 0)
+                .SetName("IconThumbnailUrl Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IconThumbnailUrl", new Action<User>(x => x.IconThumbnailUrl = Faker.Url.Image()), 1)
+                .SetName("IconThumbnailUrl Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "BlockId", new Action<User>(x => { }), 0)
+                .SetName("BlockId Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "BlockId", new Action<User>(x => x.BlockId = Faker.RandomNumber.Next()), 1)
+                .SetName("BlockId Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "FollowId", new Action<User>(x => { }), 0)
+                .SetName("FollowId Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "FollowId", new Action<User>(x => x.FollowId = Faker.RandomNumber.Next()), 1)
+                .SetName("FollowId Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "FriendsCount", new Action<User>(x => { }), 0)
+                .SetName("FollowId Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "FriendsCount", new Action<User>(x => x.FriendsCount = Faker.RandomNumber.Next()), 1)
+                .SetName("FriendsCount Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsAccepted", new Action<User>(x => { }), 0)
+                .SetName("IsAccepted Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsAccepted", new Action<User>(x => x.IsAccepted = !x.IsAccepted), 1)
+                .SetName("IsAccepted Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsAccepted", new Action<User>(x => { }), 0)
+                .SetName("IsAccepted Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                "IsFollower", new Action<User>(x => x.IsFollower = !x.IsFollower), 1)
+                .SetName("IsFollower Property When chnaged Should raise PropertyChanged");
+        }
+
+        [Test]
+        [TestCaseSource("PropertyChangedTestCase")]
+        public void PropertyChanged(string propertyName, Action<User> setter, int expected)
+        {
+            var scheduler = new TestScheduler();
+            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
+            var subject = new User();
+            subject.PropertyChangedAsObservable()
+                .Where(x => x.PropertyName == propertyName)
+                .Subscribe(observer);
+
+            setter.Invoke(subject);
+
+            Assert.That(observer.Messages.Count, Is.EqualTo(expected));
         }
     }
 }

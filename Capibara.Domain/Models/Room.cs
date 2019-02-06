@@ -1,11 +1,19 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Capibara.Domain.Models
 {
     public class Room : ModelBase<Room>
     {
+        public Room()
+        {
+            this.Messages = new ObservableCollection<Message>();
+            this.Messages.CollectionChanged += (sender, e) => this.RaisePropertyChanged(nameof(Messages));
+
+            this.Participants = new ObservableCollection<User>();
+            this.Participants.CollectionChanged += (sender, e) => this.RaisePropertyChanged(nameof(Participants));
+        }
+
         private bool isConnected;
 
         private int id;
@@ -23,10 +31,8 @@ namespace Capibara.Domain.Models
         }
 
         public ObservableCollection<Message> Messages { get; }
-            = new ObservableCollection<Message>();
 
         public ObservableCollection<User> Participants { get; }
-            = new ObservableCollection<User>();
 
         public int Id
         {

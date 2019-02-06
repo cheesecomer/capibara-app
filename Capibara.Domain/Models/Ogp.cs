@@ -44,7 +44,7 @@
 
         public string ImageUrl
         {
-            get => this.description;
+            get => this.imageUrl;
             set => this.SetProperty(ref this.imageUrl, value);
         }
 
