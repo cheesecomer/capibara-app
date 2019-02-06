@@ -6,6 +6,7 @@ namespace Capibara
     [TestFixture]
     public class StringExtensionsTest
     {
+        [TestCase("　", "　")]
         [TestCase("\r", "")]
         [TestCase("\n", "")]
         [TestCase("\r\n", "")]
