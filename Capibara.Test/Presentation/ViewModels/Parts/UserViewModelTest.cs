@@ -42,7 +42,7 @@ namespace Capibara.Presentation.ViewModels.Parts
         [TestCaseSource("Property_WhenRisePropertyChanged_ShouldUpdate_TestCase")]
         public void Property_WhenRisePropertyChanged_ShouldUpdate(Func<User, object> setter, Func<UserViewModel, object> getter)
         {
-            var subject = new UserViewModel();
+            var subject = new UserViewModel(model: ModelFixture.User());
             var expected = setter(subject.Model);
             Assert.That(getter(subject), Is.EqualTo(expected));
         }
@@ -99,7 +99,7 @@ namespace Capibara.Presentation.ViewModels.Parts
         {
             var scheduler = new TestScheduler();
             var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
-            var subject = new UserViewModel();
+            var subject = new UserViewModel(model: ModelFixture.User());
 
             observableGetter(subject)
                 .Where(x => x.PropertyName == "Value")
