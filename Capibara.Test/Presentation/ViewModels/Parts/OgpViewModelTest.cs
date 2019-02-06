@@ -1,134 +1,100 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using Microsoft.Reactive.Testing;
-using NUnit.Framework;
-using Reactive.Bindings.Extensions;
-using Moq;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
+using Microsoft.Reactive.Testing;
+using Moq;
+using NUnit.Framework;
+using Reactive.Bindings.Extensions;
 
 namespace Capibara.Presentation.ViewModels.Parts
 {
     public class OgpViewModelTest
     {
-        #region TitleProperty
-
-        [Test]
-        public void TitleProperty_WhenModelChanged_ShouldUpdate()
+        static private IEnumerable Property_WhenRisePropertyChanged_ShouldUpdate_TestCase()
         {
-            var subject = new OgpViewModel();
-            var expected = subject.Model.Title = Faker.Lorem.Sentence();
-            Assert.That(subject.Title.Value, Is.EqualTo(expected));
+            yield return new TestCaseData(
+                new Func<OgpViewModel, object>(x => x.Model.Title = Faker.Lorem.Sentence()),
+                new Func<OgpViewModel, object>(x => x.Title.Value))
+                .SetName("Title Property When changed Should change");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, object>(x => x.Model.Description = Faker.Lorem.Paragraph()),
+                new Func<OgpViewModel, object>(x => x.Description.Value))
+                .SetName("Description Property When changed Should change");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, object>(x => x.Model.ImageUrl = Faker.Url.Image()),
+                new Func<OgpViewModel, object>(x => x.ImageUrl.Value))
+                .SetName("ImageUrl Property When changed Should change");
         }
 
         [Test]
-        public void TitleProperty_WhenModelNotChanged_ShouldNotRaisePropertyChanged()
+        [TestCaseSource("Property_WhenRisePropertyChanged_ShouldUpdate_TestCase")]
+        public void Property_WhenRisePropertyChanged_ShouldUpdate(Func<OgpViewModel, object> setter, Func<OgpViewModel, object> getter)
         {
-            var scheduler = new TestScheduler();
-            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
             var subject = new OgpViewModel();
-            subject.Title
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.Title.Value))
-                .Subscribe(observer);
-            Assert.That(observer.Messages.Count, Is.EqualTo(0));
+            var expected = setter(subject);
+            Assert.That(getter(subject), Is.EqualTo(expected));
+        }
+
+        static private IEnumerable PropertyChangedTestCase()
+        {
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.Title.PropertyChangedAsObservable()),
+                new Action<Ogp>(x => { }),
+                0)
+                .SetName("Title Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.Title.PropertyChangedAsObservable()), 
+                new Action<Ogp>(x => x.Title = Faker.Lorem.Sentence()), 1)
+                .SetName("Title Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.Description.PropertyChangedAsObservable()), 
+                new Action<Ogp>(x => { }), 0)
+                .SetName("Description Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.Description.PropertyChangedAsObservable()), 
+                new Action<Ogp>(x => x.Description = Faker.Lorem.Paragraph()), 1)
+                .SetName("Description Property When chnaged Should raise PropertyChanged");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.ImageUrl.PropertyChangedAsObservable()), 
+                new Action<Ogp>(x => { }), 0)
+                .SetName("ImageUrl Property When not chnaged Should not raise PropertyChanged");
+
+            yield return new TestCaseData(
+                new Func<OgpViewModel, IObservable<PropertyChangedEventArgs>>(x => x.ImageUrl.PropertyChangedAsObservable()), 
+                new Action<Ogp>(x => x.ImageUrl = Faker.Url.Image()), 1)
+                .SetName("ImageUrl Property When chnaged Should raise PropertyChanged");
         }
 
         [Test]
-        public void TitleProperty_WhenModelChanged_ShouldRaisePropertyChanged()
-        {
-            var scheduler = new TestScheduler();
-            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
-            var subject = new OgpViewModel();
-            subject.Title
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.Title.Value))
-                .Subscribe(observer);
-            subject.Model.Title = Faker.Lorem.Sentence();
-            Assert.That(observer.Messages.Count, Is.EqualTo(1));
-        }
-
-        #endregion
-
-        #region DescriptionProperty
-
-        [Test]
-        public void DescriptionProperty_WhenModelChanged_ShouldUpdate()
-        {
-            var subject = new OgpViewModel();
-            var expected = subject.Model.Description = Faker.Lorem.Paragraph();
-            Assert.That(subject.Description.Value, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void DescriptionProperty_WhenModelNotChanged_ShouldNotRaisePropertyChanged()
-        {
-            var scheduler = new TestScheduler();
-            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
-            var subject = new OgpViewModel();
-            subject.Description
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.Description.Value))
-                .Subscribe(observer);
-            Assert.That(observer.Messages.Count, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void DescriptionProperty_WhenModelChanged_ShouldRaisePropertyChanged()
-        {
-            var scheduler = new TestScheduler();
-            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
-            var subject = new OgpViewModel();
-            subject.Description
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.Description.Value))
-                .Subscribe(observer);
-            subject.Model.Description = Faker.Lorem.Paragraph();
-            Assert.That(observer.Messages.Count, Is.EqualTo(1));
-        }
-
-        #endregion
-
-        #region ImageUrlProperty
-
-        [Test]
-        public void ImageUrlProperty_WhenModelChanged_ShouldUpdate()
-        {
-            var subject = new OgpViewModel();
-            var expected = subject.Model.ImageUrl = Faker.Url.Image();
-            Assert.That(subject.ImageUrl.Value, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ImageUrlProperty_WhenModelNotChanged_ShouldNotRaisePropertyChanged()
+        [TestCaseSource("PropertyChangedTestCase")]
+        public void PropertyChanged(
+            Func<OgpViewModel, IObservable<PropertyChangedEventArgs>> observableGetter, 
+            Action<Ogp> setter, 
+            int expected)
         {
             var scheduler = new TestScheduler();
             var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
             var subject = new OgpViewModel();
-            subject.ImageUrl
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.ImageUrl.Value))
-                .Subscribe(observer);
-            Assert.That(observer.Messages.Count, Is.EqualTo(0));
-        }
 
-        [Test]
-        public void ImageUrlProperty_WhenModelChanged_ShouldRaisePropertyChanged()
-        {
-            var scheduler = new TestScheduler();
-            var observer = scheduler.CreateObserver<PropertyChangedEventArgs>();
-            var subject = new OgpViewModel();
-            subject.ImageUrl
-                .PropertyChangedAsObservable()
-                .Where(x => x.PropertyName == nameof(subject.ImageUrl.Value))
+            observableGetter(subject)
+                .Where(x => x.PropertyName == "Value")
                 .Subscribe(observer);
-            subject.Model.ImageUrl = Faker.Url.Image();
-            Assert.That(observer.Messages.Count, Is.EqualTo(1));
-        }
 
-        #endregion
+            setter(subject.Model);
+
+            Assert.That(observer.Messages.Count, Is.EqualTo(expected));
+        }
 
         #region OpenUrlCommand
 
