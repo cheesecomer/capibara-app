@@ -12,7 +12,7 @@ namespace Capibara.Presentation.ViewModels
 {
     public class MessageViewModel : ViewModelBase<Message>
     {
-        private const string URLPattern = @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
+        private const string URLPattern = @"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+";
 
         public MessageViewModel(
             INavigationService navigationService = null,

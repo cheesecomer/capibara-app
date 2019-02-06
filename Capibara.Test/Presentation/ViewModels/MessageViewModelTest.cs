@@ -147,5 +147,83 @@ namespace Capibara.Presentation.ViewModels
 
             Assert.That(observer.Messages.Count, Is.EqualTo(expected));
         }
+
+        static private IEnumerable OgpItemsTestCase()
+        {
+            yield return new TestCaseData(
+                "see! http://example.com", new string[] { "http://example.com" })
+                .SetName("OgpItems When Content Has Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/?id=1", new string[] { "http://example.com/?id=1" })
+                .SetName("OgpItems When Content Has Url With query");
+
+            yield return new TestCaseData(
+                "see! http://example.com/?id=1&page=2", new string[] { "http://example.com/?id=1&page=2" })
+                .SetName("OgpItems When Content Has Url With multi query");
+
+            yield return new TestCaseData(
+                "see! http://example.com/?q=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE", 
+                new string[] 
+                { 
+                    "http://example.com/?q=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE" 
+                })
+                .SetName("OgpItems When Content Has Url With encoded query");
+
+            yield return new TestCaseData(
+                "see! http://example.com/?q=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&p=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&",
+                new string[]
+                {
+                    "http://example.com/?q=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&p=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&oq=%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE&"
+                })
+                .SetName("OgpItems When Content Has Url With multi encoded query");
+
+            yield return new TestCaseData(
+                "see! http://example.com http://example.com http://example.com",
+                new string[] 
+                {
+                    "http://example.com",
+                    "http://example.com",
+                    "http://example.com"
+                })
+                .SetName("OgpItems When Content Has many Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/index.html", new string[] { "http://example.com/index.html" })
+                .SetName("OgpItems When Content Has HTML Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/index.php", new string[] { "http://example.com/index.php" })
+                .SetName("OgpItems When Content Has PHP Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/index.py", new string[] { "http://example.com/index.py" })
+                .SetName("OgpItems When Content Has Python Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/image.png", new string[] { "http://example.com/image.png" })
+                .SetName("OgpItems When Content Has PNG Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/image.jpeg http://example.com/image.jpg", 
+                new string[] {
+                    "http://example.com/image.jpeg",
+                    "http://example.com/image.jpg"
+                })
+                .SetName("OgpItems When Content Has JPEG Url");
+
+            yield return new TestCaseData(
+                "see! http://example.com/image.gif", new string[] { "http://example.com/image.gif" })
+                .SetName("OgpItems When Content Has GIF Url");
+        }
+
+        [Test]
+        [TestCaseSource("OgpItemsTestCase")]
+        public void OgpItems(string content, string[] expected)
+        {
+            var subject = new MessageViewModel(model: ModelFixture.Message(content: content));
+
+            Assert.That(subject.OgpItems.Select(x => x.Model.Url).ToArray(), Is.EqualTo(expected));
+        }
     }
 }
