@@ -55,10 +55,18 @@ namespace Capibara.Domain.Models
         {
             this.At = other.At;
             this.Id = other.Id;
-            this.Sender = other.Sender;
             this.Content = other.content;
             this.ImageUrl = other.ImageUrl;
             this.ImageThumbnailUrl = other.ImageThumbnailUrl;
+
+            if (other.Sender != null && this.Sender != null)
+            {
+                this.Sender.Restore(other.Sender);
+            }
+            else
+            {
+                this.Sender = other.Sender;
+            }
 
             return this;
         }
