@@ -5,13 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using Capibara.Domain.Models;
-using Capibara.Domain.UseCases;
 using Microsoft.Reactive.Testing;
-using Moq;
 using NUnit.Framework;
 using Reactive.Bindings.Extensions;
 
-namespace Capibara.Presentation.ViewModels.Parts
+namespace Capibara.Presentation.ViewModels
 {
     public class MessageViewModelTest
     {

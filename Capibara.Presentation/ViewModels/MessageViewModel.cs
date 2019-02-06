@@ -8,7 +8,7 @@ using Prism.Services;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
-namespace Capibara.Presentation.ViewModels.Parts
+namespace Capibara.Presentation.ViewModels
 {
     public class MessageViewModel : ViewModelBase<Message>
     {

@@ -25,7 +25,4 @@
   <ItemGroup>
     <None Remove=".DS_Store" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Presentation\ViewModels\Parts\" />
-  </ItemGroup>
 </Project>

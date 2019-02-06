@@ -11,7 +11,7 @@ using Moq;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
 
-namespace Capibara.Presentation.ViewModels.Parts
+namespace Capibara.Presentation.ViewModels
 {
     public class UserViewModelTest
     {
