@@ -47,7 +47,7 @@ namespace Capibara.Presentation.ViewModels
 
             public Mock<ISignUpUseCase> SignUpUseCase { get; }
 
-            public Mock<IOAuthSignIn> OAuthSignIn { get; }
+            public Mock<IOAuthSignInUseCase> OAuthSignInUseCase { get; }
 
             public SignUpPageViewModel ViewModel { get; }
 
@@ -66,13 +66,13 @@ namespace Capibara.Presentation.ViewModels
                         ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
                         : Task.FromException<User>(exception));
 
-                this.OAuthSignIn = new Mock<IOAuthSignIn>();
+                this.OAuthSignInUseCase = new Mock<IOAuthSignInUseCase>();
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {
                     SchedulerProvider = schedulerProvider,
                     SignUpUseCase = this.SignUpUseCase.Object,
-                    OAuthSignIn = this.OAuthSignIn.Object
+                    OAuthSignInUseCase = this.OAuthSignInUseCase.Object
                 };
             }
 
@@ -162,7 +162,7 @@ namespace Capibara.Presentation.ViewModels
             subject.ViewModel.Nickname.Value = Faker.Name.FullName();
             subject.ViewModel.SignUpCommand.Execute();
 
-            Assert.That(subject.ViewModel.SignUpWithSnsCommand.CanExecute(), Is.EqualTo(false));
+            Assert.That(subject.ViewModel.SignUpByOAuthCommand.CanExecute(), Is.EqualTo(false));
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace Capibara.Presentation.ViewModels
             var subject = SignUpCommandSubject.WhenSignUpFailed();
 
             subject.ViewModel.Nickname.Value = Faker.Name.FullName();
-            subject.ViewModel.SignUpWithSnsCommand.Execute();
+            subject.ViewModel.SignUpByOAuthCommand.Execute();
 
             subject.PageDialogService.Verify(
                 x => x.DisplayActionSheetAsync(
@@ -205,10 +205,10 @@ namespace Capibara.Presentation.ViewModels
                 });
 
             subject.ViewModel.Nickname.Value = Faker.Name.FullName();
-            subject.ViewModel.SignUpWithSnsCommand.Execute();
+            subject.ViewModel.SignUpByOAuthCommand.Execute();
 
             buttons[index].Action.Invoke();
-            subject.OAuthSignIn.Verify(x => x.Invoke(provider));
+            subject.OAuthSignInUseCase.Verify(x => x.Invoke(provider));
         }
 
         #endregion

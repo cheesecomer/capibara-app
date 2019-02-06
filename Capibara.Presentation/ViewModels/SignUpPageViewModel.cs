@@ -30,22 +30,21 @@ namespace Capibara.Presentation.ViewModels
 
             this.SignUpCommand.Subscribe(SignUpAsync);
 
-
             var actionSheetButtons = new[] {
                 ActionSheetButton.CreateCancelButton("キャンセル", () => { }),
-                ActionSheetButton.CreateButton("Google", () => this.OAuthSignIn.Invoke(OAuthProvider.Google).Wait()),
-                ActionSheetButton.CreateButton("Twitter", () => this.OAuthSignIn.Invoke(OAuthProvider.Twitter).Wait()),
-                ActionSheetButton.CreateButton("LINE", () => this.OAuthSignIn.Invoke(OAuthProvider.Line).Wait())
+                ActionSheetButton.CreateButton("Google", () => this.OAuthSignInUseCase.Invoke(OAuthProvider.Google).Wait()),
+                ActionSheetButton.CreateButton("Twitter", () => this.OAuthSignInUseCase.Invoke(OAuthProvider.Twitter).Wait()),
+                ActionSheetButton.CreateButton("LINE", () => this.OAuthSignInUseCase.Invoke(OAuthProvider.Line).Wait())
             };
 
-            // SignUpWithSnsCommand
-            this.SignUpWithSnsCommand = this.SignUpCommand
+            // SignUpByOAuthCommand
+            this.SignUpByOAuthCommand = this.SignUpCommand
                 .CanExecuteChangedAsObservable()
                 .Select(x => this.SignUpCommand.CanExecute() && this.Nickname.Value.ToSlim().IsPresent())
                 .ToAsyncReactiveCommand()
                 .AddTo(this.Disposable);
 
-            this.SignUpWithSnsCommand.Subscribe(
+            this.SignUpByOAuthCommand.Subscribe(
                 () => this.PageDialogService.DisplayActionSheetAsync("SNSでログイン", actionSheetButtons));
 
             this.RefreshCommand = new AsyncReactiveCommand().AddTo(this.Disposable);
@@ -56,13 +55,13 @@ namespace Capibara.Presentation.ViewModels
 
         public AsyncReactiveCommand SignUpCommand { get; }
 
-        public AsyncReactiveCommand SignUpWithSnsCommand { get; }
+        public AsyncReactiveCommand SignUpByOAuthCommand { get; }
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
         public ISignUpUseCase SignUpUseCase { get; set; }
 
-        public IOAuthSignIn OAuthSignIn { get; set; }
+        public IOAuthSignInUseCase OAuthSignInUseCase { get; set; }
 
         public IRefreshSessionUseCase RefreshSessionUseCase { get; set; }
 
