@@ -107,7 +107,7 @@ namespace Capibara.Domain.Models
                 .SetName("Id Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "Id", new Action<User>(x => x.Id = Faker.RandomNumber.Next()), 1)
+                "Id", new Action<User>(x => x.Id = x.Id + 1), 1)
                 .SetName("Id Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -147,7 +147,7 @@ namespace Capibara.Domain.Models
                 .SetName("BlockId Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "BlockId", new Action<User>(x => x.BlockId = Faker.RandomNumber.Next()), 1)
+                "BlockId", new Action<User>(x => x.BlockId = (x.BlockId ?? Faker.RandomNumber.Next()) + 1), 1)
                 .SetName("BlockId Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -155,7 +155,7 @@ namespace Capibara.Domain.Models
                 .SetName("FollowId Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "FollowId", new Action<User>(x => x.FollowId = Faker.RandomNumber.Next()), 1)
+                "FollowId", new Action<User>(x => x.FollowId = (x.FollowId ?? Faker.RandomNumber.Next()) + 1), 1)
                 .SetName("FollowId Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -163,7 +163,7 @@ namespace Capibara.Domain.Models
                 .SetName("FollowId Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "FriendsCount", new Action<User>(x => x.FriendsCount = Faker.RandomNumber.Next()), 1)
+                "FriendsCount", new Action<User>(x => x.FriendsCount = x.FriendsCount + 1), 1)
                 .SetName("FriendsCount Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(

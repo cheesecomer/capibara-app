@@ -143,7 +143,7 @@ namespace Capibara.Domain.Models
                 .SetName("Id Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "Id", new Action<Room>(x => x.Id = Faker.RandomNumber.Next()), 1)
+                "Id", new Action<Room>(x => x.Id = x.Id + 1), 1)
                 .SetName("Id Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -151,7 +151,7 @@ namespace Capibara.Domain.Models
                 .SetName("Name Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "Name", new Action<Room>(x => x.Name = Faker.Name.FullName()), 1)
+                "Name", new Action<Room>(x => x.Name = $"{x.Name} !"), 1)
                 .SetName("Name Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -159,7 +159,7 @@ namespace Capibara.Domain.Models
                 .SetName("Capacity Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "Capacity", new Action<Room>(x => x.Capacity = Faker.RandomNumber.Next(10, 50)), 1)
+                "Capacity", new Action<Room>(x => x.Capacity = x.Capacity + 1), 1)
                 .SetName("Capacity Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
@@ -167,7 +167,7 @@ namespace Capibara.Domain.Models
                 .SetName("NumberOfParticipants Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
-                "NumberOfParticipants", new Action<Room>(x => x.NumberOfParticipants = Faker.RandomNumber.Next(10, 50)), 1)
+                "NumberOfParticipants", new Action<Room>(x => x.NumberOfParticipants = x.NumberOfParticipants + 1), 1)
                 .SetName("NumberOfParticipants Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
