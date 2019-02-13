@@ -43,8 +43,10 @@ namespace Capibara.Presentation.ViewModels
 
         private Task RefreshAsync()
         {
-            return Observable.FromAsync(this.FetchRoomsUseCase.Invoke)
-                .SubscribeOn(this.SchedulerProvider.IO)
+            return Observable
+                .FromAsync(
+                    this.FetchRoomsUseCase.Invoke,
+                    this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(rooms =>
                 {
@@ -61,11 +63,12 @@ namespace Capibara.Presentation.ViewModels
                     });
                 })
                 .Select(_ => Unit.Default)
-                .RetryWhen(x =>
-                    x.ObserveOn(this.SchedulerProvider.UI)
+                .RetryWhen(observable =>
+                    observable
                         .SelectMany(e =>
-                            this.DisplayErrorAlertAsync(e)
-                                .ToObservable()
+                            Observable.FromAsync(
+                                () => this.DisplayErrorAlertAsync(e),
+                                this.SchedulerProvider.UI)
                                 .Select(v => new Pair<Exception, bool>(e, v)))
                         .SelectMany(v => v.Second
                             ? Observable.Return(Unit.Default)

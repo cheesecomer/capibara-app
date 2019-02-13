@@ -301,9 +301,12 @@ namespace Capibara.Presentation.ViewModels
             var subject = RefreshCommandSubject.WhenHasSessionAndAccepted();
 
             subject.ViewModel.RefreshCommand.Execute();
+
             subject.HasSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
             subject.HasSessionSubject.OnNext(false);
+
+            subject.Scheduler.AdvanceBy(1);
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Never);
         }
@@ -320,11 +323,9 @@ namespace Capibara.Presentation.ViewModels
             subject.ViewModel.RefreshCommand.Execute();
             subject.HasSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
-            subject.Scheduler.AdvanceBy(1);
-
             subject.HasSessionSubject.OnNext(true);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // Invoke RefreshSessionUseCase
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
         }
@@ -337,11 +338,9 @@ namespace Capibara.Presentation.ViewModels
             subject.ViewModel.RefreshCommand.Execute();
             subject.HasSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
-            subject.Scheduler.AdvanceBy(1);
-
             subject.HasSessionSubject.OnNext(true);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // Invoke RefreshSessionUseCase
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
@@ -361,11 +360,9 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
 
-            subject.Scheduler.AdvanceBy(1);
-
             subject.HasSessionSubject.OnNext(true);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // Invoke RefreshSessionUseCase
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
@@ -385,15 +382,14 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.RefreshCommand.Execute();
 
-            subject.Scheduler.AdvanceBy(1);
-
             subject.HasSessionSubject.OnNext(true);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // Invoke RefreshSessionUseCase
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // RetryWhen
+
             subject.PageDialogService.Verify(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -407,17 +403,17 @@ namespace Capibara.Presentation.ViewModels
             var subject = RefreshCommandSubject.WhenHasSessionAndFailedAndRetry();
             subject.ViewModel.RefreshCommand.Execute();
 
-            subject.Scheduler.AdvanceBy(1);
-
             subject.HasSessionSubject.OnNext(true);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // Invoke RefreshSessionUseCase
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Once);
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // RetryWhen
 
-            subject.Scheduler.AdvanceBy(1);
+            subject.Scheduler.AdvanceBy(1); // DisplayErrorAlertAsync
+
+            subject.Scheduler.AdvanceBy(1); // Invoke HasSessionUseCase 
 
             subject.RefreshSessionUseCase.Verify(x => x.Invoke(), Times.Exactly(2));
         }

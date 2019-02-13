@@ -96,15 +96,18 @@ namespace Capibara.Presentation.ViewModels
 
         private Task SpeakAsync()
         {
-            return Observable.FromAsync(() => this.SpeekUseCase.Invoke(this.Message.Value))
-                .SubscribeOn(this.SchedulerProvider.IO)
+            return Observable
+                .FromAsync(
+                    () => this.SpeekUseCase.Invoke(this.Message.Value), 
+                    this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(_ => { }, () => this.Message.Value = string.Empty)
-                .RetryWhen(x =>
-                    x.ObserveOn(this.SchedulerProvider.UI)
+                .RetryWhen(observable =>
+                    observable
                         .SelectMany(e =>
-                            this.DisplayErrorAlertAsync(e)
-                                .ToObservable()
+                            Observable.FromAsync(
+                                () => this.DisplayErrorAlertAsync(e),
+                                this.SchedulerProvider.UI)
                                 .Select(v => new Pair<Exception, bool>(e, v)))
                         .SelectMany(v => v.Second
                             ? Observable.Return(Unit.Default)
@@ -115,17 +118,20 @@ namespace Capibara.Presentation.ViewModels
 
         private Task AttachmentImageAsync()
         {
-            return Observable.FromAsync(() => this.PickupPhotoFromAlbumUseCase.Invoke())
-                .SubscribeOn(this.SchedulerProvider.UI)
+            return Observable
+                .FromAsync(
+                    () => this.PickupPhotoFromAlbumUseCase.Invoke(),
+                    this.SchedulerProvider.UI)
                 .SelectMany(base64 => 
                     Observable.FromAsync(() => this.AttachmentImageUseCase.Invoke(base64))
                         .SubscribeOn(this.SchedulerProvider.IO)
                         .ObserveOn(this.SchedulerProvider.UI)
-                        .RetryWhen(x =>
-                            x.ObserveOn(this.SchedulerProvider.UI)
+                        .RetryWhen(observable =>
+                            observable
                                 .SelectMany(e =>
-                                    this.DisplayErrorAlertAsync(e)
-                                        .ToObservable()
+                                    Observable.FromAsync(
+                                        () => this.DisplayErrorAlertAsync(e),
+                                        this.SchedulerProvider.UI)
                                         .Select(v => new Pair<Exception, bool>(e, v)))
                                 .SelectMany(v => v.Second
                                     ? Observable.Return(Unit.Default)

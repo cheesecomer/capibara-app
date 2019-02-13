@@ -93,11 +93,12 @@ namespace Capibara.Presentation.ViewModels
                         .ToObservable();
                 })
                 .Select(_ => Unit.Default)
-                .RetryWhen(x =>
-                    x.ObserveOn(this.SchedulerProvider.UI)
+                .RetryWhen(observable =>
+                    observable
                         .SelectMany(e =>
-                            this.DisplayErrorAlertAsync(e)
-                                .ToObservable()
+                            Observable.FromAsync(
+                                () => this.DisplayErrorAlertAsync(e),
+                                this.SchedulerProvider.UI)
                                 .Select(v => new Pair<Exception, bool>(e, v)))
                         .SelectMany(v => v.Second
                             ? Observable.Return(Unit.Default)
@@ -109,13 +110,16 @@ namespace Capibara.Presentation.ViewModels
         private Task SignUpAsync()
         {
             return Observable
-                .FromAsync(() => SignUpUseCase.Invoke(this.Nickname.Value))
+                .FromAsync(
+                    () => SignUpUseCase.Invoke(this.Nickname.Value),
+                    this.SchedulerProvider.IO)
                 .Select(_ => Unit.Default)
-                .RetryWhen(x =>
-                    x.ObserveOn(this.SchedulerProvider.UI)
+                .RetryWhen(observable =>
+                    observable
                         .SelectMany(e =>
-                            this.DisplayErrorAlertAsync(e)
-                                .ToObservable()
+                            Observable.FromAsync(
+                                () => this.DisplayErrorAlertAsync(e), 
+                                this.SchedulerProvider.UI)
                                 .Select(v => new Pair<Exception, bool>(e, v)))
                         .SelectMany(v => v.Second
                             ? Observable.Return(Unit.Default)
