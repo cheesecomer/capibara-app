@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace Capibara
 {
+    [TestFixture]
     public class FailEventArgsTest
     {
         [TestCase("", "")]

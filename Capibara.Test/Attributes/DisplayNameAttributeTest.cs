@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace Capibara.Attributes
 {
+    [TestFixture]
     public class DisplayNameAttributeTest
     {
         [Test]

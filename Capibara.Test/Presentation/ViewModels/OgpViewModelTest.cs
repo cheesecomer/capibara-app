@@ -13,6 +13,7 @@ using Reactive.Bindings.Extensions;
 
 namespace Capibara.Presentation.ViewModels.Parts
 {
+    [TestFixture]
     public class OgpViewModelTest
     {
         static private IEnumerable Property_WhenRisePropertyChanged_ShouldUpdate_TestCase()

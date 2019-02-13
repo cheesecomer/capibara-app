@@ -14,6 +14,7 @@ using Prism.Services;
 
 namespace Capibara.Presentation.ViewModels
 {
+    [TestFixture]
     public class FloorMapPageViewModelTest
     {
         #region RefreshCommand

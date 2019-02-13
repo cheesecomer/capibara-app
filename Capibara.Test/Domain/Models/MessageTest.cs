@@ -9,6 +9,7 @@ using Reactive.Bindings.Extensions;
 
 namespace Capibara.Domain.Models
 {
+    [TestFixture]
     public class MessageTest
     {
         static private IEnumerable RestoreTestCase()

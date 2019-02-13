@@ -4,6 +4,7 @@ using Prism.Navigation;
 
 namespace Capibara.Presentation
 {
+    [TestFixture]
     public class NavigationParametersExtensionsTest
     {
         [Test]

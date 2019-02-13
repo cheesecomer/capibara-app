@@ -13,6 +13,7 @@ using Capibara.Domain.UseCases;
 
 namespace Capibara.Presentation.ViewModels
 {
+    [TestFixture]
     public class UserViewModelTest
     {
         static private IEnumerable Property_WhenRisePropertyChanged_ShouldUpdate_TestCase()

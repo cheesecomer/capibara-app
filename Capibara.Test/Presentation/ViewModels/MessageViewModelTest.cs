@@ -11,6 +11,7 @@ using Reactive.Bindings.Extensions;
 
 namespace Capibara.Presentation.ViewModels
 {
+    [TestFixture]
     public class MessageViewModelTest
     {
         static private IEnumerable Property_WhenRisePropertyChanged_ShouldUpdate_TestCase()

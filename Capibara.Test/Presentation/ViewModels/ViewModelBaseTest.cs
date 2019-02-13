@@ -6,6 +6,7 @@ using Moq;
 
 namespace Capibara.Presentation.ViewModels
 {
+    [TestFixture]
     public class ViewModelBaseTest
     {
         class StubViewModel : ViewModelBase

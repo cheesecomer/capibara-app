@@ -14,6 +14,7 @@ using Moq;
 
 namespace Capibara.Presentation.ViewModels
 {
+    [TestFixture]
     public class RoomPageViewModelTest
     {
         static private IEnumerable Property_WhenRisePropertyChanged_ShouldUpdate_TestCase()
