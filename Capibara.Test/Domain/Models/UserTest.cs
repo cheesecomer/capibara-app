@@ -160,7 +160,7 @@ namespace Capibara.Domain.Models
 
             yield return new TestCaseData(
                 "FriendsCount", new Action<User>(x => { }), 0)
-                .SetName("FollowId Property When not chnaged Should not raise PropertyChanged");
+                .SetName("FriendsCount Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
                 "FriendsCount", new Action<User>(x => x.FriendsCount = x.FriendsCount + 1), 1)
@@ -175,8 +175,8 @@ namespace Capibara.Domain.Models
                 .SetName("IsAccepted Property When chnaged Should raise PropertyChanged");
 
             yield return new TestCaseData(
-                "IsAccepted", new Action<User>(x => { }), 0)
-                .SetName("IsAccepted Property When not chnaged Should not raise PropertyChanged");
+                "IsFollower", new Action<User>(x => { }), 0)
+                .SetName("IsFollower Property When not chnaged Should not raise PropertyChanged");
 
             yield return new TestCaseData(
                 "IsFollower", new Action<User>(x => x.IsFollower = !x.IsFollower), 1)
