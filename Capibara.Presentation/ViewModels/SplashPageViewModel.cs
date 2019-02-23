@@ -88,16 +88,7 @@ namespace Capibara.Presentation.ViewModels
                 })
                 .Select(_ => Unit.Default)
                 .Catch((UnauthorizedException _) => this.ToSignUpPage())
-                .RetryWhen(observable =>
-                    observable
-                        .SelectMany(e =>
-                            Observable.FromAsync(
-                                () => this.DisplayErrorAlertAsync(e),
-                                this.SchedulerProvider.UI)
-                                .Select(v => new Pair<Exception, bool>(e, v)))
-                        .SelectMany(v => v.Second
-                            ? Observable.Return(Unit.Default)
-                            : Observable.Throw<Unit>(v.First)))
+                .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch((Exception _) => this.ApplicationExitUseCase.Invoke().ToObservable());
         }
 

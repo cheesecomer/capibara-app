@@ -37,15 +37,6 @@ namespace Capibara.Presentation.ViewModels
 
         #endregion
 
-        public Task<bool> DisplayErrorAlertAsync(Exception exception)
-        {
-            return this.PageDialogService.DisplayAlertAsync(
-                        "申し訳ございません！",
-                        "通信エラーです。リトライしますか？。",
-                        "リトライ",
-                        "閉じる");
-        }
-
         #region Implement IDisposable
 
         public void Dispose()

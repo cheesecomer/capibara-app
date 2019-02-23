@@ -102,16 +102,7 @@ namespace Capibara.Presentation.ViewModels
                     this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(_ => { }, () => this.Message.Value = string.Empty)
-                .RetryWhen(observable =>
-                    observable
-                        .SelectMany(e =>
-                            Observable.FromAsync(
-                                () => this.DisplayErrorAlertAsync(e),
-                                this.SchedulerProvider.UI)
-                                .Select(v => new Pair<Exception, bool>(e, v)))
-                        .SelectMany(v => v.Second
-                            ? Observable.Return(Unit.Default)
-                            : Observable.Throw<Unit>(v.First)))
+                .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch(Observable.Return(Unit.Default))
                 .ToTask();
         }
@@ -126,16 +117,7 @@ namespace Capibara.Presentation.ViewModels
                     Observable.FromAsync(() => this.AttachmentImageUseCase.Invoke(base64))
                         .SubscribeOn(this.SchedulerProvider.IO)
                         .ObserveOn(this.SchedulerProvider.UI)
-                        .RetryWhen(observable =>
-                            observable
-                                .SelectMany(e =>
-                                    Observable.FromAsync(
-                                        () => this.DisplayErrorAlertAsync(e),
-                                        this.SchedulerProvider.UI)
-                                        .Select(v => new Pair<Exception, bool>(e, v)))
-                                .SelectMany(v => v.Second
-                                    ? Observable.Return(Unit.Default)
-                                    : Observable.Throw<Unit>(v.First))))
+                        .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI))
                 .Select(_ => Unit.Default)
                 .Catch(Observable.Return(Unit.Default))
                 .ToTask();
