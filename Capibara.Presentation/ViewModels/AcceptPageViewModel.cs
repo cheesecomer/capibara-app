@@ -121,7 +121,7 @@ namespace Capibara.Presentation.ViewModels
         private Task AgreeAsync()
         {
             return Observable.FromAsync(
-                    () => this.AcceptUseCase.Invoke(),
+                    this.AcceptUseCase.Invoke,
                     this.SchedulerProvider.IO)
                 .SelectMany(_ =>
                 {
