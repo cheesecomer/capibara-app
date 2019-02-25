@@ -53,3 +53,6 @@ Thumbs.db
 # coverage report
 coverage.xml
 coverage.opencover.xml
+capibara.core.coverage.xml
+capibara.domain.coverage.xml
+capibara.presentation.coverage.xml

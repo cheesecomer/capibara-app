@@ -3,7 +3,6 @@ image: Visual Studio 2017
 before_build:
 - ps: nuget restore Capibara.PCL.sln -Verbosity quiet
 - ps: choco install codecov --no-progress
-- ps: choco install opencover --no-progress
 environment:
   TWITTER_CONSUMER_KEY: foobar
   TWITTER_CONSUMER_SECRET_KEY: foobar
@@ -15,6 +14,11 @@ after_build:
 before_test:
 - ps:
 test_script:
-- ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../coverage.xml' /p:Exclude=\"[Capibara.Domain.Fixture]*%2c[Capibara.Presentation]Capibara.Presentation.Views.*\" Capibara.Test/Capibara.Test.csproj
+- ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../capibara.core.coverage.xml' /p:Include="[Capibara.Core]*" Capibara.Test.Core/Capibara.Test.Core.csproj
+- ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../capibara.domain.coverage.xml' /p:Include="[Capibara.Domain]*" Capibara.Test.Domain/Capibara.Test.Domain.csproj
+- ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='../capibara.presentation.coverage.xml' /p:Include="[Capibara.Presentation]*" Capibara.Test.Presentation/Capibara.Test.Presentation.csproj
 after_test:
-- ps: codecov -f './coverage.xml'
+- ps: >-
+    $coveragefiles = (Get-ChildItem -Path "*.coverage.xml").Name
+
+    codecov -v -f $coveragefiles
