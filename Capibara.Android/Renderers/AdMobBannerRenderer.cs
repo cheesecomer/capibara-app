@@ -2,11 +2,14 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
+using Android.OS;
 using Android.Content;
 using Android.Gms.Ads;
 
 using Capibara.Forms;
 using Capibara.Droid.Renderers;
+
+using Java.Lang;
 
 [assembly: ExportRenderer(typeof(AdMobBanner), typeof(AdMobBannerRenderer))]
 namespace Capibara.Droid.Renderers
@@ -27,7 +30,15 @@ namespace Capibara.Droid.Renderers
                     AdSize = AdSize.Banner,
                 };
 
-                adMobBanner.LoadAd(new AdRequest.Builder().Build());
+                var extras = new Bundle();
+                extras.PutString("max_ad_content_rating", "T");
+                var request = new AdRequest.Builder()
+                    .AddNetworkExtrasBundle(
+                        Class.FromType(typeof(Google.Ads.Mediation.Admob.AdMobAdapter)),
+                        extras)
+                    .Build();
+
+                adMobBanner.LoadAd(request);
 
                 this.SetNativeControl(adMobBanner);
             }
@@ -35,7 +46,7 @@ namespace Capibara.Droid.Renderers
 
         private class AdListener : Android.Gms.Ads.AdListener
         {
-            private AdView adView;
+            private readonly AdView adView;
 
             public AdListener(AdView adView)
             {
@@ -48,7 +59,18 @@ namespace Capibara.Droid.Renderers
 
                 System.Threading.Tasks.Task.Delay(5000).ContinueWith(_ =>
                 {
-                    Device.BeginInvokeOnMainThread(() => this.adView.LoadAd(new AdRequest.Builder().Build()));
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var extras = new Bundle();
+                        extras.PutString("max_ad_content_rating", "T");
+                        var request = new AdRequest.Builder()
+                            .AddNetworkExtrasBundle(
+                                Class.FromType(typeof(Google.Ads.Mediation.Admob.AdMobAdapter)),
+                                extras)
+                            .Build();
+
+                        this.adView.LoadAd(request);
+                    });
                 });
             }
         }
