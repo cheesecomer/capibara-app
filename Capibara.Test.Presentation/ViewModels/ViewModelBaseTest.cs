@@ -32,7 +32,7 @@ namespace Capibara.Presentation.ViewModels
         [Test]
         public void OnNavigatingTo()
         {
-            Assert.DoesNotThrow(() => new StubViewModel().OnNavigatingTo(new NavigationParameters()));
+            Assert.DoesNotThrow(() => new StubViewModel().Initialize(new NavigationParameters()));
         }
     }
 
@@ -80,7 +80,7 @@ namespace Capibara.Presentation.ViewModels
         [Test]
         public void OnNavigatingTo_WhenParametersNull()
         {
-            Assert.DoesNotThrow(() => new StubViewModel().OnNavigatingTo(null));
+            Assert.DoesNotThrow(() => new StubViewModel().Initialize(null));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace Capibara.Presentation.ViewModels
         {
             var model = new Mock<StubModel>();
             var expected = new StubModel();
-            new StubViewModel(model: model.Object).OnNavigatingTo(new NavigationParameters { { ParameterNames.Model, expected } });
+            new StubViewModel(model: model.Object).Initialize(new NavigationParameters { { ParameterNames.Model, expected } });
             model.Verify(x => x.Restore(expected), Times.Once);
         }
 
@@ -96,7 +96,7 @@ namespace Capibara.Presentation.ViewModels
         public void OnNavigatingTo_WhenParametersWithoutModel()
         {
             var model = new Mock<StubModel>();
-            new StubViewModel(model: model.Object).OnNavigatingTo(new NavigationParameters());
+            new StubViewModel(model: model.Object).Initialize(new NavigationParameters());
             model.Verify(x => x.Restore(model.Object), Times.Once);
         }
     }

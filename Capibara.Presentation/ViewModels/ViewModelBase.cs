@@ -6,12 +6,15 @@ using Capibara.Reactive;
 using Prism.AppModel;
 using Prism.Navigation;
 using Prism.Services;
+using Unity;
 
 namespace Capibara.Presentation.ViewModels
 {
-    public abstract class ViewModelBase: IDisposable, INavigatingAware, IApplicationLifecycleAware
+    public abstract class ViewModelBase: IDisposable, IInitialize, IApplicationLifecycleAware
     {
         private bool disposedValue;
+
+        private IUnityContainer container;
 
         protected ViewModelBase(INavigationService navigationService, IPageDialogService pageDialogService)
         {
@@ -24,6 +27,18 @@ namespace Capibara.Presentation.ViewModels
         public ISchedulerProvider SchedulerProvider { get; set; }
 
         public IApplicationExitUseCase ApplicationExitUseCase { get; set; }
+
+        [Dependency]
+        public IUnityContainer Container
+        {
+            get => this.container;
+            set
+            {
+                this.container = value;
+
+                this.OnContainerChanged();
+            }
+        }
 
         #endregion
 
@@ -51,9 +66,9 @@ namespace Capibara.Presentation.ViewModels
 
         #endregion
 
-        #region INavigatingAware
+        #region IInitialize
 
-        public virtual void OnNavigatingTo(INavigationParameters parameters) { }
+        public virtual void Initialize(INavigationParameters parameters) { }
 
         #endregion
 
@@ -64,6 +79,8 @@ namespace Capibara.Presentation.ViewModels
         public virtual void OnSleep() { }
 
         #endregion
+
+        protected virtual void OnContainerChanged() { }
     }
 
     public class ViewModelBase<TModel> : ViewModelBase where TModel : Domain.Models.ModelBase<TModel>, new()
@@ -76,11 +93,11 @@ namespace Capibara.Presentation.ViewModels
 
         public TModel Model { get; }
 
-        public override void OnNavigatingTo(INavigationParameters parameters)
+        public override void Initialize(INavigationParameters parameters)
         {
             this.Model.Restore(parameters?.TryGetValue<TModel>(ParameterNames.Model) ?? this.Model);
 
-            base.OnNavigatingTo(parameters);
+            base.Initialize(parameters);
         }
     }
 }

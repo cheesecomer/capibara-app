@@ -38,8 +38,10 @@ namespace Capibara.Presentation.ViewModels
                 .AddTo(this.Disposable);
         }
 
+        [Unity.Dependency]
         public IOpenUrlUseCase OpenUrlUseCase { get; set; }
 
+        [Unity.Dependency]
         public IFetchOgpUseCase FetchOgpUseCase { get; set; }
 
         public AsyncReactiveCommand OpenUrlCommand { get; }

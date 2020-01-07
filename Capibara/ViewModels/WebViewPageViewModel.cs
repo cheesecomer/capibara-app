@@ -13,7 +13,7 @@ namespace Capibara.ViewModels
 {
     public class WebViewPageViewModel : ViewModelBase
     {
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IOverrideUrlService OverrideUrlService { get; set; }
 
         public ReactiveProperty<string> Title { get; } = new ReactiveProperty<string>();

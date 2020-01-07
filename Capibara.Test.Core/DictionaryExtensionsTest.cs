@@ -8,9 +8,9 @@ namespace Capibara
     [TestFixture]
     public class DictionaryExtensionsTest
     {
-        [TestCase("Foo", null, "Bar", TestName = "{m}({0}, {1}) Is When exists key Should return value")]
-        [TestCase("foo", null, null, TestName = "{m}({0}, {1}) Is When not exists key Should return null")]
-        [TestCase("Foo!", "Bar!", "Bar!", TestName = "{m}({0}, {1}) Is When not exists key and set default value Should return defauld value")]
+        [TestCase("Foo", null, "Bar", TestName = "Dictionary { { \"Foo\", \"Bar\" } }.{m}({0}, {1}) should return value")]
+        [TestCase("foo", null, null, TestName = "Dictionary { { \"Foo\", \"Bar\" } }.{m}({0}, {1}) should return null")]
+        [TestCase("Foo!", "Bar!", "Bar!", TestName = "Dictionary { { \"Foo\", \"Bar\" } }.{m}({0}, {1}) should return defauld value")]
         public void ValueOrDefault(string value, string defaultValue, string expected)
         {
             var dictionary = new Dictionary<string, string> { { "Foo", "Bar" } };

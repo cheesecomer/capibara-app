@@ -22,6 +22,7 @@ namespace Capibara.Presentation.ViewModels
             this.RefreshCommand.Subscribe(this.RefreshAsync);
         }
 
+        [Unity.Dependency]
         public IFetchBlockUsersUseCase FetchBlockUsersUseCase { get; set; }
 
         public ReactiveCollection<Block> Blocks { get; } = new ReactiveCollection<Block>();

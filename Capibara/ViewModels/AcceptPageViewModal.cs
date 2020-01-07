@@ -16,7 +16,7 @@ namespace Capibara.ViewModels
     {
         public Task NextCommandTask { get; private set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IOverrideUrlService OverrideUrlService { get; set; }
 
         public ReactiveProperty<bool> IsLoaded { get; } = new ReactiveProperty<bool>(false);

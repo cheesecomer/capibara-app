@@ -42,53 +42,53 @@ namespace Capibara.ViewModels
 
         protected virtual string OptionalScreenName { get; } = string.Empty;
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IProgressDialogService ProgressDialogService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IIsolatedStorage IsolatedStorage { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IEnvironment Environment { get; set; }
 
-        [Unity.Attributes.Dependency(UnityInstanceNames.CurrentUser)]
+        [Unity.Dependency(UnityInstanceNames.CurrentUser)]
         public User CurrentUser { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IDeviceService DeviceService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public Net.IRequestFactory RequestFactory { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public ITaskService TaskService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IApplicationService ApplicationService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public ITracker Tracker { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IBalloonService BalloonService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public ISnsLoginService SnsLoginService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IRewardedVideoService RewardedVideoService { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IImageSourceFactory ImageSourceFactory { get; set; }
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IPickupPhotoService PickupPhotoService { get; set; }
 
         /// <summary>
         /// DIコンテナ
         /// </summary>
         /// <value>The container.</value>
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IUnityContainer Container
         {
             get => this.container;

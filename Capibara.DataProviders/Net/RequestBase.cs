@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Capibara.Services;
 using Newtonsoft.Json;
 using Unity;
-using Unity.Attributes;
 
 namespace Capibara.Net
 {

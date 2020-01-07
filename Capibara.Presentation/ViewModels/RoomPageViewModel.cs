@@ -72,10 +72,13 @@ namespace Capibara.Presentation.ViewModels
             this.AttachmentImageCommand.Subscribe(this.AttachmentImageAsync);
         }
 
+        [Unity.Dependency]
         public IAttachmentImageUseCase AttachmentImageUseCase { get; set; }
 
+        [Unity.Dependency]
         public IPickupPhotoFromAlbumUseCase PickupPhotoFromAlbumUseCase { get; set; }
 
+        [Unity.Dependency]
         public ISpeekUseCase SpeekUseCase { get; set; }
 
         public AsyncReactiveCommand AttachmentImageCommand { get; }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Unity;
-using Unity.Attributes;
 
 namespace Capibara.Net.Channels
 {

@@ -66,8 +66,10 @@ namespace Capibara.Presentation.ViewModels
 
         private readonly ReplaySubject<Pair<WebPage, string>> subject = new ReplaySubject<Pair<WebPage, string>>();
 
+        [Unity.Dependency]
         public IAcceptUseCase AcceptUseCase { get; set; }
 
+        [Unity.Dependency]
         public IGetWebPageUrlUseCase GetWebPageUrlUseCase { get; set; }
 
         public AsyncReactiveCommand OpenCommand { get; }

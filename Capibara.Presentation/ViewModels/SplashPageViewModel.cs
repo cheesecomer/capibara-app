@@ -29,8 +29,10 @@ namespace Capibara.Presentation.ViewModels
             this.LogoOpacity.AddTo(this.Disposable);
         }
 
+        [Unity.Dependency]
         public IHasSessionUseCase HasSessionUseCase { get; set; }
 
+        [Unity.Dependency]
         public IRefreshSessionUseCase RefreshSessionUseCase { get; set; }
 
         public ReactiveProperty<double> LogoTopMargin { get; }

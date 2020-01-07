@@ -30,6 +30,7 @@ namespace Capibara.Presentation.ViewModels
             this.Version = new ReactiveProperty<string>().AddTo(this.Disposable);
         }
 
+        [Unity.Dependency]
         public IGetApplicationVersionUseCase GetApplicationVersionUseCase { get; set; }
 
         public ReactiveProperty<string> Version { get; }

@@ -59,12 +59,16 @@ namespace Capibara.Presentation.ViewModels
 
         public AsyncReactiveCommand RefreshCommand { get; }
 
+        [Unity.Dependency]
         public ISignUpUseCase SignUpUseCase { get; set; }
 
+        [Unity.Dependency]
         public IOAuthSignInUseCase OAuthSignInUseCase { get; set; }
 
+        [Unity.Dependency]
         public IRefreshSessionUseCase RefreshSessionUseCase { get; set; }
 
+        [Unity.Dependency]
         public IHasSessionUseCase HasSessionUseCase { get; set; }
 
         protected Task RefreshAsync()

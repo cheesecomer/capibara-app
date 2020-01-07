@@ -36,6 +36,7 @@ namespace Capibara.Presentation.ViewModels
             this.RefreshCommand.Subscribe(() => this.FetchUserUseCase.Invoke(this.Model));
         }
 
+        [Unity.Dependency]
         public IFetchUserUseCase FetchUserUseCase { get; set; }
 
         public ReactiveProperty<string> Nickname { get; }

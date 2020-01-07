@@ -33,6 +33,7 @@ namespace Capibara.Presentation.ViewModels
 
         public AsyncReactiveCommand<Room> ItemTappedCommand { get; }
 
+        [Unity.Dependency]
         public IFetchRoomsUseCase FetchRoomsUseCase { get; set; }
 
         private Task ItemTapped(Room item)

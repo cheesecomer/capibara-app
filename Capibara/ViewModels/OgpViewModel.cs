@@ -29,7 +29,7 @@ namespace Capibara.ViewModels
 
         public ReactiveProperty<ImageSource> Image { get; } = new ReactiveProperty<ImageSource>();
 
-        [Unity.Attributes.Dependency]
+        [Unity.Dependency]
         public IBrowsingContextFactory BrowsingContextFactory { get; set; }
 
         public OgpViewModel(
