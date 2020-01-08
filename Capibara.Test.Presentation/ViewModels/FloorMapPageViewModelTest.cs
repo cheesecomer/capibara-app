@@ -48,8 +48,8 @@ namespace Capibara.Presentation.ViewModels
                     .Setup(x => x.Invoke())
                     .Returns(
                         exception != null
-                            ? Task.FromException<ICollection<Room>>(exception)
-                            : Task.FromResult(rooms ?? new List<Room>()));
+                            ? Observable.Throw<ICollection<Room>>(exception)
+                            : Observable.Return(rooms ?? new List<Room>()));
 
                 this.ViewModel = new FloorMapPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {

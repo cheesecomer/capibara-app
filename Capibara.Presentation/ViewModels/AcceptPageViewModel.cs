@@ -86,9 +86,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task OpenAsync()
         {
-            return Observable.FromAsync(
-                    () => this.GetWebPageUrlUseCase.Invoke(WebPage.Terms),
-                    this.SchedulerProvider.IO)
+            return Observable.Defer(() => this.GetWebPageUrlUseCase.Invoke(WebPage.Terms))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .SelectMany(
                     x => Observable.Start(() =>
                     {
@@ -108,9 +107,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task NextAsync()
         {
-            return Observable.FromAsync(
-                    () => this.GetWebPageUrlUseCase.Invoke(WebPage.PrivacyPolicy),
-                    this.SchedulerProvider.IO)
+            return Observable.Defer(() => this.GetWebPageUrlUseCase.Invoke(WebPage.PrivacyPolicy))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .SelectMany(
                     x => Observable.Start(() =>
                     {
@@ -122,9 +120,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task AgreeAsync()
         {
-            return Observable.FromAsync(
-                    this.AcceptUseCase.Invoke,
-                    this.SchedulerProvider.IO)
+            return Observable.Defer(this.AcceptUseCase.Invoke)
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .SelectMany(_ =>
                 {
                     return Observable.FromAsync(

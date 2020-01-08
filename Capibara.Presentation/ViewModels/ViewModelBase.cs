@@ -43,6 +43,15 @@ namespace Capibara.Presentation.ViewModels
             }
         }
 
+        [Dependency]
+        public IProgressDialogService ProgressDialogService { get; set; }
+
+        [Dependency]
+        public ISnsLoginService SnsLoginService { get; set; }
+
+        [Dependency]
+        public IRewardedVideoService RewardedVideoService { get; set; }
+
         #endregion
 
         #region Protected Properties
@@ -52,9 +61,6 @@ namespace Capibara.Presentation.ViewModels
         protected INavigationService NavigationService { get; }
 
         protected IPageDialogService PageDialogService { get; }
-
-        [Dependency]
-        protected IProgressDialogService ProgressDialogService { get; }
 
         #endregion
 

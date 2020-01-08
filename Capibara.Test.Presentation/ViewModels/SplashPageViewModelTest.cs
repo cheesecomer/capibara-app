@@ -1,6 +1,6 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
-using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Capibara.Domain.Models;
@@ -63,7 +63,7 @@ namespace Capibara.Presentation.ViewModels
                 this.ApplicationExitUseCase = new Mock<IApplicationExitUseCase>();
                 this.ApplicationExitUseCase
                     .Setup(x => x.Invoke())
-                    .Returns(Task.CompletedTask);
+                    .ReturnsObservable(System.Reactive.Unit.Default);
 
                 this.HasSessionUseCase = new Mock<IHasSessionUseCase>();
                 this.HasSessionUseCase
@@ -76,8 +76,8 @@ namespace Capibara.Presentation.ViewModels
                     .Returns(() =>
                     {
                         return exception == null
-                            ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
-                            : Task.FromException<User>(exception);
+                            ? Observable.Return(ModelFixture.User(isAccepted: isAccepted))
+                            : Observable.Throw<User>(exception);
                     });
 
                 this.ViewModel = new SplashPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)

@@ -1,4 +1,5 @@
-﻿using Capibara.Domain.Models;
+﻿using System.Reactive.Threading.Tasks;
+using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
 using Prism.Navigation;
 using Prism.Services;
@@ -18,12 +19,12 @@ namespace Capibara.Presentation.ViewModels
             this.RefreshCommand = new AsyncReactiveCommand()
                 .AddTo(this.Disposable);
             this.RefreshCommand
-                .Subscribe(() => this.FetchOgpUseCase.Invoke(this.Model));
+                .Subscribe(() => this.FetchOgpUseCase.Invoke(this.Model).ToTask());
 
             this.OpenUrlCommand = new AsyncReactiveCommand()
                 .AddTo(this.Disposable);
             this.OpenUrlCommand
-                .Subscribe(() => this.OpenUrlUseCase.Invoke(this.Model.Url));
+                .Subscribe(() => this.OpenUrlUseCase.Invoke(this.Model.Url).ToTask());
 
             this.Title =  this.Model
                 .ToReactivePropertyAsSynchronized(x => x.Title)

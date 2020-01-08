@@ -48,9 +48,8 @@ namespace Capibara.Presentation.ViewModels
         private Task RefreshAsync()
         {
             return Observable
-                .FromAsync(
-                    this.FetchEnvironmentUseCase.Invoke,
-                    this.SchedulerProvider.IO)
+                .Defer(this.FetchEnvironmentUseCase.Invoke)
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(environment =>
                 {

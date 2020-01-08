@@ -3,8 +3,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Microsoft.Reactive.Testing;
 using NUnit.Framework;
 using Reactive.Bindings.Extensions;
@@ -121,6 +121,9 @@ namespace Capibara.Presentation.ViewModels
             var scheduler = schedulerProvider.Scheduler;
             var fetchUserUseCase = new Mock<IFetchUserUseCase>();
             var model = ModelFixture.User();
+
+            fetchUserUseCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+
             new UserViewModel(model: model) { SchedulerProvider = schedulerProvider, FetchUserUseCase = fetchUserUseCase.Object }.RefreshCommand.Execute();
 
             scheduler.AdvanceBy(1); // Invoke UseCase
@@ -136,7 +139,7 @@ namespace Capibara.Presentation.ViewModels
             var model = ModelFixture.User();
             fetchUserUseCase
                 .Setup(x => x.Invoke(It.IsAny<User>()))
-                .Returns(Task.FromException(new Exception()));
+                .Returns(Observable.Throw<Unit>(new Exception()));
 
             var subject = new UserViewModel(model: model) { SchedulerProvider = schedulerProvider, FetchUserUseCase = fetchUserUseCase.Object };
 

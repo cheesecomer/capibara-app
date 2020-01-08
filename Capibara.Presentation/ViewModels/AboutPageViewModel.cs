@@ -43,8 +43,10 @@ namespace Capibara.Presentation.ViewModels
 
         private Task OpenAsync()
         {
-            return Observable
-                .FromAsync(this.GetApplicationVersionUseCase.Invoke, this.SchedulerProvider.IO)
+            
+            return this.GetApplicationVersionUseCase
+                .Invoke()
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .SelectMany(x => 
                     Observable.Start(
                         () => this.Version.Value = $"Version {x}", 

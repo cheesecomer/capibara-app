@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Collections;
-using System.Threading.Tasks;
+using System.Reactive;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
 using Moq;
@@ -117,7 +117,14 @@ namespace Capibara.Presentation.ViewModels
             var useCase = new Mock<IToggleFollowUseCase>();
             var schedulerProvider = new SchedulerProvider();
             var scheduler = schedulerProvider.Scheduler;
-            var subject = new UserProfilePageViewModel(model: ModelFixture.User()) { SchedulerProvider = schedulerProvider, ToggleFollowUseCase = useCase.Object };
+            var subject = new UserProfilePageViewModel(model: ModelFixture.User())
+            {
+                SchedulerProvider = schedulerProvider,
+                ToggleFollowUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
+            };
+
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
 
             subject.ToggleFollowCommand.Execute();
 
@@ -130,7 +137,14 @@ namespace Capibara.Presentation.ViewModels
         {
             var useCase = new Mock<IToggleFollowUseCase>();
             var schedulerProvider = new SchedulerProvider();
-            var subject = new UserProfilePageViewModel(model: ModelFixture.User()) { SchedulerProvider = schedulerProvider, ToggleFollowUseCase = useCase.Object };
+            var subject = new UserProfilePageViewModel(model: ModelFixture.User())
+            {
+                SchedulerProvider = schedulerProvider,
+                ToggleFollowUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
+            };
+
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
 
             subject.ToggleFollowCommand.Execute();
 
@@ -149,10 +163,11 @@ namespace Capibara.Presentation.ViewModels
                 pageDialogService: pageDialogService.Object)
             {
                 SchedulerProvider = schedulerProvider,
-                ToggleFollowUseCase = useCase.Object
+                ToggleFollowUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).Returns(Task.FromException(new Exception()));
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(new Exception());
 
             subject.ToggleFollowCommand.Execute();
 
@@ -175,16 +190,19 @@ namespace Capibara.Presentation.ViewModels
                 pageDialogService: pageDialogService.Object)
             {
                 SchedulerProvider = schedulerProvider,
-                ToggleFollowUseCase = useCase.Object
+                ToggleFollowUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).Returns(Task.FromException(new Exception()));
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(new Exception());
 
             subject.ToggleFollowCommand.Execute();
 
             scheduler.AdvanceBy(1); // Invoke Usecase
 
             scheduler.AdvanceBy(1); // RetryWhen
+
+            scheduler.AdvanceBy(1);
 
             scheduler.AdvanceBy(1); // Invoke Usecase
 
@@ -201,7 +219,14 @@ namespace Capibara.Presentation.ViewModels
             var useCase = new Mock<IToggleBlockUseCase>();
             var schedulerProvider = new SchedulerProvider();
             var scheduler = schedulerProvider.Scheduler;
-            var subject = new UserProfilePageViewModel(model: ModelFixture.User()) { SchedulerProvider = schedulerProvider, ToggleBlockUseCase = useCase.Object };
+            var subject = new UserProfilePageViewModel(model: ModelFixture.User())
+            {
+                SchedulerProvider = schedulerProvider,
+                ToggleBlockUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
+            };
+
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
 
             subject.ToggleBlockCommand.Execute();
 
@@ -214,7 +239,14 @@ namespace Capibara.Presentation.ViewModels
         {
             var useCase = new Mock<IToggleBlockUseCase>();
             var schedulerProvider = new SchedulerProvider();
-            var subject = new UserProfilePageViewModel(model: ModelFixture.User()) { SchedulerProvider = schedulerProvider, ToggleBlockUseCase = useCase.Object };
+            var subject = new UserProfilePageViewModel(model: ModelFixture.User())
+            {
+                SchedulerProvider = schedulerProvider,
+                ToggleBlockUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
+            };
+
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
 
             subject.ToggleBlockCommand.Execute();
 
@@ -225,6 +257,7 @@ namespace Capibara.Presentation.ViewModels
         public void ToggleBlockCommand_WhenError_ShouldShowRetryDialog()
         {
             var useCase = new Mock<IToggleBlockUseCase>();
+
             var schedulerProvider = new SchedulerProvider();
             var scheduler = schedulerProvider.Scheduler;
             var pageDialogService = Mock.PageDialogService();
@@ -233,10 +266,11 @@ namespace Capibara.Presentation.ViewModels
                 pageDialogService: pageDialogService.Object)
             {
                 SchedulerProvider = schedulerProvider,
-                ToggleBlockUseCase = useCase.Object
+                ToggleBlockUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).Returns(Task.FromException(new Exception()));
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(new Exception());
 
             subject.ToggleBlockCommand.Execute();
 
@@ -259,16 +293,19 @@ namespace Capibara.Presentation.ViewModels
                 pageDialogService: pageDialogService.Object)
             {
                 SchedulerProvider = schedulerProvider,
-                ToggleBlockUseCase = useCase.Object
+                ToggleBlockUseCase = useCase.Object,
+                ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).Returns(Task.FromException(new Exception()));
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(new Exception());
 
             subject.ToggleBlockCommand.Execute();
 
             scheduler.AdvanceBy(1); // Invoke Usecase
 
             scheduler.AdvanceBy(1); // RetryWhen
+
+            scheduler.AdvanceBy(1);
 
             scheduler.AdvanceBy(1); // Invoke Usecase
 

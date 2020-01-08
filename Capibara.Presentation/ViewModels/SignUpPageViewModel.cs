@@ -77,7 +77,7 @@ namespace Capibara.Presentation.ViewModels
                 .Invoke()
                 .Where(v => v)
                 .FirstAsync()
-                .SelectMany(_ => Observable.FromAsync(this.RefreshSessionUseCase.Invoke))
+                .SelectMany(_ => this.RefreshSessionUseCase.Invoke())
                 .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .SelectMany(user =>
@@ -105,9 +105,8 @@ namespace Capibara.Presentation.ViewModels
         private Task SignUpAsync()
         {
             return Observable
-                .FromAsync(
-                    () => SignUpUseCase.Invoke(this.Nickname.Value),
-                    this.SchedulerProvider.IO)
+                .Defer(() => SignUpUseCase.Invoke(this.Nickname.Value))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .Select(_ => Unit.Default)
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch(Observable.Return(Unit.Default))

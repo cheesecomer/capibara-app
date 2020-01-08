@@ -100,9 +100,8 @@ namespace Capibara.Presentation.ViewModels
         private Task SpeakAsync()
         {
             return Observable
-                .FromAsync(
-                    () => this.SpeekUseCase.Invoke(this.Message.Value), 
-                    this.SchedulerProvider.IO)
+                .Defer(() => this.SpeekUseCase.Invoke(this.Message.Value))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(_ => { }, () => this.Message.Value = string.Empty)
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
@@ -113,11 +112,10 @@ namespace Capibara.Presentation.ViewModels
         private Task AttachmentImageAsync()
         {
             return Observable
-                .FromAsync(
-                    () => this.PickupPhotoFromAlbumUseCase.Invoke(),
-                    this.SchedulerProvider.UI)
+                .Defer(() => this.PickupPhotoFromAlbumUseCase.Invoke())
+                .SubscribeOn(this.SchedulerProvider.UI)
                 .SelectMany(base64 => 
-                    Observable.FromAsync(() => this.AttachmentImageUseCase.Invoke(base64))
+                    Observable.Defer(() => this.AttachmentImageUseCase.Invoke(base64))
                         .SubscribeOn(this.SchedulerProvider.IO)
                         .ObserveOn(this.SchedulerProvider.UI)
                         .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI))

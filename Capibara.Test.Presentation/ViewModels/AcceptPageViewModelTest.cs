@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
-using System.Threading.Tasks;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Collections;
 using Moq;
 using Capibara.Domain.UseCases;
@@ -54,9 +55,11 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
 
             subject.OpenCommand.Execute();
+
+            scheduler.AdvanceBy(1);
 
             getWebPageUrlUseCase.Verify(x => x.Invoke(Domain.Models.WebPage.Terms), Times.Once);
         }
@@ -94,7 +97,7 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
 
             subject.OpenCommand.Execute();
 
@@ -122,7 +125,7 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
 
             subject.OpenCommand.Execute();
 
@@ -157,8 +160,8 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
 
             subject.OpenCommand.Execute();
 
@@ -171,6 +174,8 @@ namespace Capibara.Presentation.ViewModels
             scheduler.AdvanceBy(1);
 
             subject.CurrentCommand.Value.Execute();
+
+            scheduler.AdvanceBy(1);
 
             getWebPageUrlUseCase.Verify(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy), Times.Once);
         }
@@ -209,8 +214,8 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
 
             subject.OpenCommand.Execute();
 
@@ -249,8 +254,8 @@ namespace Capibara.Presentation.ViewModels
                 GetWebPageUrlUseCase = getWebPageUrlUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
 
             subject.OpenCommand.Execute();
 
@@ -302,8 +307,10 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
+
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
 
             subject.OpenCommand.Execute();
 
@@ -327,6 +334,8 @@ namespace Capibara.Presentation.ViewModels
 
             subject.CurrentCommand.Value.Execute();
 
+            scheduler.AdvanceBy(1);
+
             acceptUseCase.Verify(x => x.Invoke(), Times.Once);
         }
 
@@ -347,8 +356,10 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
+
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
 
             subject.OpenCommand.Execute();
 
@@ -395,10 +406,12 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsAsync(termsUrl);
-            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsAsync(privacyPolicyUrl);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
 
-            acceptUseCase.Setup(x => x.Invoke()).Returns(Task.FromException(new Exception()));
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
+            getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
+
+            acceptUseCase.Setup(x => x.Invoke()).Returns(Observable.Throw<Unit>(new Exception()));
 
             subject.OpenCommand.Execute();
 

@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
@@ -63,10 +64,13 @@ namespace Capibara.Presentation.ViewModels
                 this.SignUpUseCase
                     .Setup(x => x.Invoke(It.IsAny<string>()))
                     .Returns(exception == null
-                        ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
-                        : Task.FromException<User>(exception));
+                        ? Observable.Return(ModelFixture.User(isAccepted: isAccepted))
+                        : Observable.Throw<User>(exception));
 
                 this.OAuthSignInUseCase = new Mock<IOAuthSignInUseCase>();
+                this.OAuthSignInUseCase
+                    .Setup(x => x.Invoke(It.IsAny<OAuthProvider>()))
+                    .ReturnsObservable(Unit.Default);
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {
@@ -88,6 +92,7 @@ namespace Capibara.Presentation.ViewModels
 
             subject.ViewModel.Nickname.Value = Faker.Name.FullName();
             subject.ViewModel.SignUpCommand.Execute();
+            subject.Scheduler.AdvanceBy(1);
 
             subject.SignUpUseCase.Verify(x => x.Invoke(subject.ViewModel.Nickname.Value), Times.Once);
         }
@@ -143,8 +148,8 @@ namespace Capibara.Presentation.ViewModels
                 this.SignUpUseCase
                     .Setup(x => x.Invoke(It.IsAny<string>()))
                     .Returns(exception == null
-                        ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
-                        : Task.FromException<User>(exception));
+                        ? Observable.Return(ModelFixture.User(isAccepted: isAccepted))
+                        : Observable.Throw<User>(exception));
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {
@@ -261,8 +266,8 @@ namespace Capibara.Presentation.ViewModels
                     .Returns(() =>
                     {
                         return exception == null
-                            ? Task.FromResult(ModelFixture.User(isAccepted: isAccepted))
-                            : Task.FromException<User>(exception);
+                            ? Observable.Return(ModelFixture.User(isAccepted: isAccepted))
+                            : Observable.Throw<User>(exception);
                     });
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)

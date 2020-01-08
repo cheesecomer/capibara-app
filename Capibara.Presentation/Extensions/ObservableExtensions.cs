@@ -2,6 +2,9 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+
+using Capibara.Services;
+
 using Prism.Services;
 
 namespace Capibara.Presentation
@@ -25,5 +28,8 @@ namespace Capibara.Presentation
                             ? Observable.Return(Unit.Default)
                             : Observable.Throw<Unit>(v.First)));
         }
+
+        public static IObservable<T> WithProgress<T>(this IObservable<T> source, IProgressDialogService progressDialogService)
+            => progressDialogService.DisplayProgressAsync(source);
     }
 }

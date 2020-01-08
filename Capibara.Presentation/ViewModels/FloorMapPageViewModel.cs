@@ -44,10 +44,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task RefreshAsync()
         {
-            return Observable
-                .FromAsync(
-                    this.FetchRoomsUseCase.Invoke,
-                    this.SchedulerProvider.IO)
+            return Observable.Defer(this.FetchRoomsUseCase.Invoke)
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .Do(rooms =>
                 {

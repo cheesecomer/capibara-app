@@ -1,6 +1,6 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
-using System.Threading.Tasks;
+using System.Reactive;
 using System.Collections;
 using System.ComponentModel;
 using System.Linq;
@@ -207,6 +207,8 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
+            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
+
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
             subject.SpeekCommand.Execute();
@@ -227,6 +229,8 @@ namespace Capibara.Presentation.ViewModels
                 SpeekUseCase = speekUseCase.Object,
                 SchedulerProvider = schedulerProvider
             };
+
+            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
 
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
@@ -257,7 +261,7 @@ namespace Capibara.Presentation.ViewModels
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(false);
 
-            speekUseCase.Setup(x => x.Invoke(It.IsNotNull<string>())).Returns(Task.FromException(new Exception()));
+            speekUseCase.Setup(x => x.Invoke(It.IsNotNull<string>())).ReturnsObservable(new Exception());
 
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
@@ -292,7 +296,7 @@ namespace Capibara.Presentation.ViewModels
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(true);
 
-            speekUseCase.Setup(x => x.Invoke(It.IsNotNull<string>())).Returns(Task.FromException(new Exception()));
+            speekUseCase.Setup(x => x.Invoke(It.IsNotNull<string>())).ReturnsObservable(new Exception());
 
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
@@ -343,7 +347,8 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsAsync(imageBase64);
+            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsObservable(imageBase64);
+            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
 
             subject.Model.IsConnected = true;
             subject.AttachmentImageCommand.Execute();
@@ -369,7 +374,7 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).Returns(Task.FromException<string>(new Exception()));
+            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsObservable(new Exception());
 
             subject.Model.IsConnected = true;
             subject.AttachmentImageCommand.Execute();
@@ -397,8 +402,8 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsAsync(imageBase64);
-            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).Returns(Task.FromException<byte[]>(new Exception()));
+            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsObservable(imageBase64);
+            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(new Exception());
 
             pageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -434,8 +439,8 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsAsync(imageBase64);
-            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).Returns(Task.FromException<byte[]>(new Exception()));
+            pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsObservable(imageBase64);
+            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(new Exception());
 
             pageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))

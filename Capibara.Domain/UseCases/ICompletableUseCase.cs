@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Reactive;
 
 namespace Capibara.Domain.UseCases
 {
     public interface ICompletableUseCase<TParam>
     {
-        Task Invoke(TParam param);
+        IObservable<Unit> Invoke(TParam param);
     }
 
     public interface ICompletableUseCase
     {
-        Task Invoke();
+        IObservable<Unit> Invoke();
     }
 }

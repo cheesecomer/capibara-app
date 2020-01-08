@@ -45,7 +45,11 @@ namespace Capibara.Presentation.ViewModels
                 FetchBlockUsersUseCase = fetchBlockUsersUseCase.Object
             };
 
+            fetchBlockUsersUseCase.Setup(x => x.Invoke()).ReturnsObservable(new List<Block>());
+
             subject.RefreshCommand.Execute();
+
+            scheduler.AdvanceBy(1);
 
             fetchBlockUsersUseCase.Verify(x => x.Invoke(), Times.Once);
         }
@@ -65,7 +69,7 @@ namespace Capibara.Presentation.ViewModels
                 FetchBlockUsersUseCase = fetchBlockUsersUseCase.Object
             };
 
-            fetchBlockUsersUseCase.Setup(x => x.Invoke()).ReturnsAsync(blocks);
+            fetchBlockUsersUseCase.Setup(x => x.Invoke()).ReturnsObservable(blocks);
 
             subject.RefreshCommand.Execute();
 

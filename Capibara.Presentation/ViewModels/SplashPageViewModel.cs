@@ -66,9 +66,8 @@ namespace Capibara.Presentation.ViewModels
         private IObservable<Unit> ToFloorMapPage()
         {
             return Observable
-                .FromAsync(
-                    this.RefreshSessionUseCase.Invoke,
-                    this.SchedulerProvider.IO)
+                .Defer(this.RefreshSessionUseCase.Invoke)
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
                 .SelectMany(user => 
                     this.LogoOpacityChangeAsync()
@@ -91,7 +90,7 @@ namespace Capibara.Presentation.ViewModels
                 .Select(_ => Unit.Default)
                 .Catch((UnauthorizedException _) => this.ToSignUpPage())
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
-                .Catch((Exception _) => this.ApplicationExitUseCase.Invoke().ToObservable());
+                .Catch((Exception _) => this.ApplicationExitUseCase.Invoke());
         }
 
         private IObservable<Unit> LogoTopMarginChangeAsync()

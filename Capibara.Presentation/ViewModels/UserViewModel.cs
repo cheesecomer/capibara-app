@@ -60,10 +60,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task RefreshAsync()
         {
-            return Observable
-                .FromAsync(
-                    x => this.FetchUserUseCase.Invoke(this.Model),
-                    this.SchedulerProvider.IO)
+            return Observable.Defer(() => this.FetchUserUseCase.Invoke(this.Model))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .Select(_ => Unit.Default)
                 .Catch(Observable.Return(Unit.Default))
                 .ToTask();

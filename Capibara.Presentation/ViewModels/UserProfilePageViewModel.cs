@@ -105,10 +105,10 @@ namespace Capibara.Presentation.ViewModels
         private Task ToggleBlockAsync()
         {
             return Observable
-                .FromAsync(
-                    x => this.ProgressDialogService.DisplayProgressAsync(this.ToggleBlockUseCase.Invoke(this.Model)),
-                    this.SchedulerProvider.IO)
+                .Defer(() => this.ToggleBlockUseCase.Invoke(this.Model))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
+                .WithProgress(this.ProgressDialogService)
                 .Select(_ => Unit.Default)
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch(Observable.Return(Unit.Default))
@@ -118,10 +118,10 @@ namespace Capibara.Presentation.ViewModels
         private Task ToggleFollowAsync()
         {
             return Observable
-                .FromAsync(
-                    x => this.ProgressDialogService.DisplayProgressAsync(this.ToggleFollowUseCase.Invoke(this.Model)),
-                    this.SchedulerProvider.IO)
+                .Defer(() => this.ToggleFollowUseCase.Invoke(this.Model))
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .ObserveOn(this.SchedulerProvider.UI)
+                .WithProgress(this.ProgressDialogService)
                 .Select(_ => Unit.Default)
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch(Observable.Return(Unit.Default))

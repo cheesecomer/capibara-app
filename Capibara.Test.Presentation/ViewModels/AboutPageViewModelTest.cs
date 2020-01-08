@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
+using System.Reactive.Linq;
 using Capibara.Domain.UseCases;
 using Moq;
 using NUnit.Framework;
@@ -47,7 +48,7 @@ namespace Capibara.Presentation.ViewModels
                 GetApplicationVersionUseCase = getApplicationVersionUseCase.Object
             };
 
-            getApplicationVersionUseCase.Setup(x => x.Invoke()).ReturnsAsync(version);
+            getApplicationVersionUseCase.Setup(x => x.Invoke()).Returns(Observable.Return(version));
 
             subject.OpenCommand.Execute();
 

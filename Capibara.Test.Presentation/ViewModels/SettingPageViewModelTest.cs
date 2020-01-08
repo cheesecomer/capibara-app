@@ -1,18 +1,10 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Capibara.Domain.Models;
+using System.Reactive;
 using Capibara.Domain.UseCases;
-using Microsoft.Reactive.Testing;
 using Moq;
 using NUnit.Framework;
 using Prism.Navigation;
-using Prism.Services;
 
 namespace Capibara.Presentation.ViewModels
 {
@@ -59,11 +51,11 @@ namespace Capibara.Presentation.ViewModels
             var fetchEnvironmentUseCase = new Mock<IFetchEnvironmentUseCase>();
             var subject = new SettingPageViewModel
             {
-
                 FetchEnvironmentUseCase = fetchEnvironmentUseCase.Object,
                 SchedulerProvider = schedulerProvider
             };
 
+            fetchEnvironmentUseCase.Setup(x => x.Invoke()).ReturnsObservable(new Mock<Domain.Models.IEnvironment>().Object);
             subject.RefreshCommand.Execute();
             scheduler.AdvanceBy(1);
 
@@ -88,7 +80,7 @@ namespace Capibara.Presentation.ViewModels
             environment.SetupGet(x => x.PrivacyPolicyUrl).Returns(privacyPolicyUrl);
             environment.SetupGet(x => x.TermsUrl).Returns(termsUrl);
 
-            fetchEnvironmentUseCase.Setup(x => x.Invoke()).ReturnsAsync(environment.Object);
+            fetchEnvironmentUseCase.Setup(x => x.Invoke()).ReturnsObservable(environment.Object);
 
             subject.RefreshCommand.Execute();
             scheduler.AdvanceBy(1);

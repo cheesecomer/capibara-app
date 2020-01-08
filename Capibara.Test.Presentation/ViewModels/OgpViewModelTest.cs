@@ -103,6 +103,8 @@ namespace Capibara.Presentation.ViewModels.Parts
         public void OpenUrlCommand_ShouldInvokeFetchOgp()
         {
             var openUrlUseCase = new Mock<IOpenUrlUseCase>();
+            openUrlUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(System.Reactive.Unit.Default);
+
             var model = ModelFixture.Ogp();
             new OgpViewModel(model: model) { OpenUrlUseCase = openUrlUseCase.Object }.OpenUrlCommand.Execute();
             openUrlUseCase.Verify(x => x.Invoke(model.Url), Times.Once);
@@ -116,6 +118,8 @@ namespace Capibara.Presentation.ViewModels.Parts
         public void RefreshCommand_ShouldInvokeFetchOgp()
         {
             var fetchOgpUseCase = new Mock<IFetchOgpUseCase>();
+            fetchOgpUseCase.Setup(x => x.Invoke(It.IsAny<Ogp>())).ReturnsObservable(System.Reactive.Unit.Default);
+
             var model = ModelFixture.Ogp();
             new OgpViewModel(model: model) { FetchOgpUseCase = fetchOgpUseCase.Object }.RefreshCommand.Execute();
             fetchOgpUseCase.Verify(x => x.Invoke(model), Times.Once);

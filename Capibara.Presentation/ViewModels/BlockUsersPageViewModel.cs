@@ -31,9 +31,8 @@ namespace Capibara.Presentation.ViewModels
 
         private Task RefreshAsync()
         {
-            return Observable.FromAsync(
-                this.FetchBlockUsersUseCase.Invoke,
-                this.SchedulerProvider.IO)
+            return Observable.Defer(this.FetchBlockUsersUseCase.Invoke)
+                .SubscribeOn(this.SchedulerProvider.IO)
                 .SelectMany(
                     blocks => Observable.Start(() =>
                     {
