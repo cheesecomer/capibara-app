@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using Capibara.Domain.UseCases;
 using Capibara.Reactive;
+using Capibara.Services;
 using Prism.AppModel;
 using Prism.Navigation;
 using Prism.Services;
@@ -24,8 +25,10 @@ namespace Capibara.Presentation.ViewModels
 
         #region Public Properties
 
+        [Dependency]
         public ISchedulerProvider SchedulerProvider { get; set; }
 
+        [Dependency]
         public IApplicationExitUseCase ApplicationExitUseCase { get; set; }
 
         [Dependency]
@@ -49,6 +52,9 @@ namespace Capibara.Presentation.ViewModels
         protected INavigationService NavigationService { get; }
 
         protected IPageDialogService PageDialogService { get; }
+
+        [Dependency]
+        protected IProgressDialogService ProgressDialogService { get; }
 
         #endregion
 

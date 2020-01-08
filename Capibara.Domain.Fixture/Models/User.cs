@@ -20,8 +20,8 @@ namespace Capibara.Domain.Models
                 Biography = biography ?? Faker.Lorem.Sentence(),
                 IconUrl = iconUrl ?? Faker.Url.Image(),
                 IconThumbnailUrl = iconThumbnailUrl ?? Faker.Url.Image(),
-                BlockId = blockId ?? Faker.RandomNumber.Next(),
-                FollowId = followId ?? Faker.RandomNumber.Next(),
+                BlockId = blockId,
+                FollowId = followId,
                 FriendsCount = friendsCount ?? Faker.RandomNumber.Next(),
                 IsAccepted = isAccepted ?? true,
                 IsFollower = isFollower ?? false

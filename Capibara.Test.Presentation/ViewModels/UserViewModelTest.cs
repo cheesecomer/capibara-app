@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Microsoft.Reactive.Testing;
 using NUnit.Framework;
 using Reactive.Bindings.Extensions;
@@ -116,10 +117,34 @@ namespace Capibara.Presentation.ViewModels
         [Test]
         public void RefreshCommand_ShouldInvokeFetchUser()
         {
+            var schedulerProvider = new SchedulerProvider();
+            var scheduler = schedulerProvider.Scheduler;
             var fetchUserUseCase = new Mock<IFetchUserUseCase>();
             var model = ModelFixture.User();
-            new UserViewModel(model: model) { FetchUserUseCase = fetchUserUseCase.Object }.RefreshCommand.Execute();
+            new UserViewModel(model: model) { SchedulerProvider = schedulerProvider, FetchUserUseCase = fetchUserUseCase.Object }.RefreshCommand.Execute();
+
+            scheduler.AdvanceBy(1); // Invoke UseCase
             fetchUserUseCase.Verify(x => x.Invoke(model), Times.Once);
+        }
+
+        [Test]
+        public void RefreshCommand_WhenError_ShouldCompleteCommand()
+        {
+            var schedulerProvider = new SchedulerProvider();
+            var scheduler = schedulerProvider.Scheduler;
+            var fetchUserUseCase = new Mock<IFetchUserUseCase>();
+            var model = ModelFixture.User();
+            fetchUserUseCase
+                .Setup(x => x.Invoke(It.IsAny<User>()))
+                .Returns(Task.FromException(new Exception()));
+
+            var subject = new UserViewModel(model: model) { SchedulerProvider = schedulerProvider, FetchUserUseCase = fetchUserUseCase.Object };
+
+            subject.RefreshCommand.Execute();
+
+            scheduler.AdvanceBy(1); // Invoke UseCase
+
+            Assert.That(subject.RefreshCommand.CanExecute(), Is.True);
         }
 
         #endregion
