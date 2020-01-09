@@ -307,7 +307,7 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable();
 
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
@@ -356,7 +356,7 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable();
 
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);
@@ -406,7 +406,7 @@ namespace Capibara.Presentation.ViewModels
                 AcceptUseCase = acceptUseCase.Object
             };
 
-            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable(Unit.Default);
+            acceptUseCase.Setup(x => x.Invoke()).ReturnsObservable();
 
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.Terms)).ReturnsObservable(termsUrl);
             getWebPageUrlUseCase.Setup(x => x.Invoke(Domain.Models.WebPage.PrivacyPolicy)).ReturnsObservable(privacyPolicyUrl);

@@ -70,7 +70,7 @@ namespace Capibara.Presentation.ViewModels
                 this.OAuthSignInUseCase = new Mock<IOAuthSignInUseCase>();
                 this.OAuthSignInUseCase
                     .Setup(x => x.Invoke(It.IsAny<OAuthProvider>()))
-                    .ReturnsObservable(Unit.Default);
+                    .ReturnsObservable();
 
                 this.ViewModel = new SignUpPageViewModel(this.NavigationService.Object, this.PageDialogService.Object)
                 {

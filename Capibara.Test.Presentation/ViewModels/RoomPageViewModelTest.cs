@@ -207,7 +207,7 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
+            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable();
 
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
@@ -230,7 +230,7 @@ namespace Capibara.Presentation.ViewModels
                 SchedulerProvider = schedulerProvider
             };
 
-            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
+            speekUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable();
 
             subject.Model.IsConnected = true;
             subject.Message.Value = message;
@@ -348,7 +348,7 @@ namespace Capibara.Presentation.ViewModels
             };
 
             pickupPhotoFromAlbumUseCase.Setup(x => x.Invoke()).ReturnsObservable(imageBase64);
-            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable(Unit.Default);
+            attachmentImageUseCase.Setup(x => x.Invoke(It.IsAny<string>())).ReturnsObservable();
 
             subject.Model.IsConnected = true;
             subject.AttachmentImageCommand.Execute();

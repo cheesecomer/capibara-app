@@ -1,8 +1,9 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using Capibara.Services;
 using Moq;
 using Moq.Language;
@@ -14,6 +15,10 @@ namespace Capibara.Presentation.ViewModels
 {
     public static class Mock
     {
+        public static IReturnsResult<TMock> ReturnsObservable<TMock>(this IReturns<TMock, IObservable<Unit>> mock)
+            where TMock : class =>
+            mock.Returns(Observable.Return(Unit.Default));
+
         public static IReturnsResult<TMock> ReturnsObservable<TMock, TResult>(this IReturns<TMock, IObservable<TResult>> mock, TResult value)
             where TMock : class =>
             mock.Returns(Observable.Return(value));
@@ -32,15 +37,24 @@ namespace Capibara.Presentation.ViewModels
             return navigationService;
         }
 
-        public static Mock<IPageDialogService> PageDialogService(bool shouldRetry = false)
+        public static Mock<IPageDialogService> PageDialogService(bool? shouldRetry = false)
         {
             var pageDialogService = new Mock<IPageDialogService>();
             pageDialogService
                 .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
-            pageDialogService
-                .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(shouldRetry);
+
+            var alert = pageDialogService
+                .Setup(x => x.DisplayAlertAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+
+            if (shouldRetry.HasValue)
+            {
+                alert.ReturnsAsync(shouldRetry.Value);
+            }
+            else
+            {
+                alert.Returns(Observable.Never<bool>().ToTask());
+            }
 
             return pageDialogService;
         }

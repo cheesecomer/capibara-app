@@ -124,7 +124,7 @@ namespace Capibara.Presentation.ViewModels
                 ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable();
 
             subject.ToggleFollowCommand.Execute();
 
@@ -144,7 +144,7 @@ namespace Capibara.Presentation.ViewModels
                 ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable();
 
             subject.ToggleFollowCommand.Execute();
 
@@ -226,7 +226,7 @@ namespace Capibara.Presentation.ViewModels
                 ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable();
 
             subject.ToggleBlockCommand.Execute();
 
@@ -246,7 +246,7 @@ namespace Capibara.Presentation.ViewModels
                 ProgressDialogService = Mock.ProgressDialogService<Unit>().Object
             };
 
-            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+            useCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable();
 
             subject.ToggleBlockCommand.Execute();
 

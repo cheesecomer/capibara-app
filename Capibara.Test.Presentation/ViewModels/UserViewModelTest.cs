@@ -122,7 +122,7 @@ namespace Capibara.Presentation.ViewModels
             var fetchUserUseCase = new Mock<IFetchUserUseCase>();
             var model = ModelFixture.User();
 
-            fetchUserUseCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable(Unit.Default);
+            fetchUserUseCase.Setup(x => x.Invoke(It.IsAny<User>())).ReturnsObservable();
 
             new UserViewModel(model: model) { SchedulerProvider = schedulerProvider, FetchUserUseCase = fetchUserUseCase.Object }.RefreshCommand.Execute();
 
