@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Capibara.Domain.Models
 {
@@ -19,5 +21,10 @@ namespace Capibara.Domain.Models
                 ImageUrl = imageUrl ?? Faker.Url.Image(),
                 ImageThumbnailUrl = imageThumbnailUrl ?? Faker.Url.Image()
             };
+
+        public static ICollection<Message> MessageCollection(int size = 10) =>
+            Enumerable.Range(0, size)
+                .Select(_ => ModelFixture.Message())
+                .ToList();
     }
 }
