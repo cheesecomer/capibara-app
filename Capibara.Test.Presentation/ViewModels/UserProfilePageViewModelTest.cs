@@ -317,6 +317,7 @@ namespace Capibara.Presentation.ViewModels
 
         #region ReportCommand
 
+        [Test]
         public void ReportCommand_WhenExecute_ShouldNavigatToReportPage()
         {
             var navigationService = Mock.NavigationService();
