@@ -52,6 +52,7 @@ namespace Capibara.Presentation.ViewModels
                     this.Threads.Clear();
                     directMessageThreads?.ForEach(this.Threads.Add);
                 })
+                .SubscribeOn(this.SchedulerProvider.UI)
                 .Select(_ => Unit.Default)
                 .RetryWhen(this.PageDialogService, this.SchedulerProvider.UI)
                 .Catch(Observable.Return(Unit.Default))

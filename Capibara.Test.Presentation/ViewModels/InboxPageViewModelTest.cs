@@ -29,7 +29,7 @@ namespace Capibara.Presentation.ViewModels
 
             viewModel.RefreshCommand.Execute();
 
-            schedulerProvider.Scheduler.AdvanceBy(1);
+            schedulerProvider.Scheduler.AdvanceBy(2);
 
             useCase.Verify(x => x.Invoke(), Times.Once);
 
