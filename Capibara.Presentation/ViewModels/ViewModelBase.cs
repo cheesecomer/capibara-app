@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Disposables;
-using System.Threading.Tasks;
 using Capibara.Domain.UseCases;
+using Capibara.Presentation.Navigation;
 using Capibara.Reactive;
 using Capibara.Services;
 using Prism.AppModel;

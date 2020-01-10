@@ -2,7 +2,9 @@
 
 namespace Capibara.Domain.Models
 {
-    public abstract class ModelBase<TModel> : BindableBase where TModel : ModelBase<TModel>
+    public interface IModel { }
+
+    public abstract class ModelBase<TModel> : BindableBase, IModel where TModel : ModelBase<TModel>
     {
         public abstract TModel Restore(TModel other);
     }

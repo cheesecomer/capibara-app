@@ -6,6 +6,7 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Capibara.Domain.UseCases;
 using Capibara.Domain.Models;
+using Capibara.Presentation.Navigation;
 using Prism.Navigation;
 using Prism.Services;
 using Reactive.Bindings;

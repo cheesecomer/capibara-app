@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Capibara.Presentation.ViewModels
+namespace Capibara.Presentation.Navigation
 {
     public static class ParameterNames
     {

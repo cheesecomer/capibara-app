@@ -11,6 +11,7 @@
     <Folder Include="Forms\Behaviors\" />
     <Folder Include="Forms\Effects\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Navigation\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
+using Capibara.Presentation.Navigation;
 using Capibara.Services;
 using Moq;
 using NUnit.Framework;

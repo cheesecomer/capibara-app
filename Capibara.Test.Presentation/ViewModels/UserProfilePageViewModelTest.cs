@@ -4,6 +4,7 @@ using System.Collections;
 using System.Reactive;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
+using Capibara.Presentation.Navigation;
 using Moq;
 using NUnit.Framework;
 using Prism.Navigation;

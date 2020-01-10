@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using Capibara.Presentation.Navigation;
 using NUnit.Framework;
 using Prism.Navigation;
 using Prism.Services;

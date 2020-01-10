@@ -2,13 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Capibara.Services;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
+using Capibara.Services;
+using Capibara.Presentation.Navigation;
 using Microsoft.Reactive.Testing;
 using Moq;
 using NUnit.Framework;

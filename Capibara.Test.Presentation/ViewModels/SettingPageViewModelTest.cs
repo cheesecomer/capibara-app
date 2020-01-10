@@ -1,7 +1,11 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using System;
 using System.Collections;
 using System.Reactive;
+using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
+using Capibara.Presentation.Navigation;
+using Microsoft.Reactive.Testing;
 using Moq;
 using NUnit.Framework;
 using Prism.Navigation;
@@ -11,6 +15,8 @@ namespace Capibara.Presentation.ViewModels
     [TestFixture]
     public class SettingPageViewModelTest
     {
+        #region SettingItem
+
         [Test(Description = "リストの要素数が７であること")]
         public void SettingItem_Should7Items()
         {
@@ -43,80 +49,229 @@ namespace Capibara.Presentation.ViewModels
             Assert.That(new SettingPageViewModel().SettingItems[index].PagePath, Is.EqualTo(expect));
         }
 
-        [Test]
-        public void RefreshCommand_ShouldExecuteUseCase()
+        #endregion
+
+        #region
+
+        public class RefreshCommandTestSubject
         {
-            var schedulerProvider = new SchedulerProvider();
-            var scheduler = schedulerProvider.Scheduler;
-            var fetchEnvironmentUseCase = new Mock<IFetchEnvironmentUseCase>();
-            var subject = new SettingPageViewModel
+            public TestScheduler Scheduler { get; private set; }
+
+            public SettingPageViewModel ViewModel { get; private set; }
+
+            public Mock<IGetWebPageUrlUseCase> GetWebPageUrlUseCase { get; private set; }
+
+            public string WebPageUrl { get; private set; }
+
+            public Mock<NavigationService> NavigationService { get; private set; }
+
+            public RefreshCommandTestSubject()
             {
-                FetchEnvironmentUseCase = fetchEnvironmentUseCase.Object,
-                SchedulerProvider = schedulerProvider
-            };
+                var schedulerProvider = new SchedulerProvider();
+                var navigationService = Mock.NavigationService();
+                var useCase = new Mock<IGetWebPageUrlUseCase>();
+                var url = Faker.Url.Root();
+                var viewModel = new SettingPageViewModel(navigationService.Object)
+                {
+                    GetWebPageUrlUseCase = useCase.Object,
+                    SchedulerProvider = schedulerProvider
+                };
 
-            fetchEnvironmentUseCase.Setup(x => x.Invoke()).ReturnsObservable(new Mock<Domain.Models.IEnvironment>().Object);
-            subject.RefreshCommand.Execute();
-            scheduler.AdvanceBy(1);
+                useCase.Setup(x => x.Invoke(It.IsAny<WebPage>())).ReturnsObservable(url);
 
-            fetchEnvironmentUseCase.Verify(x => x.Invoke(), Times.Once);
+                this.WebPageUrl = url;
+                this.Scheduler = schedulerProvider.Scheduler;
+                this.ViewModel = viewModel;
+                this.GetWebPageUrlUseCase = useCase;
+                this.NavigationService = navigationService;
+            }
+        }
+
+        public static IEnumerable ItemTappedCommandTest_TestCaseSource()
+        {
+
+            yield return
+                new TestCaseData(0, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(It.IsAny<WebPage>()), Times.Never());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[0]) should not invoke use case");
+
+            yield return
+                new TestCaseData(0, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "BlockUsersPage",
+                                    null,
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[0]) should navigate to BlockUsersPage");
+
+            yield return
+                new TestCaseData(1, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(WebPage.Terms), Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[1]) should invoke use case");
+
+            yield return
+                new TestCaseData(1, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "WebViewPage",
+                                    It.Is<NavigationParameters>(parameters =>
+                                        parameters.Count == 2 &&
+                                        parameters[ParameterNames.Title].Equals("利用規約") &&
+                                        parameters[ParameterNames.Url].Equals(subject.WebPageUrl)),
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[1]) should navigate to 利用規約 on WebViewPage");
+
+            yield return
+                new TestCaseData(2, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(WebPage.PrivacyPolicy), Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[2]) should invoke use case");
+
+            yield return
+                new TestCaseData(2, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "WebViewPage",
+                                    It.Is<NavigationParameters>(parameters =>
+                                        parameters.Count == 2 &&
+                                        parameters[ParameterNames.Title].Equals("プライバシーポリシー") &&
+                                        parameters[ParameterNames.Url].Equals(subject.WebPageUrl)),
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[2]) should navigate to プライバシーポリシー on WebViewPage");
+
+
+            yield return
+                new TestCaseData(3, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(It.IsAny<WebPage>()), Times.Never());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[3]) should not invoke use case");
+
+            yield return
+                new TestCaseData(3, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "InquiryPage",
+                                    null,
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[3]) should navigate to InquiryPage");
+
+            yield return
+                new TestCaseData(4, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(It.IsAny<WebPage>()), Times.Never());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[4]) should not invoke use case");
+
+            yield return
+                new TestCaseData(4, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "AboutPage",
+                                    null,
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[4]) should navigate to AboutPage");
+
+            yield return
+                new TestCaseData(5, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(It.IsAny<WebPage>()), Times.Never());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[5]) should not invoke use case");
+
+            yield return
+                new TestCaseData(5, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "LicensePage",
+                                    null,
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[5]) should navigate to LicensePage");
+
+            yield return
+                new TestCaseData(6, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .GetWebPageUrlUseCase
+                        .Verify(x => x.Invoke(It.IsAny<WebPage>()), Times.Never());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[6]) should not invoke use case");
+
+            yield return
+                new TestCaseData(6, 2, new Action<RefreshCommandTestSubject>(subject =>
+                {
+                    subject
+                        .NavigationService
+                        .Verify(
+                            x =>
+                                x.NavigateAsync(
+                                    "UnsubscribePage",
+                                    null,
+                                    null,
+                                    true),
+                            Times.Once());
+                })).SetName("ItemTappedCommand.Execute(SettingItems[6]) should navigate to UnsubscribePage");
         }
 
         [Test]
-        [TestCaseSource("RefreshCommand_ShouldAssignPageParams_TestCase")]
-        public void RefreshCommand_ShouldAssignPageParams(int index, NavigationParameters expect)
+        [TestCaseSource("ItemTappedCommandTest_TestCaseSource")]
+        public void ItemTappedCommand_Test(int index, int advanceTime, Action<RefreshCommandTestSubject> assert)
         {
-            var schedulerProvider = new SchedulerProvider();
-            var scheduler = schedulerProvider.Scheduler;
-            var environment = new Mock<Domain.Models.IEnvironment>();
-            var fetchEnvironmentUseCase = new Mock<IFetchEnvironmentUseCase>();
-            var subject = new SettingPageViewModel
-            {
+            var subject = new RefreshCommandTestSubject();
 
-                FetchEnvironmentUseCase = fetchEnvironmentUseCase.Object,
-                SchedulerProvider = schedulerProvider
-            };
+            subject.ViewModel.ItemTappedCommand.Execute(subject.ViewModel.SettingItems[index]);
 
-            environment.SetupGet(x => x.PrivacyPolicyUrl).Returns(privacyPolicyUrl);
-            environment.SetupGet(x => x.TermsUrl).Returns(termsUrl);
+            subject.Scheduler.AdvanceBy(advanceTime);
 
-            fetchEnvironmentUseCase.Setup(x => x.Invoke()).ReturnsObservable(environment.Object);
-
-            subject.RefreshCommand.Execute();
-            scheduler.AdvanceBy(1);
-            scheduler.AdvanceBy(1);
-
-            Assert.That(subject.SettingItems[index].Parameters, Is.EqualTo(expect));
+            assert(subject);
         }
 
-        private static string privacyPolicyUrl = Faker.Url.Root();
-
-        private static string termsUrl = Faker.Url.Root();
-
-        private static IEnumerable RefreshCommand_ShouldAssignPageParams_TestCase()
-        {
-            yield return new TestCaseData(0, null).SetName("SettingItems[{0}].PagePath should be {1}");
-            yield return new TestCaseData(
-                1,
-                new NavigationParameters
-                {
-                    { ParameterNames.Url, termsUrl },
-                    { ParameterNames.Title, "利用規約" }
-                })
-                .SetName("SettingItems[{0}].PagePath should be { { ParameterNames.Title, \"利用規約\" }, { ParameterNames.Url, Environment.TermsUrl } }");
-            yield return new TestCaseData(
-                2,
-                new NavigationParameters
-                {
-                    { ParameterNames.Url, privacyPolicyUrl },
-                    { ParameterNames.Title, "プライバシーポリシー" }
-                })
-                .SetName("SettingItems[{0}].PagePath should be { { ParameterNames.Title, \"プライバシーポリシー\" }, { ParameterNames.Url, Environment.PrivacyPolicyUrl } }");
-            yield return new TestCaseData(3, null).SetName("SettingItems[{0}].PagePath should be {1}");
-            yield return new TestCaseData(4, null).SetName("SettingItems[{0}].PagePath should be {1}");
-            yield return new TestCaseData(5, null).SetName("SettingItems[{0}].PagePath should be {1}");
-            yield return new TestCaseData(6, null).SetName("SettingItems[{0}].PagePath should be {1}");
-        }
+        #endregion
     }
-
 }
