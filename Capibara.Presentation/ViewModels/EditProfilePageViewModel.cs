@@ -1,18 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-
+using System.Threading.Tasks;
 using Capibara.Domain.Models;
 using Capibara.Domain.UseCases;
-
-using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
