@@ -3,5 +3,5 @@ using Capibara.Domain.Models;
 
 namespace Capibara.Domain.UseCases
 {
-    public interface IFetchFollowUsersUseCase : IObservableUseCase<ICollection<User>> { }
+    public interface IFetchFollowUsersUseCase : ISingleUseCase<ICollection<User>> { }
 }

@@ -169,7 +169,7 @@ namespace Capibara.Presentation.ViewModels
                                 "通信エラーです。リトライしますか？。",
                                 "リトライ",
                                 "閉じる"), Times.Once)))
-                .SetName("SubmitCommand when usecase fail should shoew retry dialog");
+                .SetName("SubmitCommand when usecase fail should show retry dialog");
 
             yield return
                 new TestCaseData(

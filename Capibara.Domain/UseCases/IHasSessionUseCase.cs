@@ -1,4 +1,4 @@
 ﻿namespace Capibara.Domain.UseCases
 {
-    public interface IHasSessionUseCase : IObservableUseCase<bool> { }
+    public interface IHasSessionUseCase : ISingleUseCase<bool> { }
 }
