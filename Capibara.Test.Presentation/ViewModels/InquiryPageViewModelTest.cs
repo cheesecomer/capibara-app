@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS1701 // アセンブリ参照が ID と一致すると仮定します
+using System;
 using System.Collections;
 
 using Capibara.Domain.Models;
@@ -7,6 +8,8 @@ using Capibara.Presentation.Navigation;
 using Moq;
 using NUnit.Framework;
 using Prism.Navigation;
+using Prism.Services;
+using Microsoft.Reactive.Testing;
 
 namespace Capibara.Presentation.ViewModels
 {
@@ -79,33 +82,118 @@ namespace Capibara.Presentation.ViewModels
             Assert.That(viewModel.SubmitCommand.CanExecute(), Is.EqualTo(canExecute));
         }
 
-        [Test]
-        public void SubmitCommand_WhenSuccess()
+        public class SubmitCommandSubject
         {
-            var schedulerProvider = new SchedulerProvider();
-            var useCase = new Mock<ICreateInquiryUseCase>();
-            var navigationService = Mock.NavigationService();
-            var viewModel = new InquiryPageViewModel(navigationService.Object)
+            public TestScheduler Scheduler { get; }
+
+            public Mock<ICreateInquiryUseCase> CreateInquiryUseCase { get; }
+
+            public Mock<NavigationService> NavigationService { get; }
+
+            public Mock<IPageDialogService> PageDialogService { get; }
+
+            public InquiryPageViewModel ViewModel { get; }
+
+            public Inquiry Model => this.ViewModel.Model;
+
+            public SubmitCommandSubject()
             {
-                SchedulerProvider = schedulerProvider,
-                CreateInquiryUseCase = useCase.Object,
-            };
+                var schedulerProvider = new SchedulerProvider();
+                var useCase = new Mock<ICreateInquiryUseCase>();
+                var navigationService = Mock.NavigationService();
+                var pageDialogService = Mock.PageDialogService(null);
+                var viewModel = new InquiryPageViewModel(
+                    navigationService.Object,
+                    pageDialogService.Object)
+                {
+                    SchedulerProvider = schedulerProvider,
+                    CreateInquiryUseCase = useCase.Object,
+                };
 
-            viewModel.Email.Value = Faker.Internet.Email();
-            viewModel.Message.Value = Faker.Lorem.Paragraph();
+                this.ViewModel = viewModel;
+                this.NavigationService = navigationService;
+                this.PageDialogService = pageDialogService;
+                this.Scheduler = schedulerProvider.Scheduler;
+                this.CreateInquiryUseCase = useCase;
+            }
+        }
 
-            useCase.Setup(x => x.Invoke(It.IsAny<Inquiry>())).ReturnsObservable();
+        public static IEnumerable SubmitCommand_WhenSuccess_TestCaseSource()
+        {
+            yield return
+                new TestCaseData(
+                    2,
+                    new Action<SubmitCommandSubject>(subject => subject.CreateInquiryUseCase.Verify(x => x.Invoke(subject.Model), Times.Once)))
+                .SetName("SubmitCommand when execute should invoke usecase");
 
-            viewModel.SubmitCommand.Execute();
+            yield return
+                new TestCaseData(
+                    3,
+                    new Action<SubmitCommandSubject>(subject => subject.NavigationService.Verify(x => x.GoBackAsync(), Times.Once)))
+                .SetName("SubmitCommand when usecase success should go back");
+        }
 
-            schedulerProvider.Scheduler.AdvanceBy(1);
-            schedulerProvider.Scheduler.AdvanceBy(1);
+        [Test]
+        [TestCaseSource("SubmitCommand_WhenSuccess_TestCaseSource")]
+        public void SubmitCommand_WhenSuccess(int advanceTime, Action<SubmitCommandSubject> assert)
+        {
+            var subject = new SubmitCommandSubject();
 
-            useCase.Verify(x => x.Invoke(viewModel.Model), Times.Once);
+            subject.ViewModel.Email.Value = Faker.Internet.Email();
+            subject.ViewModel.Message.Value = Faker.Lorem.Paragraph();
 
-            schedulerProvider.Scheduler.AdvanceBy(1);
+            subject.CreateInquiryUseCase.Setup(x => x.Invoke(It.IsAny<Inquiry>())).ReturnsObservable();
 
-            navigationService.Verify(x => x.GoBackAsync(), Times.Once);
+            subject.ViewModel.SubmitCommand.Execute();
+
+            subject.Scheduler.AdvanceBy(advanceTime);
+
+            assert(subject);
+        }
+
+        public static IEnumerable SubmitCommand_WhenFail_TestCaseSource()
+        {
+            yield return
+                new TestCaseData(
+                    2,
+                    new Action<SubmitCommandSubject>(subject => subject.CreateInquiryUseCase.Verify(x => x.Invoke(subject.Model), Times.Once)))
+                .SetName("SubmitCommand when execute should invoke usecase");
+
+            yield return
+                new TestCaseData(
+                    3,
+                    new Action<SubmitCommandSubject>(subject =>
+                        subject.PageDialogService.Verify(x =>
+                            x.DisplayAlertAsync(
+                                "申し訳ございません！",
+                                "通信エラーです。リトライしますか？。",
+                                "リトライ",
+                                "閉じる"), Times.Once)))
+                .SetName("SubmitCommand when usecase fail should shoew retry dialog");
+
+            yield return
+                new TestCaseData(
+                    3,
+                    new Action<SubmitCommandSubject>(subject => subject.NavigationService.Verify(x => x.GoBackAsync(), Times.Never)))
+                .SetName("SubmitCommand when usecase fail should not go back");
+        }
+
+        [Test]
+        [TestCaseSource("SubmitCommand_WhenFail_TestCaseSource")]
+        public void SubmitCommand_WhenFail(int advanceTime, Action<SubmitCommandSubject> assert)
+        {
+            var subject = new SubmitCommandSubject();
+
+            subject.ViewModel.Email.Value = Faker.Internet.Email();
+            subject.ViewModel.Message.Value = Faker.Lorem.Paragraph();
+
+            subject.CreateInquiryUseCase.Setup(x => x.Invoke(It.IsAny<Inquiry>())).ReturnsObservable(new Exception());
+
+            subject.ViewModel.SubmitCommand.Execute();
+
+            subject.Scheduler.AdvanceBy(advanceTime);
+
+            assert(subject);
         }
 
         #endregion
