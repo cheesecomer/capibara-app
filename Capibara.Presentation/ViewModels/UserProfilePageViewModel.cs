@@ -76,7 +76,7 @@ namespace Capibara.Presentation.ViewModels
             this.ReportCommand.Subscribe(() =>
             {
                 var parameters = new NavigationParameters();
-                parameters.Add(ParameterNames.Model, this.Model);
+                parameters.Add(ParameterNames.Model, new Report { Target = this.Model });
                 return this.NavigationService.NavigateAsync("ReportPage", parameters);
             });
 
